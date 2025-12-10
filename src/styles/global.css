@@ -1,0 +1,70 @@
+@import './variables.css';
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    color: var(--text-main);
+    min-height: 100vh;
+    /* Stylish Food Background (CSS Pattern) */
+    background-color: #fcfcfc;
+    opacity: 1;
+    background-image: radial-gradient(#E23744 0.5px, transparent 0.5px), radial-gradient(#E23744 0.5px, #fcfcfc 0.5px);
+    background-size: 20px 20px;
+    background-position: 0 0, 10px 10px;
+}
+
+/* Add a white overlay so the dots aren't too distracting */
+body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.92);
+    /* High opacity white mask */
+    z-index: -1;
+    pointer-events: none;
+}
+
+button {
+    cursor: pointer;
+    border: none;
+    background: none;
+    font-family: inherit;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+.container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 0 var(--space-md);
+    position: relative;
+}
+
+/* Glass Card Utility */
+.glass-card {
+    background: white;
+    border: 1px solid #eee;
+    box-shadow: var(--shadow-sm);
+    border-radius: var(--radius-lg);
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+.hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}

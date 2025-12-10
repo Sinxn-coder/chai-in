@@ -1,0 +1,41 @@
+:root {
+  /* Colors - Zomato Style (Red & Clean) */
+  --primary: #E23744;
+  /* Zomato Red */
+  --primary-dark: #C92532;
+  --secondary: #2D2D2D;
+  /* Dark Text/Black */
+  --accent: #267E3E;
+  /* Rating Green */
+  --bg-cream: #F8F8F8;
+  /* Light gray for contrast, not yellow-cream */
+  --bg-white: #FFFFFF;
+  --text-main: #1C1C1C;
+  --text-muted: #696969;
+  --success: #249A3E;
+  --danger: #E23744;
+
+  /* Spacing */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+
+  /* BorderRadius */
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-full: 9999px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.08);
+  /* Crisper shadow */
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.12);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
+  --shadow-float: 0 12px 32px rgba(226, 55, 68, 0.2);
+
+  /* Transitions */
+  --transition-fast: 0.2s ease;
+  --transition-normal: 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
