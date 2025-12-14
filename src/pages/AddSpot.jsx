@@ -295,9 +295,12 @@ const AddSpot = ({ lang }) => {
                                         style={{
                                             flex: 1,
                                             display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
-                                            padding: '12px 16px', background: 'rgba(38, 126, 62, 0.1)', color: 'var(--success)',
-                                            borderRadius: '12px', fontWeight: '700', fontSize: '0.9rem',
-                                            border: 'none', cursor: loading ? 'not-allowed' : 'pointer'
+                                            padding: '14px 16px',
+                                            background: 'white',
+                                            color: 'var(--success)',
+                                            borderRadius: '16px', fontWeight: '700', fontSize: '0.9rem',
+                                            border: '2px solid #e0e0e0', cursor: loading ? 'not-allowed' : 'pointer',
+                                            boxShadow: '0 4px 6px rgba(0,0,0,0.05)'
                                         }}
                                     >
                                         {loading ? <Loader className="animate-spin" size={18} /> : <Crosshair size={18} />}
