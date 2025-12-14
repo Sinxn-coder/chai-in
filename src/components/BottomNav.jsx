@@ -19,26 +19,32 @@ const BottomNav = ({ lang }) => {
         <div className="bottom-nav-container" style={{
             position: 'fixed', bottom: '30px', left: 0, right: 0,
             display: 'flex', justifyContent: 'center', zIndex: 1000,
-            pointerEvents: 'none' // Allow clicking through empty sidebar areas
+            pointerEvents: 'none'
         }}>
             <div style={{
                 pointerEvents: 'auto',
-                background: 'rgba(25, 25, 25, 0.85)', // Dark glass for "futuristic" feel
-                backdropFilter: 'blur(20px)',
-                WebkitBackdropFilter: 'blur(20px)', // Safari support
-                borderRadius: '40px',
-                padding: '10px 20px',
+                // Crystal / Water Drop Effect
+                background: 'rgba(255, 255, 255, 0.3)', // Ultra-clear base
+                backdropFilter: 'blur(25px) saturate(180%)', // Heavy frost
+                WebkitBackdropFilter: 'blur(25px) saturate(180%)',
+                borderRadius: '50px',
+                padding: '8px 24px',
                 display: 'flex',
                 alignItems: 'center',
-                gap: '8px',
-                boxShadow: '0 10px 40px rgba(0,0,0,0.3), 0 0 0 1px rgba(255,255,255,0.1)',
+                gap: '12px',
+                // Complex shadow for depth + "Glass Bevel" border
+                boxShadow: `
+                    0 20px 40px rgba(0,0,0,0.1), 
+                    0 0 0 1px rgba(255,255,255,0.4), 
+                    inset 0 1px 0 rgba(255,255,255,0.6)
+                `,
                 width: 'auto',
                 minWidth: '320px',
                 justifyContent: 'space-between'
             }}>
                 {navItems.map((item) => {
                     const isActive = location.pathname.includes(`/${lang}${item.to}`) ||
-                        (item.to === '/home' && location.pathname === `/${lang}`); // exact match for home sometimes
+                        (item.to === '/home' && location.pathname === `/${lang}`);
 
                     if (item.isFab) {
                         return (
@@ -46,16 +52,18 @@ const BottomNav = ({ lang }) => {
                                 key={item.to}
                                 to={`/${lang}${item.to}`}
                                 style={{
-                                    width: '48px', height: '48px',
+                                    width: '52px', height: '52px',
                                     borderRadius: '50%',
-                                    background: 'linear-gradient(135deg, #FF3D3D, #FF0055)',
+                                    // Liquid Gradient FAB
+                                    background: 'linear-gradient(135deg, #E23744, #FF6B6B)',
                                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                                     textDecoration: 'none',
-                                    boxShadow: '0 4px 15px rgba(255, 0, 85, 0.4)',
-                                    transition: 'transform 0.2s ease'
+                                    boxShadow: '0 8px 20px rgba(226, 55, 68, 0.4)',
+                                    transform: isActive ? 'scale(1.1)' : 'scale(1)',
+                                    transition: 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)'
                                 }}
                             >
-                                <Plus size={24} color="white" strokeWidth={3} />
+                                <Plus size={26} color="white" strokeWidth={3} />
                             </NavLink>
                         )
                     }
@@ -68,18 +76,26 @@ const BottomNav = ({ lang }) => {
                                 display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
                                 padding: '10px',
                                 borderRadius: '50%',
-                                width: '44px', height: '44px',
+                                width: '48px', height: '48px',
                                 textDecoration: 'none',
                                 transition: 'all 0.3s ease',
-                                background: isActive ? 'rgba(255,255,255,0.15)' : 'transparent'
+                                position: 'relative'
                             }}
                         >
                             <item.icon
-                                size={22}
-                                color={isActive ? '#fff' : 'rgba(255,255,255,0.5)'}
+                                size={24}
+                                // Darker icons for contrast on light glass
+                                color={isActive ? '#E23744' : 'rgba(0,0,0,0.5)'}
                                 strokeWidth={isActive ? 2.5 : 2}
-                                fill={isActive ? "white" : "none"} // Filled style for active
+                                fill={isActive ? "currentColor" : "none"}
                             />
+                            {isActive && (
+                                <div style={{
+                                    position: 'absolute', bottom: '4px',
+                                    width: '4px', height: '4px', borderRadius: '50%',
+                                    background: '#E23744'
+                                }} />
+                            )}
                         </NavLink>
                     );
                 })}
