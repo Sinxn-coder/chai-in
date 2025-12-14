@@ -3,6 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import Button from '../components/Button';
 import { useNavigate } from 'react-router-dom';
 import { Utensils, Coffee, MapPin } from 'lucide-react';
+import Logo from '../components/Logo';
 
 const Login = () => {
     const { signInWithGoogle, user } = useAuth();
@@ -55,14 +56,20 @@ const Login = () => {
                 <Utensils size={48} color="var(--primary)" />
             </div>
 
+            {/* Logo Area */}
             <div className="glass-card" style={{
                 padding: '2.5rem',
                 width: '100%',
                 maxWidth: '400px',
                 textAlign: 'center',
-                zIndex: 2
+                zIndex: 2,
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center'
             }}>
-                <h1 style={{ fontSize: '2.5rem', fontWeight: '800', color: 'var(--primary)', marginBottom: '0.5rem', letterSpacing: '-1px' }}>Chai.in</h1>
+                <div style={{ marginBottom: '1rem' }}>
+                    <Logo size={60} />
+                </div>
                 <p style={{ color: 'var(--text-muted)', marginBottom: '2rem', fontSize: '1.1rem' }}>
                     Discover the best food spots in town. <br /> Join the community.
                 </p>

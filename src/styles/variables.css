@@ -1,19 +1,30 @@
+/* Fresh & Healthy Design System - Inspired by Modern Food Apps */
+
 :root {
-  /* Colors - Zomato Style (Red & Clean) */
-  --primary: #E23744;
-  /* Zomato Red */
-  --primary-dark: #C92532;
-  --secondary: #2D2D2D;
-  /* Dark Text/Black */
-  --accent: #267E3E;
-  /* Rating Green */
-  --bg-cream: #F8F8F8;
-  /* Light gray for contrast, not yellow-cream */
+  /* Primary Colors - Fresh Green Palette */
+  --primary: #4CAF50;
+  --primary-dark: #388E3C;
+  --primary-light: #81C784;
+  --secondary: #FF9800;
+  --accent: #FFC107;
+
+  /* Background Colors */
+  --bg-main: #FAFAFA;
   --bg-white: #FFFFFF;
-  --text-main: #1C1C1C;
-  --text-muted: #696969;
-  --success: #249A3E;
-  --danger: #E23744;
+  --bg-cream: #F5F5F5;
+  --bg-light-green: #E8F5E9;
+
+  /* Text Colors */
+  --text-main: #212121;
+  --text-secondary: #424242;
+  --text-muted: #757575;
+  --text-light: #9E9E9E;
+
+  /* Status Colors */
+  --success: #4CAF50;
+  --warning: #FF9800;
+  --danger: #F44336;
+  --info: #2196F3;
 
   /* Spacing */
   --space-xs: 4px;
@@ -21,21 +32,23 @@
   --space-md: 16px;
   --space-lg: 24px;
   --space-xl: 32px;
+  --space-2xl: 48px;
 
-  /* BorderRadius */
-  --radius-sm: 6px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
+  /* Border Radius - More Organic/Rounded */
+  --radius-sm: 8px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-xl: 32px;
   --radius-full: 9999px;
 
-  /* Shadows */
-  --shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.08);
-  /* Crisper shadow */
-  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.12);
-  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
-  --shadow-float: 0 12px 32px rgba(226, 55, 68, 0.2);
+  /* Shadows - Softer, More Subtle */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.12);
 
   /* Transitions */
-  --transition-fast: 0.2s ease;
-  --transition-normal: 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  --transition-fast: 150ms ease;
+  --transition-base: 250ms ease;
+  --transition-slow: 350ms ease;
 }

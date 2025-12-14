@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { ChevronLeft, ChevronRight, Upload, MapPin, Check, Loader, Crosshair } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Upload, MapPin, Check, Loader, Crosshair, Map, Sparkles, CircleX } from 'lucide-react';
 import Button from '../components/Button';
 import Toast from '../components/Toast';
+import MapPicker from '../components/MapPicker';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabaseClient';
 import { useAuth } from '../context/AuthContext';
@@ -12,6 +13,8 @@ const AddSpot = ({ lang }) => {
     const [step, setStep] = useState(1);
     const [loading, setLoading] = useState(false);
     const [uploading, setUploading] = useState(false);
+    const [showMapPicker, setShowMapPicker] = useState(false);
+    const [mapCenter, setMapCenter] = useState([11.2588, 75.7804]); // Kozhikode default
     const [toast, setToast] = useState(null);
 
     const [formData, setFormData] = useState({
@@ -37,18 +40,20 @@ const AddSpot = ({ lang }) => {
         setToast({ message: msg, type });
     };
 
-    // --- Location Logic ---
     const handleGetLocation = () => {
         setLoading(true);
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
                 (position) => {
+                    const lat = position.coords.latitude;
+                    const lng = position.coords.longitude;
                     setFormData({
                         ...formData,
-                        latitude: position.coords.latitude,
-                        longitude: position.coords.longitude,
-                        location_text: `${position.coords.latitude.toFixed(4)}, ${position.coords.longitude.toFixed(4)}`
+                        latitude: lat,
+                        longitude: lng,
+                        location_text: `${lat.toFixed(4)}, ${lng.toFixed(4)}`
                     });
+                    setMapCenter([lat, lng]);
                     setLoading(false);
                     showToast('Location updated!');
                 },
@@ -63,10 +68,26 @@ const AddSpot = ({ lang }) => {
         }
     };
 
+    const handleMapClick = (lat, lng) => {
+        setFormData({
+            ...formData,
+            latitude: lat,
+            longitude: lng,
+            location_text: `${lat.toFixed(4)}, ${lng.toFixed(4)}`
+        });
+        setShowMapPicker(false);
+        showToast('Location selected from map!');
+    };
+
     // --- Image Upload Logic ---
     const handleImageUpload = async (e) => {
         const file = e.target.files[0];
         if (!file) return;
+
+        if (formData.images.length >= 5) {
+            showToast("Maximum 5 images allowed", 'error');
+            return;
+        }
 
         setUploading(true);
         try {
@@ -94,6 +115,13 @@ const AddSpot = ({ lang }) => {
         } finally {
             setUploading(false);
         }
+    };
+
+    const removeImage = (indexToRemove) => {
+        setFormData(prev => ({
+            ...prev,
+            images: prev.images.filter((_, i) => i !== indexToRemove)
+        }));
     };
 
     const handleSubmit = async (e) => {
@@ -139,186 +167,273 @@ const AddSpot = ({ lang }) => {
     );
 
     return (
-        <div className="container" style={{ padding: '2rem 1rem', paddingBottom: '100px' }}>
+        <div style={{
+            minHeight: '100vh',
+            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            paddingBottom: '100px'
+        }}>
             {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
 
-            <button onClick={() => navigate(-1)} style={{ marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '4px', color: 'var(--text-muted)' }}>
-                <ChevronLeft size={20} /> Back
-            </button>
+            {/* Map Picker Modal */}
+            <MapPicker
+                isOpen={showMapPicker}
+                onClose={() => setShowMapPicker(false)}
+                onSelectLocation={handleMapClick}
+                initialCenter={mapCenter}
+            />
 
-            <h1 style={{ fontSize: '1.75rem', fontWeight: '800', marginBottom: '0.5rem', color: 'var(--primary)' }}>Add New Spot</h1>
+            <div className="container" style={{ padding: '2rem 1rem', maxWidth: '600px', margin: '0 auto' }}>
+                <button
+                    onClick={() => navigate(-1)}
+                    style={{
+                        marginBottom: '1.5rem',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '4px',
+                        color: 'white',
+                        background: 'rgba(255,255,255,0.2)',
+                        padding: '8px 16px',
+                        borderRadius: '20px',
+                        border: 'none',
+                        cursor: 'pointer',
+                        fontWeight: '600',
+                        backdropFilter: 'blur(10px)'
+                    }}
+                >
+                    <ChevronLeft size={20} /> Back
+                </button>
 
-            <StepIndicator />
+                <div style={{
+                    textAlign: 'center',
+                    marginBottom: '2rem',
+                    color: 'white'
+                }}>
+                    <h1 style={{
+                        fontSize: '2rem',
+                        fontWeight: '800',
+                        marginBottom: '0.5rem',
+                        textShadow: '0 2px 10px rgba(0,0,0,0.2)'
+                    }}>
+                        Add New Spot ✨
+                    </h1>
+                    <p style={{ opacity: 0.9, fontSize: '1rem' }}>
+                        Share your favorite food spot with the community
+                    </p>
+                </div>
 
-            <form onSubmit={handleSubmit} className="glass-card" style={{ padding: '2rem', position: 'relative' }}>
+                <StepIndicator />
 
-                {/* Step 1: Basic Info */}
-                {step === 1 && (
-                    <div className="animate-fade-in">
-                        <h2 style={{ marginBottom: '1.5rem', fontSize: '1.2rem', fontWeight: '700' }}>Basic Info</h2>
+                <form onSubmit={handleSubmit} className="glass-card" style={{ padding: '2rem', position: 'relative' }}>
 
-                        <div style={{ marginBottom: '1rem' }}>
-                            <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600' }}>Spot Name</label>
-                            <input
-                                type="text"
-                                placeholder="e.g. Grandma's Cafe"
-                                value={formData.name}
-                                onChange={e => setFormData({ ...formData, name: e.target.value })}
-                                style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1px solid #ddd', fontSize: '1rem', background: '#f9f9f9' }}
-                            />
-                        </div>
+                    {/* Step 1: Basic Info */}
+                    {step === 1 && (
+                        <div className="animate-fade-in">
+                            <h2 style={{ marginBottom: '1.5rem', fontSize: '1.2rem', fontWeight: '700' }}>Basic Info</h2>
 
-                        <div style={{ marginBottom: '1rem' }}>
-                            <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600' }}>Category</label>
-                            <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
-                                {['Cafe', 'Restaurant', 'Street Food', 'Bakery'].map(cat => (
-                                    <button
-                                        key={cat} type="button"
-                                        onClick={() => setFormData({ ...formData, category: cat })}
-                                        style={{
-                                            padding: '10px 20px',
-                                            borderRadius: 'var(--radius-full)',
-                                            border: 'none',
-                                            background: formData.category === cat ? 'var(--primary)' : '#f0f0f0',
-                                            color: formData.category === cat ? 'white' : 'var(--text-main)',
-                                            fontWeight: '600',
-                                            boxShadow: formData.category === cat ? '0 4px 12px rgba(226, 55, 68, 0.3)' : 'none',
-                                            transition: 'all 0.2s ease'
-                                        }}
-                                    >
-                                        {cat}
-                                    </button>
-                                ))}
+                            <div style={{ marginBottom: '1rem' }}>
+                                <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600' }}>Spot Name</label>
+                                <input
+                                    type="text"
+                                    placeholder="e.g. Grandma's Cafe"
+                                    value={formData.name}
+                                    onChange={e => setFormData({ ...formData, name: e.target.value })}
+                                    style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1px solid #ddd', fontSize: '1rem', background: '#f9f9f9' }}
+                                />
                             </div>
-                        </div>
 
-                        <Button type="button" onClick={handleNext} style={{ width: '100%', marginTop: '1.5rem', background: 'var(--primary)', color: 'white', padding: '16px', fontSize: '1rem' }}>
-                            Next Step <ChevronRight size={18} />
-                        </Button>
-                    </div>
-                )}
-
-                {/* Step 2: Location & Details */}
-                {step === 2 && (
-                    <div className="animate-fade-in">
-                        <h2 style={{ marginBottom: '1.5rem', fontSize: '1.2rem', fontWeight: '700' }}>Location & Price</h2>
-
-                        <div style={{ marginBottom: '1.5rem' }}>
-                            <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600' }}>Location</label>
-
-                            <button
-                                type="button"
-                                onClick={handleGetLocation}
-                                disabled={loading}
-                                style={{
-                                    display: 'flex', alignItems: 'center', gap: '8px',
-                                    padding: '12px 16px', background: 'rgba(38, 126, 62, 0.1)', color: 'var(--success)',
-                                    borderRadius: '12px', marginBottom: '12px', fontWeight: '700', fontSize: '0.9rem',
-                                    width: '100%', justifyContent: 'center'
-                                }}
-                            >
-                                {loading ? <Loader className="animate-spin" size={18} /> : <Crosshair size={18} />}
-                                {formData.latitude ? 'Location Updated' : 'Use Current Location'}
-                            </button>
-
-                            <input
-                                type="text"
-                                placeholder="Type address..."
-                                value={formData.location_text}
-                                onChange={e => setFormData({ ...formData, location_text: e.target.value })}
-                                style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1px solid #ddd', background: '#f9f9f9' }}
-                            />
-                        </div>
-
-                        <div style={{ marginBottom: '1rem' }}>
-                            <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600' }}>Price Level</label>
-                            <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
-                                {[1, 2, 3].map(lvl => (
-                                    <button
-                                        key={lvl} type="button"
-                                        onClick={() => setFormData({ ...formData, price: lvl })}
-                                        style={{
-                                            width: '50px', height: '50px',
-                                            borderRadius: '50%',
-                                            background: formData.price === lvl ? 'var(--secondary)' : '#f0f0f0',
-                                            color: formData.price === lvl ? 'white' : '#999',
-                                            fontWeight: 'bold',
-                                            fontSize: '1.2rem',
-                                            transition: 'all 0.2s ease'
-                                        }}
-                                    >
-                                        {'$'.repeat(lvl)}
-                                    </button>
-                                ))}
+                            <div style={{ marginBottom: '1rem' }}>
+                                <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600' }}>Category</label>
+                                <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+                                    {['Cafe', 'Restaurant', 'Street Food', 'Bakery'].map(cat => (
+                                        <button
+                                            key={cat} type="button"
+                                            onClick={() => setFormData({ ...formData, category: cat })}
+                                            style={{
+                                                padding: '10px 20px',
+                                                borderRadius: 'var(--radius-full)',
+                                                border: 'none',
+                                                background: formData.category === cat ? 'var(--primary)' : '#f0f0f0',
+                                                color: formData.category === cat ? 'white' : 'var(--text-main)',
+                                                fontWeight: '600',
+                                                boxShadow: formData.category === cat ? '0 4px 12px rgba(226, 55, 68, 0.3)' : 'none',
+                                                transition: 'all 0.2s ease'
+                                            }}
+                                        >
+                                            {cat}
+                                        </button>
+                                    ))}
+                                </div>
                             </div>
-                        </div>
 
-                        <div style={{ display: 'flex', gap: '1rem', marginTop: '2rem' }}>
-                            <Button type="button" variant="secondary" onClick={handleBack} style={{ flex: 1, background: '#f0f0f0' }}>Back</Button>
-                            <Button type="button" onClick={handleNext} style={{ flex: 1, background: 'var(--primary)', color: 'white' }}>Next</Button>
-                        </div>
-                    </div>
-                )}
-
-                {/* Step 3: Photos & Review */}
-                {step === 3 && (
-                    <div className="animate-fade-in">
-                        <h2 style={{ marginBottom: '1.5rem', fontSize: '1.2rem', fontWeight: '700' }}>Photos</h2>
-
-                        <div style={{ marginBottom: '1.5rem' }}>
-                            <label
-                                style={{
-                                    border: '2px dashed #ddd',
-                                    borderRadius: '16px',
-                                    padding: '3rem 1rem',
-                                    textAlign: 'center',
-                                    display: 'block',
-                                    cursor: 'pointer',
-                                    background: uploading ? '#fafafa' : '#fff',
-                                    transition: 'all 0.2s ease',
-                                    '&:hover': { borderColor: 'var(--primary)' }
-                                }}
-                            >
-                                {uploading ? <Loader className="animate-spin" style={{ margin: '0 auto' }} /> : <Upload size={40} color="var(--primary)" style={{ marginBottom: '10px', margin: '0 auto' }} />}
-                                <p style={{ fontWeight: '700', marginTop: '10px', color: 'var(--primary)' }}>
-                                    {uploading ? 'Uploading...' : 'Tap to Upload Photo'}
-                                </p>
-                                <input type="file" accept="image/*" onChange={handleImageUpload} style={{ display: 'none' }} />
-                            </label>
-                        </div>
-
-                        {/* Preview */}
-                        {formData.images.length > 0 && (
-                            <div style={{
-                                display: 'flex',
-                                gap: '12px',
-                                overflowX: 'auto',
-                                marginBottom: '2rem',
-                                padding: '4px'
-                            }}>
-                                {formData.images.map((img, i) => (
-                                    <div key={i} style={{ position: 'relative', width: '80px', height: '80px', flexShrink: 0 }}>
-                                        <img src={img} alt="preview" style={{ width: '100%', height: '100%', borderRadius: '12px', objectFit: 'cover', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }} />
-                                        <div style={{ position: 'absolute', top: -5, right: -5, background: 'white', borderRadius: '50%', padding: '2px' }}><Check size={14} color="green" /></div>
-                                    </div>
-                                ))}
-                            </div>
-                        )}
-
-                        <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
-                            <Button type="button" variant="secondary" onClick={handleBack} style={{ flex: 1, background: '#f0f0f0' }}>Back</Button>
-                            <Button
-                                type="submit"
-                                disabled={loading}
-                                style={{ flex: 1, background: 'var(--success)', color: 'white', padding: '16px' }}
-                            >
-                                {loading ? 'Saving...' : 'Submit Spot'}
+                            <Button type="button" onClick={handleNext} style={{ width: '100%', marginTop: '1.5rem', background: 'var(--primary)', color: 'white', padding: '16px', fontSize: '1rem' }}>
+                                Next Step <ChevronRight size={18} />
                             </Button>
                         </div>
-                    </div>
-                )}
+                    )}
 
-            </form>
+                    {/* Step 2: Location & Details */}
+                    {step === 2 && (
+                        <div className="animate-fade-in">
+                            <h2 style={{ marginBottom: '1.5rem', fontSize: '1.2rem', fontWeight: '700' }}>Location & Price</h2>
+
+                            <div style={{ marginBottom: '1.5rem' }}>
+                                <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600' }}>Location</label>
+
+                                <div style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
+                                    <button
+                                        type="button"
+                                        onClick={handleGetLocation}
+                                        disabled={loading}
+                                        style={{
+                                            flex: 1,
+                                            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+                                            padding: '12px 16px', background: 'rgba(38, 126, 62, 0.1)', color: 'var(--success)',
+                                            borderRadius: '12px', fontWeight: '700', fontSize: '0.9rem',
+                                            border: 'none', cursor: loading ? 'not-allowed' : 'pointer'
+                                        }}
+                                    >
+                                        {loading ? <Loader className="animate-spin" size={18} /> : <Crosshair size={18} />}
+                                        Current Location
+                                    </button>
+
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowMapPicker(true)}
+                                        style={{
+                                            flex: 1,
+                                            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+                                            padding: '12px 16px', background: 'rgba(66, 133, 244, 0.1)', color: '#4285F4',
+                                            borderRadius: '12px', fontWeight: '700', fontSize: '0.9rem',
+                                            border: 'none', cursor: 'pointer'
+                                        }}
+                                    >
+                                        <Map size={18} />
+                                        Select on Map
+                                    </button>
+                                </div>
+
+                                <input
+                                    type="text"
+                                    placeholder="Type address..."
+                                    value={formData.location_text}
+                                    onChange={e => setFormData({ ...formData, location_text: e.target.value })}
+                                    style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1px solid #ddd', background: '#f9f9f9' }}
+                                />
+
+                                {formData.latitude && formData.longitude && (
+                                    <p style={{ fontSize: '0.85rem', color: 'var(--success)', marginTop: '8px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                        <Check size={16} />
+                                        Location set: {formData.latitude.toFixed(4)}, {formData.longitude.toFixed(4)}
+                                    </p>
+                                )}
+                            </div>
+
+                            <div style={{ marginBottom: '1rem' }}>
+                                <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600' }}>Price Level</label>
+                                <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
+                                    {[1, 2, 3].map(lvl => (
+                                        <button
+                                            key={lvl} type="button"
+                                            onClick={() => setFormData({ ...formData, price: lvl })}
+                                            style={{
+                                                width: '50px', height: '50px',
+                                                borderRadius: '50%',
+                                                background: formData.price === lvl ? 'var(--secondary)' : '#f0f0f0',
+                                                color: formData.price === lvl ? 'white' : '#999',
+                                                fontWeight: 'bold',
+                                                fontSize: '1.2rem',
+                                                transition: 'all 0.2s ease'
+                                            }}
+                                        >
+                                            {'$'.repeat(lvl)}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+
+                            <div style={{ display: 'flex', gap: '1rem', marginTop: '2rem' }}>
+                                <Button type="button" variant="secondary" onClick={handleBack} style={{ flex: 1, background: '#f0f0f0' }}>Back</Button>
+                                <Button type="button" onClick={handleNext} style={{ flex: 1, background: 'var(--primary)', color: 'white' }}>Next</Button>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Step 3: Photos & Review */}
+                    {step === 3 && (
+                        <div className="animate-fade-in">
+                            <h2 style={{ marginBottom: '1.5rem', fontSize: '1.2rem', fontWeight: '700' }}>Photos</h2>
+
+                            <div style={{ marginBottom: '1.5rem' }}>
+                                {formData.images.length < 5 ? (
+                                    <label
+                                        style={{
+                                            border: '2px dashed #ddd',
+                                            borderRadius: '16px',
+                                            padding: '2rem 1rem',
+                                            textAlign: 'center',
+                                            display: 'block',
+                                            cursor: 'pointer',
+                                            background: uploading ? '#fafafa' : '#fff',
+                                            transition: 'all 0.2s ease',
+                                            opacity: uploading ? 0.6 : 1
+                                        }}
+                                    >
+                                        {uploading ? <Loader className="animate-spin" style={{ margin: '0 auto' }} /> : <Upload size={32} color="var(--primary)" style={{ marginBottom: '10px', margin: '0 auto' }} />}
+                                        <p style={{ fontWeight: '600', marginTop: '10px', color: 'var(--text-muted)' }}>
+                                            {uploading ? 'Uploading...' : 'Tap to Upload (Max 5)'}
+                                        </p>
+                                        <input type="file" accept="image/*" onChange={handleImageUpload} style={{ display: 'none' }} disabled={uploading} />
+                                    </label>
+                                ) : (
+                                    <p style={{ textAlign: 'center', color: 'var(--success)', background: '#ecfdf5', padding: '10px', borderRadius: '8px' }}>
+                                        Maximum 5 images added. Good to go!
+                                    </p>
+                                )}
+                            </div>
+
+                            {/* Preview */}
+                            {/* Preview Grid */}
+                            {formData.images.length > 0 && (
+                                <div style={{
+                                    display: 'grid',
+                                    gridTemplateColumns: 'repeat(3, 1fr)',
+                                    gap: '12px',
+                                    marginBottom: '2rem'
+                                }}>
+                                    {formData.images.map((img, i) => (
+                                        <div key={i} style={{ position: 'relative', paddingTop: '100%', borderRadius: '12px', overflow: 'hidden' }}>
+                                            <img src={img} alt="preview" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
+                                            <button
+                                                type="button"
+                                                onClick={() => removeImage(i)}
+                                                style={{
+                                                    position: 'absolute', top: '4px', right: '4px',
+                                                    background: 'rgba(0,0,0,0.6)', borderRadius: '50%',
+                                                    padding: '4px', border: 'none', display: 'flex', color: 'white'
+                                                }}
+                                            >
+                                                <CircleX size={14} />
+                                            </button>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+
+                            <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
+                                <Button type="button" variant="secondary" onClick={handleBack} style={{ flex: 1, background: '#f0f0f0' }}>Back</Button>
+                                <Button
+                                    type="submit"
+                                    disabled={loading}
+                                    style={{ flex: 1, background: 'var(--success)', color: 'white', padding: '16px' }}
+                                >
+                                    {loading ? 'Saving...' : 'Submit Spot'}
+                                </Button>
+                            </div>
+                        </div>
+                    )}
+
+                </form>
+            </div>
         </div>
     );
 };
