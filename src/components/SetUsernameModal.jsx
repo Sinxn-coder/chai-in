@@ -11,8 +11,15 @@ const SetUsernameModal = () => {
     const [loading, setLoading] = useState(false);
     const [available, setAvailable] = useState(null); // true, false, null
     const [error, setError] = useState(null);
+    const [isOldUser, setIsOldUser] = useState(false);
 
     useEffect(() => {
+        if (user?.created_at) {
+            const created = new Date(user.created_at);
+            const now = new Date();
+            const diffHours = (now - created) / (1000 * 60 * 60);
+            if (diffHours > 1) setIsOldUser(true); // Account created more than 1 hour ago
+        }
         checkStatus();
     }, [user]);
 
@@ -89,10 +96,12 @@ const SetUsernameModal = () => {
                 textAlign: 'center', position: 'relative'
             }}>
                 <h2 style={{ fontSize: '1.8rem', fontWeight: '800', marginBottom: '10px' }}>
-                    Welcome to Quizzy!
+                    {isOldUser ? "Update Required 🚀" : "Welcome to Quizzy!"}
                 </h2>
                 <p style={{ color: '#666', marginBottom: '24px' }}>
-                    Please choose a unique username to continue.
+                    {isOldUser
+                        ? "We've introduced usernames! Please choose a unique handle to continue."
+                        : "Please choose a unique username to continue."}
                 </p>
 
                 <div style={{ position: 'relative', marginBottom: '20px' }}>
