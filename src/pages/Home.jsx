@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabaseClient';
 import SpotCard from '../components/SpotCard';
-import { Search, MapPin, Filter, X } from 'lucide-react';
+import { Search, MapPin, Filter, X, Bell } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import NotificationsSheet from '../components/NotificationsSheet';
 // import { getDistanceFromLatLonInKm } from '../utils/mapUtils';
 // Assuming mapUtils exists, if not I will inline the function or import from MapScreen logic if available.
 // Actually safer to inline to avoid import errors if util file not verified.
@@ -170,118 +171,178 @@ const Home = ({ lang }) => {
     return (
         <div style={{ padding: '20px', paddingBottom: '100px' }}>
 
-            {/* Header: Location Search */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
-                <div>
-                    <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-muted)' }}>Exploring</p>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '5px', cursor: 'pointer' }} onClick={() => setIsSearchingLocation(!isSearchingLocation)}>
-                        <h2 style={{ margin: 0, fontSize: '1.4rem', color: 'var(--e23744)' }}>{locationName} <span style={{ fontSize: '0.8rem' }}>▼</span></h2>
+            import {Search, MapPin, Filter, X, Bell} from 'lucide-react';
+            import NotificationsSheet from '../components/NotificationsSheet';
+
+            // ... (inside Home component)
+            const Home = ({lang}) => {
+    const {user} = useAuth();
+            // ... existing state
+            const [showNotifications, setShowNotifications] = useState(false);
+            const [unreadCount, setUnreadCount] = useState(0);
+
+    useEffect(() => {
+        if (!user) return;
+        const fetchUnread = async () => {
+            const {count} = await supabase
+            .from('notifications')
+            .select('*', {count: 'exact', head: true })
+            .eq('user_id', user.id)
+            .eq('is_read', false);
+            setUnreadCount(count || 0);
+        };
+            fetchUnread();
+
+            // Realtime listener for new notifications
+            const channel = supabase
+            .channel('public:notifications')
+            .on('postgres_changes', {event: 'INSERT', schema: 'public', table: 'notifications', filter: `user_id=eq.${user.id}` }, () => {
+                setUnreadCount(c => c + 1);
+            })
+            .subscribe();
+
+        return () => supabase.removeChannel(channel);
+    }, [user]);
+
+            // ... existing effects/functions ...
+
+            return (
+            <div style={{ padding: '20px', paddingBottom: '100px' }}>
+                <NotificationsSheet isOpen={showNotifications} onClose={() => { setShowNotifications(false); setUnreadCount(0); }} userId={user?.id} />
+
+                {/* Header: Location Search */}
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
+                    <div>
+                        <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-muted)' }}>Exploring</p>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '5px', cursor: 'pointer' }} onClick={() => setIsSearchingLocation(!isSearchingLocation)}>
+                            <h2 style={{ margin: 0, fontSize: '1.4rem', color: 'var(--e23744)' }}>{locationName} <span style={{ fontSize: '0.8rem' }}>▼</span></h2>
+                        </div>
                     </div>
-                </div>
-                <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: '#eee', overflow: 'hidden' }}>
-                    <img src={user?.user_metadata?.avatar_url || `https://ui-avatars.com/api/?name=${user?.email}`} style={{ width: '100%', height: '100%' }} />
-                </div>
-            </div>
 
-            {/* Location Search Input (Collapsible) */}
-            {isSearchingLocation && (
-                <div className="glass-card" style={{ padding: '10px', display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '15px', animation: 'fadeIn 0.3s' }}>
-
-                    <button
-                        onClick={handleUseCurrentLocation}
-                        style={{
-                            display: 'flex', alignItems: 'center', gap: '8px',
-                            background: '#e0f2f1', color: '#00796b',
-                            padding: '10px', borderRadius: '8px', border: 'none',
-                            fontWeight: '600', cursor: 'pointer'
-                        }}
-                    >
-                        <MapPin size={16} /> Use Current Location (Nearby)
-                    </button>
-
-                    <div style={{ display: 'flex', gap: '8px' }}>
-                        <input
-                            placeholder="Or enter City..."
-                            value={locationQuery}
-                            onChange={(e) => setLocationQuery(e.target.value)}
-                            style={{ border: 'none', background: '#f5f5f5', padding: '8px 12px', borderRadius: '8px', flex: 1 }}
-                            onKeyDown={(e) => e.key === 'Enter' && handleLocationSearch()}
-                        />
-                        <button onClick={handleLocationSearch} style={{ background: 'var(--primary)', color: 'white', border: 'none', padding: '8px 16px', borderRadius: '8px' }}>
-                            Go
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                        <button
+                            onClick={() => setShowNotifications(true)}
+                            style={{ position: 'relative', background: 'white', border: 'none', borderRadius: '50%', width: '40px', height: '40px', boxShadow: '0 2px 8px rgba(0,0,0,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
+                        >
+                            <Bell size={20} color="#333" />
+                            {unreadCount > 0 && (
+                                <span style={{
+                                    position: 'absolute', top: '2px', right: '2px',
+                                    background: 'var(--primary)', color: 'white',
+                                    fontSize: '0.7rem', fontWeight: 'bold',
+                                    width: '16px', height: '16px', borderRadius: '50%',
+                                    display: 'flex', alignItems: 'center', justifyContent: 'center'
+                                }}>
+                                    {unreadCount}
+                                </span>
+                            )}
                         </button>
+
+                        <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: '#eee', overflow: 'hidden', border: '2px solid white', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
+                            <img src={user?.user_metadata?.avatar_url || `https://ui-avatars.com/api/?name=${user?.email}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        </div>
                     </div>
                 </div>
-            )}
 
-            {/* Main Search Bar (Name) */}
-            <div style={{ position: 'relative', marginBottom: '20px' }}>
-                <Search style={{ position: 'absolute', left: '15px', top: '12px', color: '#999' }} size={20} />
-                <input
-                    type="text"
-                    placeholder="Search dishes, restaurants..."
-                    value={searchTerm}
-                    onChange={(e) => handleSearchInput(e.target.value)}
-                    style={{
-                        width: '100%', padding: '12px 12px 12px 45px',
-                        borderRadius: '12px', border: 'none',
-                        background: 'white', boxShadow: '0 4px 15px rgba(0,0,0,0.05)',
-                        fontSize: '1rem'
-                    }}
-                />
-            </div>
+                {/* Location Search Input (Collapsible) */}
+                {isSearchingLocation && (
+                    <div className="glass-card" style={{ padding: '10px', display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '15px', animation: 'fadeIn 0.3s' }}>
 
-            {/* Nearby Pills */}
-            <div className="hide-scrollbar" style={{ display: 'flex', gap: '10px', overflowX: 'auto', marginBottom: '20px' }}>
-                {activeCategory !== 'All' && (
-                    <button onClick={() => setActiveCategory('All')} style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '6px 12px', borderRadius: '20px', background: '#e23744', color: 'white', border: 'none' }}>
-                        <X size={14} /> Clear
-                    </button>
-                )}
-                {['Trending', 'Arabian', 'Burger', 'Cafes', ...nearbyAreas].map(tag => (
-                    <button
-                        key={tag}
-                        onClick={() => {
-                            if (tag === 'Trending') return; // Logic for trending sort?
-                            setActiveCategory(tag === activeCategory ? 'All' : tag);
-                        }}
-                        style={{
-                            padding: '8px 16px', borderRadius: '20px',
-                            background: activeCategory === tag ? 'var(--e23744)' : 'white',
-                            color: activeCategory === tag ? 'white' : '#555',
-                            border: '1px solid #eee', whiteSpace: 'nowrap'
-                        }}
-                    >
-                        {tag}
-                    </button>
-                ))}
-            </div>
+                        <button
+                            onClick={handleUseCurrentLocation}
+                            style={{
+                                display: 'flex', alignItems: 'center', gap: '8px',
+                                background: '#e0f2f1', color: '#00796b',
+                                padding: '10px', borderRadius: '8px', border: 'none',
+                                fontWeight: '600', cursor: 'pointer'
+                            }}
+                        >
+                            <MapPin size={16} /> Use Current Location (Nearby)
+                        </button>
 
-            {/* Content Grid */}
-            {loading ? (
-                <div style={{ textAlign: 'center', padding: '40px' }}>Searching...</div>
-            ) : (
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '20px' }}>
-                    {filteredSpots.length > 0 ? (
-                        filteredSpots.map(spot => (
-                            <SpotCard key={spot.id} spot={spot} />
-                        ))
-                    ) : (
-                        <div style={{ textAlign: 'center', gridColumn: '1/-1', padding: '40px' }}>
-                            <p style={{ color: '#888' }}>No spots found within 30km of {locationName}.</p>
-                            <button onClick={() => setIsSearchingLocation(true)} style={{ color: 'var(--primary)', fontWeight: 'bold', background: 'none', border: 'none' }}>
-                                Try changing location
+                        <div style={{ display: 'flex', gap: '8px' }}>
+                            <input
+                                placeholder="Or enter City..."
+                                value={locationQuery}
+                                onChange={(e) => setLocationQuery(e.target.value)}
+                                style={{ border: 'none', background: '#f5f5f5', padding: '8px 12px', borderRadius: '8px', flex: 1 }}
+                                onKeyDown={(e) => e.key === 'Enter' && handleLocationSearch()}
+                            />
+                            <button onClick={handleLocationSearch} style={{ background: 'var(--primary)', color: 'white', border: 'none', padding: '8px 16px', borderRadius: '8px' }}>
+                                Go
                             </button>
                         </div>
-                    )}
-                </div>
-            )}
+                    </div>
+                )}
 
-            <style>{`
+                {/* Main Search Bar (Name) */}
+                <div style={{ position: 'relative', marginBottom: '20px' }}>
+                    <Search style={{ position: 'absolute', left: '15px', top: '12px', color: '#999' }} size={20} />
+                    <input
+                        type="text"
+                        placeholder="Search dishes, restaurants..."
+                        value={searchTerm}
+                        onChange={(e) => handleSearchInput(e.target.value)}
+                        style={{
+                            width: '100%', padding: '12px 12px 12px 45px',
+                            borderRadius: '12px', border: 'none',
+                            background: 'white', boxShadow: '0 4px 15px rgba(0,0,0,0.05)',
+                            fontSize: '1rem'
+                        }}
+                    />
+                </div>
+
+                {/* Nearby Pills */}
+                <div className="hide-scrollbar" style={{ display: 'flex', gap: '10px', overflowX: 'auto', marginBottom: '20px' }}>
+                    {activeCategory !== 'All' && (
+                        <button onClick={() => setActiveCategory('All')} style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '6px 12px', borderRadius: '20px', background: '#e23744', color: 'white', border: 'none' }}>
+                            <X size={14} /> Clear
+                        </button>
+                    )}
+                    {['Trending', 'Arabian', 'Burger', 'Cafes', ...nearbyAreas].map(tag => (
+                        <button
+                            key={tag}
+                            onClick={() => {
+                                if (tag === 'Trending') return; // Logic for trending sort?
+                                setActiveCategory(tag === activeCategory ? 'All' : tag);
+                            }}
+                            style={{
+                                padding: '8px 16px', borderRadius: '20px',
+                                background: activeCategory === tag ? 'var(--e23744)' : 'white',
+                                color: activeCategory === tag ? 'white' : '#555',
+                                border: '1px solid #eee', whiteSpace: 'nowrap'
+                            }}
+                        >
+                            {tag}
+                        </button>
+                    ))}
+                </div>
+
+                {/* Content Grid */}
+                {loading ? (
+                    <div style={{ textAlign: 'center', padding: '40px' }}>Searching...</div>
+                ) : (
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '20px' }}>
+                        {filteredSpots.length > 0 ? (
+                            filteredSpots.map(spot => (
+                                <SpotCard key={spot.id} spot={spot} />
+                            ))
+                        ) : (
+                            <div style={{ textAlign: 'center', gridColumn: '1/-1', padding: '40px' }}>
+                                <p style={{ color: '#888' }}>No spots found within 30km of {locationName}.</p>
+                                <button onClick={() => setIsSearchingLocation(true)} style={{ color: 'var(--primary)', fontWeight: 'bold', background: 'none', border: 'none' }}>
+                                    Try changing location
+                                </button>
+                            </div>
+                        )}
+                    </div>
+                )}
+
+                <style>{`
                 @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
             `}</style>
-        </div>
-    );
+            </div>
+            );
 };
 
-export default Home;
+            export default Home;

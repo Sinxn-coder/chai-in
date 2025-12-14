@@ -5,6 +5,7 @@ import { useAuth } from '../context/AuthContext';
 import { ArrowLeft, MapPin, Star, Heart, Share2, Send, Navigation, X } from 'lucide-react';
 import Button from '../components/Button';
 import Toast from '../components/Toast';
+import ImageSlider from '../components/ImageSlider';
 
 const SpotDetail = ({ lang }) => {
     const { id } = useParams();
@@ -140,34 +141,22 @@ const SpotDetail = ({ lang }) => {
                 style={{
                     position: 'relative',
                     height: '350px',
-                    display: 'flex',
-                    overflowX: 'auto',
-                    scrollSnapType: 'x mandatory',
+                    // display: 'flex', // Removed flex as ImageSlider takes full space
+                    // overflowX: 'auto', // Removed scroll
+                    // scrollSnapType: 'x mandatory', // Removed scroll snap
                     background: '#000'
                 }}
             >
-                {(spot.images && spot.images.length > 0 ? spot.images : ['https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&q=80']).map((img, i) => (
-                    <img
-                        key={i}
-                        src={img}
-                        alt={`${spot.name} ${i + 1}`}
-                        style={{
-                            minWidth: '100%',
-                            height: '100%',
-                            objectFit: 'cover',
-                            scrollSnapAlign: 'center'
-                        }}
-                    />
-                ))}
+                <ImageSlider images={spot.images} />
 
-                {/* View All Button */}
+                {/* View All Button - Positioned absolutely by parent container */}
                 <button
                     onClick={() => setShowGallery(true)}
                     style={{
                         position: 'absolute', bottom: '20px', right: '20px',
                         background: 'rgba(0,0,0,0.6)', color: 'white', border: 'none',
                         padding: '6px 12px', borderRadius: '20px', fontSize: '0.85rem', fontWeight: '600',
-                        display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer', zIndex: 10
+                        display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer', zIndex: 30
                     }}
                 >
                     View All ({spot.images?.length || 1})
@@ -179,14 +168,15 @@ const SpotDetail = ({ lang }) => {
                     style={{
                         position: 'absolute', top: '20px', left: '20px',
                         background: 'rgba(255,255,255,0.9)', borderRadius: '50%',
-                        padding: '10px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+                        padding: '10px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                        zIndex: 30
                     }}
                 >
                     <ArrowLeft size={24} color="black" />
                 </button>
 
                 {/* Favorite & Share */}
-                <div style={{ position: 'absolute', top: '20px', right: '20px', display: 'flex', gap: '10px' }}>
+                <div style={{ position: 'absolute', top: '20px', right: '20px', display: 'flex', gap: '10px', zIndex: 30 }}>
                     <button
                         onClick={toggleFavorite}
                         style={{
