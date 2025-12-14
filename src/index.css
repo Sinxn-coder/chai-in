@@ -13,8 +13,8 @@
   --bg-white: #FFFFFF;
   --bg-cream: #F8F8F8;
 
-  --shadow-sm: 0 4px 12px rgba(0,0,0,0.05);
-  --shadow-md: 0 8px 24px rgba(0,0,0,0.08);
+  --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.08);
 
   --radius-sm: 8px;
   --radius-lg: 16px;
@@ -128,4 +128,30 @@ button:focus-visible {
   button {
     background-color: #f9f9f9;
   }
+}
+
+/* Zomato / App Specific Utilities */
+.glass-card {
+  background: white;
+  border-radius: 12px;
+  border: 1px solid #f0f0f0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  /* No glassmorphism as per request */
+}
+
+/* Animations */
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.slide-up-enter {
+  animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }

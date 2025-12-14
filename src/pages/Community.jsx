@@ -16,6 +16,12 @@ const Community = () => {
     const [toast, setToast] = useState(null);
     const [activeTab, setActiveTab] = useState('feed'); // 'feed' or 'leaderboard'
 
+    // Comment State
+    const [activePost, setActivePost] = useState(null); // Post ID for comment modal
+    const [comments, setComments] = useState([]);
+    const [newComment, setNewComment] = useState('');
+    const [loadingComments, setLoadingComments] = useState(false);
+
     // Create Post State
     const [newImage, setNewImage] = useState(null);
     const [newCaption, setNewCaption] = useState('');
@@ -148,6 +154,13 @@ const Community = () => {
 
             if (dbError) throw dbError;
 
+            // Upsert User Profile to ensure name is known
+            await supabase.from('user_preferences').upsert({
+                user_id: user.id,
+                display_name: user.user_metadata?.full_name || 'Anonymous Foodie',
+                avatar_url: user.user_metadata?.avatar_url
+            }, { onConflict: 'user_id' });
+
             setToast({ message: "Posted!", type: 'success' });
             setShowCreate(false);
             setNewImage(null);
@@ -160,6 +173,51 @@ const Community = () => {
             setToast({ message: "Failed to post", type: 'error' });
         } finally {
             setUploading(false);
+        }
+    };
+
+    const openComments = async (post) => {
+        setActivePost(post);
+        setComments([]);
+        setLoadingComments(true);
+
+        // Fetch comments
+        const { data, error } = await supabase
+            .from('post_comments')
+            .select('*')
+            .eq('post_id', post.id)
+            .order('created_at', { ascending: true });
+
+        if (data) {
+            // Enrich with user names (simple fetch for now)
+            const uids = [...new Set(data.map(c => c.user_id))];
+            const { data: users } = await supabase.from('user_preferences').select('user_id, display_name').in('user_id', uids);
+            const uMap = {};
+            users?.forEach(u => uMap[u.user_id] = u);
+
+            setComments(data.map(c => ({
+                ...c,
+                authorName: uMap[c.user_id]?.display_name || 'User'
+            })));
+        }
+        setLoadingComments(false);
+    };
+
+    const submitComment = async () => {
+        if (!newComment.trim() || !user) return;
+
+        const { error } = await supabase.from('post_comments').insert({
+            post_id: activePost.id,
+            user_id: user.id,
+            comment: newComment
+        });
+
+        if (error) {
+            setToast({ message: "Failed to comment", type: 'error' });
+        } else {
+            setNewComment('');
+            openComments(activePost); // Visual refresh
+            // Update local post comment count if tracked? (Ideally yes)
         }
     };
 
@@ -294,7 +352,10 @@ const Community = () => {
                                             style={{ transition: 'all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275)' }}
                                         />
                                     </button>
-                                    <button style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer' }}>
+                                    <button
+                                        onClick={() => openComments(post)}
+                                        style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', display: 'flex', alignItems: 'center' }}
+                                    >
                                         <MessageCircle size={28} color="#262626" />
                                     </button>
                                 </div>
@@ -373,6 +434,55 @@ const Community = () => {
                                 style={{ wwidth: '100%', border: 'none', fontSize: '1.rem', outline: 'none', resize: 'none', fontFamily: 'inherit' }}
                                 rows={4}
                             />
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Comments Modal */}
+            {activePost && (
+                <div style={{
+                    position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)',
+                    zIndex: 2000, display: 'flex', alignItems: 'flex-end', justifyContent: 'center'
+                }}>
+                    <div className="slide-up-enter" style={{
+                        background: 'white', width: '100%', maxWidth: '600px',
+                        borderRadius: '24px 24px 0 0', height: '70vh',
+                        display: 'flex', flexDirection: 'column', overflow: 'hidden'
+                    }}>
+                        <div style={{ padding: '16px', borderBottom: '1px solid #eee', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <h3 style={{ margin: 0 }}>Comments</h3>
+                            <button onClick={() => setActivePost(null)} style={{ border: 'none', background: 'none' }}><X /></button>
+                        </div>
+
+                        <div style={{ flex: 1, overflowY: 'auto', padding: '16px' }}>
+                            {loadingComments ? <p>Loading...</p> : comments.length === 0 ? <p style={{ color: '#999', textAlign: 'center' }}>No comments yet.</p> : (
+                                comments.map(c => (
+                                    <div key={c.id} style={{ marginBottom: '16px', display: 'flex', gap: '10px' }}>
+                                        <div style={{ width: '32px', height: '32px', background: '#eee', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                            <span style={{ fontWeight: 'bold', fontSize: '12px' }}>{c.authorName?.[0]}</span>
+                                        </div>
+                                        <div>
+                                            <span style={{ fontWeight: 'bold', fontSize: '0.9rem' }}>{c.authorName}</span>
+                                            <p style={{ margin: '2px 0 0', fontSize: '0.95rem', color: '#333' }}>{c.comment}</p>
+                                        </div>
+                                    </div>
+                                ))
+                            )}
+                        </div>
+
+                        <div style={{ padding: '16px', borderTop: '1px solid #eee', display: 'flex', gap: '10px' }}>
+                            <input
+                                type="text"
+                                placeholder="Add a comment..."
+                                value={newComment}
+                                onChange={e => setNewComment(e.target.value)}
+                                style={{ flex: 1, padding: '10px', borderRadius: '20px', border: '1px solid #ddd', outline: 'none' }}
+                                onKeyDown={e => e.key === 'Enter' && submitComment()}
+                            />
+                            <button onClick={submitComment} style={{ border: 'none', background: 'none', color: 'var(--primary)' }}>
+                                <Send size={24} />
+                            </button>
                         </div>
                     </div>
                 </div>
