@@ -3,7 +3,7 @@ import { supabase } from '../lib/supabaseClient';
 import SpotCard from '../components/SpotCard';
 import { Search, MapPin, Filter, X } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
-import { getDistanceFromLatLonInKm } from '../utils/mapUtils';
+// import { getDistanceFromLatLonInKm } from '../utils/mapUtils';
 // Assuming mapUtils exists, if not I will inline the function or import from MapScreen logic if available.
 // Actually safer to inline to avoid import errors if util file not verified.
 

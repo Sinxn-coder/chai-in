@@ -1,1 +1,1 @@
-npm run build | Out-File -Encoding utf8 build_log.txt
+cmd /c "npm run build > build_log.txt 2>&1"
