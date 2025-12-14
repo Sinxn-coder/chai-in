@@ -185,17 +185,32 @@ const Home = ({ lang }) => {
 
             {/* Location Search Input (Collapsible) */}
             {isSearchingLocation && (
-                <div className="glass-card" style={{ padding: '10px', display: 'flex', gap: '8px', marginBottom: '15px', animation: 'fadeIn 0.3s' }}>
-                    <input
-                        placeholder="Enter City (e.g. Kochi)"
-                        value={locationQuery}
-                        onChange={(e) => setLocationQuery(e.target.value)}
-                        style={{ border: 'none', background: '#f5f5f5', padding: '8px 12px', borderRadius: '8px', flex: 1 }}
-                        onKeyDown={(e) => e.key === 'Enter' && handleLocationSearch()}
-                    />
-                    <button onClick={handleLocationSearch} style={{ background: 'var(--primary)', color: 'white', border: 'none', padding: '8px 16px', borderRadius: '8px' }}>
-                        Go
+                <div className="glass-card" style={{ padding: '10px', display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '15px', animation: 'fadeIn 0.3s' }}>
+
+                    <button
+                        onClick={handleUseCurrentLocation}
+                        style={{
+                            display: 'flex', alignItems: 'center', gap: '8px',
+                            background: '#e0f2f1', color: '#00796b',
+                            padding: '10px', borderRadius: '8px', border: 'none',
+                            fontWeight: '600', cursor: 'pointer'
+                        }}
+                    >
+                        <MapPin size={16} /> Use Current Location (Nearby)
                     </button>
+
+                    <div style={{ display: 'flex', gap: '8px' }}>
+                        <input
+                            placeholder="Or enter City..."
+                            value={locationQuery}
+                            onChange={(e) => setLocationQuery(e.target.value)}
+                            style={{ border: 'none', background: '#f5f5f5', padding: '8px 12px', borderRadius: '8px', flex: 1 }}
+                            onKeyDown={(e) => e.key === 'Enter' && handleLocationSearch()}
+                        />
+                        <button onClick={handleLocationSearch} style={{ background: 'var(--primary)', color: 'white', border: 'none', padding: '8px 16px', borderRadius: '8px' }}>
+                            Go
+                        </button>
+                    </div>
                 </div>
             )}
 
