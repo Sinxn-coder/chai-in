@@ -14,25 +14,34 @@ const Leaderboard = ({ lang }) => {
     const fetchLeaderboard = async () => {
         setLoading(true);
         // Fetch all spots to show more users on leaderboard
-        const { data: spots, error } = await supabase
-            .from('spots')
-            .select('created_by');
+        // Fetch all spots
+        const { data: spots } = await supabase.from('spots').select('created_by');
 
-        if (error) {
-            console.error(error);
-            setLoading(false);
-            return;
-        }
+        // Fetch all reviews
+        const { data: reviews } = await supabase.from('reviews').select('user_id');
 
         // Aggregate by user
         const stats = {};
-        spots.forEach(spot => {
-            const uid = spot.created_by;
-            if (!uid) return;
-            if (!stats[uid]) stats[uid] = { count: 0, xp: 0 };
-            stats[uid].count += 1;
-            stats[uid].xp += 100; // 100 XP per spot
-        });
+
+        if (spots) {
+            spots.forEach(spot => {
+                const uid = spot.created_by;
+                if (!uid) return;
+                if (!stats[uid]) stats[uid] = { count: 0, xp: 0, reviews: 0 };
+                stats[uid].count += 1;
+                stats[uid].xp += 100; // 100 XP per spot
+            });
+        }
+
+        if (reviews) {
+            reviews.forEach(review => {
+                const uid = review.user_id;
+                if (!uid) return;
+                if (!stats[uid]) stats[uid] = { count: 0, xp: 0, reviews: 0 };
+                stats[uid].reviews += 1;
+                stats[uid].xp += 10; // 10 XP per review
+            });
+        }
 
         // Get all unique user IDs
         const userIds = Object.keys(stats);
