@@ -249,14 +249,16 @@ const AddSpot = ({ lang }) => {
                                             key={cat} type="button"
                                             onClick={() => setFormData({ ...formData, category: cat })}
                                             style={{
-                                                padding: '10px 20px',
-                                                borderRadius: 'var(--radius-full)',
-                                                border: 'none',
-                                                background: formData.category === cat ? 'var(--primary)' : '#f0f0f0',
-                                                color: formData.category === cat ? 'white' : 'var(--text-main)',
-                                                fontWeight: '600',
-                                                boxShadow: formData.category === cat ? '0 4px 12px rgba(226, 55, 68, 0.3)' : 'none',
-                                                transition: 'all 0.2s ease'
+                                                padding: '12px 24px',
+                                                borderRadius: '16px',
+                                                border: formData.category === cat ? 'none' : '2px solid #f0f0f0',
+                                                background: formData.category === cat ? 'linear-gradient(135deg, #FF6B6B 0%, #E23744 100%)' : 'white',
+                                                color: formData.category === cat ? 'white' : '#666',
+                                                fontWeight: '700',
+                                                fontSize: '0.95rem',
+                                                boxShadow: formData.category === cat ? '0 8px 16px rgba(226, 55, 68, 0.25)' : 'none',
+                                                transform: formData.category === cat ? 'scale(1.05)' : 'scale(1)',
+                                                transition: 'all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)'
                                             }}
                                         >
                                             {cat}
@@ -343,13 +345,16 @@ const AddSpot = ({ lang }) => {
                                             key={lvl} type="button"
                                             onClick={() => setFormData({ ...formData, price: lvl })}
                                             style={{
-                                                width: '50px', height: '50px',
-                                                borderRadius: '50%',
-                                                background: formData.price === lvl ? 'var(--secondary)' : '#f0f0f0',
+                                                width: '60px', height: '60px',
+                                                borderRadius: '20px',
+                                                background: formData.price === lvl ? 'linear-gradient(135deg, #F59E0B 0%, #D97706 100%)' : 'white',
                                                 color: formData.price === lvl ? 'white' : '#999',
-                                                fontWeight: 'bold',
+                                                border: formData.price === lvl ? 'none' : '2px solid #f0f0f0',
+                                                fontWeight: '800',
                                                 fontSize: '1.2rem',
-                                                transition: 'all 0.2s ease'
+                                                boxShadow: formData.price === lvl ? '0 8px 16px rgba(245, 158, 11, 0.25)' : 'none',
+                                                transform: formData.price === lvl ? 'translateY(-2px)' : 'none',
+                                                transition: 'all 0.3s ease'
                                             }}
                                         >
                                             {'$'.repeat(lvl)}
