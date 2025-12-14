@@ -66,7 +66,7 @@ const Community = () => {
         const userIds = [...new Set(postsData.map(p => p.user_id))];
         const { data: usersData, error: userError } = await supabase
             .from('user_preferences')
-            .select('user_id, display_name, avatar_url')
+            .select('user_id, username, display_name, avatar_url')
             .in('user_id', userIds);
 
         if (userError) console.error("Error fetching users:", userError);
@@ -111,8 +111,10 @@ const Community = () => {
             author: userMap[p.user_id] || {
                 // Better fallback using email prefix if available (tricky without auth)
                 display_name: 'Foodie Member',
+                username: null,
                 avatar_url: null
             },
+            name: userMap[p.user_id]?.username || userMap[p.user_id]?.display_name || 'Foodie Member',
             isLiked: myLikes.has(p.id)
         }));
 
@@ -214,13 +216,13 @@ const Community = () => {
         if (data) {
             // Enrich with user names (simple fetch for now)
             const uids = [...new Set(data.map(c => c.user_id))];
-            const { data: users } = await supabase.from('user_preferences').select('user_id, display_name').in('user_id', uids);
+            const { data: users } = await supabase.from('user_preferences').select('user_id, username, display_name').in('user_id', uids);
             const uMap = {};
             users?.forEach(u => uMap[u.user_id] = u);
 
             setComments(data.map(c => ({
                 ...c,
-                authorName: uMap[c.user_id]?.display_name || 'User'
+                authorName: uMap[c.user_id]?.username || uMap[c.user_id]?.display_name || 'User'
             })));
         }
         setLoadingComments(false);
@@ -345,7 +347,7 @@ const Community = () => {
                                     )}
                                 </div>
                                 <span style={{ fontWeight: '700', fontSize: '0.95rem' }}>
-                                    {post.author.display_name || 'User'}
+                                    {post.author.username || post.author.display_name || 'User'}
                                 </span>
                                 <span style={{ marginLeft: 'auto', fontSize: '0.75rem', color: '#999' }}>
                                     {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}
@@ -388,7 +390,7 @@ const Community = () => {
                                 </div>
 
                                 <div style={{ fontSize: '0.95rem', lineHeight: '1.4' }}>
-                                    <span style={{ fontWeight: '700', marginRight: '6px' }}>{post.author.display_name}</span>
+                                    <span style={{ fontWeight: '700', marginRight: '6px' }}>{post.author.username || post.author.display_name}</span>
                                     {post.caption}
                                 </div>
                             </div>

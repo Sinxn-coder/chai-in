@@ -206,7 +206,7 @@ const Home = ({ lang }) => {
                     type="text"
                     placeholder="Search dishes, restaurants..."
                     value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
+                    onChange={(e) => handleSearchInput(e.target.value)}
                     style={{
                         width: '100%', padding: '12px 12px 12px 45px',
                         borderRadius: '12px', border: 'none',

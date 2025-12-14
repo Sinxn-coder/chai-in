@@ -49,7 +49,7 @@ const Leaderboard = ({ lang }) => {
         // Fetch user preferences for names and avatars
         const { data: userPrefs } = await supabase
             .from('user_preferences')
-            .select('user_id, display_name, avatar_url')
+            .select('user_id, username, display_name, avatar_url')
             .in('user_id', userIds);
 
         // Create a map of user preferences
@@ -71,8 +71,8 @@ const Leaderboard = ({ lang }) => {
             return {
                 id: uid,
                 name: isMe
-                    ? (prefs?.display_name || user.user_metadata?.full_name || "You")
-                    : (prefs?.display_name || `User ${uid.slice(0, 6)}`),
+                    ? (prefs?.username || prefs?.display_name || user.user_metadata?.full_name || "You")
+                    : (prefs?.username || prefs?.display_name || `User ${uid.slice(0, 6)}`),
                 avatar: prefs?.avatar_url || null,
                 isMe: isMe,
                 ...stats[uid]

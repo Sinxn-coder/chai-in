@@ -3,6 +3,7 @@ import { Outlet } from 'react-router-dom';
 import BottomNav from '../components/BottomNav';
 import FoodParticles from '../components/FoodParticles';
 import SetUsernameModal from '../components/SetUsernameModal';
+import SetAvatarModal from '../components/SetAvatarModal';
 
 const MainLayout = ({ lang }) => {
     return (
@@ -12,6 +13,7 @@ const MainLayout = ({ lang }) => {
 
             {/* Force Username Set */}
             <SetUsernameModal />
+            <SetAvatarModal />
 
             {/* Content Area */}
             <Outlet />

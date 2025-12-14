@@ -120,7 +120,7 @@ const Profile = ({ lang }) => {
 
     // Use custom name and avatar from preferences if available
     const userData = {
-        name: userPreferences?.display_name || user?.user_metadata?.full_name || user?.user_metadata?.name || "Chai Lover",
+        name: userPreferences?.username || userPreferences?.display_name || user?.user_metadata?.full_name || "Chai Lover",
         avatar: userPreferences?.avatar_url || user?.user_metadata?.avatar_url || user?.user_metadata?.picture,
         bio: "Exploring the best tastes around Kerala!",
         stats: [

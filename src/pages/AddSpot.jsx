@@ -265,7 +265,13 @@ const AddSpot = ({ lang }) => {
                                 </div>
                             </div>
 
-                            <Button type="button" onClick={handleNext} style={{ width: '100%', marginTop: '1.5rem', background: 'var(--primary)', color: 'white', padding: '16px', fontSize: '1rem' }}>
+                            <Button type="button" onClick={handleNext} style={{
+                                width: '100%', marginTop: '1.5rem',
+                                background: 'linear-gradient(135deg, #FF6B6B 0%, #E23744 100%)',
+                                color: 'white', padding: '16px', fontSize: '1.1rem',
+                                borderRadius: '16px', boxShadow: '0 8px 16px rgba(226, 55, 68, 0.3)',
+                                border: 'none'
+                            }}>
                                 Next Step <ChevronRight size={18} />
                             </Button>
                         </div>
@@ -302,13 +308,14 @@ const AddSpot = ({ lang }) => {
                                         style={{
                                             flex: 1,
                                             display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
-                                            padding: '12px 16px', background: 'rgba(66, 133, 244, 0.1)', color: '#4285F4',
-                                            borderRadius: '12px', fontWeight: '700', fontSize: '0.9rem',
-                                            border: 'none', cursor: 'pointer'
+                                            padding: '14px 16px', background: 'white', color: '#4285F4',
+                                            borderRadius: '16px', fontWeight: '700', fontSize: '0.9rem',
+                                            border: '2px solid #e0e0e0', cursor: 'pointer',
+                                            boxShadow: '0 4px 6px rgba(0,0,0,0.05)'
                                         }}
                                     >
                                         <Map size={18} />
-                                        Select on Map
+                                        Pin on Map
                                     </button>
                                 </div>
 
@@ -424,9 +431,15 @@ const AddSpot = ({ lang }) => {
                                 <Button
                                     type="submit"
                                     disabled={loading}
-                                    style={{ flex: 1, background: 'var(--success)', color: 'white', padding: '16px' }}
+                                    style={{
+                                        flex: 2,
+                                        background: 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
+                                        color: 'white', padding: '16px',
+                                        borderRadius: '16px', boxShadow: '0 8px 16px rgba(16, 185, 129, 0.3)',
+                                        border: 'none', fontSize: '1.1rem'
+                                    }}
                                 >
-                                    {loading ? 'Saving...' : 'Submit Spot'}
+                                    {loading ? 'Saving...' : 'Submit Spot ✨'}
                                 </Button>
                             </div>
                         </div>
