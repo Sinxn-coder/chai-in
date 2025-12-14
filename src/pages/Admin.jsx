@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabaseClient';
-import { Trash2, CheckCircle, XCircle, ShieldAlert, Bell, Send, BarChart2, Download, Users, MapPin, Award } from 'lucide-react';
+import { Trash2, CircleCheck, CircleX, ShieldAlert, Bell, Send, BarChart2, Download, Users, MapPin, Award } from 'lucide-react';
 import Button from '../components/Button';
 import Toast from '../components/Toast';
 
@@ -252,7 +252,7 @@ const Admin = () => {
                             </div>
                             <div style={{ display: 'flex', gap: '10px' }}>
                                 <button onClick={() => toggleVerify(spot.id, spot.is_verified)} style={{ padding: '8px', background: '#e8f5e9', color: '#2e7d32', borderRadius: '8px', border: 'none' }}>
-                                    <CheckCircle size={18} />
+                                    <CircleCheck size={18} />
                                 </button>
                                 <button onClick={() => deleteSpot(spot.id)} style={{ padding: '8px', background: '#ffebee', color: '#c62828', borderRadius: '8px', border: 'none' }}>
                                     <Trash2 size={18} />
