@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabaseClient';
 import { useAuth } from '../context/AuthContext';
-import { ArrowLeft, MapPin, Star, Heart, Share2, Send, Navigation } from 'lucide-react';
+import { ArrowLeft, MapPin, Star, Heart, Share2, Send, Navigation, Grid, X } from 'lucide-react';
 import Button from '../components/Button';
 import Toast from '../components/Toast';
 
@@ -18,6 +18,7 @@ const SpotDetail = ({ lang }) => {
     const [newReview, setNewReview] = useState('');
     const [rating, setRating] = useState(5);
     const [toast, setToast] = useState(null);
+    const [showGallery, setShowGallery] = useState(false);
 
     useEffect(() => {
         fetchSpotDetails();
@@ -110,24 +111,19 @@ const SpotDetail = ({ lang }) => {
         const lng = spot.longitude;
         const label = encodeURIComponent(spot.name);
 
-        // Detect device and open appropriate maps app
         const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
         const isAndroid = /Android/.test(navigator.userAgent);
 
         let mapsUrl;
 
         if (isIOS) {
-            // Apple Maps for iOS devices
             mapsUrl = `maps://maps.apple.com/?q=${label}&ll=${lat},${lng}&dirflg=d`;
         } else if (isAndroid) {
-            // Google Maps for Android
             mapsUrl = `google.navigation:q=${lat},${lng}`;
         } else {
-            // Google Maps web for desktop/other
             mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}&destination_place_id=${label}`;
         }
 
-        // Try to open the maps app
         window.open(mapsUrl, '_blank');
     };
 
@@ -138,7 +134,7 @@ const SpotDetail = ({ lang }) => {
         <div style={{ paddingBottom: '20px', background: 'transparent' }}>
             {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
 
-            {/* Header Image */}
+            {/* Header Image Container */}
             <div
                 className="hide-scrollbar"
                 style={{
@@ -164,16 +160,18 @@ const SpotDetail = ({ lang }) => {
                     />
                 ))}
 
-                {/* Image Counter Badge */}
-                {spot.images && spot.images.length > 1 && (
-                    <div style={{
+                {/* View All Button */}
+                <button
+                    onClick={() => setShowGallery(true)}
+                    style={{
                         position: 'absolute', bottom: '20px', right: '20px',
-                        background: 'rgba(0,0,0,0.6)', color: 'white',
-                        padding: '4px 8px', borderRadius: '12px', fontSize: '0.8rem', fontWeight: '600'
-                    }}>
-                        Swipe for more
-                    </div>
-                )}
+                        background: 'rgba(0,0,0,0.6)', color: 'white', border: 'none',
+                        padding: '6px 12px', borderRadius: '20px', fontSize: '0.85rem', fontWeight: '600',
+                        display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer', zIndex: 10
+                    }}
+                >
+                    <Grid size={16} /> View All ({spot.images?.length || 1})
+                </button>
 
                 {/* Back Button */}
                 <button
@@ -208,6 +206,30 @@ const SpotDetail = ({ lang }) => {
                     </button>
                 </div>
             </div>
+
+            {/* Gallery Modal Portal */}
+            {showGallery && (
+                <div style={{
+                    position: 'fixed', inset: 0, background: 'black', zIndex: 3000,
+                    display: 'flex', flexDirection: 'column'
+                }}>
+                    <button
+                        onClick={() => setShowGallery(false)}
+                        style={{
+                            position: 'absolute', top: '20px', right: '20px',
+                            background: 'rgba(255,255,255,0.2)', color: 'white',
+                            borderRadius: '50%', padding: '10px', border: 'none', zIndex: 10
+                        }}
+                    >
+                        <X size={24} />
+                    </button>
+                    <div className="hide-scrollbar" style={{ padding: '20px', overflowY: 'auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', gap: '10px', marginTop: '60px' }}>
+                        {(spot.images || ['https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&q=80']).map((img, i) => (
+                            <img key={i} src={img} style={{ width: '100%', height: '150px', objectFit: 'cover', borderRadius: '8px' }} />
+                        ))}
+                    </div>
+                </div>
+            )}
 
             {/* Content Body */}
             <div style={{
