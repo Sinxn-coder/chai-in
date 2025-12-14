@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabaseClient';
 import { useAuth } from '../context/AuthContext';
-import { ArrowLeft, MapPin, Star, Heart, Share2, Send, Navigation, LayoutGrid, X } from 'lucide-react';
+import { ArrowLeft, MapPin, Star, Heart, Share2, Send, Navigation, X } from 'lucide-react';
 import Button from '../components/Button';
 import Toast from '../components/Toast';
 
@@ -170,7 +170,7 @@ const SpotDetail = ({ lang }) => {
                         display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer', zIndex: 10
                     }}
                 >
-                    <LayoutGrid size={16} /> View All ({spot.images?.length || 1})
+                    View All ({spot.images?.length || 1})
                 </button>
 
                 {/* Back Button */}
