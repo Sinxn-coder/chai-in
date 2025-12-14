@@ -5,6 +5,8 @@ import { formatDistanceToNow } from 'date-fns';
 import { useAuth } from '../context/AuthContext';
 import Button from '../components/Button';
 import Toast from '../components/Toast';
+import Leaderboard from './Leaderboard';
+import { Trophy } from 'lucide-react';
 
 const Community = () => {
     const { user } = useAuth();
@@ -12,6 +14,7 @@ const Community = () => {
     const [loading, setLoading] = useState(true);
     const [showCreate, setShowCreate] = useState(false);
     const [toast, setToast] = useState(null);
+    const [activeTab, setActiveTab] = useState('feed'); // 'feed' or 'leaderboard'
 
     // Create Post State
     const [newImage, setNewImage] = useState(null);
@@ -124,13 +127,13 @@ const Community = () => {
             const filePath = `community/${fileName}`;
 
             const { error: uploadError } = await supabase.storage
-                .from('spots') // Reusing spots bucket for now, or use 'community' if created
+                .from('food-images')
                 .upload(filePath, newImage);
 
             if (uploadError) throw uploadError;
 
             const { data: { publicUrl } } = supabase.storage
-                .from('spots')
+                .from('food-images')
                 .getPublicUrl(filePath);
 
             // Create Post
@@ -176,97 +179,139 @@ const Community = () => {
             <div className="glass-card" style={{
                 position: 'sticky', top: 0, zIndex: 100,
                 padding: '16px', borderRadius: '0 0 20px 20px',
-                display: 'flex', justifyContent: 'space-between', alignItems: 'center'
+                display: 'flex', flexDirection: 'column', gap: '12px'
             }}>
-                <h1 style={{ fontSize: '1.5rem', fontWeight: '800', margin: 0, background: 'linear-gradient(to right, #f09433, #e6683c, #dc2743, #cc2366, #bc1888)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-                    Community
-                </h1>
-                <button
-                    onClick={() => setShowCreate(true)}
-                    style={{
-                        background: 'var(--primary)', color: 'white',
-                        border: 'none', borderRadius: '50%', width: '40px', height: '40px',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        boxShadow: '0 4px 12px rgba(226, 55, 68, 0.3)'
-                    }}
-                >
-                    <Plus size={24} />
-                </button>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <h1 style={{ fontSize: '1.5rem', fontWeight: '800', margin: 0, background: 'linear-gradient(to right, #f09433, #e6683c, #dc2743, #cc2366, #bc1888)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                        Community
+                    </h1>
+                    {activeTab === 'feed' && (
+                        <button
+                            onClick={() => setShowCreate(true)}
+                            style={{
+                                background: 'var(--primary)', color: 'white',
+                                border: 'none', borderRadius: '50%', width: '40px', height: '40px',
+                                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                boxShadow: '0 4px 12px rgba(226, 55, 68, 0.3)'
+                            }}
+                        >
+                            <Plus size={24} />
+                        </button>
+                    )}
+                </div>
+
+                {/* Tabs */}
+                <div style={{ display: 'flex', gap: '8px', background: '#f0f0f0', padding: '4px', borderRadius: '12px' }}>
+                    <button
+                        onClick={() => setActiveTab('feed')}
+                        style={{
+                            flex: 1, padding: '8px', borderRadius: '10px',
+                            background: activeTab === 'feed' ? 'white' : 'transparent',
+                            color: activeTab === 'feed' ? 'black' : '#666',
+                            fontWeight: '700', border: 'none', boxShadow: activeTab === 'feed' ? '0 2px 8px rgba(0,0,0,0.05)' : 'none',
+                            transition: 'all 0.2s ease'
+                        }}
+                    >
+                        Feed
+                    </button>
+                    <button
+                        onClick={() => setActiveTab('leaderboard')}
+                        style={{
+                            flex: 1, padding: '8px', borderRadius: '10px',
+                            background: activeTab === 'leaderboard' ? 'white' : 'transparent',
+                            color: activeTab === 'leaderboard' ? 'black' : '#666',
+                            fontWeight: '700', border: 'none', boxShadow: activeTab === 'leaderboard' ? '0 2px 8px rgba(0,0,0,0.05)' : 'none',
+                            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
+                            transition: 'all 0.2s ease'
+                        }}
+                    >
+                        <Trophy size={16} color="#F59E0B" />
+                        Leaderboard
+                    </button>
+                </div>
             </div>
 
-            {/* Feed */}
-            <div className="container" style={{ padding: '16px', maxWidth: '500px', margin: '0 auto' }}>
-                {loading && <p style={{ textAlign: 'center', padding: '20px' }}>Loading feed...</p>}
+            {/* Content */}
+            {activeTab === 'leaderboard' ? (
+                <div style={{ padding: '0 16px' }}>
+                    <Leaderboard lang={window.location.hash.includes('/ml/') ? 'ml' : 'en'} />
+                </div>
+            ) : (
 
-                {posts.map(post => (
-                    <div key={post.id} style={{
-                        background: 'white', borderRadius: '20px',
-                        marginBottom: '24px', overflow: 'hidden',
-                        boxShadow: '0 10px 40px -10px rgba(0,0,0,0.08)'
-                    }}>
-                        {/* Post Header */}
-                        <div style={{ padding: '12px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-                            <div style={{
-                                width: '36px', height: '36px', borderRadius: '50%',
-                                background: '#eee', overflow: 'hidden',
-                                border: '2px solid #fff', boxShadow: '0 0 0 2px #f09433'
-                            }}>
-                                {post.author.avatar_url ? (
-                                    <img src={post.author.avatar_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                                ) : (
-                                    <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#eee' }}>
-                                        <UserIcon size={20} color="#999" />
-                                    </div>
-                                )}
+                /* Feed Content */
+                <div className="container" style={{ padding: '16px', maxWidth: '500px', margin: '0 auto' }}>
+                    {loading && <p style={{ textAlign: 'center', padding: '20px' }}>Loading feed...</p>}
+
+                    {posts.map(post => (
+                        <div key={post.id} style={{
+                            background: 'white', borderRadius: '20px',
+                            marginBottom: '24px', overflow: 'hidden',
+                            boxShadow: '0 10px 40px -10px rgba(0,0,0,0.08)'
+                        }}>
+                            {/* Post Header */}
+                            <div style={{ padding: '12px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                <div style={{
+                                    width: '36px', height: '36px', borderRadius: '50%',
+                                    background: '#eee', overflow: 'hidden',
+                                    border: '2px solid #fff', boxShadow: '0 0 0 2px #f09433'
+                                }}>
+                                    {post.author.avatar_url ? (
+                                        <img src={post.author.avatar_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                    ) : (
+                                        <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#eee' }}>
+                                            <UserIcon size={20} color="#999" />
+                                        </div>
+                                    )}
+                                </div>
+                                <span style={{ fontWeight: '700', fontSize: '0.95rem' }}>
+                                    {post.author.display_name || 'User'}
+                                </span>
+                                <span style={{ marginLeft: 'auto', fontSize: '0.75rem', color: '#999' }}>
+                                    {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}
+                                </span>
                             </div>
-                            <span style={{ fontWeight: '700', fontSize: '0.95rem' }}>
-                                {post.author.display_name || 'User'}
-                            </span>
-                            <span style={{ marginLeft: 'auto', fontSize: '0.75rem', color: '#999' }}>
-                                {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}
-                            </span>
+
+                            {/* Image */}
+                            <div style={{ position: 'relative', width: '100%', paddingTop: '100%' }}>
+                                <img
+                                    src={post.image_url}
+                                    alt=""
+                                    style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover' }}
+                                />
+                            </div>
+
+                            {/* Actions */}
+                            <div style={{ padding: '12px 16px' }}>
+                                <div style={{ display: 'flex', gap: '16px', marginBottom: '12px' }}>
+                                    <button
+                                        onClick={() => handleLike(post)}
+                                        style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}
+                                    >
+                                        <Heart
+                                            size={28}
+                                            fill={post.isLiked ? "#dc2743" : "none"}
+                                            color={post.isLiked ? "#dc2743" : "#262626"}
+                                            style={{ transition: 'all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275)' }}
+                                        />
+                                    </button>
+                                    <button style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer' }}>
+                                        <MessageCircle size={28} color="#262626" />
+                                    </button>
+                                </div>
+
+                                <div style={{ fontWeight: '700', fontSize: '0.9rem', marginBottom: '6px' }}>
+                                    {post.likes_count} likes
+                                </div>
+
+                                <div style={{ fontSize: '0.95rem', lineHeight: '1.4' }}>
+                                    <span style={{ fontWeight: '700', marginRight: '6px' }}>{post.author.display_name}</span>
+                                    {post.caption}
+                                </div>
+                            </div>
                         </div>
-
-                        {/* Image */}
-                        <div style={{ position: 'relative', width: '100%', paddingTop: '100%' }}>
-                            <img
-                                src={post.image_url}
-                                alt=""
-                                style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover' }}
-                            />
-                        </div>
-
-                        {/* Actions */}
-                        <div style={{ padding: '12px 16px' }}>
-                            <div style={{ display: 'flex', gap: '16px', marginBottom: '12px' }}>
-                                <button
-                                    onClick={() => handleLike(post)}
-                                    style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}
-                                >
-                                    <Heart
-                                        size={28}
-                                        fill={post.isLiked ? "#dc2743" : "none"}
-                                        color={post.isLiked ? "#dc2743" : "#262626"}
-                                        style={{ transition: 'all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275)' }}
-                                    />
-                                </button>
-                                <button style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer' }}>
-                                    <MessageCircle size={28} color="#262626" />
-                                </button>
-                            </div>
-
-                            <div style={{ fontWeight: '700', fontSize: '0.9rem', marginBottom: '6px' }}>
-                                {post.likes_count} likes
-                            </div>
-
-                            <div style={{ fontSize: '0.95rem', lineHeight: '1.4' }}>
-                                <span style={{ fontWeight: '700', marginRight: '6px' }}>{post.author.display_name}</span>
-                                {post.caption}
-                            </div>
-                        </div>
-                    </div>
-                ))}
-            </div>
+                    ))}
+                </div>
+            )}
 
             {/* Create Post Modal */}
             {showCreate && (

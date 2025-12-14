@@ -51,7 +51,7 @@ const BottomNav = ({ lang }) => {
                     className={`nav-item nav-item-${id} ${isActive ? 'active' : ''}`}
                     style={{ color: isActive ? color : '#aaa' }}
                 >
-                    <Icon size={24} strokeWidth={isActive ? 2.5 : 2} />
+                    <Icon size={24} strokeWidth={isActive ? 2.5 : 2} fill={isActive ? color : 'none'} />
                     <span>{label}</span>
                 </NavLink>
             </div>

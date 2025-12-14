@@ -1,19 +1,53 @@
 import React from 'react';
 import { Star, MapPin, Heart } from 'lucide-react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { supabase } from '../lib/supabaseClient';
+import { useAuth } from '../context/AuthContext';
 
 const SpotCard = ({ spot }) => {
     const { name, rating, reviews_count, images, distance, tags, price_level, id } = spot;
     const navigate = useNavigate();
+    const { user } = useAuth();
+
+    const checkStreak = async () => {
+        if (!user) return;
+
+        try {
+            const { data: prefs } = await supabase.from('user_preferences').select('streak_current, last_active_at').eq('user_id', user.id).single();
+
+            if (prefs) {
+                const lastActive = prefs.last_active_at ? new Date(prefs.last_active_at) : new Date(0);
+                const today = new Date();
+                const isSameDay = lastActive.toDateString() === today.toDateString();
+
+                if (!isSameDay) {
+                    const yesterday = new Date();
+                    yesterday.setDate(yesterday.getDate() - 1);
+                    const isConsecutive = lastActive.toDateString() === yesterday.toDateString();
+
+                    const newStreak = isConsecutive ? (prefs.streak_current || 0) + 1 : 1;
+
+                    await supabase.from('user_preferences').update({
+                        streak_current: newStreak,
+                        last_active_at: new Date().toISOString()
+                    }).eq('user_id', user.id);
+                }
+            }
+        } catch (e) {
+            console.error("Streak check failed", e);
+        }
+    };
 
     const handleCardClick = (e) => {
+        // Run streak check in background
+        checkStreak();
+
         // Prevent click if scrolling images
         if (e.target.tagName !== 'IMG' && !e.target.classList.contains('image-scroll-container')) {
             const currentLang = window.location.hash.includes('/ml/') ? 'ml' : 'en';
             navigate(`/${currentLang}/spot/${id}`);
         } else {
-            // If clicking image, still go, unless we want strict scroll-only? 
-            // Zomato usually lets you click anywhere. Let's redirect always.
+            // Logic for image area click
             const currentLang = window.location.hash.includes('/ml/') ? 'ml' : 'en';
             navigate(`/${currentLang}/spot/${id}`);
         }
@@ -52,7 +86,7 @@ const SpotCard = ({ spot }) => {
                     scrollSnapType: 'x mandatory',
                     background: '#f0f0f0'
                 }}
-                onClick={(e) => e.stopPropagation()} // Allow scrolling without triggering nav instantly? No, nav is fine.
+                onClick={(e) => e.stopPropagation()}
             >
                 {/* Images */}
                 {(images && images.length > 0 ? images : ['https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&q=80']).map((img, i) => (
