@@ -210,7 +210,7 @@ const Home = ({ lang }) => {
             <TopBar location={userLoc ? "Current Location" : "Kochi, Kerala"} />
 
             {/* Search Bar */}
-            <div style={{ padding: '0 var(--space-md) var(--space-md)' }}>
+            <div style={{ padding: '20px var(--space-md) var(--space-md)' }}>
                 <div className="glass-card" style={{
                     padding: '12px 16px',
                     display: 'flex',

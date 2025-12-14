@@ -139,12 +139,41 @@ const SpotDetail = ({ lang }) => {
             {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
 
             {/* Header Image */}
-            <div style={{ position: 'relative', height: '300px' }}>
-                <img
-                    src={spot.images?.[0] || 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&q=80'}
-                    alt={spot.name}
-                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                />
+            <div
+                className="hide-scrollbar"
+                style={{
+                    position: 'relative',
+                    height: '350px',
+                    display: 'flex',
+                    overflowX: 'auto',
+                    scrollSnapType: 'x mandatory',
+                    background: '#000'
+                }}
+            >
+                {(spot.images && spot.images.length > 0 ? spot.images : ['https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&q=80']).map((img, i) => (
+                    <img
+                        key={i}
+                        src={img}
+                        alt={`${spot.name} ${i + 1}`}
+                        style={{
+                            minWidth: '100%',
+                            height: '100%',
+                            objectFit: 'cover',
+                            scrollSnapAlign: 'center'
+                        }}
+                    />
+                ))}
+
+                {/* Image Counter Badge */}
+                {spot.images && spot.images.length > 1 && (
+                    <div style={{
+                        position: 'absolute', bottom: '20px', right: '20px',
+                        background: 'rgba(0,0,0,0.6)', color: 'white',
+                        padding: '4px 8px', borderRadius: '12px', fontSize: '0.8rem', fontWeight: '600'
+                    }}>
+                        Swipe for more
+                    </div>
+                )}
 
                 {/* Back Button */}
                 <button
