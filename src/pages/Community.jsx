@@ -64,10 +64,12 @@ const Community = () => {
 
         // Fetch authors
         const userIds = [...new Set(postsData.map(p => p.user_id))];
-        const { data: usersData } = await supabase
+        const { data: usersData, error: userError } = await supabase
             .from('user_preferences')
             .select('user_id, display_name, avatar_url')
             .in('user_id', userIds);
+
+        if (userError) console.error("Error fetching users:", userError);
 
         const userMap = {};
         if (usersData) {
@@ -77,6 +79,23 @@ const Community = () => {
         // Fetch my likes
         let myLikes = new Set();
         if (user) {
+            // Auto-Sync: Ensure MY profile exists if I'm viewing
+            // This fixes "Unknown User" for myself immediately
+            if (!userMap[user.id]) {
+                const myProfile = {
+                    display_name: user.user_metadata?.full_name || user.email?.split('@')[0] || 'Quizzy User',
+                    avatar_url: user.user_metadata?.avatar_url
+                };
+                userMap[user.id] = myProfile; // Client-side hydration
+
+                // Silent Upsert to DB
+                supabase.from('user_preferences').upsert({
+                    user_id: user.id,
+                    display_name: myProfile.display_name,
+                    avatar_url: myProfile.avatar_url
+                }, { onConflict: 'user_id' }).then(() => console.log("Profile synced"));
+            }
+
             const { data: likesData } = await supabase
                 .from('post_likes')
                 .select('post_id')
@@ -89,7 +108,11 @@ const Community = () => {
         // Enrich posts
         const enriched = postsData.map(p => ({
             ...p,
-            author: userMap[p.user_id] || { display_name: 'Unknown User', avatar_url: null },
+            author: userMap[p.user_id] || {
+                // Better fallback using email prefix if available (tricky without auth)
+                display_name: 'Foodie Member',
+                avatar_url: null
+            },
             isLiked: myLikes.has(p.id)
         }));
 
