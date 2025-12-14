@@ -112,13 +112,13 @@ const Community = () => {
         if (isLiked) {
             // Unlike
             await supabase.from('post_likes').delete().match({ user_id: user.id, post_id: post.id });
-            await supabase.rpc('decrement_likes', { row_id: post.id }); // Using atomic numeric update if function exists, else raw update
-            // Fallback raw update if RPC not set
-            await supabase.from('community_posts').update({ likes_count: post.likes_count - 1 }).eq('id', post.id);
+            // Use RPC for atomic reliable update
+            await supabase.rpc('decrement_likes', { row_id: post.id });
         } else {
             // Like
             await supabase.from('post_likes').insert({ user_id: user.id, post_id: post.id });
-            await supabase.from('community_posts').update({ likes_count: post.likes_count + 1 }).eq('id', post.id);
+            // Use RPC for atomic reliable update
+            await supabase.rpc('increment_likes', { row_id: post.id });
         }
     };
 
