@@ -43,14 +43,15 @@ const BottomNav = ({ lang }) => {
                 justifyContent: 'space-between'
             }}>
                 {navItems.map((item) => {
-                    const isActive = location.pathname.includes(`/${lang}${item.to}`) ||
-                        (item.to === '/home' && location.pathname === `/${lang}`);
+                    const currentLang = lang || 'en';
+                    const isActive = location.pathname.includes(`/${currentLang}${item.to}`) ||
+                        (item.to === '/home' && location.pathname === `/${currentLang}`);
 
                     if (item.isFab) {
                         return (
                             <NavLink
                                 key={item.to}
-                                to={`/${lang}${item.to}`}
+                                to={`/${currentLang}${item.to}`}
                                 style={{
                                     width: '52px', height: '52px',
                                     borderRadius: '50%',
@@ -70,8 +71,7 @@ const BottomNav = ({ lang }) => {
 
                     return (
                         <NavLink
-                            key={item.to}
-                            to={`/${lang}${item.to}`}
+                            to={`/${currentLang}${item.to}`}
                             style={{
                                 display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
                                 padding: '10px',

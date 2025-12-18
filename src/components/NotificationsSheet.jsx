@@ -10,8 +10,7 @@ const NotificationsSheet = ({ isOpen, onClose, userId }) => {
     useEffect(() => {
         if (isOpen && userId) {
             fetchNotifications();
-            markAllAsRead(); // Optional: Mark as read when opened? Or user manual?
-            // Usually simpler to mark as read when seen.
+            markAllAsRead();
         }
     }, [isOpen, userId]);
 
@@ -20,7 +19,7 @@ const NotificationsSheet = ({ isOpen, onClose, userId }) => {
         const { data, error } = await supabase
             .from('notifications')
             .select('*')
-            .eq('user_id', userId)
+            .or(`user_id.eq.${userId},user_id.is.null`)
             .order('created_at', { ascending: false })
             .limit(20);
 
@@ -29,6 +28,7 @@ const NotificationsSheet = ({ isOpen, onClose, userId }) => {
     };
 
     const markAllAsRead = async () => {
+        if (!userId) return;
         await supabase
             .from('notifications')
             .update({ is_read: true })
@@ -93,7 +93,7 @@ const NotificationsSheet = ({ isOpen, onClose, userId }) => {
                                 </p>
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                     <span style={{ fontSize: '0.75rem', color: '#999' }}>
-                                        {formatDistanceToNow(new Date(n.created_at), { addSuffix: true })}
+                                        {n.created_at ? formatDistanceToNow(new Date(n.created_at), { addSuffix: true }) : 'just now'}
                                     </span>
                                     <button
                                         onClick={() => deleteNotification(n.id)}

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Bell, User, MapPin } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
@@ -15,19 +15,19 @@ const AppBar = () => {
     // Dynamic title/subtitle based on location
     const isHome = location.pathname.includes('/home');
 
-    // Fetch unread count (simplified logic, MainLayout/Home already listens)
-    // For consistency, we can elevate this to Context if needed, but for now we'll match Home's logic
-    React.useEffect(() => {
+    useEffect(() => {
         if (!user) return;
         const fetchUnread = async () => {
             const { count } = await supabase
                 .from('notifications')
                 .select('*', { count: 'exact', head: true })
-                .eq('user_id', user.id)
+                .or(`user_id.eq.${user.id},user_id.is.null`)
                 .eq('is_read', false);
             setUnreadCount(count || 0);
         };
         fetchUnread();
+
+        // Optional: Realtime sync could go here for global unread
     }, [user]);
 
     return (
@@ -61,7 +61,7 @@ const AppBar = () => {
                 <img
                     src="chai_icon.png"
                     alt="chai."
-                    style={{ height: '48px', objectFit: 'contain' }}
+                    style={{ height: '48px', objectFit: 'contain', mixBlendMode: 'multiply' }}
                     onError={(e) => {
                         const path = window.location.pathname;
                         const base = path.split('/')[1];

@@ -3,7 +3,6 @@ import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import { supabase } from '../lib/supabaseClient';
 import L from 'leaflet';
-import TopBar from '../components/TopBar';
 
 // Custom Marker Icon (Fix for default Leaflet icon missing)
 const icon = L.icon({

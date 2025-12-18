@@ -19,9 +19,6 @@ const Home = ({ lang }) => {
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
 
-    // Notification state
-    const [showNotifications, setShowNotifications] = useState(false);
-    const [unreadCount, setUnreadCount] = useState(0);
 
     // Location State
     const [userLocation, setUserLocation] = useState(null); // Actual GPS (for distance calculation)
@@ -38,29 +35,6 @@ const Home = ({ lang }) => {
         if (user) checkStreak();
     }, [user]);
 
-    // Notification Logic
-    useEffect(() => {
-        if (!user) return;
-        const fetchUnread = async () => {
-            const { count } = await supabase
-                .from('notifications')
-                .select('*', { count: 'exact', head: true })
-                .eq('user_id', user.id)
-                .eq('is_read', false);
-            setUnreadCount(count || 0);
-        };
-        fetchUnread();
-
-        // Realtime listener for new notifications
-        const channel = supabase
-            .channel('public:notifications')
-            .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'notifications', filter: `user_id=eq.${user.id}` }, () => {
-                setUnreadCount(c => c + 1);
-            })
-            .subscribe();
-
-        return () => supabase.removeChannel(channel);
-    }, [user]);
 
     const checkStreak = async () => {
         const today = new Date().toISOString().split('T')[0];
@@ -209,29 +183,6 @@ const Home = ({ lang }) => {
     }
     function deg2rad(deg) { return deg * (Math.PI / 180); }
 
-    // Notifications Effect
-    useEffect(() => {
-        if (!user) return;
-        const fetchUnread = async () => {
-            const { count } = await supabase
-                .from('notifications')
-                .select('*', { count: 'exact', head: true })
-                .eq('user_id', user.id)
-                .eq('is_read', false);
-            setUnreadCount(count || 0);
-        };
-        fetchUnread();
-
-        // Realtime listener for new notifications
-        const channel = supabase
-            .channel('public:notifications')
-            .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'notifications', filter: `user_id=eq.${user.id}` }, () => {
-                setUnreadCount(c => c + 1);
-            })
-            .subscribe();
-
-        return () => supabase.removeChannel(channel);
-    }, [user]);
 
     // Hash navigation for #admin shortcut
     useEffect(() => {
@@ -270,7 +221,6 @@ const Home = ({ lang }) => {
 
     return (
         <div style={{ padding: '20px', paddingBottom: '100px', paddingTop: '10px' }}>
-            <NotificationsSheet isOpen={showNotifications} onClose={() => { setShowNotifications(false); setUnreadCount(0); }} userId={user?.id} />
 
             {/* Location Selector (Now just the Trigger) */}
             <div style={{ marginBottom: '15px' }}>
