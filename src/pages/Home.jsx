@@ -393,5 +393,5 @@ const Home = ({ lang }) => {
     );
 };
 
+
 export default Home;
-```
