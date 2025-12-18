@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabaseClient';
 import { Trash2, CircleCheck, CircleX, ShieldAlert, Bell, Send, BarChart2, Download, Users, MapPin, Award } from 'lucide-react';
 import Button from '../components/Button';
@@ -9,6 +10,8 @@ const Admin = () => {
     const [loading, setLoading] = useState(true);
     const [toast, setToast] = useState(null);
     const [activeTab, setActiveTab] = useState('analytics');
+    const [isAuthorized, setIsAuthorized] = useState(false);
+    const navigate = useNavigate();
 
     // Notification state
     const [notifications, setNotifications] = useState([]);
@@ -25,6 +28,15 @@ const Admin = () => {
     });
 
     useEffect(() => {
+        // Session-based Password Prompt
+        const pin = prompt("Admin Access Restricted. Enter PIN:");
+        if (pin !== "Sinu@1234") {
+            alert("Unauthorized!");
+            navigate("/");
+            return;
+        }
+        setIsAuthorized(true);
+
         fetchSpots();
         fetchNotifications();
         fetchAnalytics();
@@ -174,7 +186,7 @@ const Admin = () => {
     };
 
     // --- RENDER HELPERS ---
-
+    if (!isAuthorized) return null; // Or unauthorized view
     // Using Sub-components logic inline for simpler state access in one file or simple components below
     // I'll render them directly here to avoid scope issues or define outside
 
