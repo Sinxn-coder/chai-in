@@ -13,6 +13,7 @@ import { useNavigate } from 'react-router-dom';
 const Home = ({ lang }) => {
     const navigate = useNavigate();
     const { user } = useAuth();
+
     const [spots, setSpots] = useState([]);
     const [filteredSpots, setFilteredSpots] = useState([]);
     const [loading, setLoading] = useState(true);
