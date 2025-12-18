@@ -59,7 +59,12 @@ const AppBar = () => {
                 <img
                     src="chai_icon.png"
                     alt="chai."
-                    style={{ height: '48px', objectFit: 'contain', mixBlendMode: 'multiply' }}
+                    style={{
+                        height: '42px',
+                        objectFit: 'contain',
+                        mixBlendMode: 'multiply',
+                        filter: 'contrast(1.1) brightness(1.02)'
+                    }}
                     onError={(e) => {
                         const path = window.location.pathname;
                         const base = path.split('/')[1];

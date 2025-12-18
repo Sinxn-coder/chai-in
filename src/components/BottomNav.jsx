@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Home, Map, Plus, Users, User } from 'lucide-react';
+import { Home, Map, Plus, Users, User, Trophy } from 'lucide-react';
 import { NavLink, useLocation } from 'react-router-dom';
 import './BottomNav.css';
 
@@ -11,7 +11,7 @@ const BottomNav = ({ lang }) => {
         { to: '/home', icon: Home, label: 'Home' },
         { to: '/map', icon: Map, label: 'Map' },
         { to: '/add-spot', icon: Plus, label: 'Add', isFab: true },
-        { to: '/community', icon: Users, label: 'Social' },
+        { to: '/leaderboard', icon: Trophy, label: 'Leaders' },
         { to: '/profile', icon: User, label: 'Profile' },
     ];
 

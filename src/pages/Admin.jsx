@@ -150,16 +150,34 @@ const Admin = () => {
             });
             const signupsByMonth = Object.entries(signupsMap).map(([name, count]) => ({ name, count }));
 
+            // Calculate Top Contributors
+            const contributorsMap = {};
+            allSpots.forEach(s => {
+                if (s.created_by) {
+                    contributorsMap[s.created_by] = (contributorsMap[s.created_by] || 0) + 1;
+                }
+            });
+
+            const topContributors = Object.entries(contributorsMap)
+                .map(([id, count]) => {
+                    const u = users.find(user => user.user_id === id);
+                    return { name: u?.username || u?.display_name || 'Anonymous', count };
+                })
+                .sort((a, b) => b.count - a.count)
+                .slice(0, 5);
+
             setAnalytics({
                 totalUsers: users.length,
                 totalSpots: allSpots.length,
                 signupsByMonth,
                 topContributors,
-                activeAreas
+                activeAreas: [] // Placeholder for now
             });
 
         } catch (e) {
             console.error(e);
+        } finally {
+            setLoading(false);
         }
     };
 
