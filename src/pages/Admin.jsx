@@ -32,6 +32,7 @@ const Admin = () => {
 
     useEffect(() => {
         if (!isAuthorized) return;
+        setLoading(true); // Ensure loading state is reset when range/auth changes
         fetchSpots();
         fetchNotifications();
         fetchAnalytics();
@@ -45,19 +46,13 @@ const Admin = () => {
         handleHash();
         window.addEventListener('hashchange', handleHash);
         return () => window.removeEventListener('hashchange', handleHash);
-    }, [range]);
+    }, [range, isAuthorized]);
 
     const showToast = (msg, type = 'success') => {
         setToast({ message: msg, type });
     };
 
     const fetchSpots = async () => {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) {
-            showToast("Unauthorized Access", 'error');
-            setLoading(false);
-            return;
-        }
 
         const { data, error } = await supabase
             .from('spots')
