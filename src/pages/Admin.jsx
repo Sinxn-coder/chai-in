@@ -78,8 +78,10 @@ const Admin = () => {
     const deleteSpot = async (id) => {
         if (!confirm("Permanently delete this spot?")) return;
         const { error } = await supabase.from('spots').delete().eq('id', id);
-        if (error) showToast("Failed to delete", 'error');
-        else {
+        if (error) {
+            console.error(error);
+            showToast("Failed to delete: " + error.message, 'error');
+        } else {
             showToast("Spot deleted", 'success');
             setSpots(spots.filter(s => s.id !== id));
         }
@@ -358,8 +360,10 @@ const CommunityManager = () => {
     const deletePost = async (id) => {
         if (!confirm("Delete this post?")) return;
         const { error } = await supabase.from('community_posts').delete().eq('id', id);
-        if (error) alert("Failed to delete");
-        else setPosts(posts.filter(p => p.id !== id));
+        if (error) {
+            console.error(error);
+            alert("Failed to delete post: " + error.message);
+        } else setPosts(posts.filter(p => p.id !== id));
     };
 
     if (loading) return <div>Loading...</div>;
@@ -392,8 +396,10 @@ const ReviewManager = () => {
     const deleteReview = async (id) => {
         if (!confirm("Delete review?")) return;
         const { error } = await supabase.from('reviews').delete().eq('id', id);
-        if (error) alert("Failed");
-        else setReviews(reviews.filter(r => r.id !== id));
+        if (error) {
+            console.error(error);
+            alert("Failed to delete review: " + error.message);
+        } else setReviews(reviews.filter(r => r.id !== id));
     };
 
     return (
