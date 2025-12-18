@@ -63,7 +63,7 @@ const AppBar = () => {
                         height: '42px',
                         objectFit: 'contain',
                         mixBlendMode: 'multiply',
-                        filter: 'contrast(1.1) brightness(1.02)'
+                        filter: 'contrast(1.2) brightness(1.05)'
                     }}
                     onError={(e) => {
                         const path = window.location.pathname;
@@ -75,6 +75,7 @@ const AppBar = () => {
                         }
                     }}
                 />
+                <span style={{ fontSize: '10px', color: 'var(--primary)', fontWeight: 'bold', alignSelf: 'flex-end', marginBottom: '8px' }}>v3</span>
             </div>
 
             {/* Right Actions */}
