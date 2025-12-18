@@ -26,8 +26,6 @@ const AppBar = () => {
             setUnreadCount(count || 0);
         };
         fetchUnread();
-
-        // Optional: Realtime sync could go here for global unread
     }, [user]);
 
     return (
