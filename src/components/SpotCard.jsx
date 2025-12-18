@@ -1,5 +1,5 @@
 import React from 'react';
-import { Star, MapPin, Heart } from 'lucide-react';
+import { Star, MapPin, Heart, Check, User } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabaseClient';
 import { useAuth } from '../context/AuthContext';
@@ -8,6 +8,74 @@ const SpotCard = ({ spot }) => {
     const { name, rating, reviews_count, images, distance, tags, price_level, id } = spot;
     const navigate = useNavigate();
     const { user } = useAuth();
+    const [visited, setVisited] = React.useState(false);
+    const [visitCount, setVisitCount] = React.useState(0);
+    const [visitLoading, setVisitLoading] = React.useState(true);
+
+    React.useEffect(() => {
+        if (id) {
+            fetchVisitStats();
+        }
+    }, [id, user]);
+
+    const fetchVisitStats = async () => {
+        try {
+            // Fetch total count
+            const { count } = await supabase
+                .from('visited_spots')
+                .select('*', { count: 'exact', head: true })
+                .eq('spot_id', id);
+            setVisitCount(count || 0);
+
+            // Fetch if current user visited
+            if (user) {
+                const { data } = await supabase
+                    .from('visited_spots')
+                    .select('user_id')
+                    .eq('spot_id', id)
+                    .eq('user_id', user.id)
+                    .maybeSingle();
+                setVisited(!!data);
+            }
+        } catch (e) {
+            console.error(e);
+        } finally {
+            setVisitLoading(false);
+        }
+    };
+
+    const handleVisitToggle = async (e) => {
+        e.stopPropagation();
+        if (!user) {
+            alert("Please login to mark as visited!");
+            return;
+        }
+
+        try {
+            if (visited) {
+                // Remove visit
+                const { error } = await supabase
+                    .from('visited_spots')
+                    .delete()
+                    .eq('spot_id', id)
+                    .eq('user_id', user.id);
+                if (error) throw error;
+                setVisited(false);
+                setVisitCount(prev => Math.max(0, prev - 1));
+            } else {
+                // Add visit
+                const { error } = await supabase
+                    .from('visited_spots')
+                    .insert({ spot_id: id, user_id: user.id });
+                if (error) throw error;
+                setVisited(true);
+                setVisitCount(prev => prev + 1);
+            }
+        } catch (e) {
+            console.error(e);
+            alert("Action failed. Try again.");
+        }
+    };
 
     const checkStreak = async () => {
         if (!user) return;
@@ -141,6 +209,35 @@ const SpotCard = ({ spot }) => {
                         Verified
                     </div>
                 )}
+
+                {/* Visited Button (Layered on Image) */}
+                <button
+                    onClick={handleVisitToggle}
+                    style={{
+                        position: 'absolute',
+                        top: '12px',
+                        right: '12px',
+                        background: visited ? 'var(--primary)' : 'rgba(255,255,255,0.9)',
+                        color: visited ? 'white' : 'var(--text-main)',
+                        border: 'none',
+                        padding: '6px 10px',
+                        borderRadius: '8px',
+                        fontSize: '0.75rem',
+                        fontWeight: '700',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '4px',
+                        cursor: 'pointer',
+                        boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                        zIndex: 2,
+                        transition: 'all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275)'
+                    }}
+                    onMouseDown={(e) => e.currentTarget.style.transform = 'scale(0.9)'}
+                    onMouseUp={(e) => e.currentTarget.style.transform = 'scale(1)'}
+                >
+                    <Check size={14} strokeWidth={3} />
+                    {visited ? 'Visited' : 'I Visited'}
+                </button>
             </div>
 
             {/* Info Area */}
@@ -155,6 +252,19 @@ const SpotCard = ({ spot }) => {
                     }}>
                         {name}
                     </h3>
+                    <span style={{
+                        backgroundColor: '#f8f8f8',
+                        color: '#555',
+                        fontSize: '0.75rem',
+                        padding: '3px 8px',
+                        borderRadius: '6px',
+                        fontWeight: '700',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '4px'
+                    }}>
+                        <User size={12} /> {visitCount} visited
+                    </span>
                     <span style={{
                         backgroundColor: '#f8f8f8',
                         color: '#555',
