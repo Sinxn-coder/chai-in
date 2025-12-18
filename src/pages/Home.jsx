@@ -24,8 +24,9 @@ const Home = ({ lang }) => {
     const [unreadCount, setUnreadCount] = useState(0);
 
     // Location State
-    const [userLocation, setUserLocation] = useState(null); // { lat, lng }
-    const [locationName, setLocationName] = useState('Locating...');
+    const [userLocation, setUserLocation] = useState(null); // Actual GPS (for distance calculation)
+    const [activeLocation, setActiveLocation] = useState(null); // Selected filter location { lat, lng }
+    const [locationName, setLocationName] = useState('All Kerala');
     const [isSearchingLocation, setIsSearchingLocation] = useState(false);
     const [locationQuery, setLocationQuery] = useState('');
 
@@ -94,7 +95,15 @@ const Home = ({ lang }) => {
 
     useEffect(() => {
         fetchSpots();
-    }, [userLocation]); // Re-fetch/filter when location changes
+    }, [activeLocation]); // Re-fetch/filter when active location changes
+
+    // Actual user GPS for distance sorting/display
+    useEffect(() => {
+        navigator.geolocation.getCurrentPosition(
+            (pos) => setUserLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
+            (err) => console.error(err)
+        );
+    }, []);
 
     // Search Location (Nominatim)
     const handleLocationSearch = async () => {
@@ -108,9 +117,10 @@ const Home = ({ lang }) => {
                 const parts = display_name.split(',');
                 const shortName = parts[0];
 
-                setUserLocation({ lat: parseFloat(lat), lng: parseFloat(lon) });
+                setActiveLocation({ lat: parseFloat(lat), lng: parseFloat(lon) });
                 setLocationName(shortName);
-                setSearchTerm(''); // Clear name search to show all spots in new area
+                setIsSearchingLocation(false);
+                setSearchTerm('');
             } else {
                 alert("Location not found!");
             }
@@ -134,13 +144,13 @@ const Home = ({ lang }) => {
         } else {
             let allSpots = data || [];
 
-            // 1. Filter by 30km Radius Logic
-            if (userLocation) {
+            // 1. Filter by 30km Radius Logic (ONLY if activeLocation is set)
+            if (activeLocation) {
                 const nearby = [];
                 const areas = {};
 
                 allSpots.forEach(spot => {
-                    const dist = getDistanceFromLatLonInKm(userLocation.lat, userLocation.lng, spot.latitude, spot.longitude);
+                    const dist = getDistanceFromLatLonInKm(activeLocation.lat, activeLocation.lng, spot.latitude, spot.longitude);
                     spot.distance = dist; // Attach distance for sorting
 
                     if (dist <= 30) {
@@ -155,12 +165,12 @@ const Home = ({ lang }) => {
 
                 // Update Nearby Areas List
                 setNearbyAreas(Object.keys(areas).slice(0, 5));
-
-                // If searching a location specifically, maybe we want to restrict to "nearby" only?
-                // Requirements: "Search location... show spots within 30 km".
-                // So we REPLACE allSpots with nearbySpots?
-                // Yes, otherwise the dashboard shows global spots.
                 allSpots = nearby;
+            } else if (userLocation) {
+                // Background distance calculation if userLocation exists but no filter
+                allSpots.forEach(spot => {
+                    spot.distance = getDistanceFromLatLonInKm(userLocation.lat, userLocation.lng, spot.latitude, spot.longitude);
+                });
             }
 
             setSpots(allSpots);
@@ -243,16 +253,19 @@ const Home = ({ lang }) => {
             (pos) => {
                 const { latitude, longitude } = pos.coords;
                 const newLocation = { lat: latitude, lng: longitude };
-                setUserLocation(newLocation);
-                setLocationName("Current Location");
-                fetchSpots(newLocation); // Pass the new location directly
+                setActiveLocation(newLocation);
+                setLocationName("Nearby You");
             },
             (err) => {
                 console.error(err);
-                // Assuming showToast is defined elsewhere or will be added
-                // showToast("Could not get location", "error");
             }
         );
+    };
+
+    const handleClearLocation = () => {
+        setActiveLocation(null);
+        setLocationName('All Kerala');
+        setIsSearchingLocation(false);
     };
 
     return (
@@ -295,32 +308,115 @@ const Home = ({ lang }) => {
 
             {/* Location Search Input (Collapsible) */}
             {isSearchingLocation && (
-                <div className="glass-card" style={{ padding: '10px', display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '15px', animation: 'fadeIn 0.3s' }}>
+                <div
+                    className="glass-card"
+                    style={{
+                        padding: '16px',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '12px',
+                        marginBottom: '20px',
+                        animation: 'fadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                        zIndex: 10
+                    }}
+                >
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
+                        <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: '700' }}>Change Location</h3>
+                        <button onClick={() => setIsSearchingLocation(false)} style={{ background: 'none', border: 'none', color: '#999' }}><X size={20} /></button>
+                    </div>
 
                     <button
                         onClick={handleUseCurrentLocation}
                         style={{
-                            display: 'flex', alignItems: 'center', gap: '8px',
-                            background: '#e0f2f1', color: '#00796b',
-                            padding: '10px', borderRadius: '8px', border: 'none',
-                            fontWeight: '600', cursor: 'pointer'
+                            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+                            background: 'linear-gradient(135deg, #E0F2F1 0%, #B2DFDB 100%)',
+                            color: '#00796b',
+                            padding: '12px', borderRadius: '12px', border: 'none',
+                            fontWeight: '700', cursor: 'pointer', transition: 'transform 0.2s'
                         }}
+                        onMouseDown={(e) => e.currentTarget.style.transform = 'scale(0.98)'}
+                        onMouseUp={(e) => e.currentTarget.style.transform = 'scale(1)'}
                     >
-                        <MapPin size={16} /> Use Current Location (Nearby)
+                        <MapPin size={18} /> Use Current Location
                     </button>
 
                     <div style={{ display: 'flex', gap: '8px' }}>
-                        <input
-                            placeholder="Or enter City..."
-                            value={locationQuery}
-                            onChange={(e) => setLocationQuery(e.target.value)}
-                            style={{ border: 'none', background: '#f5f5f5', padding: '8px 12px', borderRadius: '8px', flex: 1 }}
-                            onKeyDown={(e) => e.key === 'Enter' && handleLocationSearch()}
-                        />
-                        <button onClick={handleLocationSearch} style={{ background: 'var(--primary)', color: 'white', border: 'none', padding: '8px 16px', borderRadius: '8px' }}>
+                        <div style={{ position: 'relative', flex: 1 }}>
+                            <Search size={16} color="#999" style={{ position: 'absolute', left: '12px', top: '12px' }} />
+                            <input
+                                placeholder="Search city or area..."
+                                value={locationQuery}
+                                onChange={(e) => setLocationQuery(e.target.value)}
+                                style={{
+                                    width: '100%',
+                                    border: '1px solid #eee',
+                                    background: '#f9f9f9',
+                                    padding: '10px 10px 10px 36px',
+                                    borderRadius: '12px',
+                                    fontSize: '0.95rem'
+                                }}
+                                onKeyDown={(e) => e.key === 'Enter' && handleLocationSearch()}
+                            />
+                        </div>
+                        <button
+                            onClick={handleLocationSearch}
+                            style={{
+                                background: 'var(--primary)',
+                                color: 'white',
+                                border: 'none',
+                                padding: '10px 20px',
+                                borderRadius: '12px',
+                                fontWeight: '700',
+                                boxShadow: '0 4px 12px rgba(226, 55, 68, 0.2)'
+                            }}
+                        >
                             Go
                         </button>
                     </div>
+
+                    {activeLocation && (
+                        <button
+                            onClick={handleClearLocation}
+                            style={{
+                                marginTop: '4px',
+                                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
+                                background: 'white', color: '#666',
+                                padding: '10px', borderRadius: '12px', border: '1px solid #eee',
+                                fontSize: '0.9rem', fontWeight: '600'
+                            }}
+                        >
+                            <X size={16} /> Clear Location Filter
+                        </button>
+                    )}
+                </div>
+            )}
+
+            {/* Active Location Chip (Visible when filtering) */}
+            {activeLocation && !isSearchingLocation && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '15px', animation: 'fadeIn 0.3s' }}>
+                    <div
+                        style={{
+                            display: 'flex', alignItems: 'center', gap: '6px',
+                            background: 'linear-gradient(135deg, #FF6B6B 0%, #E23744 100%)',
+                            color: 'white', padding: '6px 14px', borderRadius: '20px',
+                            fontSize: '0.85rem', fontWeight: '700',
+                            boxShadow: '0 4px 12px rgba(226, 55, 68, 0.25)'
+                        }}
+                    >
+                        <MapPin size={14} /> {locationName}
+                        <button
+                            onClick={handleClearLocation}
+                            style={{
+                                marginLeft: '4px', background: 'rgba(255,255,255,0.2)',
+                                border: 'none', borderRadius: '50%', width: '18px', height: '18px',
+                                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                color: 'white', cursor: 'pointer'
+                            }}
+                        >
+                            <X size={12} strokeWidth={3} />
+                        </button>
+                    </div>
+                    <span style={{ fontSize: '0.8rem', color: '#999' }}>within 30km</span>
                 </div>
             )}
 
