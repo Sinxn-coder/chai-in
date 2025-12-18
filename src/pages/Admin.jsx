@@ -28,21 +28,14 @@ const Admin = () => {
     });
     const [range, setRange] = useState(30);
 
-    useEffect(() => {
-        // Session-based Password Prompt
-        const pin = prompt("Admin Access Restricted. Enter PIN:");
-        if (pin !== "Sinu@1234") {
-            alert("Unauthorized!");
-            navigate("/");
-            return;
-        }
-        setIsAuthorized(true);
+    const [pin, setPin] = useState('');
 
+    useEffect(() => {
+        if (!isAuthorized) return;
         fetchSpots();
         fetchNotifications();
         fetchAnalytics();
 
-        // Handle deep-linking via hash
         const handleHash = () => {
             const hash = window.location.hash.replace('#', '');
             if (['analytics', 'spots', 'community', 'reviews', 'notifications', 'moderation'].includes(hash)) {
@@ -171,7 +164,48 @@ const Admin = () => {
     };
 
     // --- RENDER HELPERS ---
-    if (!isAuthorized) return null; // Or unauthorized view
+    if (!isAuthorized) {
+        return (
+            <div style={{
+                height: '80vh', display: 'flex', flexDirection: 'column',
+                alignItems: 'center', justifyContent: 'center', padding: '20px'
+            }}>
+                <div className="glass-card" style={{ padding: '30px', width: '100%', maxWidth: '400px', textAlign: 'center' }}>
+                    <ShieldAlert size={48} color="var(--primary)" style={{ marginBottom: '20px' }} />
+                    <h2 style={{ marginBottom: '10px' }}>Admin Login</h2>
+                    <p style={{ color: '#666', marginBottom: '20px' }}>Please enter your PIN to access the dashboard.</p>
+                    <input
+                        type="password"
+                        id="adminPinInput"
+                        placeholder="Enter PIN"
+                        value={pin}
+                        onChange={(e) => setPin(e.target.value)}
+                        style={{
+                            width: '100%', padding: '12px', borderRadius: '12px',
+                            border: '1px solid #ddd', marginBottom: '20px', textAlign: 'center',
+                            fontSize: '1.2rem', letterSpacing: '4px'
+                        }}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter' && pin === "Sinu@1234") {
+                                setIsAuthorized(true);
+                            } else if (e.key === 'Enter') {
+                                showToast("Incorrect PIN", 'error');
+                            }
+                        }}
+                    />
+                    <Button
+                        onClick={() => {
+                            if (pin === "Sinu@1234") setIsAuthorized(true);
+                            else showToast("Incorrect PIN", 'error');
+                        }}
+                        style={{ width: '100%' }}
+                    >
+                        Access Dashboard
+                    </Button>
+                </div>
+            </div>
+        );
+    }
     // Using Sub-components logic inline for simpler state access in one file or simple components below
     // I'll render them directly here to avoid scope issues or define outside
 
