@@ -28,6 +28,17 @@ const Admin = () => {
         fetchSpots();
         fetchNotifications();
         fetchAnalytics();
+
+        // Handle deep-linking via hash
+        const handleHash = () => {
+            const hash = window.location.hash.replace('#', '');
+            if (['analytics', 'spots', 'community', 'reviews', 'notifications'].includes(hash)) {
+                setActiveTab(hash);
+            }
+        };
+        handleHash();
+        window.addEventListener('hashchange', handleHash);
+        return () => window.removeEventListener('hashchange', handleHash);
     }, []);
 
     const showToast = (msg, type = 'success') => {
@@ -112,7 +123,7 @@ const Admin = () => {
 
     const fetchAnalytics = async () => {
         try {
-            const { data: users } = await supabase.from('user_preferences').select('created_at, display_name, user_id'); // Added user_id
+            const { data: users } = await supabase.from('user_preferences').select('created_at, display_name, username, user_id'); // Added username
             const { data: allSpots } = await supabase.from('spots').select('created_by, location_text, created_at');
 
             if (!users || !allSpots) return;
@@ -136,7 +147,7 @@ const Admin = () => {
                 .slice(0, 5)
                 .map(([id, count]) => {
                     const user = users.find(u => u.user_id === id); // Now valid
-                    return { id, count, name: user?.display_name || `User ${id.substring(0, 4)}...` };
+                    return { id, count, name: user?.username || user?.display_name || `User ${id.substring(0, 4)}...` };
                 });
 
             // Active Areas
