@@ -269,40 +269,14 @@ const Home = ({ lang }) => {
     };
 
     return (
-        <div style={{ padding: '20px', paddingBottom: '100px' }}>
+        <div style={{ padding: '20px', paddingBottom: '100px', paddingTop: '10px' }}>
             <NotificationsSheet isOpen={showNotifications} onClose={() => { setShowNotifications(false); setUnreadCount(0); }} userId={user?.id} />
 
-            {/* Header: Location Search */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
-                <div>
-                    <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-muted)' }}>Exploring</p>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '5px', cursor: 'pointer' }} onClick={() => setIsSearchingLocation(!isSearchingLocation)}>
-                        <h2 style={{ margin: 0, fontSize: '1.4rem', color: 'var(--e23744)' }}>{locationName} <span style={{ fontSize: '0.8rem' }}>▼</span></h2>
-                    </div>
-                </div>
-
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                    <button
-                        onClick={() => setShowNotifications(true)}
-                        style={{ position: 'relative', background: 'white', border: 'none', borderRadius: '50%', width: '40px', height: '40px', boxShadow: '0 2px 8px rgba(0,0,0,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
-                    >
-                        <Bell size={20} color="#333" />
-                        {unreadCount > 0 && (
-                            <span style={{
-                                position: 'absolute', top: '2px', right: '2px',
-                                background: 'var(--primary)', color: 'white',
-                                fontSize: '0.7rem', fontWeight: 'bold',
-                                width: '16px', height: '16px', borderRadius: '50%',
-                                display: 'flex', alignItems: 'center', justifyContent: 'center'
-                            }}>
-                                {unreadCount}
-                            </span>
-                        )}
-                    </button>
-
-                    <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: '#eee', overflow: 'hidden', border: '2px solid white', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
-                        <img src={user?.user_metadata?.avatar_url || `https://ui-avatars.com/api/?name=${user?.email}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                    </div>
+            {/* Location Selector (Now just the Trigger) */}
+            <div style={{ marginBottom: '15px' }}>
+                <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--text-muted)' }}>Exploring</p>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '5px', cursor: 'pointer' }} onClick={() => setIsSearchingLocation(!isSearchingLocation)}>
+                    <h2 style={{ margin: 0, fontSize: '1.2rem', color: 'var(--e23744)' }}>{locationName} <span style={{ fontSize: '0.7rem' }}>▼</span></h2>
                 </div>
             </div>
 

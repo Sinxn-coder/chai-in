@@ -9,12 +9,43 @@ const Login = () => {
     const { signInWithGoogle, user } = useAuth();
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
+    const [referrer, setReferrer] = useState(null);
+
+    useEffect(() => {
+        const params = new URLSearchParams(window.location.search);
+        const ref = params.get('ref');
+        if (ref) {
+            setReferrer(ref);
+            localStorage.setItem('chai_referrer', ref);
+        }
+    }, []);
 
     useEffect(() => {
         if (user) {
+            handlePostLoginReward();
             navigate('/en/home');
         }
     }, [user, navigate]);
+
+    const handlePostLoginReward = async () => {
+        const refId = referrer || localStorage.getItem('chai_referrer');
+        if (!refId || !user) return;
+
+        try {
+            // Check if this user already has a referrer to avoid double rewards
+            const { data: profile } = await supabase.from('user_preferences').select('referred_by').eq('user_id', user.id).single();
+
+            if (profile && !profile.referred_by && refId !== user.id) {
+                // Award points to the referrer
+                await supabase.rpc('reward_referrer', { referrer_id: refId });
+                // Record who referred this user
+                await supabase.from('user_preferences').update({ referred_by: refId }).eq('user_id', user.id);
+                localStorage.removeItem('chai_referrer');
+            }
+        } catch (err) {
+            console.error("Referral reward error:", err);
+        }
+    };
 
     const handleLogin = async () => {
         setLoading(true);

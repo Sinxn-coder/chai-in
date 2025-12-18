@@ -258,61 +258,7 @@ const Community = () => {
         <div style={{ paddingBottom: '100px', background: '#fafafa', minHeight: '100vh' }}>
             {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
 
-            {/* Header */}
-            <div className="glass-card" style={{
-                position: 'sticky', top: 0, zIndex: 100,
-                padding: '16px', borderRadius: '0 0 20px 20px',
-                display: 'flex', flexDirection: 'column', gap: '12px'
-            }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <h1 style={{ fontSize: '1.5rem', fontWeight: '800', margin: 0, background: 'linear-gradient(to right, #f09433, #e6683c, #dc2743, #cc2366, #bc1888)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-                        Community
-                    </h1>
-                    {activeTab === 'feed' && (
-                        <button
-                            onClick={() => setShowCreate(true)}
-                            style={{
-                                background: 'var(--primary)', color: 'white',
-                                border: 'none', borderRadius: '50%', width: '40px', height: '40px',
-                                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                boxShadow: '0 4px 12px rgba(226, 55, 68, 0.3)'
-                            }}
-                        >
-                            <Plus size={24} />
-                        </button>
-                    )}
-                </div>
-
-                {/* Tabs */}
-                <div style={{ display: 'flex', gap: '8px', background: '#f0f0f0', padding: '4px', borderRadius: '12px' }}>
-                    <button
-                        onClick={() => setActiveTab('feed')}
-                        style={{
-                            flex: 1, padding: '8px', borderRadius: '10px',
-                            background: activeTab === 'feed' ? 'white' : 'transparent',
-                            color: activeTab === 'feed' ? 'black' : '#666',
-                            fontWeight: '700', border: 'none', boxShadow: activeTab === 'feed' ? '0 2px 8px rgba(0,0,0,0.05)' : 'none',
-                            transition: 'all 0.2s ease'
-                        }}
-                    >
-                        Feed
-                    </button>
-                    <button
-                        onClick={() => setActiveTab('leaderboard')}
-                        style={{
-                            flex: 1, padding: '8px', borderRadius: '10px',
-                            background: activeTab === 'leaderboard' ? 'white' : 'transparent',
-                            color: activeTab === 'leaderboard' ? 'black' : '#666',
-                            fontWeight: '700', border: 'none', boxShadow: activeTab === 'leaderboard' ? '0 2px 8px rgba(0,0,0,0.05)' : 'none',
-                            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
-                            transition: 'all 0.2s ease'
-                        }}
-                    >
-                        <Trophy size={16} color="#F59E0B" />
-                        Leaderboard
-                    </button>
-                </div>
-            </div>
+            {/* Local Header removed to use global AppBar */}
 
             {/* Content */}
             {activeTab === 'leaderboard' ? (

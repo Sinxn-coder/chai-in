@@ -29,7 +29,7 @@ const MapScreen = ({ lang }) => {
 
     return (
         <div style={{ height: '100vh', position: 'relative', paddingBottom: '80px' }}>
-            <TopBar location="Exploring Map" />
+            {/* Local Header removed to use global AppBar */}
 
             <div style={{ height: 'calc(100% - 60px)', width: '100%', zIndex: 0 }}>
                 <MapContainer center={defaultPosition} zoom={13} style={{ height: '100%', width: '100%' }}>

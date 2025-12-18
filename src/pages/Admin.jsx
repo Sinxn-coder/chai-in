@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabaseClient';
-import { Trash2, CircleCheck, CircleX, ShieldAlert, Bell, Send, BarChart2, Download, Users, MapPin, Award } from 'lucide-react';
+import { Trash2, CheckCircle, XCircle, ShieldAlert, Bell, Send, BarChart2, Download, Users, MapPin, Award } from 'lucide-react';
 import Button from '../components/Button';
 import Toast from '../components/Toast';
 
@@ -26,6 +26,7 @@ const Admin = () => {
         topContributors: [],
         activeAreas: []
     });
+    const [range, setRange] = useState(30);
 
     useEffect(() => {
         // Session-based Password Prompt
@@ -44,14 +45,14 @@ const Admin = () => {
         // Handle deep-linking via hash
         const handleHash = () => {
             const hash = window.location.hash.replace('#', '');
-            if (['analytics', 'spots', 'community', 'reviews', 'notifications'].includes(hash)) {
+            if (['analytics', 'spots', 'community', 'reviews', 'notifications', 'moderation'].includes(hash)) {
                 setActiveTab(hash);
             }
         };
         handleHash();
         window.addEventListener('hashchange', handleHash);
         return () => window.removeEventListener('hashchange', handleHash);
-    }, []);
+    }, [range]);
 
     const showToast = (msg, type = 'success') => {
         setToast({ message: msg, type });
@@ -142,37 +143,19 @@ const Admin = () => {
 
             if (!users || !allSpots) return;
 
-            // Stats: Signups per Month
+            // Stats: Signups per Day/Month within Range
+            const now = new Date();
+            const cutoff = new Date();
+            cutoff.setDate(now.getDate() - range);
+
+            const filteredSignups = users.filter(u => new Date(u.created_at) >= cutoff);
+
             const signupsMap = {};
-            users.forEach(u => {
-                const month = new Date(u.created_at).toLocaleString('default', { month: 'short', year: 'numeric' });
-                signupsMap[month] = (signupsMap[month] || 0) + 1;
+            filteredSignups.forEach(u => {
+                const date = new Date(u.created_at).toLocaleDateString('default', { month: 'short', day: 'numeric' });
+                signupsMap[date] = (signupsMap[date] || 0) + 1;
             });
             const signupsByMonth = Object.entries(signupsMap).map(([name, count]) => ({ name, count }));
-
-            // Stats: Top Contributors
-            const uploadsMap = {};
-            allSpots.forEach(s => {
-                if (s.created_by) uploadsMap[s.created_by] = (uploadsMap[s.created_by] || 0) + 1;
-            });
-
-            const topContributors = Object.entries(uploadsMap)
-                .sort(([, a], [, b]) => b - a)
-                .slice(0, 5)
-                .map(([id, count]) => {
-                    const user = users.find(u => u.user_id === id); // Now valid
-                    return { id, count, name: user?.username || user?.display_name || `User ${id.substring(0, 4)}...` };
-                });
-
-            // Active Areas
-            const areaMap = {};
-            allSpots.forEach(s => {
-                if (s.location_text) {
-                    const area = s.location_text.split(',')[0].trim();
-                    areaMap[area] = (areaMap[area] || 0) + 1;
-                }
-            });
-            const activeAreas = Object.entries(areaMap).sort((a, b) => b[1] - a[1]).slice(0, 5).map(([name, count]) => ({ name, count }));
 
             setAnalytics({
                 totalUsers: users.length,
@@ -201,7 +184,7 @@ const Admin = () => {
             </div>
 
             <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '10px', marginBottom: '20px' }} className="hide-scrollbar">
-                {['analytics', 'spots', 'community', 'reviews', 'notifications'].map(tab => (
+                {['analytics', 'spots', 'community', 'reviews', 'notifications', 'moderation'].map(tab => (
                     <button
                         key={tab}
                         onClick={() => setActiveTab(tab)}
@@ -237,15 +220,32 @@ const Admin = () => {
                         <MapPin size={40} color="orange" />
                     </div>
 
-                    <div className="glass-card" style={{ padding: '20px' }}>
-                        <h3>Growth</h3>
-                        <div style={{ height: '150px', display: 'flex', alignItems: 'flex-end', gap: '8px' }}>
-                            {analytics.signupsByMonth.map((d, i) => (
-                                <div key={i} style={{ flex: 1, height: `${Math.min(d.count * 10, 100)}%`, background: '#4CAF50', borderRadius: '4px 4px 0 0', position: 'relative', minHeight: '4px' }}>
-                                </div>
-                            ))}
+                    <div className="glass-card" style={{ padding: '20px', gridColumn: '1 / -1' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+                            <h3 style={{ margin: 0 }}>Growth Analytics</h3>
+                            <div style={{ display: 'flex', gap: '8px' }}>
+                                {[30, 60, 90].map(r => (
+                                    <button
+                                        key={r}
+                                        onClick={() => setRange(r)}
+                                        style={{
+                                            padding: '6px 12px', borderRadius: '8px', border: '1px solid #ddd',
+                                            background: range === r ? 'var(--primary)' : 'white',
+                                            color: range === r ? 'white' : '#666',
+                                            fontSize: '0.8rem', fontWeight: '700', cursor: 'pointer'
+                                        }}
+                                    >
+                                        {r} Days
+                                    </button>
+                                ))}
+                            </div>
                         </div>
-                        <p style={{ textAlign: 'center', fontSize: '0.8rem', color: '#888', marginTop: '10px' }}>User Signups by Month</p>
+                        <div style={{ width: '100%', height: '250px', position: 'relative' }}>
+                            {analytics.signupsByMonth.length > 0 && (
+                                <AnalyticsGraph data={analytics.signupsByMonth} />
+                            )}
+                        </div>
+                        <p style={{ textAlign: 'center', fontSize: '0.8rem', color: '#888', marginTop: '1rem' }}>User Signups over time</p>
                     </div>
 
                     <div className="glass-card" style={{ padding: '20px' }}>
@@ -277,10 +277,10 @@ const Admin = () => {
                             </div>
                             <div style={{ display: 'flex', gap: '10px' }}>
                                 <button onClick={() => toggleVerify(spot.id, spot.is_verified)} style={{ padding: '8px', background: '#e8f5e9', color: '#2e7d32', borderRadius: '8px', border: 'none' }}>
-                                    <CircleCheck size={18} />
+                                    <CheckCircle size={18} />
                                 </button>
                                 <button onClick={() => deleteSpot(spot.id)} style={{ padding: '8px', background: '#ffebee', color: '#c62828', borderRadius: '8px', border: 'none' }}>
-                                    <Trash2 size={18} />
+                                    <XCircle size={18} />
                                 </button>
                             </div>
                         </div>
@@ -338,6 +338,7 @@ const Admin = () => {
 
             {!loading && activeTab === 'community' && <CommunityManager />}
             {!loading && activeTab === 'reviews' && <ReviewManager />}
+            {!loading && activeTab === 'moderation' && <ModerationManager showToast={showToast} />}
 
         </div>
     );
@@ -413,6 +414,121 @@ const ReviewManager = () => {
                     <button onClick={() => deleteReview(r.id)} style={{ background: '#ffebee', border: 'none', cursor: 'pointer', padding: '8px', borderRadius: '8px', color: 'red' }}>
                         <Trash2 size={18} />
                     </button>
+                </div>
+            ))}
+        </div>
+    );
+};
+
+const AnalyticsGraph = ({ data }) => {
+    const max = Math.max(...data.map(d => d.count), 5);
+    const height = 200;
+    const width = 800;
+    const padding = 30;
+
+    const points = data.map((d, i) => {
+        const x = padding + (i * (width - padding * 2) / (data.length - 1 || 1));
+        const y = height - padding - (d.count * (height - padding * 2) / max);
+        return `${x},${y}`;
+    }).join(' ');
+
+    return (
+        <svg viewBox={`0 0 ${width} ${height}`} style={{ width: '100%', height: '100%' }}>
+            {/* Grid lines */}
+            <line x1={padding} y1={height - padding} x2={width - padding} y2={height - padding} stroke="#eee" />
+            <line x1={padding} y1={padding} x2={padding} y2={height - padding} stroke="#eee" />
+
+            {/* Axis Labels */}
+            <text x={padding - 10} y={padding} textAnchor="end" fontSize="10" fill="#999">{max}</text>
+            <text x={padding - 10} y={height - padding} textAnchor="end" fontSize="10" fill="#999">0</text>
+
+            <polyline
+                fill="none"
+                stroke="var(--primary)"
+                strokeWidth="3"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                points={points}
+            />
+            {data.map((d, i) => {
+                const x = padding + (i * (width - padding * 2) / (data.length - 1 || 1));
+                const y = height - padding - (d.count * (height - padding * 2) / max);
+                return (
+                    <g key={i}>
+                        <circle cx={x} cy={y} r="4" fill="white" stroke="var(--primary)" strokeWidth="2" />
+                        <text x={x} y={height - 5} textAnchor="middle" fontSize="10" fill="#999">{d.name}</text>
+                        <text x={x} y={y - 10} textAnchor="middle" fontSize="12" fontWeight="700" fill="var(--primary)">{d.count}</text>
+                    </g>
+                );
+            })}
+        </svg>
+    );
+};
+
+const ModerationManager = ({ showToast }) => {
+    const [edits, setEdits] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => { fetchEdits(); }, []);
+
+    const fetchEdits = async () => {
+        const { data } = await supabase.from('spot_edits').select('*, spots(name)').eq('status', 'pending');
+        setEdits(data || []);
+        setLoading(false);
+    };
+
+    const handleModeration = async (editId, status, spotId, newData) => {
+        try {
+            if (status === 'approved') {
+                // Apply the changes to the main spot table
+                const { error: spotError } = await supabase.from('spots').update({
+                    name: newData.name,
+                    category: newData.category,
+                    price_level: newData.price,
+                    description: newData.description,
+                    location_text: newData.location_text,
+                    latitude: newData.latitude,
+                    longitude: newData.longitude,
+                    images: newData.images
+                }).eq('id', spotId);
+                if (spotError) throw spotError;
+            }
+
+            // Update the edit record status
+            const { error: editError } = await supabase.from('spot_edits').update({ status }).eq('id', editId);
+            if (editError) throw editError;
+
+            showToast(`Edit ${status}`, 'success');
+            setEdits(edits.filter(e => e.id !== editId));
+        } catch (err) {
+            console.error(err);
+            showToast("Moderation failed", 'error');
+        }
+    };
+
+    if (loading) return <div>Loading pendings...</div>;
+
+    return (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+            {edits.length === 0 ? <p>No pending edits to review.</p> : edits.map(edit => (
+                <div key={edit.id} className="glass-card" style={{ padding: '20px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
+                        <h4 style={{ margin: 0 }}>Edit Suggestion for: {edit.spots?.name}</h4>
+                        <span style={{ fontSize: '0.8rem', color: '#888' }}>{new Date(edit.created_at).toLocaleDateString()}</span>
+                    </div>
+                    <div style={{ background: '#f8fafc', padding: '10px', borderRadius: '8px', fontSize: '0.9rem', marginBottom: '15px', color: '#475569' }}>
+                        <strong>Suggested Name:</strong> {edit.data.name}<br />
+                        <strong>Suggested Category:</strong> {edit.data.category}<br />
+                        <strong>New Desc:</strong> {edit.data.description?.substring(0, 100)}...
+                    </div>
+                    <div style={{ display: 'flex', gap: '10px' }}>
+                        <button onClick={() => handleModeration(edit.id, 'approved', edit.spot_id, edit.data)} style={{ flex: 1, padding: '10px', background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)', color: 'white', border: 'none', borderRadius: '8px', fontWeight: '700', cursor: 'pointer' }}>
+                            Approve & Apply
+                        </button>
+                        <button onClick={() => handleModeration(edit.id, 'rejected')} style={{ flex: 1, padding: '10px', background: '#fee2e2', color: '#991b1b', border: 'none', borderRadius: '8px', fontWeight: '700', cursor: 'pointer' }}>
+                            Reject
+                        </button>
+                    </div>
                 </div>
             ))}
         </div>

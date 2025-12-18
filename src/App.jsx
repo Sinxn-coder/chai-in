@@ -9,6 +9,7 @@ import Leaderboard from './pages/Leaderboard';
 import Admin from './pages/Admin';
 import SpotDetail from './pages/SpotDetail';
 import Community from './pages/Community';
+import EditSpot from './pages/EditSpot';
 import MainLayout from './layouts/MainLayout';
 import { useAuth } from './context/AuthContext';
 
@@ -56,6 +57,7 @@ function AppRoutes({ lang }) {
         <Route path="profile" element={<Profile lang={lang} />} />
         <Route path="settings" element={<Settings lang={lang} />} />
         <Route path="spot/:id" element={<SpotDetail lang={lang} />} />
+        <Route path="edit-spot/:id" element={<EditSpot lang={lang} />} />
         <Route path="admin" element={<Admin />} />
       </Route>
     </Routes>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ChevronLeft, ChevronRight, Upload, MapPin, Check, Loader, Crosshair, Map, Sparkles, CircleX } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Upload, MapPin, Check, Loader, Crosshair, Map, Sparkles, XCircle } from 'lucide-react';
 import Button from '../components/Button';
 import Toast from '../components/Toast';
 import MapPicker from '../components/MapPicker';
@@ -267,15 +267,23 @@ const AddSpot = ({ lang }) => {
                                 </div>
                             </div>
 
-                            <Button type="button" onClick={handleNext} style={{
-                                width: '100%', marginTop: '1.5rem',
-                                background: 'linear-gradient(135deg, #FF6B6B 0%, #E23744 100%)',
-                                color: 'white', padding: '16px', fontSize: '1.1rem',
-                                borderRadius: '16px', boxShadow: '0 8px 16px rgba(226, 55, 68, 0.3)',
-                                border: 'none'
-                            }}>
-                                Next Step <ChevronRight size={18} />
-                            </Button>
+                            <button
+                                type="button"
+                                onClick={handleNext}
+                                style={{
+                                    width: '100%', marginTop: '1.5rem',
+                                    background: 'linear-gradient(135deg, #FF6B6B 0%, #E23744 100%)',
+                                    color: 'white', padding: '18px', fontSize: '1.1rem',
+                                    borderRadius: '18px', boxShadow: '0 8px 16px rgba(226, 55, 68, 0.3)',
+                                    border: 'none', fontWeight: '800', display: 'flex',
+                                    alignItems: 'center', justifyContent: 'center', gap: '8px',
+                                    cursor: 'pointer', transition: 'all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)'
+                                }}
+                                onMouseEnter={(e) => e.target.style.transform = 'translateY(-2px)'}
+                                onMouseLeave={(e) => e.target.style.transform = 'translateY(0)'}
+                            >
+                                Next Step <ChevronRight size={20} />
+                            </button>
                         </div>
                     )}
 
@@ -366,9 +374,32 @@ const AddSpot = ({ lang }) => {
                                 </div>
                             </div>
 
-                            <div style={{ display: 'flex', gap: '1rem', marginTop: '2rem' }}>
-                                <Button type="button" variant="secondary" onClick={handleBack} style={{ flex: 1, background: '#f0f0f0' }}>Back</Button>
-                                <Button type="button" onClick={handleNext} style={{ flex: 1, background: 'var(--primary)', color: 'white' }}>Next</Button>
+                            <div style={{ display: 'flex', gap: '1rem', marginTop: '2.5rem' }}>
+                                <button
+                                    type="button"
+                                    onClick={handleBack}
+                                    style={{
+                                        flex: 1, background: '#f8fafc', color: '#64748b',
+                                        padding: '16px', borderRadius: '18px', border: '1px solid #e2e8f0',
+                                        fontWeight: '700', cursor: 'pointer', transition: 'all 0.2s'
+                                    }}
+                                >
+                                    Back
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={handleNext}
+                                    style={{
+                                        flex: 2, background: 'linear-gradient(135deg, #FF6B6B 0%, #E23744 100%)',
+                                        color: 'white', padding: '18px', borderRadius: '18px', border: 'none',
+                                        fontWeight: '800', fontSize: '1.05rem', cursor: 'pointer',
+                                        boxShadow: '0 8px 16px rgba(226, 55, 68, 0.2)', transition: 'all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)'
+                                    }}
+                                    onMouseEnter={(e) => e.target.style.transform = 'translateY(-2px)'}
+                                    onMouseLeave={(e) => e.target.style.transform = 'translateY(0)'}
+                                >
+                                    Continue <ChevronRight size={20} style={{ verticalAlign: 'middle', marginLeft: '4px' }} />
+                                </button>
                             </div>
                         </div>
                     )}
@@ -427,28 +458,42 @@ const AddSpot = ({ lang }) => {
                                                     padding: '4px', border: 'none', display: 'flex', color: 'white'
                                                 }}
                                             >
-                                                <CircleX size={14} />
+                                                <XCircle size={14} />
                                             </button>
                                         </div>
                                     ))}
                                 </div>
                             )}
 
-                            <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
-                                <Button type="button" variant="secondary" onClick={handleBack} style={{ flex: 1, background: '#f0f0f0' }}>Back</Button>
-                                <Button
+                            <div style={{ display: 'flex', gap: '1rem', marginTop: '2rem' }}>
+                                <button
+                                    type="button"
+                                    onClick={handleBack}
+                                    style={{
+                                        flex: 1, background: '#f8fafc', color: '#64748b',
+                                        padding: '16px', borderRadius: '18px', border: '1px solid #e2e8f0',
+                                        fontWeight: '700', cursor: 'pointer'
+                                    }}
+                                >
+                                    Back
+                                </button>
+                                <button
                                     type="submit"
                                     disabled={loading}
                                     style={{
                                         flex: 2,
                                         background: 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
-                                        color: 'white', padding: '16px',
-                                        borderRadius: '16px', boxShadow: '0 8px 16px rgba(16, 185, 129, 0.3)',
-                                        border: 'none', fontSize: '1.1rem'
+                                        color: 'white', padding: '18px',
+                                        borderRadius: '18px', boxShadow: '0 8px 16px rgba(16, 185, 129, 0.3)',
+                                        border: 'none', fontSize: '1.1rem', fontWeight: '800',
+                                        cursor: loading ? 'not-allowed' : 'pointer',
+                                        transition: 'all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)'
                                     }}
+                                    onMouseEnter={(e) => !loading && (e.target.style.transform = 'translateY(-3px)')}
+                                    onMouseLeave={(e) => (e.target.style.transform = 'translateY(0)')}
                                 >
-                                    {loading ? 'Saving...' : 'Submit Spot ✨'}
-                                </Button>
+                                    {loading ? <Loader className="animate-spin" size={20} style={{ margin: '0 auto' }} /> : 'Submit Spot ✨'}
+                                </button>
                             </div>
                         </div>
                     )}

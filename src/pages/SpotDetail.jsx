@@ -264,6 +264,33 @@ const SpotDetail = ({ lang }) => {
                                 Get Directions
                             </button>
                         )}
+                        {/* Edit Spot Button - Available for all logged-in users */}
+                        {user && (
+                            <button
+                                onClick={() => navigate(`/${lang}/edit-spot/${spot.id}`)}
+                                style={{
+                                    marginTop: '8px',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '6px',
+                                    padding: '8px 16px',
+                                    background: 'white',
+                                    color: '#1a1a1a',
+                                    border: '1px solid #e2e8f0',
+                                    borderRadius: '8px',
+                                    fontSize: '0.9rem',
+                                    fontWeight: '600',
+                                    cursor: 'pointer',
+                                    boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
+                                    transition: 'all 0.2s ease'
+                                }}
+                                onMouseEnter={(e) => e.target.style.background = '#f8fafc'}
+                                onMouseLeave={(e) => e.target.style.background = 'white'}
+                            >
+                                <Edit3 size={16} />
+                                Suggest Edits
+                            </button>
+                        )}
                     </div>
                     <div style={{
                         background: 'var(--bg-cream)', padding: '6px 12px',

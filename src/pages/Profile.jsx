@@ -114,8 +114,21 @@ const Profile = ({ lang }) => {
 
     const handleShare = () => {
         const link = `${window.location.origin}/login?ref=${user.id}`;
-        navigator.clipboard.writeText(link);
-        showToast('Referral link copied to clipboard!');
+        const text = "Join me on chai. 🍵 to discover the best food spots in Kerala!";
+
+        if (navigator.share) {
+            navigator.share({
+                title: 'Join chai.',
+                text: text,
+                url: link,
+            }).catch(console.error);
+        } else {
+            // WhatsApp Fallback
+            window.open(`https://wa.me/?text=${encodeURIComponent(text + " " + link)}`, '_blank');
+            navigator.clipboard.writeText(link);
+            // Assuming showToast is available or inherited (it was in the previous state, but let's check profile state)
+            alert('Referral link copied & WhatsApp opened!');
+        }
     };
 
     // Use custom name and avatar from preferences if available
@@ -143,23 +156,7 @@ const Profile = ({ lang }) => {
                 boxShadow: 'var(--shadow-md)',
                 position: 'relative'
             }}>
-                <div style={{ position: 'absolute', top: '1rem', right: '1rem', display: 'flex', gap: '8px' }}>
-                    <button
-                        onClick={() => navigate(`/${lang}/settings`)}
-                        style={{
-                            padding: '8px',
-                            background: 'rgba(226, 55, 68, 0.1)',
-                            borderRadius: '8px',
-                            border: 'none',
-                            cursor: 'pointer'
-                        }}
-                    >
-                        <Settings size={20} color="var(--primary)" />
-                    </button>
-                    <button onClick={signOut} style={{ padding: '8px' }}>
-                        <LogOut size={20} color="var(--danger)" />
-                    </button>
-                </div>
+                {/* Local Actions Removed - Use AppBar or Settings Page */}
 
                 <div style={{
                     width: '100px',
@@ -188,7 +185,7 @@ const Profile = ({ lang }) => {
                     display: 'flex',
                     justifyContent: 'center',
                     gap: '1.5rem',
-                    marginTop: '1.5rem'
+                    marginTop: '1rem'
                 }}>
                     {userData.stats && userData.stats.map((stat, index) => (
                         <div key={index} className="stat-item" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
@@ -203,14 +200,15 @@ const Profile = ({ lang }) => {
                     ))}
                 </div>
 
-                <div style={{ display: 'flex', justifyContent: 'center', marginTop: '1.5rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'center', marginTop: '1rem' }}>
                     <button
                         onClick={handleShare}
                         style={{
                             display: 'flex', alignItems: 'center', gap: '8px',
                             background: '#f0f9ff', color: '#0284c7',
-                            padding: '10px 20px', borderRadius: '20px',
-                            fontWeight: '600', border: '1px solid #bae6fd'
+                            padding: '8px 16px', borderRadius: '20px',
+                            fontWeight: '600', border: '1px solid #bae6fd',
+                            fontSize: '0.9rem'
                         }}
                     >
                         <Share2 size={18} />

@@ -1,11 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { X, MapPin as MapPinIcon, Loader, Locate } from 'lucide-react';
+import { X, MapPin as MapPinIcon, Loader, Locate, Search, Layers, Edit3 } from 'lucide-react';
 
 const MapPicker = ({ isOpen, onClose, onSelectLocation, initialCenter = [11.2588, 75.7804] }) => {
     const [selectedLocation, setSelectedLocation] = useState(null);
     const [isMapReady, setIsMapReady] = useState(false);
-    const mapInstanceRef = useRef(null);
+    const [isSatellite, setIsSatellite] = useState(false);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [searching, setSearching] = useState(false);
     const mapContainerRef = useRef(null);
+    const mapInstanceRef = useRef(null);
     const markerRef = useRef(null);
 
     // Initial load of resources
@@ -58,14 +61,23 @@ const MapPicker = ({ isOpen, onClose, onSelectLocation, initialCenter = [11.2588
         }
 
         try {
-            // Initialize Map
-            const map = window.L.map(mapContainerRef.current).setView(initialCenter, 13);
-            mapInstanceRef.current = map;
-
-            // Add Tile Layer
-            window.L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            // Add Tile Layers
+            const streets = window.L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '© OpenStreetMap contributors'
-            }).addTo(map);
+            });
+
+            const satellite = window.L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+                attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EBP, and the GIS User Community'
+            });
+
+            if (isSatellite) {
+                satellite.addTo(map);
+            } else {
+                streets.addTo(map);
+            }
+
+            tileLayerRef.current = streets;
+            satelliteLayerRef.current = satellite;
 
             // Add Marker
             const marker = window.L.marker(initialCenter, {
@@ -144,6 +156,43 @@ const MapPicker = ({ isOpen, onClose, onSelectLocation, initialCenter = [11.2588
         };
     }, [isOpen, isMapReady]); // Removed initialCenter from deps to prevent re-init loop
 
+    const toggleSatellite = () => {
+        if (!mapInstanceRef.current || !tileLayerRef.current || !satelliteLayerRef.current) return;
+        const map = mapInstanceRef.current;
+        if (isSatellite) {
+            map.removeLayer(satelliteLayerRef.current);
+            tileLayerRef.current.addTo(map);
+        } else {
+            map.removeLayer(tileLayerRef.current);
+            satelliteLayerRef.current.addTo(map);
+        }
+        setIsSatellite(!isSatellite);
+    };
+
+    const handleSearch = async () => {
+        if (!searchQuery.trim() || searching) return;
+        setSearching(true);
+        try {
+            const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchQuery)}`);
+            const data = await response.json();
+            if (data && data.length > 0) {
+                const { lat, lon } = data[0];
+                const newCenter = [parseFloat(lat), parseFloat(lon)];
+                if (mapInstanceRef.current && markerRef.current) {
+                    mapInstanceRef.current.setView(newCenter, 16);
+                    markerRef.current.setLatLng(newCenter);
+                    setSelectedLocation({ lat: parseFloat(lat), lng: parseFloat(lon) });
+                }
+            } else {
+                alert("Location not found.");
+            }
+        } catch (error) {
+            console.error("Search error:", error);
+        } finally {
+            setSearching(false);
+        }
+    };
+
     const handleConfirm = () => {
         if (selectedLocation) {
             onSelectLocation(selectedLocation.lat, selectedLocation.lng);
@@ -216,6 +265,36 @@ const MapPicker = ({ isOpen, onClose, onSelectLocation, initialCenter = [11.2588
                     </button>
                 </div>
 
+                {/* Search Bar */}
+                <div style={{ padding: '0.8rem 1rem', background: '#fff', borderBottom: '1px solid #eee', display: 'flex', gap: '8px' }}>
+                    <div style={{ flex: 1, position: 'relative' }}>
+                        <input
+                            type="text"
+                            placeholder="Search location (e.g. Kozhikode)"
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                            style={{
+                                width: '100%', padding: '10px 12px 10px 40px',
+                                border: '1px solid #e2e8f0', borderRadius: '10px',
+                                fontSize: '0.9rem'
+                            }}
+                        />
+                        <Search size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }} />
+                    </div>
+                    <button
+                        onClick={handleSearch}
+                        disabled={searching || !searchQuery.trim()}
+                        style={{
+                            padding: '8px 16px', background: 'var(--primary)', color: 'white',
+                            border: 'none', borderRadius: '10px', fontWeight: '600',
+                            fontSize: '0.85rem', cursor: 'pointer', opacity: searching ? 0.6 : 1
+                        }}
+                    >
+                        {searching ? '...' : 'Search'}
+                    </button>
+                </div>
+
                 {/* Map Container */}
                 <div style={{ flex: 1, position: 'relative' }}>
                     {!isMapReady && (
@@ -234,6 +313,24 @@ const MapPicker = ({ isOpen, onClose, onSelectLocation, initialCenter = [11.2588
                             </div>
                         </div>
                     )}
+
+                    {/* Satellite Toggle Button */}
+                    <button
+                        onClick={(e) => { e.preventDefault(); toggleSatellite(); }}
+                        style={{
+                            position: 'absolute', top: '12px', right: '12px',
+                            zIndex: 1000, background: isSatellite ? '#10b981' : 'white',
+                            color: isSatellite ? 'white' : '#1e293b',
+                            border: '1px solid #e2e8f0', borderRadius: '8px',
+                            padding: '8px 12px', display: 'flex', alignItems: 'center',
+                            gap: '8px', cursor: 'pointer', fontWeight: '600', fontSize: '0.85rem',
+                            boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+                        }}
+                    >
+                        <Layers size={16} />
+                        {isSatellite ? 'Satellite' : 'Map View'}
+                    </button>
+
                     <div
                         ref={mapContainerRef}
                         style={{
@@ -276,6 +373,7 @@ const MapPicker = ({ isOpen, onClose, onSelectLocation, initialCenter = [11.2588
                             )}
                         </div>
                     </div>
+
 
                     <button
                         onClick={handleConfirm}
