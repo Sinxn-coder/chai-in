@@ -19,9 +19,12 @@ const NotificationsSheet = ({ isOpen, onClose, userId }) => {
         const { data, error } = await supabase
             .from('notifications')
             .select('*')
+            // Fix: simplified OR syntax or just fetching global + personal in a cleaner way
             .or(`user_id.eq.${userId},user_id.is.null`)
             .order('created_at', { ascending: false })
             .limit(20);
+
+        if (error) console.error("Notif error:", error);
 
         if (data) setNotifications(data);
         setLoading(false);
@@ -45,71 +48,69 @@ const NotificationsSheet = ({ isOpen, onClose, userId }) => {
 
     return (
         <div style={{
-            position: 'fixed', inset: 0, zIndex: 3000,
-            background: 'rgba(0,0,0,0.5)',
-            display: 'flex', justifyContent: 'flex-end'
-        }} onClick={onClose}>
-            <div
-                onClick={e => e.stopPropagation()}
-                className="slide-in-right"
-                style={{
-                    width: '85%', maxWidth: '350px', height: '100%',
-                    background: 'white',
-                    padding: '20px',
-                    display: 'flex', flexDirection: 'column',
-                    boxShadow: '-4px 0 20px rgba(0,0,0,0.1)'
-                }}
-            >
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-                    <h2 style={{ fontSize: '1.4rem', fontWeight: '800', display: 'flex', alignItems: 'center', gap: '10px' }}>
-                        <Bell fill="var(--primary)" color="var(--primary)" size={24} />
-                        Notifications
-                    </h2>
-                    <button onClick={onClose} style={{ background: 'none', border: 'none' }}><X /></button>
-                </div>
+            position: 'absolute',
+            top: '60px',
+            right: '20px',
+            zIndex: 3000,
+            width: '320px',
+            maxHeight: '400px',
+            background: 'white',
+            borderRadius: '16px',
+            boxShadow: '0 10px 40px rgba(0,0,0,0.15)',
+            border: '1px solid #eee',
+            display: 'flex', flexDirection: 'column',
+            animation: 'fadeInDown 0.2s ease-out'
+        }} onClick={e => e.stopPropagation()}>
+            <div style={{ padding: '16px', borderBottom: '1px solid #f0f0f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: '800', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <Bell size={18} fill="var(--primary)" color="var(--primary)" />
+                    Notifications
+                </h3>
+                <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '4px' }}>
+                    <X size={16} color="#999" />
+                </button>
+            </div>
 
-                <div style={{ flex: 1, overflowY: 'auto' }}>
-                    {loading ? (
-                        <p style={{ textAlign: 'center', color: '#888' }}>Loading...</p>
-                    ) : notifications.length === 0 ? (
-                        <div style={{ textAlign: 'center', paddingTop: '50px', opacity: 0.5 }}>
-                            <Bell size={48} color="#ccc" style={{ marginBottom: '10px' }} />
-                            <p>No notifications yet</p>
-                        </div>
-                    ) : (
-                        notifications.map(n => (
-                            <div key={n.id} style={{
-                                padding: '16px', borderRadius: '16px',
-                                background: n.is_read ? '#fff' : '#fff5f5',
-                                border: '1px solid #f0f0f0',
-                                marginBottom: '10px',
-                                position: 'relative'
-                            }}>
-                                <h4 style={{ margin: '0 0 6px', fontSize: '1rem', fontWeight: '700', color: n.is_read ? '#333' : 'var(--primary)' }}>
-                                    {n.title}
-                                </h4>
-                                <p style={{ margin: '0 0 8px', fontSize: '0.9rem', color: '#666', lineHeight: '1.4' }}>
-                                    {n.message}
-                                </p>
-                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                    <span style={{ fontSize: '0.75rem', color: '#999' }}>
-                                        {n.created_at ? formatDistanceToNow(new Date(n.created_at), { addSuffix: true }) : 'just now'}
-                                    </span>
-                                    <button
-                                        onClick={() => deleteNotification(n.id)}
-                                        style={{ fontSize: '0.75rem', color: '#aaa', background: 'none', border: 'none' }}
-                                    >
-                                        Dismiss
-                                    </button>
-                                </div>
+            <div style={{ flex: 1, overflowY: 'auto' }}>
+                {loading ? (
+                    <p style={{ textAlign: 'center', color: '#888' }}>Loading...</p>
+                ) : notifications.length === 0 ? (
+                    <div style={{ textAlign: 'center', paddingTop: '50px', opacity: 0.5 }}>
+                        <Bell size={48} color="#ccc" style={{ marginBottom: '10px' }} />
+                        <p>No notifications yet</p>
+                    </div>
+                ) : (
+                    notifications.map(n => (
+                        <div key={n.id} style={{
+                            padding: '16px', borderRadius: '16px',
+                            background: n.is_read ? '#fff' : '#fff5f5',
+                            border: '1px solid #f0f0f0',
+                            marginBottom: '10px',
+                            position: 'relative'
+                        }}>
+                            <h4 style={{ margin: '0 0 6px', fontSize: '1rem', fontWeight: '700', color: n.is_read ? '#333' : 'var(--primary)' }}>
+                                {n.title}
+                            </h4>
+                            <p style={{ margin: '0 0 8px', fontSize: '0.9rem', color: '#666', lineHeight: '1.4' }}>
+                                {n.message}
+                            </p>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                <span style={{ fontSize: '0.75rem', color: '#999' }}>
+                                    {n.created_at ? formatDistanceToNow(new Date(n.created_at), { addSuffix: true }) : 'just now'}
+                                </span>
+                                <button
+                                    onClick={() => deleteNotification(n.id)}
+                                    style={{ fontSize: '0.75rem', color: '#aaa', background: 'none', border: 'none' }}
+                                >
+                                    Dismiss
+                                </button>
                             </div>
-                        ))
-                    )}
-                </div>
+                        </div>
+                    ))
+                )}
             </div>
             <style>{`
-                .slide-in-right { animation: slideInRight 0.3s ease-out; }
-                @keyframes slideInRight { from { transform: translateX(100%); } to { transform: translateX(0); } }
+                @keyframes fadeInDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
             `}</style>
         </div>
     );

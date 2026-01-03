@@ -5,8 +5,6 @@ import { formatDistanceToNow } from 'date-fns';
 import { useAuth } from '../context/AuthContext';
 import Button from '../components/Button';
 import Toast from '../components/Toast';
-import Leaderboard from './Leaderboard';
-import { Trophy } from 'lucide-react';
 
 const Community = () => {
     const { user } = useAuth();
@@ -261,89 +259,82 @@ const Community = () => {
             {/* Local Header removed to use global AppBar */}
 
             {/* Content */}
-            {activeTab === 'leaderboard' ? (
-                <div style={{ padding: '0 16px' }}>
-                    <Leaderboard lang={window.location.hash.includes('/ml/') ? 'ml' : 'en'} />
-                </div>
-            ) : (
+            {/* Content - Feed Only */}
+            <div className="container" style={{ padding: '16px', maxWidth: '500px', margin: '0 auto' }}>
+                {loading && <p style={{ textAlign: 'center', padding: '20px' }}>Loading feed...</p>}
 
-                /* Feed Content */
-                <div className="container" style={{ padding: '16px', maxWidth: '500px', margin: '0 auto' }}>
-                    {loading && <p style={{ textAlign: 'center', padding: '20px' }}>Loading feed...</p>}
+                {posts.map(post => (
+                    <div key={post.id} style={{
+                        background: 'white', borderRadius: '20px',
+                        marginBottom: '24px', overflow: 'hidden',
+                        boxShadow: '0 10px 40px -10px rgba(0,0,0,0.08)'
+                    }}>
+                        {/* Post Header */}
+                        <div style={{ padding: '12px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                            <div style={{
+                                width: '36px', height: '36px', borderRadius: '50%',
+                                background: '#eee', overflow: 'hidden',
+                                border: '2px solid #fff', boxShadow: '0 0 0 2px #f09433'
+                            }}>
+                                {post.author.avatar_url ? (
+                                    <img src={post.author.avatar_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                ) : (
+                                    <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#eee' }}>
+                                        <UserIcon size={20} color="#999" />
+                                    </div>
+                                )}
+                            </div>
+                            <span style={{ fontWeight: '700', fontSize: '0.95rem' }}>
+                                {post.author.username || post.author.display_name || 'User'}
+                            </span>
+                            <span style={{ marginLeft: 'auto', fontSize: '0.75rem', color: '#999' }}>
+                                {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}
+                            </span>
+                        </div>
 
-                    {posts.map(post => (
-                        <div key={post.id} style={{
-                            background: 'white', borderRadius: '20px',
-                            marginBottom: '24px', overflow: 'hidden',
-                            boxShadow: '0 10px 40px -10px rgba(0,0,0,0.08)'
-                        }}>
-                            {/* Post Header */}
-                            <div style={{ padding: '12px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-                                <div style={{
-                                    width: '36px', height: '36px', borderRadius: '50%',
-                                    background: '#eee', overflow: 'hidden',
-                                    border: '2px solid #fff', boxShadow: '0 0 0 2px #f09433'
-                                }}>
-                                    {post.author.avatar_url ? (
-                                        <img src={post.author.avatar_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                                    ) : (
-                                        <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#eee' }}>
-                                            <UserIcon size={20} color="#999" />
-                                        </div>
-                                    )}
-                                </div>
-                                <span style={{ fontWeight: '700', fontSize: '0.95rem' }}>
-                                    {post.author.username || post.author.display_name || 'User'}
-                                </span>
-                                <span style={{ marginLeft: 'auto', fontSize: '0.75rem', color: '#999' }}>
-                                    {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}
-                                </span>
+                        {/* Image */}
+                        <div style={{ position: 'relative', width: '100%', paddingTop: '100%' }}>
+                            <img
+                                src={post.image_url}
+                                alt=""
+                                style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover' }}
+                            />
+                        </div>
+
+                        {/* Actions */}
+                        <div style={{ padding: '12px 16px' }}>
+                            <div style={{ display: 'flex', gap: '16px', marginBottom: '12px' }}>
+                                <button
+                                    onClick={() => handleLike(post)}
+                                    style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}
+                                >
+                                    <Heart
+                                        size={28}
+                                        fill={post.isLiked ? "#dc2743" : "none"}
+                                        color={post.isLiked ? "#dc2743" : "#262626"}
+                                        style={{ transition: 'all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275)' }}
+                                    />
+                                </button>
+                                <button
+                                    onClick={() => openComments(post)}
+                                    style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', display: 'flex', alignItems: 'center' }}
+                                >
+                                    <MessageCircle size={28} color="#262626" />
+                                </button>
                             </div>
 
-                            {/* Image */}
-                            <div style={{ position: 'relative', width: '100%', paddingTop: '100%' }}>
-                                <img
-                                    src={post.image_url}
-                                    alt=""
-                                    style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover' }}
-                                />
+                            <div style={{ fontWeight: '700', fontSize: '0.9rem', marginBottom: '6px' }}>
+                                {post.likes_count} likes
                             </div>
 
-                            {/* Actions */}
-                            <div style={{ padding: '12px 16px' }}>
-                                <div style={{ display: 'flex', gap: '16px', marginBottom: '12px' }}>
-                                    <button
-                                        onClick={() => handleLike(post)}
-                                        style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}
-                                    >
-                                        <Heart
-                                            size={28}
-                                            fill={post.isLiked ? "#dc2743" : "none"}
-                                            color={post.isLiked ? "#dc2743" : "#262626"}
-                                            style={{ transition: 'all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275)' }}
-                                        />
-                                    </button>
-                                    <button
-                                        onClick={() => openComments(post)}
-                                        style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', display: 'flex', alignItems: 'center' }}
-                                    >
-                                        <MessageCircle size={28} color="#262626" />
-                                    </button>
-                                </div>
-
-                                <div style={{ fontWeight: '700', fontSize: '0.9rem', marginBottom: '6px' }}>
-                                    {post.likes_count} likes
-                                </div>
-
-                                <div style={{ fontSize: '0.95rem', lineHeight: '1.4' }}>
-                                    <span style={{ fontWeight: '700', marginRight: '6px' }}>{post.author.username || post.author.display_name}</span>
-                                    {post.caption}
-                                </div>
+                            <div style={{ fontSize: '0.95rem', lineHeight: '1.4' }}>
+                                <span style={{ fontWeight: '700', marginRight: '6px' }}>{post.author.username || post.author.display_name}</span>
+                                {post.caption}
                             </div>
                         </div>
-                    ))}
-                </div>
-            )}
+                    </div>
+                ))}
+            </div>
 
             {/* Create Post Modal */}
             {showCreate && (

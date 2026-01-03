@@ -34,82 +34,91 @@ const Profile = ({ lang }) => {
     }, [user]);
 
     const fetchAllData = async () => {
+        if (!user) return; // Safety check
         setLoading(true);
 
-        // Fetch user preferences first
-        const { data: prefs } = await supabase
-            .from('user_preferences')
-            .select('*')
-            .eq('user_id', user.id)
-            .single();
+        try {
+            // Fetch user preferences first
+            const { data: prefs, error: prefError } = await supabase
+                .from('user_preferences')
+                .select('*')
+                .eq('user_id', user.id)
+                .single();
 
-        setUserPreferences(prefs);
+            if (!prefError) setUserPreferences(prefs);
 
-        // Fetch user's spots count for stats
-        const { count: spotsCount } = await supabase
-            .from('spots')
-            .select('*', { count: 'exact', head: true })
-            .eq('created_by', user.id);
+            // Note: If no prefs found, we just use defaults.
 
-        // Fetch user's reviews count for stats
-        const { count: reviewsCount } = await supabase
-            .from('reviews')
-            .select('*', { count: 'exact', head: true })
-            .eq('user_id', user.id);
+            // Fetch user's spots count for stats
+            const { count: spotsCount } = await supabase
+                .from('spots')
+                .select('*', { count: 'exact', head: true })
+                .eq('created_by', user.id);
 
-        setStats({
-            spots: spotsCount || 0,
-            reviews: reviewsCount || 0,
-            xp: ((spotsCount || 0) * 100) + ((reviewsCount || 0) * 10)
-        });
+            // Fetch user's reviews count for stats
+            const { count: reviewsCount } = await supabase
+                .from('reviews')
+                .select('*', { count: 'exact', head: true })
+                .eq('user_id', user.id);
 
-        // Fetch favourites with spot details
-        const { data: favData } = await supabase
-            .from('favourites')
-            .select('spot_id')
-            .eq('user_id', user.id);
+            setStats({
+                spots: spotsCount || 0,
+                reviews: reviewsCount || 0,
+                xp: ((spotsCount || 0) * 100) + ((reviewsCount || 0) * 10)
+            });
 
-        if (favData && favData.length > 0) {
-            const spotIds = favData.map(f => f.spot_id);
-            const { data: spots } = await supabase
+            // Fetch favourites with spot details
+            const { data: favData } = await supabase
+                .from('favourites')
+                .select('spot_id')
+                .eq('user_id', user.id);
+
+            if (favData && favData.length > 0) {
+                const spotIds = favData.map(f => f.spot_id);
+                const { data: spots } = await supabase
+                    .from('spots')
+                    .select('*')
+                    .in('id', spotIds);
+                setFavouriteSpots(spots || []);
+            }
+
+            // Fetch user's reviews with spot details
+            const { data: reviewsData } = await supabase
+                .from('reviews')
+                .select('*, spot_id')
+                .eq('user_id', user.id)
+                .order('created_at', { ascending: false });
+
+            if (reviewsData && reviewsData.length > 0) {
+                const spotIds = reviewsData.map(r => r.spot_id);
+                // Unique IDs
+                const uniqueSpotIds = [...new Set(spotIds)];
+                const { data: spots } = await supabase
+                    .from('spots')
+                    .select('*')
+                    .in('id', uniqueSpotIds);
+
+                // Merge reviews with spot data
+                const reviewsWithSpots = reviewsData.map(review => ({
+                    ...review,
+                    spot: spots?.find(s => s.id === review.spot_id)
+                }));
+                setUserReviews(reviewsWithSpots);
+            }
+
+            // Fetch user's created spots
+            const { data: userSpotsData } = await supabase
                 .from('spots')
                 .select('*')
-                .in('id', spotIds);
-            setFavouriteSpots(spots || []);
+                .eq('created_by', user.id)
+                .order('created_at', { ascending: false });
+
+            setUserSpots(userSpotsData || []);
+        } catch (error) {
+            console.error("Profile load error:", error);
+        } finally {
+            setLoading(false);
         }
-
-        // Fetch user's reviews with spot details
-        const { data: reviewsData } = await supabase
-            .from('reviews')
-            .select('*, spot_id')
-            .eq('user_id', user.id)
-            .order('created_at', { ascending: false });
-
-        if (reviewsData && reviewsData.length > 0) {
-            const spotIds = reviewsData.map(r => r.spot_id);
-            const { data: spots } = await supabase
-                .from('spots')
-                .select('*')
-                .in('id', spotIds);
-
-            // Merge reviews with spot data
-            const reviewsWithSpots = reviewsData.map(review => ({
-                ...review,
-                spot: spots?.find(s => s.id === review.spot_id)
-            }));
-            setUserReviews(reviewsWithSpots);
-        }
-
-        // Fetch user's created spots
-        const { data: userSpotsData } = await supabase
-            .from('spots')
-            .select('*')
-            .eq('created_by', user.id)
-            .order('created_at', { ascending: false });
-
-        setUserSpots(userSpotsData || []);
-        setLoading(false);
-        setLoading(false);
     };
 
     const handleShare = () => {

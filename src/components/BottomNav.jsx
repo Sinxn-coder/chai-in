@@ -12,7 +12,7 @@ const BottomNav = ({ lang }) => {
         { to: '/map', icon: Map, label: 'Map' },
         { to: '/add-spot', icon: Plus, label: 'Add', isFab: true },
         { to: '/leaderboard', icon: Trophy, label: 'Leaders' },
-        { to: '/profile', icon: User, label: 'Profile' },
+        { to: '/community', icon: Users, label: 'Club' },
     ];
 
     return (

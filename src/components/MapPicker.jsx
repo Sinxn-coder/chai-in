@@ -10,26 +10,25 @@ const MapPicker = ({ isOpen, onClose, onSelectLocation, initialCenter = [11.2588
     const mapContainerRef = useRef(null);
     const mapInstanceRef = useRef(null);
     const markerRef = useRef(null);
+    const tileLayerRef = useRef(null);
+    const satelliteLayerRef = useRef(null);
 
     // Initial load of resources
     useEffect(() => {
         if (!isOpen) return;
 
         const loadLeaflet = () => {
-            // Check if Leaflet is already loaded globally
             if (window.L) {
                 setIsMapReady(true);
                 return;
             }
 
-            // Check if script is already present but not loaded yet
             if (document.getElementById('leaflet-script')) {
                 const existingScript = document.getElementById('leaflet-script');
                 existingScript.addEventListener('load', () => setIsMapReady(true));
                 return;
             }
 
-            // Load CSS
             if (!document.getElementById('leaflet-css')) {
                 const link = document.createElement('link');
                 link.id = 'leaflet-css';
@@ -38,7 +37,6 @@ const MapPicker = ({ isOpen, onClose, onSelectLocation, initialCenter = [11.2588
                 document.head.appendChild(link);
             }
 
-            // Load JS
             const script = document.createElement('script');
             script.id = 'leaflet-script';
             script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
@@ -54,14 +52,15 @@ const MapPicker = ({ isOpen, onClose, onSelectLocation, initialCenter = [11.2588
     useEffect(() => {
         if (!isOpen || !isMapReady || !mapContainerRef.current) return;
 
-        // Cleanup existing map if initialization runs again
         if (mapInstanceRef.current) {
             mapInstanceRef.current.remove();
             mapInstanceRef.current = null;
         }
 
         try {
-            // Add Tile Layers
+            const map = window.L.map(mapContainerRef.current).setView(initialCenter, 13);
+            mapInstanceRef.current = map;
+
             const streets = window.L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '© OpenStreetMap contributors'
             });
@@ -79,7 +78,6 @@ const MapPicker = ({ isOpen, onClose, onSelectLocation, initialCenter = [11.2588
             tileLayerRef.current = streets;
             satelliteLayerRef.current = satellite;
 
-            // Add Marker
             const marker = window.L.marker(initialCenter, {
                 draggable: true,
                 icon: window.L.icon({
@@ -95,7 +93,6 @@ const MapPicker = ({ isOpen, onClose, onSelectLocation, initialCenter = [11.2588
 
             marker.bindPopup('Drag me to select location!').openPopup();
 
-            // Events
             marker.on('dragend', function (e) {
                 const position = e.target.getLatLng();
                 setSelectedLocation({ lat: position.lat, lng: position.lng });
@@ -106,7 +103,6 @@ const MapPicker = ({ isOpen, onClose, onSelectLocation, initialCenter = [11.2588
                 setSelectedLocation({ lat: e.latlng.lat, lng: e.latlng.lng });
             });
 
-            // Locate control (manual implementation for simplicity)
             const locateControl = window.L.Control.extend({
                 options: { position: 'bottomright' },
                 onAdd: function (map) {
@@ -135,12 +131,10 @@ const MapPicker = ({ isOpen, onClose, onSelectLocation, initialCenter = [11.2588
                 setSelectedLocation({ lat: e.latlng.lat, lng: e.latlng.lng });
             });
 
-            // Trigger resize to ensure tiles load correctly
             setTimeout(() => {
                 map.invalidateSize();
-            }, 200);
+            }, 300);
 
-            // Set initial selection
             setSelectedLocation({ lat: initialCenter[0], lng: initialCenter[1] });
 
         } catch (error) {
