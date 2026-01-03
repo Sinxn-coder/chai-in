@@ -164,8 +164,28 @@ const EditSpot = ({ lang }) => {
                                 placeholder="Address"
                                 value={formData.location_text}
                                 onChange={e => setFormData({ ...formData, location_text: e.target.value })}
-                                style={{ width: '100%', padding: '14px', borderRadius: '12px', border: 'none', background: 'rgba(255,255,255,0.1)', color: 'white' }}
+                                style={{ width: '100%', padding: '14px', borderRadius: '12px', border: 'none', background: 'rgba(255,255,255,0.1)', color: 'white', marginBottom: '1.5rem' }}
                             />
+
+                            <label style={{ display: 'block', marginBottom: '8px', opacity: 0.8 }}>Price Level</label>
+                            <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', marginBottom: '1.5rem' }}>
+                                {[1, 2, 3].map(lvl => (
+                                    <button
+                                        key={lvl} type="button"
+                                        onClick={() => setFormData({ ...formData, price: lvl })}
+                                        style={{
+                                            width: '60px', height: '60px',
+                                            borderRadius: '20px',
+                                            background: formData.price === lvl ? 'linear-gradient(135deg, #F59E0B 0%, #D97706 100%)' : 'rgba(255,255,255,0.1)',
+                                            color: 'white',
+                                            border: formData.price === lvl ? 'none' : '2px solid rgba(255,255,255,0.2)',
+                                            fontWeight: '800', fontSize: '1.2rem', cursor: 'pointer', transition: 'all 0.3s ease'
+                                        }}
+                                    >
+                                        {'₹'.repeat(lvl)}
+                                    </button>
+                                ))}
+                            </div>
 
                             <div style={{ display: 'flex', gap: '1rem', marginTop: '2rem' }}>
                                 <button type="button" onClick={handleBack} style={{ flex: 1, padding: '16px', borderRadius: '16px', background: 'transparent', border: '1px solid rgba(255,255,255,0.2)', color: 'white', cursor: 'pointer' }}>Back</button>

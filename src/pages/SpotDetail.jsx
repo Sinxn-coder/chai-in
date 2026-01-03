@@ -296,7 +296,7 @@ const SpotDetail = ({ lang }) => {
                         background: 'var(--bg-cream)', padding: '6px 12px',
                         borderRadius: '12px', fontWeight: 'bold', color: 'var(--secondary)'
                     }}>
-                        ${spot.price_level}/4
+                        {'₹'.repeat(spot.price_level || 1)}/3
                     </div>
                 </div>
 

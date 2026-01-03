@@ -368,7 +368,7 @@ const AddSpot = ({ lang }) => {
                                                 transition: 'all 0.3s ease'
                                             }}
                                         >
-                                            {'$'.repeat(lvl)}
+                                            {'₹'.repeat(lvl)}
                                         </button>
                                     ))}
                                 </div>

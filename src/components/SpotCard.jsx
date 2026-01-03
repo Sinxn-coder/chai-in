@@ -3,12 +3,22 @@ import { Star, MapPin, Heart, Check, User } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabaseClient';
 import { useAuth } from '../context/AuthContext';
+import ImageSlider from './ImageSlider';
 
 const SpotCard = ({ spot }) => {
     const { name, rating, reviews_count, images, distance, tags, price_level, id } = spot;
     const navigate = useNavigate();
     const { user } = useAuth();
     const [visited, setVisited] = React.useState(false);
+
+    // Price Level Colors
+    const getPriceColor = (level) => {
+        if (level <= 1) return '#10B981'; // Green
+        if (level === 2) return '#F59E0B'; // Orange
+        return '#EF4444'; // Red
+    };
+
+    const priceColor = getPriceColor(price_level || 1);
     const [visitCount, setVisitCount] = React.useState(0);
     const [visitLoading, setVisitLoading] = React.useState(true);
 
@@ -129,10 +139,11 @@ const SpotCard = ({ spot }) => {
                 borderRadius: '16px',
                 overflow: 'hidden',
                 boxShadow: '0 8px 30px rgba(0,0,0,0.06)',
-                transition: 'transform 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                transition: 'all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
                 cursor: 'pointer',
                 marginBottom: '24px',
-                border: '1px solid rgba(0,0,0,0.02)'
+                border: '1px solid rgba(0,0,0,0.02)',
+                borderTop: `5px solid ${priceColor}` // Color based on price
             }}
             onMouseEnter={(e) => {
                 e.currentTarget.style.transform = 'scale(1.02)';
@@ -143,33 +154,16 @@ const SpotCard = ({ spot }) => {
                 e.currentTarget.style.boxShadow = '0 8px 30px rgba(0,0,0,0.06)';
             }}
         >
-            {/* Image Area - Horizontal Scroll */}
+            {/* Image Area - Automatic Slider */}
             <div
-                className="hide-scrollbar"
                 style={{
                     position: 'relative',
                     height: '240px',
-                    display: 'flex',
-                    overflowX: 'auto',
-                    scrollSnapType: 'x mandatory',
                     background: '#f0f0f0'
                 }}
                 onClick={(e) => e.stopPropagation()}
             >
-                {/* Images */}
-                {(images && images.length > 0 ? images : ['https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&q=80']).map((img, i) => (
-                    <img
-                        key={i}
-                        src={img}
-                        alt={`${name} ${i + 1}`}
-                        style={{
-                            minWidth: '100%',
-                            height: '100%',
-                            objectFit: 'cover',
-                            scrollSnapAlign: 'center'
-                        }}
-                    />
-                ))}
+                <ImageSlider images={images} interval={3000} />
 
                 {/* Rating Badge */}
                 <div style={{
@@ -185,7 +179,8 @@ const SpotCard = ({ spot }) => {
                     display: 'flex',
                     alignItems: 'center',
                     gap: '4px',
-                    boxShadow: '0 2px 8px rgba(0,0,0,0.2)'
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
+                    zIndex: 21
                 }}>
                     {rating} <Star size={12} fill="white" strokeWidth={0} />
                 </div>
@@ -310,7 +305,14 @@ const SpotCard = ({ spot }) => {
                             </span>
                         ))}
                     </div>
-                    <span style={{ fontSize: '0.9rem', fontWeight: '600', color: '#333' }}>
+                    <span style={{
+                        fontSize: '0.9rem',
+                        fontWeight: '800',
+                        color: priceColor,
+                        padding: '2px 8px',
+                        borderRadius: '6px',
+                        background: `${priceColor}15` // Very light background
+                    }}>
                         {'₹'.repeat(price_level)}
                     </span>
                 </div>
