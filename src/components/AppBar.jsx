@@ -75,7 +75,7 @@ const AppBar = () => {
                         }
                     }}
                 />
-                <span style={{ fontSize: '10px', color: 'var(--primary)', fontWeight: 'bold', alignSelf: 'flex-end', marginBottom: '8px' }}>v8</span>
+                <span style={{ fontSize: '10px', color: 'var(--primary)', fontWeight: 'bold', alignSelf: 'flex-end', marginBottom: '8px' }}>v10</span>
             </div>
 
             {/* Right Actions */}
