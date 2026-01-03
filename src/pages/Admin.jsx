@@ -199,7 +199,7 @@ const Admin = () => {
                             fontSize: '1.2rem', letterSpacing: '4px'
                         }}
                         onKeyDown={(e) => {
-                            if (e.key === 'Enter' && pin === "Sinu@1234") {
+                            if (e.key === 'Enter' && pin === "Sinu@12345") {
                                 setIsAuthorized(true);
                             } else if (e.key === 'Enter') {
                                 showToast("Incorrect PIN", 'error');
@@ -208,7 +208,7 @@ const Admin = () => {
                     />
                     <Button
                         onClick={() => {
-                            if (pin === "Sinu@1234") setIsAuthorized(true);
+                            if (pin === "Sinu@12345") setIsAuthorized(true);
                             else showToast("Incorrect PIN", 'error');
                         }}
                         style={{ width: '100%' }}

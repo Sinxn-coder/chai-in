@@ -61,7 +61,7 @@ const Community = () => {
         }
 
         // Fetch authors
-        const userIds = [...new Set(postsData.map(p => p.user_id))];
+        const userIds = [...new Set((postsData || []).map(p => p.user_id))];
         const { data: usersData, error: userError } = await supabase
             .from('user_preferences')
             .select('user_id, username, display_name, avatar_url')
@@ -393,7 +393,7 @@ const Community = () => {
                                 placeholder="Write a caption..."
                                 value={newCaption}
                                 onChange={e => setNewCaption(e.target.value)}
-                                style={{ wwidth: '100%', border: 'none', fontSize: '1.rem', outline: 'none', resize: 'none', fontFamily: 'inherit' }}
+                                style={{ width: '100%', border: 'none', fontSize: '1rem', outline: 'none', resize: 'none', fontFamily: 'inherit' }}
                                 rows={4}
                             />
                         </div>
