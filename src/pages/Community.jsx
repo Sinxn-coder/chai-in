@@ -262,7 +262,12 @@ const Community = () => {
             {/* Content - Feed Only */}
             <div className="container" style={{ padding: '16px', maxWidth: '500px', margin: '0 auto' }}>
                 {loading && <p style={{ textAlign: 'center', padding: '20px' }}>Loading feed...</p>}
-
+                {!loading && posts.length === 0 && (
+                    <div style={{ textAlign: 'center', padding: '40px 20px', color: '#888' }}>
+                        <p style={{ fontSize: '1.2rem', marginBottom: '10px' }}>No posts yet 🍃</p>
+                        <p>Be the first to share a moment!</p>
+                    </div>
+                )}
                 {posts.map(post => (
                     <div key={post.id} style={{
                         background: 'white', borderRadius: '20px',
