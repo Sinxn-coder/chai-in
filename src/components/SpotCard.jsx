@@ -11,14 +11,26 @@ const SpotCard = ({ spot }) => {
     const { user } = useAuth();
     const [visited, setVisited] = React.useState(false);
 
-    // Price Level Colors
-    const getPriceColor = (level) => {
-        if (level <= 1) return '#10B981'; // Green
-        if (level === 2) return '#F59E0B'; // Orange
-        return '#EF4444'; // Red
+    // Price Level Gradient Palettes
+    const getPriceTheme = (level) => {
+        if (level <= 1) return {
+            gradient: 'linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%)',
+            shadow: 'rgba(0, 210, 255, 0.2)',
+            text: '#0056b3'
+        };
+        if (level === 2) return {
+            gradient: 'linear-gradient(135deg, #8e2de2 0%, #4a00e0 100%)',
+            shadow: 'rgba(142, 45, 226, 0.2)',
+            text: '#4a00e0'
+        };
+        return {
+            gradient: 'linear-gradient(135deg, #f2994a 0%, #f2c94c 100%)',
+            shadow: 'rgba(242, 153, 74, 0.2)',
+            text: '#8a5e00'
+        };
     };
 
-    const priceColor = getPriceColor(price_level || 1);
+    const theme = getPriceTheme(price_level || 1);
     const [visitCount, setVisitCount] = React.useState(0);
     const [visitLoading, setVisitLoading] = React.useState(true);
 
@@ -136,14 +148,14 @@ const SpotCard = ({ spot }) => {
             onClick={handleCardClick}
             style={{
                 background: 'white',
-                borderRadius: '16px',
+                borderRadius: '24px', // More rounded for premium feel
                 overflow: 'hidden',
-                boxShadow: '0 8px 30px rgba(0,0,0,0.06)',
-                transition: 'all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                boxShadow: `0 10px 40px ${theme.shadow}, 0 4px 12px rgba(0,0,0,0.03)`,
+                transition: 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
                 cursor: 'pointer',
-                marginBottom: '24px',
-                border: '1px solid rgba(0,0,0,0.02)',
-                borderTop: `5px solid ${priceColor}` // Color based on price
+                marginBottom: '28px',
+                border: '1px solid rgba(0,0,0,0.03)',
+                position: 'relative'
             }}
             onMouseEnter={(e) => {
                 e.currentTarget.style.transform = 'scale(1.02)';
@@ -154,6 +166,15 @@ const SpotCard = ({ spot }) => {
                 e.currentTarget.style.boxShadow = '0 8px 30px rgba(0,0,0,0.06)';
             }}
         >
+            {/* Premium Gradient Top Accents */}
+            <div style={{
+                position: 'absolute',
+                top: 0, left: 0, right: 0,
+                height: '6px',
+                background: theme.gradient,
+                zIndex: 10
+            }} />
+
             {/* Image Area - Automatic Slider */}
             <div
                 style={{
@@ -165,21 +186,21 @@ const SpotCard = ({ spot }) => {
             >
                 <ImageSlider images={images} interval={3000} />
 
-                {/* Rating Badge */}
+                {/* Rating Badge - Using Theme Gradient */}
                 <div style={{
                     position: 'absolute',
                     bottom: '12px',
                     right: '12px',
-                    background: rating >= 4.0 ? '#267E3E' : '#f59e0b',
+                    background: theme.gradient,
                     color: 'white',
-                    padding: '4px 8px',
-                    borderRadius: '6px',
+                    padding: '6px 10px',
+                    borderRadius: '10px',
                     fontSize: '0.85rem',
                     fontWeight: '800',
                     display: 'flex',
                     alignItems: 'center',
                     gap: '4px',
-                    boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
                     zIndex: 21
                 }}>
                     {rating} <Star size={12} fill="white" strokeWidth={0} />
@@ -307,11 +328,12 @@ const SpotCard = ({ spot }) => {
                     </div>
                     <span style={{
                         fontSize: '0.9rem',
-                        fontWeight: '800',
-                        color: priceColor,
-                        padding: '2px 8px',
-                        borderRadius: '6px',
-                        background: `${priceColor}15` // Very light background
+                        fontWeight: '900',
+                        padding: '6px 12px',
+                        borderRadius: '12px',
+                        background: theme.gradient,
+                        color: 'white',
+                        boxShadow: `0 4px 10px ${theme.shadow}`
                     }}>
                         {'₹'.repeat(price_level)}
                     </span>
