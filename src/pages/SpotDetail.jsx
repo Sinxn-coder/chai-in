@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabaseClient';
 import { useAuth } from '../context/AuthContext';
-import { ArrowLeft, MapPin, Star, Heart, Share2, Send, Navigation, X, Edit3 } from 'lucide-react';
+import { ArrowLeft, MapPin, Star, Heart, Share2, Send, Navigation, X, Edit3, Instagram, MessageCircle } from 'lucide-react';
 import Button from '../components/Button';
 import Toast from '../components/Toast';
 import ImageSlider from '../components/ImageSlider';
@@ -20,6 +20,7 @@ const SpotDetail = ({ lang }) => {
     const [rating, setRating] = useState(5);
     const [toast, setToast] = useState(null);
     const [showGallery, setShowGallery] = useState(false);
+    const [isOpen, setIsOpen] = useState(null);
 
     useEffect(() => {
         fetchSpotDetails();
@@ -41,6 +42,7 @@ const SpotDetail = ({ lang }) => {
         }
 
         setSpot(spotData);
+        calculateAvailability(spotData);
 
         // 2. Fetch Reviews
         fetchReviews();
@@ -57,6 +59,37 @@ const SpotDetail = ({ lang }) => {
         }
 
         setLoading(false);
+    };
+
+    const calculateAvailability = async (spotData) => {
+        // 1. Check Recent Visits (Intelligence)
+        const { data: recentVisits } = await supabase
+            .from('visited_spots')
+            .select('created_at')
+            .eq('spot_id', id)
+            .order('created_at', { ascending: false })
+            .limit(1);
+
+        const now = new Date();
+        const keralaOffset = 5.5 * 60 * 60 * 1000;
+        const keralaTime = new Date(now.getTime() + keralaOffset);
+        const hour = keralaTime.getUTCHours();
+
+        if (recentVisits && recentVisits.length > 0) {
+            const lastVisit = new Date(recentVisits[0].created_at);
+            const diffInMinutes = (now - lastVisit) / (1000 * 60);
+
+            if (diffInMinutes < 60) {
+                setIsOpen(true);
+                return;
+            }
+        }
+
+        if (hour >= 10 && hour <= 22) {
+            setIsOpen(true);
+        } else {
+            setIsOpen(false);
+        }
     };
 
     const fetchReviews = async () => {
@@ -233,37 +266,69 @@ const SpotDetail = ({ lang }) => {
             }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start' }}>
                     <div style={{ flex: 1 }}>
-                        <h1 style={{ fontSize: '1.8rem', fontWeight: '800', margin: 0 }}>{spot.name}</h1>
-                        <p style={{ color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '6px', marginTop: '8px' }}>
-                            <MapPin size={16} /> {spot.location_text || 'Kerala'}
-                        </p>
-                        {/* Get Directions Button */}
-                        {spot.latitude && spot.longitude && (
-                            <button
-                                onClick={getDirections}
-                                style={{
-                                    marginTop: '8px',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: '6px',
-                                    padding: '8px 16px',
-                                    background: 'linear-gradient(135deg, #4285F4 0%, #34A853 100%)',
-                                    color: 'white',
-                                    border: 'none',
-                                    borderRadius: '8px',
-                                    fontSize: '0.9rem',
-                                    fontWeight: '600',
-                                    cursor: 'pointer',
-                                    boxShadow: '0 2px 8px rgba(66, 133, 244, 0.3)',
-                                    transition: 'all 0.2s ease'
-                                }}
-                                onMouseEnter={(e) => e.target.style.transform = 'translateY(-2px)'}
-                                onMouseLeave={(e) => e.target.style.transform = 'translateY(0)'}
-                            >
-                                <Navigation size={16} />
-                                Get Directions
-                            </button>
-                        )}
+                        <h1 style={{ fontSize: '1.8rem', fontWeight: '900', margin: 0, color: '#1a1a1a' }}>{spot.name}</h1>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '8px' }}>
+                            <div style={{
+                                background: isOpen ? '#10b981' : '#64748b',
+                                color: 'white', padding: '4px 10px', borderRadius: '12px',
+                                fontSize: '0.7rem', fontWeight: '800', display: 'flex', alignItems: 'center', gap: '4px'
+                            }}>
+                                <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'white', animation: isOpen ? 'pulse 2s infinite' : 'none' }} />
+                                {isOpen ? 'OPEN NOW' : 'CLOSED'}
+                            </div>
+                            <p style={{ color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '4px', margin: 0, fontSize: '0.9rem' }}>
+                                <MapPin size={14} /> {spot.location_text || 'Kerala'}
+                            </p>
+                        </div>
+                        {/* Action Buttons Group */}
+                        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginTop: '16px' }}>
+                            {spot.latitude && spot.longitude && (
+                                <button
+                                    onClick={getDirections}
+                                    style={{
+                                        display: 'flex', alignItems: 'center', gap: '6px', padding: '10px 16px',
+                                        background: 'linear-gradient(135deg, #4285F4 0%, #34A853 100%)',
+                                        color: 'white', border: 'none', borderRadius: '12px',
+                                        fontSize: '0.9rem', fontWeight: '700', cursor: 'pointer',
+                                        boxShadow: '0 4px 12px rgba(66, 133, 244, 0.2)'
+                                    }}
+                                >
+                                    <Navigation size={16} /> Maps
+                                </button>
+                            )}
+
+                            {spot.instagram_handle && (
+                                <a
+                                    href={`https://instagram.com/${spot.instagram_handle.replace('@', '')}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    style={{
+                                        display: 'flex', alignItems: 'center', gap: '6px', padding: '10px 16px',
+                                        background: 'linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%)',
+                                        color: 'white', border: 'none', borderRadius: '12px', textDecoration: 'none',
+                                        fontSize: '0.9rem', fontWeight: '700', boxShadow: '0 4px 12px rgba(188, 24, 136, 0.2)'
+                                    }}
+                                >
+                                    <Instagram size={16} /> Instagram
+                                </a>
+                            )}
+
+                            {spot.whatsapp_number && (
+                                <a
+                                    href={`https://wa.me/${spot.whatsapp_number.replace(/\D/g, '')}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    style={{
+                                        display: 'flex', alignItems: 'center', gap: '6px', padding: '10px 16px',
+                                        background: 'linear-gradient(135deg, #25D366 0%, #128C7E 100%)',
+                                        color: 'white', border: 'none', borderRadius: '12px', textDecoration: 'none',
+                                        fontSize: '0.9rem', fontWeight: '700', boxShadow: '0 4px 12px rgba(37, 211, 102, 0.2)'
+                                    }}
+                                >
+                                    <MessageCircle size={16} /> WhatsApp
+                                </a>
+                            )}
+                        </div>
                         {/* Edit Spot Button - Available for all logged-in users */}
                         {user && (
                             <button

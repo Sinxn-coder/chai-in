@@ -105,8 +105,28 @@ const Home = ({ lang }) => {
         setIsSearchingLocation(false);
     };
 
-    const fetchSpots = async () => {
-        setLoading(true);
+    const fetchSpots = async (isRefresh = false) => {
+        // Caching Logic for Speed
+        const cacheKey = 'home_spots_cache';
+        const cachedData = localStorage.getItem(cacheKey);
+        const cacheTime = localStorage.getItem(cacheKey + '_time');
+        const now = Date.now();
+
+        if (cachedData && cacheTime && (now - cacheTime < 15 * 60 * 1000) && !isRefresh && !activeLocation) {
+            const parsed = JSON.parse(cachedData);
+            setSpots(parsed);
+            setFilteredSpots(parsed);
+            setLoading(false);
+            // Still fetch in background to keep fresh
+            performFetch(false);
+            return;
+        }
+
+        performFetch(true);
+    };
+
+    const performFetch = async (showLoading) => {
+        if (showLoading) setLoading(true);
         const { data, error } = await supabase
             .from('spots')
             .select('*')
@@ -149,6 +169,12 @@ const Home = ({ lang }) => {
 
             setSpots(allSpots);
             setFilteredSpots(allSpots);
+
+            // Update Cache
+            if (!activeLocation) {
+                localStorage.setItem('home_spots_cache', JSON.stringify(allSpots));
+                localStorage.setItem('home_spots_cache_time', Date.now().toString());
+            }
         }
         setLoading(false);
     };

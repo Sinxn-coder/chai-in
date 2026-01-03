@@ -6,7 +6,7 @@ import { useAuth } from '../context/AuthContext';
 import ImageSlider from './ImageSlider';
 
 const SpotCard = ({ spot }) => {
-    const { name, rating, reviews_count, images, distance, tags, price_level, id } = spot;
+    const { name, rating, reviews_count, images, distance, tags, price_level, id, instagram_handle, whatsapp_number } = spot;
     const navigate = useNavigate();
     const { user } = useAuth();
     const [visited, setVisited] = React.useState(false);
@@ -33,12 +33,49 @@ const SpotCard = ({ spot }) => {
     const theme = getPriceTheme(price_level || 1);
     const [visitCount, setVisitCount] = React.useState(0);
     const [visitLoading, setVisitLoading] = React.useState(true);
+    const [isOpen, setIsOpen] = React.useState(null); // null = unknown, true = open, false = closed
+    const [lastVisitorTime, setLastVisitorTime] = React.useState(null);
 
     React.useEffect(() => {
         if (id) {
             fetchVisitStats();
+            calculateAvailability();
         }
     }, [id, user]);
+
+    const calculateAvailability = async () => {
+        // 1. Check Recent Visits (Intelligence)
+        const { data: recentVisits } = await supabase
+            .from('visited_spots')
+            .select('created_at')
+            .eq('spot_id', id)
+            .order('created_at', { ascending: false })
+            .limit(1);
+
+        const now = new Date();
+        const keralaOffset = 5.5 * 60 * 60 * 1000;
+        const keralaTime = new Date(now.getTime() + keralaOffset);
+        const hour = keralaTime.getUTCHours();
+
+        if (recentVisits && recentVisits.length > 0) {
+            const lastVisit = new Date(recentVisits[0].created_at);
+            const diffInMinutes = (now - lastVisit) / (1000 * 60);
+            setLastVisitorTime(diffInMinutes);
+
+            if (diffInMinutes < 60) {
+                setIsOpen(true); // Verified Open by recent visit
+                return;
+            }
+        }
+
+        // 2. Default Time Patterns (Intelligence)
+        // Most spots in Kerala are open from 10 AM to 10:30 PM
+        if (hour >= 10 && hour <= 22) {
+            setIsOpen(true);
+        } else {
+            setIsOpen(false);
+        }
+    };
 
     const fetchVisitStats = async () => {
         try {
@@ -186,6 +223,28 @@ const SpotCard = ({ spot }) => {
             >
                 <ImageSlider images={images} interval={3000} />
 
+                {/* Availability Badge (Intelligence) */}
+                <div style={{
+                    position: 'absolute',
+                    top: '12px',
+                    left: '12px',
+                    background: isOpen ? 'linear-gradient(135deg, #10b981 0%, #059669 100%)' : 'linear-gradient(135deg, #64748b 0%, #475569 100%)',
+                    color: 'white',
+                    padding: '6px 12px',
+                    borderRadius: '20px',
+                    fontSize: '0.75rem',
+                    fontWeight: '800',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                    zIndex: 21,
+                    backdropFilter: 'blur(10px)'
+                }}>
+                    <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'white', animation: isOpen ? 'pulse 2s infinite' : 'none' }} />
+                    {isOpen ? 'OPEN NOW' : 'CLOSED'}
+                </div>
+
                 {/* Rating Badge - Using Theme Gradient */}
                 <div style={{
                     position: 'absolute',
@@ -259,15 +318,47 @@ const SpotCard = ({ spot }) => {
             {/* Info Area */}
             <div style={{ padding: '16px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
-                    <h3 style={{
-                        fontSize: '1.25rem',
-                        fontWeight: '800',
-                        margin: 0,
-                        color: '#1c1c1c',
-                        lineHeight: '1.3'
-                    }}>
-                        {name}
-                    </h3>
+                    <div style={{ flex: 1 }}>
+                        <h3 style={{
+                            fontSize: '1.25rem',
+                            fontWeight: '900',
+                            margin: 0,
+                            color: '#1a1a1a',
+                            lineHeight: '1.2',
+                            letterSpacing: '-0.3px'
+                        }}>
+                            {name}
+                        </h3>
+                        {/* Social Action Group */}
+                        <div style={{ display: 'flex', gap: '8px', mt: '6px', marginTop: '6px' }} onClick={(e) => e.stopPropagation()}>
+                            {instagram_handle && (
+                                <a
+                                    href={`https://instagram.com/${instagram_handle.replace('@', '')}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    style={{
+                                        padding: '6px', borderRadius: '10px', background: 'linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%)',
+                                        color: 'white', display: 'flex'
+                                    }}
+                                >
+                                    <Instagram size={14} />
+                                </a>
+                            )}
+                            {whatsapp_number && (
+                                <a
+                                    href={`https://wa.me/${whatsapp_number.replace(/\D/g, '')}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    style={{
+                                        padding: '6px', borderRadius: '10px', background: 'linear-gradient(135deg, #25D366 0%, #128C7E 100%)',
+                                        color: 'white', display: 'flex'
+                                    }}
+                                >
+                                    <MessageCircle size={14} />
+                                </a>
+                            )}
+                        </div>
+                    </div>
                     <span style={{
                         backgroundColor: '#f8f8f8',
                         color: '#555',
@@ -311,29 +402,32 @@ const SpotCard = ({ spot }) => {
                 </div>
 
                 {/* Tags & Price */}
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '4px' }}>
                     <div style={{ display: 'flex', gap: '6px', overflow: 'hidden' }}>
-                        {tags.slice(0, 3).map((tag, i) => (
+                        {(tags || []).slice(0, 3).map((tag, i) => (
                             <span key={i} style={{
                                 fontSize: '0.75rem',
-                                color: '#888',
-                                border: '1px solid #eee',
-                                padding: '2px 8px',
-                                borderRadius: '12px',
+                                color: '#64748b',
+                                background: 'rgba(0,0,0,0.04)',
+                                padding: '4px 10px',
+                                borderRadius: '10px',
+                                fontWeight: '700',
                                 whiteSpace: 'nowrap'
                             }}>
-                                {tag}
+                                #{tag}
                             </span>
                         ))}
                     </div>
                     <span style={{
                         fontSize: '0.9rem',
-                        fontWeight: '900',
-                        padding: '6px 12px',
-                        borderRadius: '12px',
+                        fontWeight: '950',
+                        padding: '8px 14px',
+                        borderRadius: '16px',
                         background: theme.gradient,
                         color: 'white',
-                        boxShadow: `0 4px 10px ${theme.shadow}`
+                        boxShadow: `0 8px 20px ${theme.shadow}`,
+                        transform: 'rotate(-2deg) translateY(-2px)',
+                        transition: 'all 0.3s ease'
                     }}>
                         {'₹'.repeat(price_level)}
                     </span>
