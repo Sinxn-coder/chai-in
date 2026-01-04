@@ -15,7 +15,6 @@ const SpotDetail = ({ lang }) => {
     const [reviews, setReviews] = useState([]);
     const [newReview, setNewReview] = useState('');
     const [isFavorite, setIsFavorite] = useState(false);
-    const [favoriteCount, setFavoriteCount] = useState(0);
     const [loading, setLoading] = useState(true);
     const [isOpen, setIsOpen] = useState(null);
     const [visited, setVisited] = useState(false);
@@ -26,16 +25,24 @@ const SpotDetail = ({ lang }) => {
 
     const fetchSpotDetails = async () => {
         setLoading(true);
-        const { data: spotData, error } = await supabase.from('spots').select('*, likes_count:likes(count)').eq('id', id).single();
-        if (error) { console.error(error); setLoading(false); return; }
+        const { data: spotData, error } = await supabase.from('spots').select('*').eq('id', parseInt(id)).single();
+        if (error) { 
+            console.error('Error fetching spot:', error); 
+            setLoading(false); 
+            return; 
+        }
+        if (!spotData) {
+            console.error('Spot not found');
+            setLoading(false);
+            return;
+        }
         setSpot(spotData);
-        setFavoriteCount(spotData.likes_count[0]?.count || 0);
         calculateAvailability(spotData);
         fetchReviews();
         if (user) {
-            const { data: fav } = await supabase.from('favorites').select('*').eq('spot_id', id).eq('user_id', user.id).maybeSingle();
+            const { data: fav } = await supabase.from('user_favorites').select('*').eq('spot_id', parseInt(id)).eq('user_id', user.id).maybeSingle();
             setIsFavorite(!!fav);
-            const { data: vis } = await supabase.from('visited_spots').select('*').eq('spot_id', id).eq('user_id', user.id).maybeSingle();
+            const { data: vis } = await supabase.from('visited_spots').select('*').eq('spot_id', parseInt(id)).eq('user_id', user.id).maybeSingle();
             setVisited(!!vis);
         }
         setLoading(false);
@@ -48,30 +55,41 @@ const SpotDetail = ({ lang }) => {
     };
 
     const fetchReviews = async () => {
-        const { data } = await supabase.from('reviews').select('*, user:user_preferences(display_name, avatar_url)').eq('spot_id', id).order('created_at', { ascending: false });
-        setReviews(data || []);
+        const { data: reviewsData } = await supabase.from('reviews').select('*').eq('spot_id', id).order('created_at', { ascending: false });
+        
+        if (reviewsData) {
+            const userIds = [...new Set(reviewsData.map(r => r.user_id))];
+            const { data: usersData } = await supabase.from('user_preferences').select('user_id, display_name, avatar_url').in('user_id', userIds);
+            const userMap = {};
+            usersData?.forEach(u => userMap[u.user_id] = u);
+            
+            setReviews(reviewsData.map(r => ({
+                ...r,
+                user: userMap[r.user_id] || { display_name: 'User' }
+            })));
+        } else {
+            setReviews([]);
+        }
     };
 
     const toggleFavorite = async () => {
         if (!user) return alert("Please login!");
         if (isFavorite) {
-            await supabase.from('favorites').delete().eq('spot_id', id).eq('user_id', user.id);
+            await supabase.from('user_favorites').delete().eq('spot_id', parseInt(id)).eq('user_id', user.id);
             setIsFavorite(false);
-            setFavoriteCount(c => c - 1);
         } else {
-            await supabase.from('favorites').insert({ spot_id: id, user_id: user.id });
+            await supabase.from('user_favorites').insert({ spot_id: parseInt(id), user_id: user.id });
             setIsFavorite(true);
-            setFavoriteCount(c => c + 1);
         }
     };
 
     const handleVisitToggle = async () => {
         if (!user) return alert("Please login!");
         if (visited) {
-            await supabase.from('visited_spots').delete().eq('spot_id', id).eq('user_id', user.id);
+            await supabase.from('visited_spots').delete().eq('spot_id', parseInt(id)).eq('user_id', user.id);
             setVisited(false);
         } else {
-            await supabase.from('visited_spots').insert({ spot_id: id, user_id: user.id });
+            await supabase.from('visited_spots').insert({ spot_id: parseInt(id), user_id: user.id });
             setVisited(true);
         }
     };
@@ -81,7 +99,7 @@ const SpotDetail = ({ lang }) => {
         if (!newReview.trim()) return;
 
         const { error } = await supabase.from('reviews').insert({
-            spot_id: id,
+            spot_id: parseInt(id),
             user_id: user.id,
             comment: newReview,
             rating: 5 // Default rating
