@@ -1,444 +1,148 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import { supabase } from '../lib/supabaseClient';
 import SpotCard from '../components/SpotCard';
-import { Search, MapPin, Filter, X, Bell } from 'lucide-react';
+import { Search, MapPin, Filter, X } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
-import NotificationsSheet from '../components/NotificationsSheet';
-// import { getDistanceFromLatLonInKm } from '../utils/mapUtils';
-// Assuming mapUtils exists, if not I will inline the function or import from MapScreen logic if available.
-// Actually safer to inline to avoid import errors if util file not verified.
-
 import { useNavigate } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
+import FoodLoader from '../components/FoodLoader';
 
 const Home = ({ lang }) => {
     const navigate = useNavigate();
     const { user } = useAuth();
 
     const [spots, setSpots] = useState([]);
-    const [filteredSpots, setFilteredSpots] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
-
-
-    // Location State
-    const [userLocation, setUserLocation] = useState(null); // Actual GPS (for distance calculation)
-    const [activeLocation, setActiveLocation] = useState(null); // Selected filter location { lat, lng }
+    const [activeLocation, setActiveLocation] = useState(null);
     const [locationName, setLocationName] = useState('All Kerala');
-    const [isSearchingLocation, setIsSearchingLocation] = useState(false);
-    const [locationQuery, setLocationQuery] = useState('');
-
-    const [nearbyAreas, setNearbyAreas] = useState([]);
     const [activeCategory, setActiveCategory] = useState('All');
-
-    // Check Streaks
-    useEffect(() => {
-        if (user) checkStreak();
-    }, [user]);
-
-
-    const checkStreak = async () => {
-        const today = new Date().toISOString().split('T')[0];
-        const lastActive = localStorage.getItem('last_active_date');
-
-        if (lastActive !== today) {
-            localStorage.setItem('last_active_date', today);
-            // Increment streak in DB
-            if (user) {
-                const { data } = await supabase.from('user_preferences').select('streak').eq('user_id', user.id).single();
-                const newStreak = (data?.streak || 0) + 1;
-                await supabase.from('user_preferences').update({ streak: newStreak }).eq('user_id', user.id);
-            }
-        }
-    };
-
-    useEffect(() => {
-        // Initial Geolocation
-        navigator.geolocation.getCurrentPosition(
-            (pos) => {
-                const { latitude, longitude } = pos.coords;
-                setUserLocation({ lat: latitude, lng: longitude });
-                setLocationName("Current Location");
-            },
-            (err) => {
-                console.error(err);
-                setLocationName("Kerala"); // Default
-                setUserLocation({ lat: 10.8505, lng: 76.2711 }); // Kerala Center
-            }
-        );
-    }, []);
 
     useEffect(() => {
         fetchSpots();
-    }, [activeLocation]); // Re-fetch/filter when active location changes
+    }, [activeLocation]);
 
-    // Actual user GPS for distance sorting/display
-    useEffect(() => {
-        navigator.geolocation.getCurrentPosition(
-            (pos) => setUserLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
-            (err) => console.error(err)
-        );
-    }, []);
-
-    // Search Location (Nominatim)
-    const handleLocationSearch = async () => {
-        if (!locationQuery.trim()) return;
-        setIsSearchingLocation(true);
-        try {
-            const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(locationQuery)}`);
-            const data = await res.json();
-            if (data && data.length > 0) {
-                const { lat, lon, display_name } = data[0];
-                const parts = display_name.split(',');
-                const shortName = parts[0];
-
-                setActiveLocation({ lat: parseFloat(lat), lng: parseFloat(lon) });
-                setLocationName(shortName);
-                setIsSearchingLocation(false);
-                setSearchTerm('');
-            } else {
-                alert("Location not found!");
-            }
-        } catch (e) {
-            console.error(e);
-            alert("Failed to search location");
-        }
-        setIsSearchingLocation(false);
-    };
-
-    const fetchSpots = async (isRefresh = false) => {
-        // Caching Logic for Speed
-        const cacheKey = 'home_spots_cache';
-        const cachedData = localStorage.getItem(cacheKey);
-        const cacheTime = localStorage.getItem(cacheKey + '_time');
-        const now = Date.now();
-
-        if (cachedData && cacheTime && (now - cacheTime < 15 * 60 * 1000) && !isRefresh && !activeLocation) {
-            const parsed = JSON.parse(cachedData);
-            setSpots(parsed);
-            setFilteredSpots(parsed);
-            setLoading(false);
-            // Still fetch in background to keep fresh
-            performFetch(false);
-            return;
-        }
-
-        performFetch(true);
-    };
-
-    const performFetch = async (showLoading) => {
-        if (showLoading) setLoading(true);
-        const { data, error } = await supabase
-            .from('spots')
-            .select('*')
-            .eq('is_verified', true)
-            .order('created_at', { ascending: false });
-
+    const fetchSpots = async () => {
+        setLoading(true);
+        const { data, error } = await supabase.from('spots').select('*').eq('is_verified', true).order('created_at', { ascending: false });
         if (error) {
             console.error(error);
         } else {
-            let allSpots = data || [];
-
-            // 1. Filter by 30km Radius Logic (ONLY if activeLocation is set)
+            let all = data || [];
             if (activeLocation) {
-                const nearby = [];
-                const areas = {};
-
-                allSpots.forEach(spot => {
-                    const dist = getDistanceFromLatLonInKm(activeLocation.lat, activeLocation.lng, spot.latitude, spot.longitude);
-                    spot.distance = dist; // Attach distance for sorting
-
-                    if (dist <= 30) {
-                        nearby.push(spot);
-                        // Extract Area Name
-                        if (spot.location_text) {
-                            const area = spot.location_text.split(',')[0].trim();
-                            areas[area] = (areas[area] || 0) + 1;
-                        }
-                    }
-                });
-
-                // Update Nearby Areas List
-                setNearbyAreas(Object.keys(areas).slice(0, 5));
-                allSpots = nearby;
-            } else if (userLocation) {
-                // Background distance calculation if userLocation exists but no filter
-                allSpots.forEach(spot => {
-                    spot.distance = getDistanceFromLatLonInKm(userLocation.lat, userLocation.lng, spot.latitude, spot.longitude);
-                });
+                all = all.filter(s => getDistanceFromLatLonInKm(activeLocation.lat, activeLocation.lng, s.latitude, s.longitude) <= 30);
             }
-
-            setSpots(allSpots);
-            setFilteredSpots(allSpots);
-
-            // Update Cache
-            if (!activeLocation) {
-                localStorage.setItem('home_spots_cache', JSON.stringify(allSpots));
-                localStorage.setItem('home_spots_cache_time', Date.now().toString());
-            }
+            setSpots(all);
         }
         setLoading(false);
     };
 
-    // Filter Logic (Search Term + Category)
-    useEffect(() => {
-        let results = spots;
+    const filteredSpots = useMemo(() => {
+        return spots.filter(s => {
+            const matchesSearch = s.name.toLowerCase().includes(searchTerm.toLowerCase());
+            const matchesCategory = activeCategory === 'All' || s.category === activeCategory;
+            return matchesSearch && matchesCategory;
+        });
+    }, [spots, searchTerm, activeCategory]);
 
-        if (searchTerm) {
-            results = results.filter(s => s.name.toLowerCase().includes(searchTerm.toLowerCase()));
-        }
-
-        if (activeCategory !== 'All') {
-            results = results.filter(s => s.category === activeCategory);
-        }
-
-        setFilteredSpots(results);
-    }, [searchTerm, activeCategory, spots]);
-
-    // Helper (Inline)
     function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
-        if (!lat1 || !lon1 || !lat2 || !lon2) return 9999;
         var R = 6371;
-        var dLat = deg2rad(lat2 - lat1);
-        var dLon = deg2rad(lon2 - lon1);
-        var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-            Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
-            Math.sin(dLon / 2) * Math.sin(dLon / 2);
-        var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        var d = R * c;
-        return d;
+        var dLat = (lat2 - lat1) * Math.PI / 180;
+        var dLon = (lon2 - lon1) * Math.PI / 180;
+        var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)));
     }
-    function deg2rad(deg) { return deg * (Math.PI / 180); }
-
-
-    // Hash navigation for #admin shortcut
-    useEffect(() => {
-        if (window.location.hash === '#admin') {
-            navigate(`/${lang || 'en'}/admin`);
-        }
-    }, [navigate, lang]);
-
-    const handleSearchInput = (val) => {
-        setSearchTerm(val);
-        if (val.toLowerCase().trim() === '#admin') {
-            navigate(`/${lang || 'en'}/admin`);
-        }
-    };
-
-    const handleUseCurrentLocation = () => {
-        setIsSearchingLocation(false);
-        navigator.geolocation.getCurrentPosition(
-            (pos) => {
-                const { latitude, longitude } = pos.coords;
-                const newLocation = { lat: latitude, lng: longitude };
-                setActiveLocation(newLocation);
-                setLocationName("Nearby You");
-            },
-            (err) => {
-                console.error(err);
-            }
-        );
-    };
-
-    const handleClearLocation = () => {
-        setActiveLocation(null);
-        setLocationName('All Kerala');
-        setIsSearchingLocation(false);
-    };
 
     return (
-        <div style={{ padding: '20px', paddingBottom: '100px', paddingTop: '10px' }}>
+        <div style={{ padding: '20px', paddingBottom: '120px', background: 'var(--bg-white)', minHeight: '100vh' }}>
+            <header style={{ marginBottom: '24px' }}>
+                <p style={{ margin: 0, fontSize: '1rem', color: 'var(--text-muted)' }}>Hello {user?.user_metadata?.full_name?.split(' ')[0] || 'Foodie'},</p>
+                <h1 style={{ margin: '4px 0', fontSize: '1.6rem', fontWeight: '900', color: 'var(--text-main)' }}>What do you want to eat today?</h1>
+            </header>
 
-            {/* Location Selector (Now just the Trigger) */}
-            <div style={{ marginBottom: '15px' }}>
-                <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--text-muted)' }}>Exploring</p>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '5px', cursor: 'pointer' }} onClick={() => setIsSearchingLocation(!isSearchingLocation)}>
-                    <h2 style={{ margin: 0, fontSize: '1.2rem', color: 'var(--e23744)' }}>{locationName} <span style={{ fontSize: '0.7rem' }}>▼</span></h2>
-                </div>
-            </div>
-
-            {/* Location Search Input (Collapsible) */}
-            {isSearchingLocation && (
-                <div
-                    className="glass-card"
-                    style={{
-                        padding: '16px',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        gap: '12px',
-                        marginBottom: '20px',
-                        animation: 'fadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                        zIndex: 10
-                    }}
-                >
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
-                        <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: '700' }}>Change Location</h3>
-                        <button onClick={() => setIsSearchingLocation(false)} style={{ background: 'none', border: 'none', color: '#999' }}><X size={20} /></button>
-                    </div>
-
-                    <button
-                        onClick={handleUseCurrentLocation}
-                        style={{
-                            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
-                            background: 'linear-gradient(135deg, #E0F2F1 0%, #B2DFDB 100%)',
-                            color: '#00796b',
-                            padding: '12px', borderRadius: '12px', border: 'none',
-                            fontWeight: '700', cursor: 'pointer', transition: 'transform 0.2s'
-                        }}
-                        onMouseDown={(e) => e.currentTarget.style.transform = 'scale(0.98)'}
-                        onMouseUp={(e) => e.currentTarget.style.transform = 'scale(1)'}
-                    >
-                        <MapPin size={18} /> Use Current Location
-                    </button>
-
-                    <div style={{ display: 'flex', gap: '8px' }}>
-                        <div style={{ position: 'relative', flex: 1 }}>
-                            <Search size={16} color="#999" style={{ position: 'absolute', left: '12px', top: '12px' }} />
-                            <input
-                                placeholder="Search city or area..."
-                                value={locationQuery}
-                                onChange={(e) => setLocationQuery(e.target.value)}
-                                style={{
-                                    width: '100%',
-                                    border: '1px solid #eee',
-                                    background: '#f9f9f9',
-                                    padding: '10px 10px 10px 36px',
-                                    borderRadius: '12px',
-                                    fontSize: '0.95rem'
-                                }}
-                                onKeyDown={(e) => e.key === 'Enter' && handleLocationSearch()}
-                            />
-                        </div>
-                        <button
-                            onClick={handleLocationSearch}
-                            style={{
-                                background: 'var(--primary)',
-                                color: 'white',
-                                border: 'none',
-                                padding: '10px 20px',
-                                borderRadius: '12px',
-                                fontWeight: '700',
-                                boxShadow: '0 4px 12px rgba(226, 55, 68, 0.2)'
-                            }}
-                        >
-                            Go
-                        </button>
-                    </div>
-
-                    {activeLocation && (
-                        <button
-                            onClick={handleClearLocation}
-                            style={{
-                                marginTop: '4px',
-                                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
-                                background: 'white', color: '#666',
-                                padding: '10px', borderRadius: '12px', border: '1px solid #eee',
-                                fontSize: '0.9rem', fontWeight: '600'
-                            }}
-                        >
-                            <X size={16} /> Clear Location Filter
-                        </button>
-                    )}
-                </div>
-            )}
-
-            {/* Active Location Chip (Visible when filtering) */}
-            {activeLocation && !isSearchingLocation && (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '15px', animation: 'fadeIn 0.3s' }}>
-                    <div
-                        style={{
-                            display: 'flex', alignItems: 'center', gap: '6px',
-                            background: 'linear-gradient(135deg, #FF6B6B 0%, #E23744 100%)',
-                            color: 'white', padding: '6px 14px', borderRadius: '20px',
-                            fontSize: '0.85rem', fontWeight: '700',
-                            boxShadow: '0 4px 12px rgba(226, 55, 68, 0.25)'
-                        }}
-                    >
-                        <MapPin size={14} /> {locationName}
-                        <button
-                            onClick={handleClearLocation}
-                            style={{
-                                marginLeft: '4px', background: 'rgba(255,255,255,0.2)',
-                                border: 'none', borderRadius: '50%', width: '18px', height: '18px',
-                                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                color: 'white', cursor: 'pointer'
-                            }}
-                        >
-                            <X size={12} strokeWidth={3} />
-                        </button>
-                    </div>
-                    <span style={{ fontSize: '0.8rem', color: '#999' }}>within 30km</span>
-                </div>
-            )}
-
-            {/* Main Search Bar (Name) */}
-            <div style={{ position: 'relative', marginBottom: '20px' }}>
-                <Search style={{ position: 'absolute', left: '15px', top: '12px', color: '#999' }} size={20} />
+            <div style={{ position: 'relative', marginBottom: '24px' }}>
                 <input
                     type="text"
                     placeholder="Search dishes, restaurants..."
                     value={searchTerm}
-                    onChange={(e) => handleSearchInput(e.target.value)}
+                    onChange={(e) => {
+                        const value = e.target.value;
+                        if (value === '#admin') {
+                            navigate(`/${lang}/admin`);
+                            setSearchTerm('');
+                        } else {
+                            setSearchTerm(value);
+                        }
+                    }}
                     style={{
-                        width: '100%', padding: '12px 12px 12px 45px',
-                        borderRadius: '12px', border: 'none',
-                        background: 'white', boxShadow: '0 4px 15px rgba(0,0,0,0.05)',
-                        fontSize: '1rem'
+                        width: '100%',
+                        padding: '16px 20px 16px 50px',
+                        borderRadius: 'var(--radius-lg)',
+                        border: 'none',
+                        background: 'var(--secondary)',
+                        fontSize: '1rem',
+                        fontWeight: '600'
                     }}
                 />
+                <Search size={22} color="var(--text-muted)" style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)' }} />
             </div>
 
-            {/* Nearby Pills */}
-            <div className="hide-scrollbar" style={{ display: 'flex', gap: '10px', overflowX: 'auto', marginBottom: '20px' }}>
-                {activeCategory !== 'All' && (
-                    <button onClick={() => setActiveCategory('All')} style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '6px 12px', borderRadius: '20px', background: '#e23744', color: 'white', border: 'none' }}>
-                        <X size={14} /> Clear
-                    </button>
-                )}
-                {['Trending', 'Arabian', 'Burger', 'Cafes', ...nearbyAreas].map(tag => (
-                    <button
-                        key={tag}
-                        onClick={() => {
-                            if (tag === 'Trending') return; // Logic for trending sort?
-                            setActiveCategory(tag === activeCategory ? 'All' : tag);
-                        }}
+            <div className="hide-scrollbar" style={{ display: 'flex', gap: '12px', overflowX: 'auto', marginBottom: '30px', padding: '4px 0' }}>
+                {['All', 'Trending', 'Arabian', 'Burger', 'Cafes', 'Desserts'].map(cat => (
+                    <motion.button
+                        key={cat}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => setActiveCategory(cat)}
                         style={{
-                            padding: '8px 16px', borderRadius: '20px',
-                            background: activeCategory === tag ? 'var(--e23744)' : 'white',
-                            color: activeCategory === tag ? 'white' : '#555',
-                            border: '1px solid #eee', whiteSpace: 'nowrap'
+                            padding: '10px 24px',
+                            borderRadius: '16px',
+                            background: activeCategory === cat ? 'var(--primary)' : 'var(--secondary)',
+                            color: activeCategory === cat ? 'white' : 'var(--text-muted)',
+                            border: 'none',
+                            fontWeight: '800',
+                            whiteSpace: 'nowrap',
+                            boxShadow: activeCategory === cat ? 'var(--shadow-sm)' : 'none',
+                            transition: 'all 0.3s ease'
                         }}
                     >
-                        {tag}
-                    </button>
+                        {cat}
+                    </motion.button>
                 ))}
             </div>
 
-            {/* Content Grid */}
-            {loading ? (
-                <div style={{ textAlign: 'center', padding: '40px' }}>Searching...</div>
-            ) : (
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '20px' }}>
-                    {filteredSpots.length > 0 ? (
-                        filteredSpots.map(spot => (
-                            <SpotCard key={spot.id} spot={spot} />
-                        ))
-                    ) : (
-                        <div style={{ textAlign: 'center', gridColumn: '1/-1', padding: '40px' }}>
-                            <p style={{ color: '#888' }}>No spots found within 30km of {locationName}.</p>
-                            <button onClick={() => setIsSearchingLocation(true)} style={{ color: 'var(--primary)', fontWeight: 'bold', background: 'none', border: 'none' }}>
-                                Try changing location
-                            </button>
-                        </div>
-                    )}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '20px' }}>
+                <div style={{ background: 'rgba(239, 42, 57, 0.1)', color: 'var(--primary)', padding: '6px 12px', borderRadius: '12px', fontSize: '0.85rem', fontWeight: '800', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <MapPin size={16} /> {locationName}
                 </div>
-            )}
+            </div>
 
+            {loading ? (
+                <FoodLoader message="Finding delicious spots..." />
+            ) : (
+                <motion.div
+                    layout
+                    style={{
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(2, 1fr)',
+                        gap: '16px'
+                    }}
+                >
+                    <AnimatePresence>
+                        {filteredSpots.map(spot => (
+                            <SpotCard key={spot.id} spot={spot} />
+                        ))}
+                    </AnimatePresence>
+                </motion.div>
+            )}
             <style>{`
-                @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+                @keyframes pulse {
+                    0% { opacity: 0.6; }
+                    50% { opacity: 0.3; }
+                    100% { opacity: 0.6; }
+                }
             `}</style>
         </div>
     );
 };
-
 
 export default Home;

@@ -96,7 +96,7 @@ const SetUsernameModal = () => {
                 textAlign: 'center', position: 'relative'
             }}>
                 <h2 style={{ fontSize: '1.8rem', fontWeight: '800', marginBottom: '10px' }}>
-                    {isOldUser ? "Update Required 🚀" : "Welcome to Quizzy!"}
+                    {isOldUser ? "Update Required 🚀" : "Welcome to Chai-in!"}
                 </h2>
                 <p style={{ color: '#666', marginBottom: '24px' }}>
                     {isOldUser

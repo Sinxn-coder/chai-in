@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Pause, Play } from 'lucide-react';
 
-const ImageSlider = ({ images, interval = 3000 }) => {
+const ImageSlider = ({ images, interval = 3000, showControls = false }) => {
     // Limit to 5 images as requested
     const displayImages = images && images.length > 0 ? images.slice(0, 5) : ['https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&q=80'];
 
@@ -54,7 +54,7 @@ const ImageSlider = ({ images, interval = 3000 }) => {
             ))}
 
             {/* Pause/Play Toggle - Positioned at bottom left nicely */}
-            {displayImages.length > 1 && (
+            {showControls && displayImages.length > 1 && (
                 <button
                     onClick={togglePlay}
                     style={{

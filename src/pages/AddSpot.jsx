@@ -10,6 +10,7 @@ import MapPicker from '../components/MapPicker';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabaseClient';
 import { useAuth } from '../context/AuthContext';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const AddSpot = ({ lang }) => {
     const navigate = useNavigate();
@@ -33,6 +34,7 @@ const AddSpot = ({ lang }) => {
         description: '',
         instagram: '',
         whatsapp: '',
+        google_maps: '',
         tags: [],
         images: []
     });
@@ -92,434 +94,181 @@ const AddSpot = ({ lang }) => {
         showToast('Location selected from map!');
     };
 
-    // --- Modern Multi-Image Upload Logic ---
     const handleImageUpload = async (e) => {
         const files = Array.from(e.target.files);
         if (files.length === 0) return;
-
-        const totalImages = formData.images.length + files.length;
-        if (totalImages > 5) {
-            showToast("Maximum 5 images allowed in total", 'error');
-            return;
-        }
+        if (formData.images.length + files.length > 5) return showToast("Max 5 images allowed", 'error');
 
         setUploading(true);
-        const uploadedUrls = [];
-
         try {
             for (const file of files) {
-                const fileExt = file.name.split('.').pop();
-                const fileName = `${Math.random()}.${fileExt}`;
-                const filePath = `${fileName}`;
-
-                const { error: uploadError } = await supabase.storage
-                    .from('food-images')
-                    .upload(filePath, file);
-
-                if (uploadError) throw uploadError;
-
-                const { data } = supabase.storage.from('food-images').getPublicUrl(filePath);
-                uploadedUrls.push(data.publicUrl);
+                const fileName = `${Math.random()}.${file.name.split('.').pop()}`;
+                await supabase.storage.from('food-images').upload(fileName, file);
+                const { data } = supabase.storage.from('food-images').getPublicUrl(fileName);
+                setFormData(prev => ({ ...prev, images: [...prev.images, data.publicUrl] }));
             }
-
-            setFormData(prev => ({
-                ...prev,
-                images: [...prev.images, ...uploadedUrls]
-            }));
-            showToast(`${uploadedUrls.length} images uploaded!`);
-
+            showToast(`${files.length} images uploaded!`);
         } catch (error) {
-            console.error("Upload error:", error);
             showToast("Error uploading images.", 'error');
         } finally {
             setUploading(false);
-            if (fileInputRef.current) fileInputRef.current.value = "";
         }
-    };
-
-    const removeImage = (indexToRemove) => {
-        setFormData(prev => ({
-            ...prev,
-            images: prev.images.filter((_, i) => i !== indexToRemove)
-        }));
     };
 
     const toggleTag = (tag) => {
         if (formData.tags.includes(tag)) {
             setFormData(prev => ({ ...prev, tags: prev.tags.filter(t => t !== tag) }));
         } else {
-            if (formData.tags.length >= 5) {
-                showToast("Maximum 5 tags allowed", 'error');
-                return;
-            }
+            if (formData.tags.length >= 5) return showToast("Max 5 tags allowed", 'error');
             setFormData(prev => ({ ...prev, tags: [...prev.tags, tag] }));
         }
     };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+    const handleSubmit = async () => {
         if (!user) return showToast("Please login first", "error");
         setLoading(true);
-
         try {
             const { error } = await supabase.from('spots').insert([{
-                name: formData.name,
-                category: formData.category,
+                ...formData,
                 price_level: formData.price,
-                location_text: formData.location_text,
-                latitude: formData.latitude || 0,
-                longitude: formData.longitude || 0,
-                description: formData.description,
                 instagram_handle: formData.instagram,
                 whatsapp_number: formData.whatsapp,
-                tags: formData.tags,
-                images: formData.images,
-                created_by: user?.id,
-                is_verified: false
+                google_maps_link: formData.google_maps,
+                created_by: user.id
             }]);
-
             if (error) throw error;
-
-            showToast("Spot Submitted Successfully! ✨", 'success');
+            showToast("Spot shared! Redirecting...", 'success');
             setTimeout(() => navigate(`/${lang}/home`), 2000);
         } catch (error) {
-            console.error("Submit error:", error);
-            showToast("Failed to save spot.", 'error');
+            showToast("Error saving spot", 'error');
             setLoading(false);
         }
     };
 
-    const StepIndicator = () => (
-        <div style={{ display: 'flex', justifyContent: 'center', gap: '12px', marginBottom: '2.5rem' }}>
-            {[1, 2, 3, 4].map(i => (
-                <div key={i} style={{
-                    width: i === step ? '32px' : '10px',
-                    height: '10px',
-                    borderRadius: '5px',
-                    background: i <= step ? 'var(--primary)' : 'rgba(255,255,255,0.3)',
-                    transition: 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)'
-                }} />
-            ))}
-        </div>
-    );
-
     return (
-        <div style={{
-            minHeight: '100vh',
-            background: 'linear-gradient(135deg, #FF6B6B 0%, #E23744 100%)',
-            paddingBottom: '120px',
-            color: 'white'
-        }}>
+        <div style={{ minHeight: '100vh', background: 'var(--secondary)', paddingBottom: '100px' }}>
             {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
 
-            <MapPicker
-                isOpen={showMapPicker}
-                onClose={() => setShowMapPicker(false)}
-                onSelectLocation={handleMapClick}
-                initialCenter={mapCenter}
-            />
+            <MapPicker isOpen={showMapPicker} onClose={() => setShowMapPicker(false)} onSelectLocation={handleMapClick} initialCenter={mapCenter} />
 
-            <div className="container" style={{ padding: '2rem 1rem', maxWidth: '550px', margin: '0 auto' }}>
-                {/* Header Section */}
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '2rem' }}>
-                    <button
-                        onClick={() => navigate(-1)}
-                        style={{
-                            background: 'rgba(255,255,255,0.2)',
-                            backdropFilter: 'blur(10px)',
-                            border: '1px solid rgba(255,255,255,0.3)',
-                            padding: '10px',
-                            borderRadius: '16px',
-                            cursor: 'pointer',
-                            color: 'white'
-                        }}
-                    >
-                        <ChevronLeft size={24} />
-                    </button>
-                    <div style={{ textAlign: 'center' }}>
-                        <h1 style={{ fontSize: '1.5rem', fontWeight: '900', margin: 0 }}>Step {step} of 4</h1>
-                    </div>
-                    <div style={{ width: '44px' }}></div>
+            {/* Red Header */}
+            <div style={{ height: '140px', background: 'var(--primary)', borderBottomLeftRadius: '40px', borderBottomRightRadius: '40px', padding: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <button onClick={() => navigate(-1)} style={{ position: 'absolute', left: '20px', background: 'rgba(255,255,255,0.2)', border: 'none', padding: '10px', borderRadius: '15px', color: 'white' }}>
+                    <ChevronLeft size={24} />
+                </button>
+                <h1 style={{ color: 'white', fontSize: '1.4rem', fontWeight: '900' }}>Add New Spot</h1>
+            </div>
+
+            <div className="container" style={{ marginTop: '-40px', padding: '0 20px' }}>
+                {/* Step Indicator */}
+                <div style={{ display: 'flex', gap: '8px', marginBottom: '20px', justifyContent: 'center' }}>
+                    {[1, 2, 3, 4].map(i => (
+                        <div key={i} style={{ width: i === step ? '32px' : '10px', height: '10px', borderRadius: '5px', background: i <= step ? 'var(--primary)' : '#ddd', transition: 'all 0.3s' }} />
+                    ))}
                 </div>
 
-                <StepIndicator />
-
-                <div style={{
-                    background: 'rgba(255,255,255,1)',
-                    borderRadius: '32px',
-                    padding: '2rem',
-                    color: '#1a1a1a',
-                    boxShadow: '0 20px 40px rgba(0,0,0,0.1)'
-                }}>
-
-                    {/* Step 1: Identity & Category */}
-                    {step === 1 && (
-                        <div className="animate-fade-in">
-                            <h2 style={{ fontSize: '1.4rem', fontWeight: '800', marginBottom: '1.5rem', color: '#E23744' }}>
-                                What's the name? 🏷️
-                            </h2>
-
-                            <div style={{ marginBottom: '1.5rem' }}>
-                                <label style={{ display: 'block', fontSize: '0.9rem', fontWeight: '700', marginBottom: '8px', opacity: 0.6 }}>SPOT NAME</label>
+                <motion.div
+                    layout
+                    style={{ background: 'white', borderRadius: '32px', padding: '24px', boxShadow: 'var(--shadow-md)' }}
+                >
+                    <AnimatePresence mode="wait">
+                        {step === 1 && (
+                            <motion.div key="step1" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
+                                <h2 style={{ fontSize: '1.25rem', fontWeight: '900', marginBottom: '16px', color: 'var(--text-main)' }}>The Basics 🍽️</h2>
+                                <label style={{ fontSize: '0.85rem', fontWeight: '800', color: 'var(--text-muted)', marginBottom: '8px', display: 'block' }}>SPOT NAME</label>
                                 <input
                                     type="text"
-                                    placeholder="e.g. Grandma's Famous Biriyani"
+                                    placeholder="Enter spot name..."
                                     value={formData.name}
                                     onChange={e => setFormData({ ...formData, name: e.target.value })}
-                                    style={{
-                                        width: '100%', padding: '16px', borderRadius: '16px', border: '1px solid #eee',
-                                        fontSize: '1rem', background: '#f8fafc', fontWeight: '600', outline: 'none'
-                                    }}
+                                    style={{ width: '100%', padding: '16px', borderRadius: '18px', border: '2px solid var(--secondary)', background: 'var(--secondary)', fontSize: '1rem', fontWeight: '700', outline: 'none', marginBottom: '20px' }}
                                 />
-                            </div>
-
-                            <div style={{ marginBottom: '1.5rem' }}>
-                                <label style={{ display: 'block', fontSize: '0.9rem', fontWeight: '700', marginBottom: '12px', opacity: 0.6 }}>CATEGORY</label>
-                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                                <label style={{ fontSize: '0.85rem', fontWeight: '800', color: 'var(--text-muted)', marginBottom: '12px', display: 'block' }}>CATEGORY</label>
+                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '10px', marginBottom: '24px' }}>
                                     {categories.map(cat => (
                                         <button
-                                            key={cat} type="button"
+                                            key={cat}
                                             onClick={() => setFormData({ ...formData, category: cat })}
-                                            style={{
-                                                padding: '14px', borderRadius: '16px', border: formData.category === cat ? 'none' : '2px solid #f1f5f9',
-                                                background: formData.category === cat ? 'linear-gradient(135deg, #FF6B6B 0%, #E23744 100%)' : 'white',
-                                                color: formData.category === cat ? 'white' : '#64748b',
-                                                fontWeight: '800', fontSize: '0.9rem', cursor: 'pointer',
-                                                transition: 'all 0.3s'
-                                            }}
+                                            style={{ padding: '14px', borderRadius: '18px', border: 'none', background: formData.category === cat ? 'var(--primary)' : 'var(--secondary)', color: formData.category === cat ? 'white' : 'var(--text-main)', fontWeight: '800', transition: 'all 0.2s' }}
                                         >
                                             {cat}
                                         </button>
                                     ))}
                                 </div>
-                            </div>
+                                <Button onClick={handleNext} style={{ width: '100%', padding: '18px', borderRadius: '24px', justifyContent: 'center' }}>Continue</Button>
+                            </motion.div>
+                        )}
 
-                            <Button onClick={handleNext} style={{ width: '100%', padding: '18px', borderRadius: '20px', justifyContent: 'center', fontSize: '1.1rem' }}>
-                                Continue <ChevronRight size={20} style={{ marginLeft: '8px' }} />
-                            </Button>
-                        </div>
-                    )}
-
-                    {/* Step 2: Location & Price */}
-                    {step === 2 && (
-                        <div className="animate-fade-in">
-                            <h2 style={{ fontSize: '1.4rem', fontWeight: '800', marginBottom: '1.5rem', color: '#E23744' }}>
-                                Where is it? 📍
-                            </h2>
-
-                            <div style={{ marginBottom: '1.5rem' }}>
-                                <div style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
-                                    <button
-                                        type="button"
-                                        onClick={handleGetLocation}
-                                        style={{
-                                            flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
-                                            padding: '14px', background: '#ecfdf5', color: '#10b981', border: 'none', borderRadius: '16px', fontWeight: '700'
-                                        }}
-                                    >
+                        {step === 2 && (
+                            <motion.div key="step2" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
+                                <h2 style={{ fontSize: '1.25rem', fontWeight: '900', marginBottom: '16px', color: 'var(--text-main)' }}>Location 📍</h2>
+                                <div style={{ display: 'flex', gap: '10px', marginBottom: '16px' }}>
+                                    <button onClick={handleGetLocation} style={{ flex: 1, padding: '14px', borderRadius: '18px', border: 'none', background: '#ECFDF5', color: '#10B981', fontWeight: '800', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
                                         <Crosshair size={18} /> GPS
                                     </button>
-                                    <button
-                                        type="button"
-                                        onClick={() => setShowMapPicker(true)}
-                                        style={{
-                                            flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
-                                            padding: '14px', background: '#eff6ff', color: '#3b82f6', border: 'none', borderRadius: '16px', fontWeight: '700'
-                                        }}
-                                    >
-                                        <Map size={18} /> Map Pin
+                                    <button onClick={() => setShowMapPicker(true)} style={{ flex: 1, padding: '14px', borderRadius: '18px', border: 'none', background: '#EFF6FF', color: '#3B82F6', fontWeight: '800', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                                        <Map size={18} /> Map
                                     </button>
                                 </div>
                                 <input
                                     type="text"
-                                    placeholder="Address or Location Text"
+                                    placeholder="Location address..."
                                     value={formData.location_text}
                                     onChange={e => setFormData({ ...formData, location_text: e.target.value })}
-                                    style={{
-                                        width: '100%', padding: '16px', borderRadius: '16px', border: '1px solid #eee',
-                                        fontSize: '1rem', background: '#f8fafc', fontWeight: '600'
-                                    }}
+                                    style={{ width: '100%', padding: '16px', borderRadius: '18px', border: '2px solid var(--secondary)', background: 'var(--secondary)', fontSize: '1rem', fontWeight: '700', outline: 'none', marginBottom: '20px' }}
                                 />
-                            </div>
+                                <div style={{ display: 'flex', gap: '12px', marginTop: '12px' }}>
+                                    <button onClick={handleBack} style={{ flex: 1, padding: '18px', borderRadius: '24px', background: 'var(--secondary)', border: 'none', fontWeight: '800' }}>Back</button>
+                                    <Button onClick={handleNext} style={{ flex: 2, padding: '18px', borderRadius: '24px', justifyContent: 'center' }}>Next</Button>
+                                </div>
+                            </motion.div>
+                        )}
 
-                            <label style={{ display: 'block', fontSize: '0.9rem', fontWeight: '700', marginBottom: '12px', opacity: 0.6 }}>PRICE LEVEL</label>
-                            <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', marginBottom: '2rem' }}>
-                                {[1, 2, 3].map(lvl => (
-                                    <button
-                                        key={lvl} type="button"
-                                        onClick={() => setFormData({ ...formData, price: lvl })}
-                                        style={{
-                                            width: '80px', height: '60px', borderRadius: '16px',
-                                            background: formData.price === lvl ? 'linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%)' : '#f8fafc',
-                                            color: formData.price === lvl ? 'white' : '#94a3b8',
-                                            border: 'none', fontWeight: '900', fontSize: '1.2rem', cursor: 'pointer', transition: 'all 0.3s'
-                                        }}
-                                    >
-                                        {'₹'.repeat(lvl)}
-                                    </button>
-                                ))}
-                            </div>
-
-                            <div style={{ display: 'flex', gap: '12px' }}>
-                                <button onClick={handleBack} style={{ flex: 1, padding: '16px', border: 'none', borderRadius: '20px', background: '#f1f5f9', fontWeight: '700' }}>Back</button>
-                                <Button onClick={handleNext} style={{ flex: 2, padding: '16px', borderRadius: '20px', justifyContent: 'center' }}>Next</Button>
-                            </div>
-                        </div>
-                    )}
-
-                    {/* Step 3: Details & Social */}
-                    {step === 3 && (
-                        <div className="animate-fade-in">
-                            <h2 style={{ fontSize: '1.4rem', fontWeight: '800', marginBottom: '1.5rem', color: '#E23744' }}>
-                                Let's get social! 💬
-                            </h2>
-
-                            <div style={{ marginBottom: '1.5rem' }}>
-                                <label style={{ display: 'block', fontSize: '0.9rem', fontWeight: '700', marginBottom: '8px', opacity: 0.6 }}>DESCRIPTION</label>
+                        {step === 3 && (
+                            <motion.div key="step3" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
+                                <h2 style={{ fontSize: '1.25rem', fontWeight: '900', marginBottom: '16px', color: 'var(--text-main)' }}>Socials 💬</h2>
                                 <textarea
-                                    placeholder="Tell more about the specialties, ambiance..."
+                                    placeholder="Add a juicy description..."
                                     value={formData.description}
                                     onChange={e => setFormData({ ...formData, description: e.target.value })}
-                                    style={{
-                                        width: '100%', padding: '16px', borderRadius: '16px', border: '1px solid #eee',
-                                        fontSize: '1rem', background: '#f8fafc', fontWeight: '600', minHeight: '100px', resize: 'none'
-                                    }}
+                                    style={{ width: '100%', padding: '16px', borderRadius: '18px', border: '2px solid var(--secondary)', background: 'var(--secondary)', fontSize: '1rem', fontWeight: '700', outline: 'none', marginBottom: '16px', minHeight: '100px' }}
                                 />
-                            </div>
-
-                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '1.5rem' }}>
-                                <div>
-                                    <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.8rem', fontWeight: '700', marginBottom: '8px', opacity: 0.6 }}>
-                                        <Instagram size={14} /> INSTAGRAM
-                                    </label>
-                                    <input
-                                        type="text"
-                                        placeholder="@handle"
-                                        value={formData.instagram}
-                                        onChange={e => setFormData({ ...formData, instagram: e.target.value })}
-                                        style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1px solid #eee', fontSize: '0.9rem', background: '#f8fafc' }}
-                                    />
+                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '20px' }}>
+                                    <input placeholder="Insta @user" value={formData.instagram} onChange={e => setFormData({ ...formData, instagram: e.target.value })} style={{ padding: '14px', borderRadius: '16px', background: 'var(--secondary)', border: 'none', fontWeight: '700' }} />
+                                    <input placeholder="WhatsApp" value={formData.whatsapp} onChange={e => setFormData({ ...formData, whatsapp: e.target.value })} style={{ padding: '14px', borderRadius: '16px', background: 'var(--secondary)', border: 'none', fontWeight: '700' }} />
                                 </div>
-                                <div>
-                                    <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.8rem', fontWeight: '700', marginBottom: '8px', opacity: 0.6 }}>
-                                        <MessageCircle size={14} /> WHATSAPP
-                                    </label>
-                                    <input
-                                        type="text"
-                                        placeholder="Phone number"
-                                        value={formData.whatsapp}
-                                        onChange={e => setFormData({ ...formData, whatsapp: e.target.value })}
-                                        style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1px solid #eee', fontSize: '0.9rem', background: '#f8fafc' }}
-                                    />
+                                <div style={{ display: 'flex', gap: '12px' }}>
+                                    <button onClick={handleBack} style={{ flex: 1, padding: '18px', borderRadius: '24px', background: 'var(--secondary)', border: 'none', fontWeight: '800' }}>Back</button>
+                                    <Button onClick={handleNext} style={{ flex: 2, padding: '18px', borderRadius: '24px', justifyContent: 'center' }}>Next</Button>
                                 </div>
-                            </div>
+                            </motion.div>
+                        )}
 
-                            <label style={{ display: 'block', fontSize: '0.9rem', fontWeight: '700', marginBottom: '12px', opacity: 0.6 }}>POPULAR TAGS (MAX 5)</label>
-                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '2rem' }}>
-                                {popularTags.map(tag => (
-                                    <button
-                                        key={tag} type="button"
-                                        onClick={() => toggleTag(tag)}
-                                        style={{
-                                            padding: '8px 16px', borderRadius: '20px',
-                                            background: formData.tags.includes(tag) ? '#E23744' : '#f1f5f9',
-                                            color: formData.tags.includes(tag) ? 'white' : '#64748b',
-                                            border: 'none', fontSize: '0.8rem', fontWeight: '700', cursor: 'pointer'
-                                        }}
-                                    >
-                                        {tag}
+                        {step === 4 && (
+                            <motion.div key="step4" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
+                                <h2 style={{ fontSize: '1.25rem', fontWeight: '900', marginBottom: '16px', color: 'var(--text-main)' }}>Photos 📸</h2>
+                                <div onClick={() => fileInputRef.current.click()} style={{ border: '2px dashed #ddd', borderRadius: '24px', padding: '30px', textAlign: 'center', background: 'var(--secondary)', cursor: 'pointer', marginBottom: '20px' }}>
+                                    <input type="file" multiple ref={fileInputRef} onChange={handleImageUpload} style={{ display: 'none' }} />
+                                    {uploading ? <Loader className="animate-spin" size={30} color="var(--primary)" /> : <Camera size={40} color="var(--primary)" />}
+                                    <p style={{ fontWeight: '800', marginTop: '10px', fontSize: '0.9rem' }}>Upload up to 5 photos</p>
+                                </div>
+                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px', marginBottom: '20px' }}>
+                                    {formData.images.map((img, i) => (
+                                        <div key={i} style={{ width: '100%', paddingTop: '100%', position: 'relative', borderRadius: '14px', overflow: 'hidden' }}>
+                                            <img src={img} style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
+                                        </div>
+                                    ))}
+                                </div>
+                                <div style={{ display: 'flex', gap: '12px' }}>
+                                    <button onClick={handleBack} style={{ flex: 1, padding: '18px', borderRadius: '24px', background: 'var(--secondary)', border: 'none', fontWeight: '800' }}>Back</button>
+                                    <button onClick={handleSubmit} disabled={loading} style={{ flex: 2, padding: '18px', borderRadius: '24px', background: 'var(--primary)', color: 'white', border: 'none', fontWeight: '900', fontSize: '1.1rem', boxShadow: 'var(--shadow-md)' }}>
+                                        {loading ? 'Submitting...' : 'Post Spot ✨'}
                                     </button>
-                                ))}
-                            </div>
-
-                            <div style={{ display: 'flex', gap: '12px' }}>
-                                <button onClick={handleBack} style={{ flex: 1, padding: '16px', border: 'none', borderRadius: '20px', background: '#f1f5f9', fontWeight: '700' }}>Back</button>
-                                <Button onClick={handleNext} style={{ flex: 2, padding: '16px', borderRadius: '20px', justifyContent: 'center' }}>Next</Button>
-                            </div>
-                        </div>
-                    )}
-
-                    {/* Step 4: Photos & Finish */}
-                    {step === 4 && (
-                        <div className="animate-fade-in">
-                            <h2 style={{ fontSize: '1.4rem', fontWeight: '800', marginBottom: '1.5rem', color: '#E23744' }}>
-                                Visual Proof! 📸
-                            </h2>
-
-                            <div style={{ marginBottom: '1.5rem' }}>
-                                <input
-                                    type="file"
-                                    multiple
-                                    accept="image/*"
-                                    onChange={handleImageUpload}
-                                    style={{ display: 'none' }}
-                                    ref={fileInputRef}
-                                />
-
-                                <div
-                                    onClick={() => fileInputRef.current.click()}
-                                    style={{
-                                        border: '3px dashed #e2e8f0', borderRadius: '24px', padding: '2rem 1rem',
-                                        textAlign: 'center', cursor: 'pointer', background: '#f8fafc',
-                                        transition: 'all 0.3s ease'
-                                    }}
-                                >
-                                    {uploading ? (
-                                        <Loader className="animate-spin" style={{ margin: '0 auto', color: '#E23744' }} />
-                                    ) : (
-                                        <>
-                                            <Camera size={40} style={{ color: '#E23744', marginBottom: '12px', margin: '0 auto' }} />
-                                            <p style={{ fontWeight: '800', fontSize: '0.9rem', color: '#1a1a1a' }}>Select Multiple Photos</p>
-                                            <p style={{ fontSize: '0.75rem', color: '#64748b', marginTop: '4px' }}>Max 5 images total</p>
-                                        </>
-                                    )}
                                 </div>
-                            </div>
-
-                            {/* Image Grid */}
-                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px', marginBottom: '2rem' }}>
-                                {formData.images.map((img, i) => (
-                                    <div key={i} style={{ position: 'relative', width: '100%', paddingTop: '100%', borderRadius: '16px', overflow: 'hidden' }}>
-                                        <img src={img} alt="preview" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
-                                        <button
-                                            onClick={() => removeImage(i)}
-                                            style={{
-                                                position: 'absolute', top: '5px', right: '5px',
-                                                background: 'rgba(0,0,0,0.6)', border: 'none', borderRadius: '50%',
-                                                width: '24px', height: '24px', color: 'white'
-                                            }}
-                                        >
-                                            <XCircle size={16} />
-                                        </button>
-                                    </div>
-                                ))}
-                            </div>
-
-                            <div style={{ display: 'flex', gap: '12px' }}>
-                                <button onClick={handleBack} style={{ flex: 1, padding: '16px', border: 'none', borderRadius: '20px', background: '#f1f5f9', fontWeight: '700' }}>Back</button>
-                                <button
-                                    onClick={handleSubmit}
-                                    disabled={loading || uploading}
-                                    style={{
-                                        flex: 2, padding: '16px', borderRadius: '20px',
-                                        background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-                                        color: 'white', border: 'none', fontWeight: '900', fontSize: '1.1rem',
-                                        boxShadow: '0 10px 20px rgba(16, 185, 129, 0.2)', cursor: 'pointer'
-                                    }}
-                                >
-                                    {loading ? 'Posting...' : 'Finish ✨'}
-                                </button>
-                            </div>
-                        </div>
-                    )}
-                </div>
-
-                {/* Info Note */}
-                <div style={{ marginTop: '20px', padding: '16px', background: 'rgba(255,255,255,0.15)', borderRadius: '20px', backdropFilter: 'blur(10px)' }}>
-                    <p style={{ fontSize: '0.85rem', display: 'flex', gap: '8px', color: 'white', fontWeight: '500' }}>
-                        <Info size={18} /> Note: New spots are reviewed by the community team before being verified.
-                    </p>
-                </div>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+                </motion.div>
             </div>
         </div>
     );

@@ -94,17 +94,9 @@ const NotificationsSheet = ({ isOpen, onClose, userId }) => {
                             <p style={{ margin: '0 0 8px', fontSize: '0.9rem', color: '#666', lineHeight: '1.4' }}>
                                 {n.message}
                             </p>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                <span style={{ fontSize: '0.75rem', color: '#999' }}>
-                                    {n.created_at ? formatDistanceToNow(new Date(n.created_at), { addSuffix: true }) : 'just now'}
-                                </span>
-                                <button
-                                    onClick={() => deleteNotification(n.id)}
-                                    style={{ fontSize: '0.75rem', color: '#aaa', background: 'none', border: 'none' }}
-                                >
-                                    Dismiss
-                                </button>
-                            </div>
+                            <span style={{ fontSize: '0.75rem', color: '#999' }}>
+                                {n.created_at ? formatDistanceToNow(new Date(n.created_at), { addSuffix: true }) : 'just now'}
+                            </span>
                         </div>
                     ))
                 )}

@@ -10,13 +10,20 @@ import Admin from './pages/Admin';
 import SpotDetail from './pages/SpotDetail';
 import Community from './pages/Community';
 import EditSpot from './pages/EditSpot';
+import Favorites from './pages/Favorites';
 import MainLayout from './layouts/MainLayout';
 import { useAuth } from './context/AuthContext';
+
+import FoodLoader from './components/FoodLoader';
 
 // Protected Route Wrapper
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
-  if (loading) return null; // Or a spinner
+  if (loading) return (
+    <div style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'white' }}>
+      <FoodLoader message="Welcome to Chai-in..." />
+    </div>
+  );
   if (!user) return <Navigate to="/login" replace />;
   return children;
 };
@@ -53,6 +60,7 @@ function AppRoutes({ lang }) {
         <Route path="map" element={<MapScreen lang={lang} />} />
         <Route path="add-spot" element={<AddSpot lang={lang} />} />
         <Route path="community" element={<Community lang={lang} />} />
+        <Route path="favorites" element={<Favorites lang={lang} />} />
         <Route path="leaderboard" element={<Leaderboard lang={lang} />} />
         <Route path="profile" element={<Profile lang={lang} />} />
         <Route path="settings" element={<Settings lang={lang} />} />

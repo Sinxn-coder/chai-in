@@ -1,29 +1,28 @@
 :root {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  font-family: 'Outfit', 'Inter', -apple-system, sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
-  /* Zomato / Modern Food App Theme */
-  --primary: #E23744;
-  --secondary: #F4F4F2;
-  --success: #267E3E;
-  --warning: #F59E0B;
-  --text-main: #1C1C1C;
-  --text-muted: #696969;
+  /* Chai-in v16 Theme */
+  --primary: #EF2A39;
+  --secondary: #F8F9FA;
+  --text-main: #3C2F2F;
+  --text-muted: #808080;
   --bg-white: #FFFFFF;
-  --bg-cream: #F8F8F8;
 
-  --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.08);
+  --shadow-sm: 0 4px 12px rgba(239, 42, 57, 0.05);
+  --shadow-md: 0 10px 30px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 15px 45px rgba(239, 42, 57, 0.12);
 
-  --radius-sm: 8px;
-  --radius-lg: 16px;
+  --radius-sm: 12px;
+  --radius-lg: 32px;
+  /* Chai-in style ultra-rounded */
   --radius-full: 9999px;
 
   --space-md: 16px;
 
   color: var(--text-main);
-  background-color: #fdfbfb;
+  background-color: var(--bg-white);
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;

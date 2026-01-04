@@ -57,25 +57,16 @@ const AppBar = () => {
                 onClick={() => navigate('/en/home')}
             >
                 <img
-                    src="chai_icon.png"
-                    alt="chai."
+                    src="/chai-in/chai_logo.png"
+                    alt="Chai-in"
                     style={{
                         height: '42px',
                         objectFit: 'contain',
-                        mixBlendMode: 'multiply',
-                        filter: 'contrast(1.2) brightness(1.05)'
+                        borderRadius: '8px'
                     }}
-                    onError={(e) => {
-                        const path = window.location.pathname;
-                        const base = path.split('/')[1];
-                        if (base && !e.target.src.includes(base)) {
-                            e.target.src = `/${base}/chai_icon.png`;
-                        } else {
-                            e.target.src = "/chai_icon.png";
-                        }
-                    }}
+                    onError={(e) => { e.target.src = 'https://ui-avatars.com/api/?name=Chai-in&background=EF2A39&color=fff&rounded=true&size=42' }}
                 />
-                <span style={{ fontSize: '10px', color: 'var(--primary)', fontWeight: 'bold', alignSelf: 'flex-end', marginBottom: '8px' }}>v14</span>
+                <span style={{ fontSize: '12px', color: 'var(--primary)', fontWeight: '900', alignSelf: 'flex-end', marginBottom: '8px', letterSpacing: '1px' }}>v16</span>
             </div>
 
             {/* Right Actions */}

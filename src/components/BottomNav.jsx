@@ -1,100 +1,122 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Home, Map, Plus, Users, User, Trophy, Compass } from 'lucide-react';
+import React from 'react';
+import { Home, Map, PlusCircle, Flame, Crown } from 'lucide-react';
 import { NavLink, useLocation } from 'react-router-dom';
-import './BottomNav.css';
+import { motion } from 'framer-motion';
 
 const BottomNav = ({ lang }) => {
     const location = useLocation();
+    const currentLang = lang || 'en';
 
-    // Mapping for active states
     const navItems = [
         { to: '/home', icon: Home, label: 'Home' },
         { to: '/map', icon: Map, label: 'Map' },
-        { to: '/add-spot', icon: Plus, label: 'Add', isFab: true },
-        { to: '/leaderboard', icon: Trophy, label: 'Leaders' },
-        { to: '/community', icon: Compass, label: 'Club' },
+        { to: '/add-spot', icon: PlusCircle, label: 'Add', isFab: true },
+        { to: '/community', icon: Flame, label: 'Club' },
+        { to: '/leaderboard', icon: Crown, label: 'Top' },
     ];
 
     return (
-        <div className="bottom-nav-container" style={{
-            position: 'fixed', bottom: '30px', left: 0, right: 0,
-            display: 'flex', justifyContent: 'center', zIndex: 1000,
+        <div style={{
+            position: 'fixed',
+            bottom: 0,
+            left: 0,
+            right: 0,
+            height: '90px',
+            background: 'transparent',
+            zIndex: 1000,
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'flex-end',
             pointerEvents: 'none'
         }}>
+            {/* The Curved Background SVG */}
             <div style={{
-                pointerEvents: 'auto',
-                // Crystal / Water Drop Effect
-                background: 'rgba(255, 255, 255, 0.3)', // Ultra-clear base
-                backdropFilter: 'blur(25px) saturate(180%)', // Heavy frost
-                WebkitBackdropFilter: 'blur(25px) saturate(180%)',
-                borderRadius: '50px',
-                padding: '8px 24px',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '12px',
-                // Complex shadow for depth + "Glass Bevel" border
-                boxShadow: `
-                    0 20px 40px rgba(0,0,0,0.1), 
-                    0 0 0 1px rgba(255,255,255,0.4), 
-                    inset 0 1px 0 rgba(255,255,255,0.6)
-                `,
-                width: 'auto',
-                minWidth: '320px',
-                justifyContent: 'space-between'
+                position: 'absolute',
+                bottom: 0,
+                width: '100%',
+                height: '75px',
+                pointerEvents: 'auto'
             }}>
-                {navItems.map((item) => {
-                    const currentLang = lang || 'en';
+                <svg width="100%" height="75" viewBox="0 0 400 75" preserveAspectRatio="none" style={{ display: 'block' }}>
+                    <path
+                        d="M0 25C0 11.1929 11.1929 0 25 0H150C165 0 170 15 180 20C190 25 210 25 220 20C230 15 235 0 250 0H375C388.807 0 400 11.1929 400 25V75H0V25Z"
+                        fill="#EF2A39"
+                    />
+                </svg>
+            </div>
+
+            <div style={{
+                position: 'relative',
+                width: '100%',
+                maxWidth: '500px',
+                height: '75px',
+                display: 'flex',
+                justifyContent: 'space-around',
+                alignItems: 'center',
+                padding: '0 10px',
+                pointerEvents: 'auto'
+            }}>
+                {navItems.map((item, index) => {
                     const isActive = location.pathname.includes(`/${currentLang}${item.to}`) ||
-                        (item.to === '/home' && location.pathname === `/${currentLang}`);
+                        (item.to === '/home' && (location.pathname === `/${currentLang}` || location.pathname === `/${currentLang}/`));
 
                     if (item.isFab) {
                         return (
-                            <NavLink
-                                key={item.to}
-                                to={`/${currentLang}${item.to}`}
-                                style={{
-                                    width: '52px', height: '52px',
-                                    borderRadius: '50%',
-                                    // Liquid Gradient FAB
-                                    background: 'linear-gradient(135deg, #E23744, #FF6B6B)',
-                                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                    textDecoration: 'none',
-                                    boxShadow: '0 8px 20px rgba(226, 55, 68, 0.4)',
-                                    transform: isActive ? 'scale(1.1)' : 'scale(1)',
-                                    transition: 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)'
-                                }}
-                            >
-                                <Plus size={26} color="white" strokeWidth={3} />
-                            </NavLink>
-                        )
+                            <div key={item.to} style={{ position: 'relative', top: '-25px', zIndex: 1001 }}>
+                                <NavLink
+                                    to={`/${currentLang}${item.to}`}
+                                    style={{ textDecoration: 'none' }}
+                                >
+                                    <motion.div
+                                        whileHover={{ scale: 1.1 }}
+                                        whileTap={{ scale: 0.9 }}
+                                        style={{
+                                            width: '64px',
+                                            height: '64px',
+                                            borderRadius: '50%',
+                                            background: '#EF2A39',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            boxShadow: '0 8px 25px rgba(239, 42, 57, 0.4)'
+                                        }}
+                                    >
+                                        <PlusCircle size={36} color="white" strokeWidth={0} fill="white" />
+                                    </motion.div>
+                                </NavLink>
+                            </div>
+                        );
                     }
 
                     return (
                         <NavLink
+                            key={item.to}
                             to={`/${currentLang}${item.to}`}
                             style={{
-                                display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-                                padding: '10px',
-                                borderRadius: '50%',
-                                width: '48px', height: '48px',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
                                 textDecoration: 'none',
-                                transition: 'all 0.3s ease',
-                                position: 'relative'
+                                opacity: isActive ? 1 : 0.6,
+                                transition: 'all 0.3s ease'
                             }}
                         >
                             <item.icon
-                                size={24}
-                                // Darker icons for contrast on light glass
-                                color={isActive ? '#E23744' : 'rgba(0,0,0,0.5)'}
+                                size={26}
+                                color="white"
                                 strokeWidth={isActive ? 2.5 : 2}
-                                fill={isActive ? "currentColor" : "none"}
                             />
                             {isActive && (
-                                <div style={{
-                                    position: 'absolute', bottom: '4px',
-                                    width: '4px', height: '4px', borderRadius: '50%',
-                                    background: '#E23744'
-                                }} />
+                                <motion.div
+                                    layoutId="navDot"
+                                    style={{
+                                        width: '4px',
+                                        height: '4px',
+                                        background: 'white',
+                                        borderRadius: '50%',
+                                        marginTop: '4px'
+                                    }}
+                                />
                             )}
                         </NavLink>
                     );

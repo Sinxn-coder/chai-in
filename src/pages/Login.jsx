@@ -1,51 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import Button from '../components/Button';
 import { useNavigate } from 'react-router-dom';
-import { Utensils, Coffee, MapPin } from 'lucide-react';
-import Logo from '../components/Logo';
+import { motion } from 'framer-motion';
+import { supabase } from '../lib/supabaseClient';
 
 const Login = () => {
     const { signInWithGoogle, user } = useAuth();
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
-    const [referrer, setReferrer] = useState(null);
 
     useEffect(() => {
-        const params = new URLSearchParams(window.location.search);
-        const ref = params.get('ref');
-        if (ref) {
-            setReferrer(ref);
-            localStorage.setItem('chai_referrer', ref);
-        }
-    }, []);
-
-    useEffect(() => {
-        if (user) {
-            handlePostLoginReward();
-            navigate('/en/home');
-        }
+        if (user) navigate('/en/home');
     }, [user, navigate]);
-
-    const handlePostLoginReward = async () => {
-        const refId = referrer || localStorage.getItem('chai_referrer');
-        if (!refId || !user) return;
-
-        try {
-            // Check if this user already has a referrer to avoid double rewards
-            const { data: profile } = await supabase.from('user_preferences').select('referred_by').eq('user_id', user.id).single();
-
-            if (profile && !profile.referred_by && refId !== user.id) {
-                // Award points to the referrer
-                await supabase.rpc('reward_referrer', { referrer_id: refId });
-                // Record who referred this user
-                await supabase.from('user_preferences').update({ referred_by: refId }).eq('user_id', user.id);
-                localStorage.removeItem('chai_referrer');
-            }
-        } catch (err) {
-            console.error("Referral reward error:", err);
-        }
-    };
 
     const handleLogin = async () => {
         setLoading(true);
@@ -60,82 +26,75 @@ const Login = () => {
     return (
         <div style={{
             minHeight: '100vh',
+            background: 'var(--bg-white)',
             display: 'flex',
             flexDirection: 'column',
-            justifyContent: 'center',
             alignItems: 'center',
-            padding: '2rem',
-            position: 'relative',
-            overflow: 'hidden'
+            justifyContent: 'center',
+            padding: '20px',
+            textAlign: 'center'
         }}>
 
-            {/* Background Decor */}
-            <div style={{ position: 'absolute', top: '-10%', right: '-10%', width: '300px', height: '300px', background: 'var(--secondary)', borderRadius: '50%', opacity: 0.1, filter: 'blur(50px)' }} />
-            <div style={{ position: 'absolute', bottom: '-10%', left: '-10%', width: '300px', height: '300px', background: 'var(--primary)', borderRadius: '50%', opacity: 0.1, filter: 'blur(50px)' }} />
-
-            {/* Hero Icon */}
-            <div style={{
-                width: '120px', height: '120px',
-                background: 'white',
-                borderRadius: '50%',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                boxShadow: 'var(--shadow-float)',
-                marginBottom: '2rem',
-                zIndex: 2,
-                animation: 'float 3s ease-in-out infinite'
-            }}>
-                <Utensils size={48} color="var(--primary)" />
-            </div>
-
-            {/* Logo Area */}
-            <div className="glass-card" style={{
-                padding: '2.5rem',
-                width: '100%',
-                maxWidth: '400px',
-                textAlign: 'center',
-                zIndex: 2,
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center'
-            }}>
-                <div style={{ marginBottom: '1rem' }}>
-                    <Logo size={60} />
+            <motion.div
+                initial={{ scale: 0.5, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ type: 'spring', damping: 12 }}
+                style={{ marginBottom: '40px' }}
+            >
+                <div style={{ position: 'relative', width: '120px', height: '120px', margin: '0 auto' }}>
+                    <img
+                        src="/chai-in/chai_logo.png"
+                        alt="Chai-in Logo"
+                        style={{ width: '120px', height: '120px', objectFit: 'contain' }}
+                        onError={(e) => { e.target.src = 'https://ui-avatars.com/api/?name=Chai-in&background=EF2A39&color=fff&rounded=true' }}
+                    />
                 </div>
-                <p style={{ color: 'var(--text-muted)', marginBottom: '2rem', fontSize: '1.1rem' }}>
-                    Discover the best food spots in town. <br /> Join the community.
-                </p>
+                <h1 style={{ marginTop: '20px', fontSize: '2.5rem', fontWeight: '900', color: 'var(--primary)', letterSpacing: '-1px' }}>Chai-in</h1>
+                <p style={{ color: 'var(--text-muted)', fontSize: '1.1rem', fontWeight: '600' }}>Discover Kerala's Best Eats</p>
+            </motion.div>
 
-                <Button
+            <motion.div
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ delay: 0.2 }}
+                style={{ width: '100%', maxWidth: '350px' }}
+            >
+                <button
                     onClick={handleLogin}
                     disabled={loading}
                     style={{
                         width: '100%',
-                        justifyContent: 'center',
-                        background: 'var(--text-main)',
+                        padding: '18px',
+                        borderRadius: '24px',
+                        background: 'var(--primary)',
                         color: 'white',
-                        padding: '16px',
-                        fontSize: '1.1rem'
+                        border: 'none',
+                        fontSize: '1.1rem',
+                        fontWeight: '800',
+                        boxShadow: 'var(--shadow-lg)',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '12px'
                     }}
                 >
-                    {loading ? 'Connecting...' : 'Continue with Google'}
-                </Button>
+                    {loading ? 'Connecting...' : (
+                        <>
+                            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="20" alt="Google" />
+                            Sign in with Google
+                        </>
+                    )}
+                </button>
 
-                <p style={{ marginTop: '1.5rem', fontSize: '0.8rem', color: '#999' }}>
-                    By continuing, you verify that you are a food lover.
+                <p style={{ marginTop: '24px', color: 'var(--text-muted)', fontSize: '0.9rem', lineHeight: '1.5' }}>
+                    By continuing, you agree to discover the most delicious spots in Kerala.
                 </p>
-            </div>
+            </motion.div>
 
-            {/* Floating Icons */}
-            <Coffee size={32} color="var(--secondary)" style={{ position: 'absolute', top: '20%', left: '10%', opacity: 0.5, transform: 'rotate(-20deg)' }} />
-            <MapPin size={32} color="var(--accent)" style={{ position: 'absolute', bottom: '20%', right: '10%', opacity: 0.5, transform: 'rotate(15deg)' }} />
-
-            <style>{`
-        @keyframes float {
-          0% { transform: translateY(0px); }
-          50% { transform: translateY(-10px); }
-          100% { transform: translateY(0px); }
-        }
-      `}</style>
+            {/* Decor Circles */}
+            <div style={{ position: 'absolute', top: '-100px', right: '-100px', width: '300px', height: '300px', borderRadius: '50%', background: 'rgba(239, 42, 57, 0.05)', zIndex: -1 }} />
+            <div style={{ position: 'absolute', bottom: '-80px', left: '-80px', width: '250px', height: '250px', borderRadius: '50%', background: 'rgba(239, 42, 57, 0.05)', zIndex: -1 }} />
         </div>
     );
 };
