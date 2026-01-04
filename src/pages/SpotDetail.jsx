@@ -13,7 +13,9 @@ const SpotDetail = ({ lang }) => {
 
     const [spot, setSpot] = useState(null);
     const [reviews, setReviews] = useState([]);
+    const [newReview, setNewReview] = useState('');
     const [isFavorite, setIsFavorite] = useState(false);
+    const [favoriteCount, setFavoriteCount] = useState(0);
     const [loading, setLoading] = useState(true);
     const [isOpen, setIsOpen] = useState(null);
     const [visited, setVisited] = useState(false);
@@ -24,9 +26,10 @@ const SpotDetail = ({ lang }) => {
 
     const fetchSpotDetails = async () => {
         setLoading(true);
-        const { data: spotData, error } = await supabase.from('spots').select('*').eq('id', id).single();
+        const { data: spotData, error } = await supabase.from('spots').select('*, likes_count:likes(count)').eq('id', id).single();
         if (error) { console.error(error); setLoading(false); return; }
         setSpot(spotData);
+        setFavoriteCount(spotData.likes_count[0]?.count || 0);
         calculateAvailability(spotData);
         fetchReviews();
         if (user) {
@@ -45,7 +48,7 @@ const SpotDetail = ({ lang }) => {
     };
 
     const fetchReviews = async () => {
-        const { data } = await supabase.from('reviews').select('*').eq('spot_id', id).order('created_at', { ascending: false });
+        const { data } = await supabase.from('reviews').select('*, user:user_preferences(display_name, avatar_url)').eq('spot_id', id).order('created_at', { ascending: false });
         setReviews(data || []);
     };
 
@@ -54,9 +57,11 @@ const SpotDetail = ({ lang }) => {
         if (isFavorite) {
             await supabase.from('favorites').delete().eq('spot_id', id).eq('user_id', user.id);
             setIsFavorite(false);
+            setFavoriteCount(c => c - 1);
         } else {
             await supabase.from('favorites').insert({ spot_id: id, user_id: user.id });
             setIsFavorite(true);
+            setFavoriteCount(c => c + 1);
         }
     };
 
@@ -68,6 +73,25 @@ const SpotDetail = ({ lang }) => {
         } else {
             await supabase.from('visited_spots').insert({ spot_id: id, user_id: user.id });
             setVisited(true);
+        }
+    };
+
+    const handleReviewSubmit = async () => {
+        if (!user) return alert("Please login to submit a review!");
+        if (!newReview.trim()) return;
+
+        const { error } = await supabase.from('reviews').insert({
+            spot_id: id,
+            user_id: user.id,
+            comment: newReview,
+            rating: 5 // Default rating
+        });
+
+        if (error) {
+            console.error('Error adding review:', error);
+        } else {
+            setNewReview('');
+            fetchReviews(); // Re-fetch reviews to show the new one
         }
     };
 
@@ -94,9 +118,10 @@ const SpotDetail = ({ lang }) => {
                 <motion.button
                     whileTap={{ scale: 0.9 }}
                     onClick={toggleFavorite}
-                    style={{ position: 'absolute', top: '24px', right: '20px', background: 'white', border: 'none', borderRadius: '16px', padding: '12px', boxShadow: 'var(--shadow-md)', zIndex: 10 }}
+                    style={{ position: 'absolute', top: '24px', right: '20px', background: 'white', border: 'none', borderRadius: '16px', padding: '12px', boxShadow: 'var(--shadow-md)', zIndex: 10, display: 'flex', alignItems: 'center', gap: '8px' }}
                 >
                     <Heart size={24} fill={isFavorite ? 'var(--primary)' : 'none'} color={isFavorite ? 'var(--primary)' : 'var(--text-main)'} />
+                    <span style={{ fontWeight: '800' }}>{favoriteCount}</span>
                 </motion.button>
             </div>
 
@@ -148,6 +173,33 @@ const SpotDetail = ({ lang }) => {
                             <MessageCircle size={20} /> WhatsApp
                         </a>
                     )}
+                </div>
+
+                {/* Reviews Section */}
+                <div style={{ marginBottom: '40px' }}>
+                    <h2 style={{ fontSize: '1.4rem', fontWeight: '900', marginBottom: '20px' }}>Reviews ({reviews.length})</h2>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                        {reviews.map(review => (
+                            <div key={review.id} style={{ display: 'flex', gap: '12px' }}>
+                                <img src={review.user?.avatar_url || 'https://i.pravatar.cc/40'} style={{ width: '40px', height: '40px', borderRadius: '50%' }} />
+                                <div>
+                                    <p style={{ fontWeight: '800', margin: 0 }}>{review.user?.display_name || 'Anonymous'}</p>
+                                    <p style={{ margin: '4px 0 0 0', color: 'var(--text-main)' }}>{review.comment}</p>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+
+                    <div style={{ marginTop: '24px', display: 'flex', gap: '10px' }}>
+                        <input
+                            type="text"
+                            value={newReview}
+                            onChange={(e) => setNewReview(e.target.value)}
+                            placeholder="Add a review..."
+                            style={{ flex: 1, padding: '14px', borderRadius: '16px', border: '2px solid var(--secondary)', outline: 'none', fontWeight: '700' }}
+                        />
+                        <button onClick={handleReviewSubmit} style={{ padding: '14px 20px', borderRadius: '16px', background: 'var(--primary)', color: 'white', border: 'none', fontWeight: '800' }}>Send</button>
+                    </div>
                 </div>
 
                 {/* Primary Action */}

@@ -27,7 +27,7 @@ const SpotCard = memo(({ spot }) => {
 
     const checkFavorite = async (isMounted) => {
         if (!user) return;
-        const { data } = await supabase.from('favorites').select('*').eq('spot_id', id).eq('user_id', user.id).maybeSingle();
+        const { data } = await supabase.from('user_favorites').select('*').eq('spot_id', id).eq('user_id', user.id).maybeSingle();
         if (isMounted) setIsFavorite(!!data);
     };
 
@@ -38,9 +38,9 @@ const SpotCard = memo(({ spot }) => {
         setIsFavorite(!prev); // Optimistic update
         try {
             if (prev) {
-                await supabase.from('favorites').delete().eq('spot_id', id).eq('user_id', user.id);
+                await supabase.from('user_favorites').delete().eq('spot_id', id).eq('user_id', user.id);
             } else {
-                await supabase.from('favorites').insert({ spot_id: id, user_id: user.id });
+                await supabase.from('user_favorites').insert({ spot_id: id, user_id: user.id });
             }
         } catch (e) {
             setIsFavorite(prev);

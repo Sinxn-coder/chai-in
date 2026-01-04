@@ -64,6 +64,20 @@ const Settings = () => {
     const handleSave = async () => {
         setSaving(true);
         try {
+            // Check for uniqueness
+            const { data: existingUser } = await supabase
+                .from('user_preferences')
+                .select('display_name')
+                .eq('display_name', formData.displayName)
+                .not('user_id', 'eq', user.id)
+                .maybeSingle();
+
+            if (existingUser) {
+                setToast({ message: 'This display name is already taken.', type: 'error' });
+                setSaving(false);
+                return;
+            }
+
             const prefsData = {
                 user_id: user.id,
                 display_name: formData.displayName,

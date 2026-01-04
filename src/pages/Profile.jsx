@@ -18,7 +18,15 @@ const Profile = ({ lang }) => {
     const [tabLoading, setTabLoading] = useState(false);
 
     useEffect(() => {
-        if (user) fetchProfileData();
+        if (user) {
+            fetchProfileData();
+            window.addEventListener('focus', fetchProfileData);
+        }
+        return () => {
+            if (user) {
+                window.removeEventListener('focus', fetchProfileData);
+            }
+        };
     }, [user]);
 
     useEffect(() => {

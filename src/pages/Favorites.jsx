@@ -20,7 +20,7 @@ const Favorites = ({ lang }) => {
     const fetchFavorites = async () => {
         setLoading(true);
         const { data: favData } = await supabase
-            .from('favorites')
+            .from('user_favorites')
             .select('spot_id')
             .eq('user_id', user.id);
 

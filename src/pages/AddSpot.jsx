@@ -33,6 +33,7 @@ const AddSpot = ({ lang }) => {
         longitude: null,
         description: '',
         instagram: '',
+        instagram_link: '',
         whatsapp: '',
         google_maps: '',
         tags: [],
@@ -40,7 +41,7 @@ const AddSpot = ({ lang }) => {
     });
 
     const categories = ['Cafe', 'Restaurant', 'Street Food', 'Bakery', 'Juice Shop', 'Tea Stall'];
-    const popularTags = ['Biriyani', 'Mandhi', 'Burger', 'Coffee', 'Desserts', 'Spicy', 'Budget-friendly', 'Late Night', 'Outdoor'];
+
 
     const showToast = (msg, type = 'success') => {
         setToast({ message: msg, type });
@@ -128,19 +129,28 @@ const AddSpot = ({ lang }) => {
         if (!user) return showToast("Please login first", "error");
         setLoading(true);
         try {
-            const { error } = await supabase.from('spots').insert([{
-                ...formData,
+            const spotData = {
+                name: formData.name,
+                category: formData.category,
                 price_level: formData.price,
+                location_text: formData.location_text,
+                latitude: formData.latitude,
+                longitude: formData.longitude,
+                description: formData.description,
                 instagram_handle: formData.instagram,
                 whatsapp_number: formData.whatsapp,
                 google_maps_link: formData.google_maps,
+                tags: formData.tags,
+                images: formData.images,
                 created_by: user.id
-            }]);
+            };
+            const { error } = await supabase.from('spots').insert([spotData]);
             if (error) throw error;
             showToast("Spot shared! Redirecting...", 'success');
             setTimeout(() => navigate(`/${lang}/home`), 2000);
         } catch (error) {
-            showToast("Error saving spot", 'error');
+            console.error('Error saving spot:', error);
+            showToast(`Error saving spot: ${error.message}`, 'error');
             setLoading(false);
         }
     };
@@ -241,6 +251,18 @@ const AddSpot = ({ lang }) => {
                                         </button>
                                     ))}
                                 </div>
+                                <label style={{ fontSize: '0.85rem', fontWeight: '800', color: 'var(--text-muted)', marginBottom: '12px', display: 'block' }}>PRICE LEVEL</label>
+                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '10px', marginBottom: '24px' }}>
+                                    {[1, 2, 3, 4].map(p => (
+                                        <button
+                                            key={p}
+                                            onClick={() => setFormData({ ...formData, price: p })}
+                                            style={{ padding: '14px', borderRadius: '18px', border: 'none', background: formData.price === p ? 'var(--primary)' : 'var(--secondary)', color: formData.price === p ? 'white' : 'var(--text-main)', fontWeight: '800', transition: 'all 0.2s' }}
+                                        >
+                                            {'₹'.repeat(p)}
+                                        </button>
+                                    ))}
+                                </div>
                                 <Button onClick={handleNext} style={{ width: '100%', padding: '18px', borderRadius: '24px', justifyContent: 'center' }}>Continue</Button>
                             </motion.div>
                         )}
@@ -272,17 +294,28 @@ const AddSpot = ({ lang }) => {
 
                         {step === 3 && (
                             <motion.div key="step3" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
-                                <h2 style={{ fontSize: '1.25rem', fontWeight: '900', marginBottom: '16px', color: 'var(--text-main)' }}>Socials 💬</h2>
+                                <h2 style={{ fontSize: '1.25rem', fontWeight: '900', marginBottom: '16px', color: 'var(--text-main)' }}>Socials & Details 💬</h2>
                                 <textarea
                                     placeholder="Add a juicy description..."
                                     value={formData.description}
                                     onChange={e => setFormData({ ...formData, description: e.target.value })}
                                     style={{ width: '100%', padding: '16px', borderRadius: '18px', border: '2px solid var(--secondary)', background: 'var(--secondary)', fontSize: '1rem', fontWeight: '700', outline: 'none', marginBottom: '16px', minHeight: '100px' }}
                                 />
-                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '20px' }}>
-                                    <input placeholder="Insta @user" value={formData.instagram} onChange={e => setFormData({ ...formData, instagram: e.target.value })} style={{ padding: '14px', borderRadius: '16px', background: 'var(--secondary)', border: 'none', fontWeight: '700' }} />
-                                    <input placeholder="WhatsApp" value={formData.whatsapp} onChange={e => setFormData({ ...formData, whatsapp: e.target.value })} style={{ padding: '14px', borderRadius: '16px', background: 'var(--secondary)', border: 'none', fontWeight: '700' }} />
+                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '16px' }}>
+                                    <input placeholder="WhatsApp Number" value={formData.whatsapp} onChange={e => setFormData({ ...formData, whatsapp: e.target.value })} style={{ padding: '14px', borderRadius: '16px', background: 'var(--secondary)', border: 'none', fontWeight: '700' }} />
+                                    <input placeholder="Google Maps Link" value={formData.google_maps} onChange={e => setFormData({ ...formData, google_maps: e.target.value })} style={{ padding: '14px', borderRadius: '16px', background: 'var(--secondary)', border: 'none', fontWeight: '700' }} />
                                 </div>
+                                <label style={{ fontSize: '0.85rem', fontWeight: '800', color: 'var(--text-muted)', marginBottom: '8px', display: 'block' }}>INSTAGRAM</label>
+                                <input placeholder="Insta @user or instagram.com/user" value={formData.instagram} onChange={e => setFormData({ ...formData, instagram: e.target.value })} style={{ width: '100%', padding: '14px', borderRadius: '16px', background: 'var(--secondary)', border: 'none', fontWeight: '700', marginBottom: '16px' }} />
+                                
+                                <label style={{ fontSize: '0.85rem', fontWeight: '800', color: 'var(--text-muted)', marginBottom: '8px', display: 'block' }}>TAGS</label>
+                                <input
+                                    type="text"
+                                    placeholder="e.g. burger, spicy, budget-friendly"
+                                    onChange={e => setFormData({ ...formData, tags: e.target.value.split(',').map(tag => tag.trim()) })}
+                                    style={{ width: '100%', padding: '16px', borderRadius: '18px', border: '2px solid var(--secondary)', background: 'var(--secondary)', fontSize: '1rem', fontWeight: '700', outline: 'none', marginBottom: '20px' }}
+                                />
+
                                 <div style={{ display: 'flex', gap: '12px' }}>
                                     <button onClick={handleBack} style={{ flex: 1, padding: '18px', borderRadius: '24px', background: 'var(--secondary)', border: 'none', fontWeight: '800' }}>Back</button>
                                     <Button onClick={handleNext} style={{ flex: 2, padding: '18px', borderRadius: '24px', justifyContent: 'center' }}>Next</Button>

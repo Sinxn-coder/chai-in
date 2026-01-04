@@ -16,10 +16,7 @@ const Community = () => {
     const [imagePreview, setImagePreview] = useState(null);
     const [newImage, setNewImage] = useState(null);
     const [newCaption, setNewCaption] = useState('');
-
-    useEffect(() => {
-        fetchPosts();
-    }, []);
+    const [selectedPost, setSelectedPost] = useState(null);
 
     const fetchPosts = async () => {
         setLoading(true);
@@ -31,24 +28,36 @@ const Community = () => {
             const userMap = {};
             usersData?.forEach(u => userMap[u.user_id] = u);
 
-            // Fetch user's likes
+            // Fetch all likes for these posts
             const postIds = postsData.map(p => p.id);
-            const { data: likesData } = await supabase
+            const { data: allLikesData } = await supabase
                 .from('post_likes')
-                .select('post_id')
-                .eq('user_id', user?.id)
+                .select('post_id, user_id')
                 .in('post_id', postIds);
 
-            const likedPostIds = new Set(likesData?.map(l => l.post_id) || []);
+            // Count likes per post
+            const likesCountMap = {};
+            const userLikesMap = {};
+            allLikesData?.forEach(like => {
+                likesCountMap[like.post_id] = (likesCountMap[like.post_id] || 0) + 1;
+                if (like.user_id === user?.id) {
+                    userLikesMap[like.post_id] = true;
+                }
+            });
 
             setPosts(postsData.map(p => ({
                 ...p,
+                likes_count: likesCountMap[p.id] || 0,
                 author: userMap[p.user_id] || { display_name: 'Foodie' },
-                isLikedByUser: likedPostIds.has(p.id)
+                isLikedByUser: !!userLikesMap[p.id]
             })));
         }
         setLoading(false);
     };
+
+    useEffect(() => {
+        fetchPosts();
+    }, []);
 
     const handleCreatePost = async () => {
         if (!newImage || !newCaption) return;
@@ -87,11 +96,9 @@ const Community = () => {
         if (existingLike) {
             // Unlike
             await supabase.from('post_likes').delete().eq('id', existingLike.id);
-            await supabase.from('community_posts').update({ likes_count: Math.max(0, currentLikes - 1) }).eq('id', postId);
         } else {
             // Like
             await supabase.from('post_likes').insert({ post_id: postId, user_id: user.id });
-            await supabase.from('community_posts').update({ likes_count: currentLikes + 1 }).eq('id', postId);
         }
         fetchPosts();
     };
@@ -154,7 +161,9 @@ const Community = () => {
                                         <motion.div whileTap={{ scale: 0.8 }} onClick={() => handleLike(post.id, post.likes_count)} style={{ cursor: 'pointer' }}>
                                             <Heart size={26} color="var(--primary)" fill={post.isLikedByUser ? "var(--primary)" : "none"} />
                                         </motion.div>
-                                        <MessageCircle size={26} color="var(--text-main)" />
+                                        <motion.div whileTap={{ scale: 0.8 }} onClick={() => setSelectedPost(post)} style={{ cursor: 'pointer' }}>
+                                            <MessageCircle size={26} color="var(--text-main)" />
+                                        </motion.div>
                                     </div>
                                     <div style={{ fontWeight: '850', fontSize: '0.9rem', marginBottom: '8px' }}>{post.likes_count || 0} cravings</div>
                                     <div style={{ fontSize: '0.95rem', lineHeight: '1.5', color: 'var(--text-main)' }}>
@@ -167,6 +176,8 @@ const Community = () => {
                     </div>
                 )}
             </div>
+
+            {selectedPost && <Comments post={selectedPost} onClose={() => setSelectedPost(null)} />}
 
             {/* Create Post Overlay */}
             <AnimatePresence>
@@ -229,5 +240,97 @@ const Community = () => {
         </div>
     );
 };
+
+const Comments = ({ post, onClose }) => {
+    const { user } = useAuth();
+    const [comments, setComments] = useState([]);
+    const [newComment, setNewComment] = useState('');
+    const [loading, setLoading] = useState(true);
+
+    const fetchComments = async () => {
+        setLoading(true);
+        const { data: commentsData } = await supabase.from('post_comments').select('*').eq('post_id', post.id).order('created_at', { ascending: false });
+        
+        if (commentsData) {
+            const userIds = [...new Set(commentsData.map(c => c.user_id))];
+            const { data: usersData } = await supabase.from('user_preferences').select('user_id, display_name, avatar_url').in('user_id', userIds);
+            const userMap = {};
+            usersData?.forEach(u => userMap[u.user_id] = u);
+            
+            setComments(commentsData.map(c => ({
+                ...c,
+                user: userMap[c.user_id] || { display_name: 'User' }
+            })));
+        } else {
+            setComments([]);
+        }
+        setLoading(false);
+    };
+
+    useEffect(() => {
+        fetchComments();
+    }, []);
+
+    const handleCommentSubmit = async () => {
+        if (!user) return;
+        if (!newComment.trim()) return;
+
+        await supabase.from('post_comments').insert({
+            post_id: post.id,
+            user_id: user.id,
+            comment: newComment
+        });
+
+        setNewComment('');
+        fetchComments();
+    };
+
+    return (
+        <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 1100, display: 'flex', alignItems: 'flex-end' }}
+            onClick={onClose}
+        >
+            <motion.div
+                initial={{ y: '100%' }}
+                animate={{ y: 0 }}
+                exit={{ y: '100%' }}
+                transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+                style={{ background: 'white', width: '100%', borderTopLeftRadius: '40px', borderTopRightRadius: '40px', padding: '24px', maxHeight: '80vh', overflowY: 'auto' }}
+                onClick={(e) => e.stopPropagation()}
+            >
+                <h3 style={{ fontSize: '1.4rem', fontWeight: '900', margin: '0 0 24px 0', textAlign: 'center' }}>Comments</h3>
+
+                {loading ? <Loader className="animate-spin" /> : (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginBottom: '24px' }}>
+                        {comments.map(c => (
+                            <div key={c.id} style={{ display: 'flex', gap: '12px' }}>
+                                <img src={c.user?.avatar_url || 'https://i.pravatar.cc/40'} style={{ width: '40px', height: '40px', borderRadius: '14px' }} />
+                                <div>
+                                    <span style={{ fontWeight: '800' }}>{c.user?.display_name || 'User'}</span>
+                                    <p style={{ margin: '2px 0 0 0' }}>{c.comment}</p>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                )}
+
+                <div style={{ display: 'flex', gap: '10px' }}>
+                    <input
+                        type="text"
+                        value={newComment}
+                        onChange={e => setNewComment(e.target.value)}
+                        placeholder="Add a comment..."
+                        style={{ flex: 1, padding: '14px', borderRadius: '16px', border: '2px solid var(--secondary)', outline: 'none', fontWeight: '700' }}
+                    />
+                    <button onClick={handleCommentSubmit} style={{ padding: '14px 20px', borderRadius: '16px', background: 'var(--primary)', color: 'white', border: 'none', fontWeight: '800' }}>Send</button>
+                </div>
+            </motion.div>
+        </motion.div>
+    )
+};
+
 
 export default Community;
