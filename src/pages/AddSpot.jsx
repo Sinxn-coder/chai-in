@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 import {
     ChevronLeft, ChevronRight, Upload, MapPin, Check,
     Loader, Crosshair, Map, Sparkles, XCircle,
-    Instagram, MessageCircle, Info, Tag, Camera
+    Instagram, MessageCircle, Info, Tag, Camera, Youtube, AlertCircle
 } from 'lucide-react';
 import Button from '../components/Button';
 import Toast from '../components/Toast';
@@ -166,6 +166,52 @@ const AddSpot = ({ lang }) => {
                         <div key={i} style={{ width: i === step ? '32px' : '10px', height: '10px', borderRadius: '5px', background: i <= step ? 'var(--primary)' : '#ddd', transition: 'all 0.3s' }} />
                     ))}
                 </div>
+
+                {/* Important Note */}
+                <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    style={{
+                        background: 'rgba(239, 42, 57, 0.05)',
+                        padding: '16px',
+                        borderRadius: '20px',
+                        marginBottom: '16px',
+                        border: '2px dashed var(--primary)'
+                    }}
+                >
+                    <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', marginBottom: '12px' }}>
+                        <AlertCircle size={20} color="var(--primary)" style={{ flexShrink: 0, marginTop: '2px' }} />
+                        <div>
+                            <h3 style={{ fontSize: '0.95rem', fontWeight: '800', color: 'var(--primary)', margin: '0 0 4px 0' }}>
+                                ⚠️ Verification Required
+                            </h3>
+                            <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', margin: 0, lineHeight: '1.5' }}>
+                                Your spot will be added to Chai.in only after our admin team verifies it. This helps maintain quality and accuracy!
+                            </p>
+                        </div>
+                    </div>
+                    <a
+                        href="https://www.youtube.com/watch?v=PLACEHOLDER_VIDEO_ID"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '8px',
+                            background: '#FF0000',
+                            color: 'white',
+                            padding: '10px 16px',
+                            borderRadius: '12px',
+                            textDecoration: 'none',
+                            fontWeight: '700',
+                            fontSize: '0.85rem',
+                            justifyContent: 'center'
+                        }}
+                    >
+                        <Youtube size={18} />
+                        Watch Tutorial: How to Add a Spot
+                    </a>
+                </motion.div>
 
                 <motion.div
                     layout

@@ -11,6 +11,8 @@ import SpotDetail from './pages/SpotDetail';
 import Community from './pages/Community';
 import EditSpot from './pages/EditSpot';
 import Favorites from './pages/Favorites';
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import ContactAdmin from './pages/ContactAdmin';
 import MainLayout from './layouts/MainLayout';
 import { useAuth } from './context/AuthContext';
 
@@ -64,6 +66,8 @@ function AppRoutes({ lang }) {
         <Route path="leaderboard" element={<Leaderboard lang={lang} />} />
         <Route path="profile" element={<Profile lang={lang} />} />
         <Route path="settings" element={<Settings lang={lang} />} />
+        <Route path="privacy-policy" element={<PrivacyPolicy lang={lang} />} />
+        <Route path="contact-admin" element={<ContactAdmin lang={lang} />} />
         <Route path="spot/:id" element={<SpotDetail lang={lang} />} />
         <Route path="edit-spot/:id" element={<EditSpot lang={lang} />} />
         <Route path="admin" element={<Admin />} />

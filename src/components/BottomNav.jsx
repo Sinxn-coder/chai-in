@@ -1,5 +1,5 @@
 import React from 'react';
-import { Home, Map, PlusCircle, Flame, Crown } from 'lucide-react';
+import { Home, Map, Plus, Flame, Crown } from 'lucide-react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 
@@ -10,7 +10,7 @@ const BottomNav = ({ lang }) => {
     const navItems = [
         { to: '/home', icon: Home, label: 'Home' },
         { to: '/map', icon: Map, label: 'Map' },
-        { to: '/add-spot', icon: PlusCircle, label: 'Add', isFab: true },
+        { to: '/add-spot', icon: Plus, label: 'Add', isFab: true },
         { to: '/community', icon: Flame, label: 'Club' },
         { to: '/leaderboard', icon: Crown, label: 'Top' },
     ];
@@ -81,7 +81,7 @@ const BottomNav = ({ lang }) => {
                                             boxShadow: '0 8px 25px rgba(239, 42, 57, 0.4)'
                                         }}
                                     >
-                                        <PlusCircle size={36} color="white" strokeWidth={0} fill="white" />
+                                        <Plus size={32} color="white" strokeWidth={3} />
                                     </motion.div>
                                 </NavLink>
                             </div>

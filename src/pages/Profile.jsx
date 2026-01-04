@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { User, Settings, LogOut, Award, Star, MapPin, Zap, ChevronRight, Heart, MessageSquare, Plus } from 'lucide-react';
+import { User, Settings, LogOut, Award, Star, MapPin, Zap, ChevronRight, Heart, MessageSquare, Plus, Shield, MessageCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabaseClient';
 import { motion } from 'framer-motion';
@@ -253,6 +253,54 @@ const Profile = ({ lang }) => {
                             <Award size={22} color="#F59E0B" />
                         </div>
                         <span style={{ fontWeight: '800', fontSize: '1.05rem', color: 'var(--text-main)' }}>Leaderboard</span>
+                    </div>
+                    <ChevronRight size={20} color="var(--text-muted)" />
+                </motion.div>
+
+                <motion.div
+                    whileTap={{ scale: 0.98 }}
+                    onClick={() => navigate(`/${lang}/privacy-policy`)}
+                    style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        padding: '16px 20px',
+                        background: 'white',
+                        borderRadius: '24px',
+                        boxShadow: '0 4px 15px rgba(0,0,0,0.03)',
+                        cursor: 'pointer',
+                        border: '1px solid var(--secondary)'
+                    }}
+                >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                        <div style={{ padding: '10px', borderRadius: '14px', background: '#F0FDF4' }}>
+                            <Shield size={22} color="#10B981" />
+                        </div>
+                        <span style={{ fontWeight: '800', fontSize: '1.05rem', color: 'var(--text-main)' }}>Privacy Policy</span>
+                    </div>
+                    <ChevronRight size={20} color="var(--text-muted)" />
+                </motion.div>
+
+                <motion.div
+                    whileTap={{ scale: 0.98 }}
+                    onClick={() => navigate(`/${lang}/contact-admin`)}
+                    style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        padding: '16px 20px',
+                        background: 'white',
+                        borderRadius: '24px',
+                        boxShadow: '0 4px 15px rgba(0,0,0,0.03)',
+                        cursor: 'pointer',
+                        border: '1px solid var(--secondary)'
+                    }}
+                >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                        <div style={{ padding: '10px', borderRadius: '14px', background: '#FEF2F2' }}>
+                            <MessageCircle size={22} color="#EF4444" />
+                        </div>
+                        <span style={{ fontWeight: '800', fontSize: '1.05rem', color: 'var(--text-main)' }}>Contact Admin</span>
                     </div>
                     <ChevronRight size={20} color="var(--text-muted)" />
                 </motion.div>

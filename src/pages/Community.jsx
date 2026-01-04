@@ -31,9 +31,20 @@ const Community = () => {
             const userMap = {};
             usersData?.forEach(u => userMap[u.user_id] = u);
 
+            // Fetch user's likes
+            const postIds = postsData.map(p => p.id);
+            const { data: likesData } = await supabase
+                .from('post_likes')
+                .select('post_id')
+                .eq('user_id', user?.id)
+                .in('post_id', postIds);
+
+            const likedPostIds = new Set(likesData?.map(l => l.post_id) || []);
+
             setPosts(postsData.map(p => ({
                 ...p,
-                author: userMap[p.user_id] || { display_name: 'Foodie' }
+                author: userMap[p.user_id] || { display_name: 'Foodie' },
+                isLikedByUser: likedPostIds.has(p.id)
             })));
         }
         setLoading(false);
@@ -141,7 +152,7 @@ const Community = () => {
                                 <div style={{ padding: '20px' }}>
                                     <div style={{ display: 'flex', gap: '16px', marginBottom: '12px' }}>
                                         <motion.div whileTap={{ scale: 0.8 }} onClick={() => handleLike(post.id, post.likes_count)} style={{ cursor: 'pointer' }}>
-                                            <Heart size={26} color="var(--primary)" fill={post.likes_count > 0 ? "var(--primary)" : "none"} />
+                                            <Heart size={26} color="var(--primary)" fill={post.isLikedByUser ? "var(--primary)" : "none"} />
                                         </motion.div>
                                         <MessageCircle size={26} color="var(--text-main)" />
                                     </div>

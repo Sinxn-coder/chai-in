@@ -53,20 +53,21 @@ const AppBar = () => {
 
             {/* Brand / Logo */}
             <div
-                style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }}
+                style={{ display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer' }}
                 onClick={() => navigate('/en/home')}
             >
                 <img
-                    src="/chai-in/chai_logo.png"
+                    src="/chai-in/chai_icon.png"
                     alt="Chai-in"
                     style={{
-                        height: '42px',
+                        height: '40px',
+                        width: '40px',
                         objectFit: 'contain',
-                        borderRadius: '8px'
+                        borderRadius: '10px'
                     }}
-                    onError={(e) => { e.target.src = 'https://ui-avatars.com/api/?name=Chai-in&background=EF2A39&color=fff&rounded=true&size=42' }}
+                    onError={(e) => { e.target.src = 'https://ui-avatars.com/api/?name=C&background=EF2A39&color=fff&rounded=true&size=40' }}
                 />
-                <span style={{ fontSize: '12px', color: 'var(--primary)', fontWeight: '900', alignSelf: 'flex-end', marginBottom: '8px', letterSpacing: '1px' }}>v16</span>
+                <span style={{ fontSize: '1.3rem', color: 'var(--text-main)', fontWeight: '900', fontFamily: "'Outfit', sans-serif" }}>Chai.in</span>
             </div>
 
             {/* Right Actions */}
@@ -90,13 +91,17 @@ const AppBar = () => {
                     <Bell size={20} color="#333" />
                     {unreadCount > 0 && (
                         <span style={{
-                            position: 'absolute', top: '2px', right: '2px',
-                            background: 'var(--primary)', color: 'white',
-                            fontSize: '0.7rem', fontWeight: 'bold',
-                            width: '16px', height: '16px', borderRadius: '50%',
-                            display: 'flex', alignItems: 'center', justifyContent: 'center'
+                            position: 'absolute', top: '4px', right: '4px',
+                            background: '#EF2A39', color: 'white',
+                            fontSize: '0.65rem', fontWeight: '900',
+                            minWidth: '18px', height: '18px',
+                            borderRadius: '50%',
+                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            padding: '0 4px',
+                            border: '2px solid white',
+                            boxShadow: '0 2px 4px rgba(239, 42, 57, 0.3)'
                         }}>
-                            {unreadCount}
+                            {unreadCount > 9 ? '9+' : unreadCount}
                         </span>
                     )}
                 </button>
