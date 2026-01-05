@@ -1,1 +1,0 @@
-cmd /c "npm run build > build_log.txt 2>&1"
