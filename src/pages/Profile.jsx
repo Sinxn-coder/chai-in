@@ -40,7 +40,7 @@ const Profile = ({ lang }) => {
 
         const { count: spotsCount } = await supabase.from('spots').select('*', { count: 'exact', head: true }).eq('created_by', user.id);
         const { count: reviewsCount } = await supabase.from('reviews').select('*', { count: 'exact', head: true }).eq('user_id', user.id);
-        const { count: favCount } = await supabase.from('favorites').select('*', { count: 'exact', head: true }).eq('user_id', user.id);
+        const { count: favCount } = await supabase.from('user_favorites').select('*', { count: 'exact', head: true }).eq('user_id', user.id);
 
         setStats({
             spots: spotsCount || 0,
@@ -54,7 +54,7 @@ const Profile = ({ lang }) => {
     const fetchTabData = async () => {
         setTabLoading(true);
         if (activeTab === 'favorites') {
-            const { data: favData } = await supabase.from('favorites').select('spot_id').eq('user_id', user.id);
+            const { data: favData } = await supabase.from('user_favorites').select('spot_id').eq('user_id', user.id);
             if (favData && favData.length > 0) {
                 const spotIds = favData.map(f => f.spot_id);
                 const { data: spotsData } = await supabase.from('spots').select('*').in('id', spotIds);

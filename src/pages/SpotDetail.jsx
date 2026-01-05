@@ -139,7 +139,7 @@ const SpotDetail = ({ lang }) => {
                     style={{ position: 'absolute', top: '24px', right: '20px', background: 'white', border: 'none', borderRadius: '16px', padding: '12px', boxShadow: 'var(--shadow-md)', zIndex: 10, display: 'flex', alignItems: 'center', gap: '8px' }}
                 >
                     <Heart size={24} fill={isFavorite ? 'var(--primary)' : 'none'} color={isFavorite ? 'var(--primary)' : 'var(--text-main)'} />
-                    <span style={{ fontWeight: '800' }}>{favoriteCount}</span>
+                    <span style={{ fontWeight: '800' }}>{spot.favorites_count || 0}</span>
                 </motion.button>
             </div>
 

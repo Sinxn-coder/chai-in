@@ -62,7 +62,7 @@ const BottomNav = ({ lang }) => {
 
                     if (item.isFab) {
                         return (
-                            <div key={item.to} style={{ position: 'relative', top: '-25px', zIndex: 1001 }}>
+                            <div key={item.to} style={{ position: 'relative', top: '-35px', zIndex: 1001 }}>
                                 <NavLink
                                     to={`/${currentLang}${item.to}`}
                                     style={{ textDecoration: 'none' }}
