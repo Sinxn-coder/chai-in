@@ -14,6 +14,9 @@ import Favorites from './pages/Favorites';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import ContactAdmin from './pages/ContactAdmin';
 import DirectionsPage from './pages/DirectionsPage';
+import ProfileFavorites from './pages/ProfileFavorites';
+import ProfileReviews from './pages/ProfileReviews';
+import ProfileAdded from './pages/ProfileAdded';
 import MainLayout from './layouts/MainLayout';
 import { useAuth } from './context/AuthContext';
 
@@ -66,6 +69,9 @@ function AppRoutes({ lang }) {
         <Route path="favorites" element={<Favorites lang={lang} />} />
         <Route path="leaderboard" element={<Leaderboard lang={lang} />} />
         <Route path="profile" element={<Profile lang={lang} />} />
+        <Route path="profile/favorites" element={<ProfileFavorites lang={lang} />} />
+        <Route path="profile/reviews" element={<ProfileReviews lang={lang} />} />
+        <Route path="profile/added" element={<ProfileAdded lang={lang} />} />
         <Route path="settings" element={<Settings lang={lang} />} />
         <Route path="privacy-policy" element={<PrivacyPolicy lang={lang} />} />
         <Route path="contact-admin" element={<ContactAdmin lang={lang} />} />

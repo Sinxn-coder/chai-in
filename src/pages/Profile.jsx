@@ -179,43 +179,34 @@ const Profile = ({ lang }) => {
                 </div>
             </div>
 
-            {/* Tab Content */}
+            {/* Tab Content - Navigation Buttons */}
             <div style={{ padding: '0 20px' }}>
-                {tabLoading ? (
-                    <FoodLoader message="Loading..." />
-                ) : activeTab === 'reviews' ? (
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                        {tabData.length === 0 ? (
-                            <div style={{ textAlign: 'center', padding: '40px 20px', color: 'var(--text-muted)' }}>
-                                <MessageSquare size={48} style={{ marginBottom: '12px', opacity: 0.3 }} />
-                                <p>No reviews yet</p>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px' }}>
+                    {tabs.map(tab => (
+                        <motion.button
+                            key={tab.id}
+                            whileTap={{ scale: 0.95 }}
+                            onClick={() => navigate(`/${lang}/profile/${tab.id}`)}
+                            style={{
+                                padding: '20px',
+                                borderRadius: '20px',
+                                background: 'white',
+                                border: '2px solid var(--secondary)',
+                                boxShadow: 'var(--shadow-md)',
+                                cursor: 'pointer',
+                                textAlign: 'center'
+                            }}
+                        >
+                            <tab.icon size={32} color="var(--primary)" style={{ marginBottom: '12px' }} />
+                            <div style={{ fontSize: '1.1rem', fontWeight: '900', color: 'var(--text-main)', marginBottom: '4px' }}>
+                                {tab.label}
                             </div>
-                        ) : (
-                            tabData.map(review => (
-                                <div key={review.id} style={{ background: 'white', padding: '16px', borderRadius: '20px', boxShadow: 'var(--shadow-sm)' }}>
-                                    <div style={{ display: 'flex', gap: '4px', marginBottom: '8px' }}>
-                                        {[...Array(5)].map((_, i) => (
-                                            <Star key={i} size={14} fill={i < review.rating ? '#FFB800' : 'none'} color={i < review.rating ? '#FFB800' : '#ddd'} />
-                                        ))}
-                                    </div>
-                                    <p style={{ fontSize: '0.9rem', color: 'var(--text-main)', marginBottom: '8px' }}>{review.comment}</p>
-                                    <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: '600' }}>at {review.spots?.name}</p>
-                                </div>
-                            ))
-                        )}
-                    </div>
-                ) : (
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px' }}>
-                        {tabData.length === 0 ? (
-                            <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '40px 20px', color: 'var(--text-muted)' }}>
-                                <Heart size={48} style={{ marginBottom: '12px', opacity: 0.3 }} />
-                                <p>Nothing here yet</p>
+                            <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: '600' }}>
+                                {tab.count} items
                             </div>
-                        ) : (
-                            tabData.map(spot => <SpotCard key={spot.id} spot={spot} />)
-                        )}
-                    </div>
-                )}
+                        </motion.button>
+                    ))}
+                </div>
             </div>
 
             {/* Quick Actions */}
