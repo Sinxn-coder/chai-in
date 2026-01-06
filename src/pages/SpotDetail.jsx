@@ -202,6 +202,28 @@ const SpotDetail = ({ lang }) => {
     };
 
     const handleGetDirections = () => {
+        if (!spot?.latitude || !spot?.longitude) {
+            alert('Location coordinates not available for this spot.');
+            return;
+        }
+
+        const lat = spot.latitude;
+        const lng = spot.longitude;
+        const spotName = encodeURIComponent(spot.name || 'Spot');
+        
+        // Check if device is iOS
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+        
+        // Open maps immediately
+        if (isIOS) {
+            // For iOS devices, use Apple Maps
+            window.open(`maps://?daddr=${lat},${lng}&q=${spotName}`, '_blank');
+        } else {
+            // For Android and desktop, use Google Maps
+            window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}&destination_place_id=${spotName}`, '_blank');
+        }
+        
+        // Also navigate to directions page in background
         navigate(`/${window.location.pathname.includes('/ml/') ? 'ml' : 'en'}/directions/${id}`);
     };
 
