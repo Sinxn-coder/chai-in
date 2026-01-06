@@ -5,6 +5,7 @@ import { formatDistanceToNow } from 'date-fns';
 import { useAuth } from '../context/AuthContext';
 import Toast from '../components/Toast';
 import { motion, AnimatePresence } from 'framer-motion';
+import ImageCropper from '../components/ImageCropper';
 
 const Community = () => {
     const { user } = useAuth();
@@ -17,6 +18,8 @@ const Community = () => {
     const [newImage, setNewImage] = useState(null);
     const [newCaption, setNewCaption] = useState('');
     const [selectedPost, setSelectedPost] = useState(null);
+    const [showCropper, setShowCropper] = useState(false);
+    const [originalImageFile, setOriginalImageFile] = useState(null);
 
     const fetchPosts = async () => {
         setLoading(true);
@@ -69,6 +72,26 @@ const Community = () => {
         };
     }, []);
 
+    const handleImageSelect = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setOriginalImageFile(file);
+            setShowCropper(true);
+        }
+    };
+
+    const handleCropComplete = (croppedFile) => {
+        setNewImage(croppedFile);
+        setImagePreview(URL.createObjectURL(croppedFile));
+        setShowCropper(false);
+        setOriginalImageFile(null);
+    };
+
+    const handleCropCancel = () => {
+        setShowCropper(false);
+        setOriginalImageFile(null);
+    };
+
     const handleCreatePost = async () => {
         if (!newImage || !newCaption) return;
         setUploading(true);
@@ -79,7 +102,7 @@ const Community = () => {
 
             await supabase.from('community_posts').insert([{ user_id: user.id, image_url: publicUrl, caption: newCaption, likes_count: 0 }]);
 
-            setToast({ message: "Shared with the community! ✨", type: 'success' });
+            setToast({ message: "Shared with community! ✨", type: 'success' });
             setShowCreate(false);
             setNewImage(null);
             setImagePreview(null);
@@ -229,12 +252,9 @@ const Community = () => {
                                     </div>
                                 ) : (
                                     <label style={{ width: '100%', height: '200px', border: '3px dashed var(--secondary)', borderRadius: '24px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', background: 'var(--secondary)' }}>
-                                        <input type="file" accept="image/*" style={{ display: 'none' }} onChange={(e) => {
-                                            const file = e.target.files[0];
-                                            if (file) { setNewImage(file); setImagePreview(URL.createObjectURL(file)); }
-                                        }} />
+                                        <input type="file" accept="image/*" style={{ display: 'none' }} onChange={handleImageSelect} />
                                         <Camera size={40} color="var(--primary)" />
-                                        <span style={{ fontWeight: '800', marginTop: '10px', color: 'var(--text-muted)' }}>Tap to Upload Photo</span>
+                                        <span style={{ fontWeight: '800', marginTop: '10px', color: 'var(--text-muted)' }}>Tap to Upload & Crop Photo</span>
                                     </label>
                                 )}
 
@@ -256,6 +276,17 @@ const Community = () => {
                             </div>
                         </motion.div>
                     </motion.div>
+                )}
+            </AnimatePresence>
+
+            {/* Image Cropper Overlay */}
+            <AnimatePresence>
+                {showCropper && originalImageFile && (
+                    <ImageCropper
+                        imageFile={originalImageFile}
+                        onCrop={handleCropComplete}
+                        onCancel={handleCropCancel}
+                    />
                 )}
             </AnimatePresence>
         </div>
