@@ -147,41 +147,9 @@ const Profile = ({ lang }) => {
                 ))}
             </div>
 
-            {/* Tabs */}
+            {/* Tabs - Now Navigate to Separate Pages */}
             <div style={{ padding: '0 20px', marginBottom: '20px' }}>
                 <div style={{ display: 'flex', gap: '8px', background: 'var(--secondary)', padding: '6px', borderRadius: '20px' }}>
-                    {tabs.map(tab => (
-                        <button
-                            key={tab.id}
-                            onClick={() => setActiveTab(tab.id)}
-                            style={{
-                                flex: 1,
-                                padding: '12px',
-                                borderRadius: '16px',
-                                background: activeTab === tab.id ? 'white' : 'transparent',
-                                border: 'none',
-                                fontWeight: '800',
-                                fontSize: '0.85rem',
-                                color: activeTab === tab.id ? 'var(--primary)' : 'var(--text-muted)',
-                                cursor: 'pointer',
-                                boxShadow: activeTab === tab.id ? 'var(--shadow-sm)' : 'none',
-                                transition: 'all 0.3s ease',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                gap: '6px'
-                            }}
-                        >
-                            <tab.icon size={16} />
-                            {tab.label} ({tab.count})
-                        </button>
-                    ))}
-                </div>
-            </div>
-
-            {/* Tab Content - Navigation Buttons */}
-            <div style={{ padding: '0 20px' }}>
-                <div style={{ display: 'flex', gap: '8px', background: 'var(--secondary)', padding: '6px', borderRadius: '20px', marginBottom: '20px' }}>
                     {tabs.map(tab => (
                         <button
                             key={tab.id}
