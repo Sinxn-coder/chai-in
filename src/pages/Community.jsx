@@ -1,10 +1,11 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabaseClient';
-import { Heart, MessageCircle, Plus, Image as ImageIcon, Send, X, User as UserIcon, Loader, Camera, Crop, RotateCw } from 'lucide-react';
+import { Heart, MessageCircle, Plus, User as UserIcon, Loader } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { useAuth } from '../context/AuthContext';
 import Toast from '../components/Toast';
 import { motion, AnimatePresence } from 'framer-motion';
+import CreatePostModal from '../components/CreatePostModal';
 
 const Community = () => {
     const { user } = useAuth();
@@ -12,18 +13,6 @@ const Community = () => {
     const [loading, setLoading] = useState(true);
     const [showCreate, setShowCreate] = useState(false);
     const [toast, setToast] = useState(null);
-    const [uploading, setUploading] = useState(false);
-    const [imagePreview, setImagePreview] = useState(null);
-    const [newImage, setNewImage] = useState(null);
-    const [newCaption, setNewCaption] = useState('');
-    const [selectedPost, setSelectedPost] = useState(null);
-    const [showCropper, setShowCropper] = useState(false);
-    const [originalImageFile, setOriginalImageFile] = useState(null);
-    const [crop, setCrop] = useState({ x: 0, y: 0, width: 100, height: 100 });
-    const [zoom, setZoom] = useState(1);
-    const [rotation, setRotation] = useState(0);
-    const canvasRef = useRef(null);
-    const imageRef = useRef(null);
 
     const fetchPosts = async () => {
         setLoading(true);
@@ -76,128 +65,20 @@ const Community = () => {
         };
     }, []);
 
-    const handleImageSelect = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            setOriginalImageFile(file);
-            setImagePreview(URL.createObjectURL(file));
-            setShowCropper(true);
-            
-            // Initialize crop to square (1:1) like Instagram
-            const img = new Image();
-            img.onload = () => {
-                const aspectRatio = img.naturalWidth / img.naturalHeight;
-                const size = Math.min(img.naturalWidth, img.naturalHeight);
-                setCrop({
-                    x: (img.naturalWidth - size) / 2,
-                    y: (img.naturalHeight - size) / 2,
-                    width: size,
-                    height: size
-                });
-            };
-            img.src = URL.createObjectURL(file);
-        }
-    };
+    const handlePostComplete = async (imageFile, caption) => {
+        const fileName = `${user.id}-${Date.now()}.${imageFile.name.split('.').pop()}`;
+        await supabase.storage.from('food-images').upload(`community/${fileName}`, imageFile);
+        const { data: { publicUrl } } = supabase.storage.from('food-images').getPublicUrl(`community/${fileName}`);
 
-    const handleCropComplete = () => {
-        const canvas = canvasRef.current;
-        const ctx = canvas.getContext('2d');
-        const image = imageRef.current;
+        await supabase.from('community_posts').insert([{ 
+            user_id: user.id, 
+            image_url: publicUrl, 
+            caption: caption, 
+            likes_count: 0 
+        }]);
 
-        if (!canvas || !image) return;
-
-        // Set canvas to Instagram square size (1080x1080)
-        const size = 1080;
-        canvas.width = size;
-        canvas.height = size;
-
-        // Clear canvas
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        // Save context state
-        ctx.save();
-
-        // Apply transformations
-        const centerX = size / 2;
-        const centerY = size / 2;
-
-        // Move to center
-        ctx.translate(centerX, centerY);
-
-        // Apply rotation
-        ctx.rotate((rotation * Math.PI) / 180);
-
-        // Apply zoom
-        ctx.scale(zoom, zoom);
-
-        // Draw image centered and scaled to fit square
-        const imgSize = Math.min(image.naturalWidth, image.naturalHeight);
-        const scale = size / imgSize;
-        
-        ctx.drawImage(
-            image,
-            -imgSize / 2,
-            -imgSize / 2,
-            imgSize,
-            imgSize
-        );
-
-        // Restore context state
-        ctx.restore();
-
-        const croppedDataUrl = canvas.toDataURL('image/jpeg', 0.9);
-        if (croppedDataUrl) {
-            // Convert data URL to blob
-            fetch(croppedDataUrl)
-                .then(res => res.blob())
-                .then(blob => {
-                    const file = new File([blob], 'cropped-image.jpg', { type: 'image/jpeg' });
-                    setNewImage(file);
-                    setImagePreview(URL.createObjectURL(file));
-                    setShowCropper(false);
-                    setOriginalImageFile(null);
-                });
-        }
-    };
-
-    const handleCropCancel = () => {
-        setShowCropper(false);
-        setOriginalImageFile(null);
-    };
-
-    const handleRotate = () => {
-        setRotation((prev) => (prev + 90) % 360);
-    };
-
-    const handleZoomIn = () => {
-        setZoom((prev) => Math.min(prev + 0.1, 3));
-    };
-
-    const handleZoomOut = () => {
-        setZoom((prev) => Math.max(prev - 0.1, 0.5));
-    };
-
-    const handleCreatePost = async () => {
-        if (!newImage || !newCaption) return;
-        setUploading(true);
-        try {
-            const fileName = `${user.id}-${Date.now()}.${newImage.name.split('.').pop()}`;
-            await supabase.storage.from('food-images').upload(`community/${fileName}`, newImage);
-            const { data: { publicUrl } } = supabase.storage.from('food-images').getPublicUrl(`community/${fileName}`);
-
-            await supabase.from('community_posts').insert([{ user_id: user.id, image_url: publicUrl, caption: newCaption, likes_count: 0 }]);
-
-            setToast({ message: "Shared with community! ✨", type: 'success' });
-            setShowCreate(false);
-            setNewImage(null);
-            setImagePreview(null);
-            setNewCaption('');
-            fetchPosts();
-        } catch (error) {
-            setToast({ message: "Failed to post", type: 'error' });
-        } finally {
-            setUploading(false);
-        }
+        setToast({ message: "Shared with community! ✨", type: 'success' });
+        fetchPosts();
     };
 
     const handleLike = async (postId, currentLikes) => {
@@ -308,226 +189,15 @@ const Community = () => {
 
             {selectedPost && <Comments post={selectedPost} onClose={() => setSelectedPost(null)} />}
 
-            {/* Create Post Overlay */}
+            {/* Create Post Modal */}
             <AnimatePresence>
                 {showCreate && (
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 1100, display: 'flex', alignItems: 'flex-end' }}
-                    >
-                        <motion.div
-                            initial={{ y: '100%' }}
-                            animate={{ y: 0 }}
-                            exit={{ y: '100%' }}
-                            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-                            style={{ background: 'white', width: '100%', borderTopLeftRadius: '40px', borderTopRightRadius: '40px', padding: '24px', maxHeight: '90vh', overflowY: 'auto' }}
-                        >
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-                                <h3 style={{ fontSize: '1.4rem', fontWeight: '900', margin: 0 }}>New Post</h3>
-                                <button onClick={() => setShowCreate(false)} style={{ background: 'var(--secondary)', border: 'none', padding: '8px', borderRadius: '12px' }}><X size={20} /></button>
-                            </div>
-
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                                {imagePreview && (
-                                    <div style={{ width: '100%', borderRadius: '24px', overflow: 'hidden', position: 'relative' }}>
-                                        <img 
-                                            ref={imageRef}
-                                            src={imagePreview} 
-                                            style={{ 
-                                                width: '100%', 
-                                                height: '300px', 
-                                                objectFit: 'contain',
-                                                display: showCropper ? 'none' : 'block'
-                                            }} 
-                                        />
-                                        
-                                        {/* Cropping Controls Overlay */}
-                                        {showCropper && (
-                                            <div style={{
-                                                position: 'absolute',
-                                                top: 0,
-                                                left: 0,
-                                                right: 0,
-                                                bottom: 0,
-                                                background: 'rgba(0, 0, 0, 0.8)',
-                                                display: 'flex',
-                                                flexDirection: 'column',
-                                                alignItems: 'center',
-                                                justifyContent: 'center',
-                                                padding: '20px',
-                                                gap: '12px'
-                                            }}>
-                                                <div style={{
-                                                    width: '250px',
-                                                    height: '250px',
-                                                    borderRadius: '12px',
-                                                    overflow: 'hidden',
-                                                    border: '2px solid white',
-                                                    position: 'relative',
-                                                    background: 'black'
-                                                }}>
-                                                    <img 
-                                                        ref={imageRef}
-                                                        src={imagePreview} 
-                                                        style={{ 
-                                                            width: '100%', 
-                                                            height: '100%', 
-                                                            objectFit: 'contain',
-                                                            transform: `scale(${zoom}) rotate(${rotation}deg)`,
-                                                            transition: 'transform 0.3s ease'
-                                                        }} 
-                                                    />
-                                                </div>
-                                                <div style={{
-                                                    display: 'flex',
-                                                    justifyContent: 'center',
-                                                    gap: '10px',
-                                                    marginBottom: '16px'
-                                                }}>
-                                                    <button
-                                                        onClick={handleZoomOut}
-                                                        style={{
-                                                            background: 'var(--secondary)',
-                                                            border: 'none',
-                                                            padding: '8px 12px',
-                                                            borderRadius: '8px',
-                                                            cursor: 'pointer',
-                                                            fontSize: '0.9rem',
-                                                            fontWeight: '600'
-                                                        }}
-                                                    >
-                                                        Zoom -
-                                                    </button>
-                                                    <button
-                                                        onClick={handleZoomIn}
-                                                        style={{
-                                                            background: 'var(--secondary)',
-                                                            border: 'none',
-                                                            padding: '8px 12px',
-                                                            borderRadius: '8px',
-                                                            cursor: 'pointer',
-                                                            fontSize: '0.9rem',
-                                                            fontWeight: '600'
-                                                        }}
-                                                    >
-                                                        Zoom +
-                                                    </button>
-                                                    <button
-                                                        onClick={handleRotate}
-                                                        style={{
-                                                            background: 'var(--secondary)',
-                                                            border: 'none',
-                                                            padding: '8px 12px',
-                                                            borderRadius: '8px',
-                                                            cursor: 'pointer',
-                                                            fontSize: '0.9rem',
-                                                            fontWeight: '600',
-                                                            display: 'flex',
-                                                            alignItems: 'center',
-                                                            gap: '6px'
-                                                        }}
-                                                    >
-                                                        <RotateCw size={16} />
-                                                        Rotate
-                                                    </button>
-                                                </div>
-                                                
-                                                <div style={{
-                                                    display: 'flex',
-                                                    justifyContent: 'center',
-                                                    gap: '10px'
-                                                }}>
-                                                    <button
-                                                        onClick={handleCropComplete}
-                                                        style={{
-                                                            background: 'var(--primary)',
-                                                            color: 'white',
-                                                            border: 'none',
-                                                            padding: '12px 24px',
-                                                            borderRadius: '12px',
-                                                            cursor: 'pointer',
-                                                            fontSize: '1rem',
-                                                            fontWeight: '800',
-                                                            display: 'flex',
-                                                            alignItems: 'center',
-                                                            gap: '8px'
-                                                        }}
-                                                    >
-                                                        <Crop size={18} />
-                                                        Apply Crop
-                                                    </button>
-                                                    <button
-                                                        onClick={handleCropCancel}
-                                                        style={{
-                                                            background: 'var(--secondary)',
-                                                            border: 'none',
-                                                            padding: '8px 16px',
-                                                            borderRadius: '12px',
-                                                            cursor: 'pointer',
-                                                            fontSize: '0.9rem',
-                                                            fontWeight: '600'
-                                                        }}
-                                                    >
-                                                        Cancel
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        )}
-                                        
-                                        {!showCropper && (
-                                            <button 
-                                                onClick={() => { setImagePreview(null); setNewImage(null) }} 
-                                                style={{ 
-                                                    position: 'absolute', 
-                                                    top: '10px', 
-                                                    right: '10px', 
-                                                    background: 'rgba(0,0,0,0.5)', 
-                                                    color: 'white', 
-                                                    border: 'none', 
-                                                    borderRadius: '50%', 
-                                                    padding: '6px' 
-                                                }}
-                                            >
-                                                <X size={16} />
-                                            </button>
-                                        )}
-                                    </div>
-                                )} : (
-                                    <label style={{ width: '100%', height: '200px', border: '3px dashed var(--secondary)', borderRadius: '24px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', background: 'var(--secondary)' }}>
-                                        <input type="file" accept="image/*" style={{ display: 'none' }} onChange={handleImageSelect} />
-                                        <Camera size={40} color="var(--primary)" />
-                                        <span style={{ fontWeight: '800', marginTop: '10px', color: 'var(--text-muted)' }}>Tap to Upload & Crop Photo</span>
-                                    </label>
-                                )}
-
-                                <textarea
-                                    placeholder="Write a caption..."
-                                    value={newCaption}
-                                    onChange={e => setNewCaption(e.target.value)}
-                                    style={{ width: '100%', padding: '20px', borderRadius: '24px', background: 'var(--secondary)', border: 'none', fontSize: '1rem', fontWeight: '600', minHeight: '120px', outline: 'none' }}
-                                />
-
-                                <motion.button
-                                    whileTap={{ scale: 0.95 }}
-                                    onClick={handleCreatePost}
-                                    disabled={uploading || !newImage}
-                                    style={{ width: '100%', padding: '20px', borderRadius: '24px', background: 'var(--primary)', color: 'white', border: 'none', fontSize: '0.9rem', fontWeight: '900', boxShadow: 'var(--shadow-md)', opacity: (uploading || !newImage) ? 0.6 : 1 }}
-                                >
-                                    {uploading ? 'Sharing...' : 'Share Post'}
-                                </motion.button>
-                            </div>
-                        </motion.div>
-                    </motion.div>
+                    <CreatePostModal
+                        onClose={() => setShowCreate(false)}
+                        onPostComplete={handlePostComplete}
+                    />
                 )}
             </AnimatePresence>
-
-            {/* Hidden canvas for cropping */}
-            <canvas
-                ref={canvasRef}
-                style={{ display: 'none' }}
-            />
         </div>
     );
 };
