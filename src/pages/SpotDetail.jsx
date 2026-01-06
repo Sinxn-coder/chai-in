@@ -160,7 +160,7 @@ const SpotDetail = ({ lang }) => {
     if (!spot) return <div style={{ padding: '40px', textAlign: 'center' }}>Spot disappeared...</div>;
 
     return (
-        <div style={{ background: 'var(--bg-white)', minHeight: '100vh', position: 'relative' }}>
+        <div style={{ background: 'var(--bg-white)', minHeight: '100vh', position: 'relative', paddingBottom: '140px' }}>
 
             {/* Header Image */}
             <div style={{ height: '45vh', position: 'relative', background: '#000' }}>
@@ -278,7 +278,7 @@ const SpotDetail = ({ lang }) => {
                 </div>
 
                 {/* Primary Action */}
-                <div style={{ position: 'sticky', bottom: '20px', left: 0, right: 0, zIndex: 10 }}>
+                <div style={{ position: 'sticky', bottom: '20px', left: 0, right: 0, zIndex: 10, padding: '0 4px', marginBottom: '12px' }}>
                     <motion.button
                         whileTap={{ scale: 0.95 }}
                         onClick={handleVisitToggle}
