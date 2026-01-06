@@ -20,6 +20,8 @@ const SpotDetail = ({ lang }) => {
     const [visited, setVisited] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
     const [visitCount, setVisitCount] = useState(0);
+    const [prevVisitCount, setPrevVisitCount] = useState(0);
+    const [isCountAnimating, setIsCountAnimating] = useState(false);
 
     useEffect(() => {
         fetchSpotDetails();
@@ -148,8 +150,19 @@ const SpotDetail = ({ lang }) => {
     const handleVisitToggle = async () => {
         if (!user) return alert("Please login!");
         const prevVisited = visited;
-        setVisited(!prevVisited);
-        setVisitCount(prevVisited ? visitCount - 1 : visitCount + 1);
+        const newVisited = !prevVisited;
+        const newCount = prevVisited ? visitCount - 1 : visitCount + 1;
+        
+        setVisited(newVisited);
+        setPrevVisitCount(visitCount);
+        setVisitCount(newCount);
+        
+        // Trigger animation when count increases
+        if (!prevVisited) {
+            setIsCountAnimating(true);
+            setTimeout(() => setIsCountAnimating(false), 600);
+        }
+        
         try {
             if (prevVisited) {
                 await supabase.from('visited_spots').delete().eq('spot_id', parseInt(id)).eq('user_id', user.id);
@@ -273,9 +286,8 @@ const SpotDetail = ({ lang }) => {
                         <Star size={18} fill="#FFB800" color="#FFB800" />
                         <span style={{ fontWeight: '800', fontSize: '1.1rem' }}>{spot.rating || '4.5'}</span>
                     </div>
-                    <div style={{ background: 'var(--secondary)', padding: '10px 16px', borderRadius: '16px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                        <MapPin size={18} color="var(--primary)" />
-                        <span style={{ fontWeight: '800', fontSize: '1.1rem', color: 'var(--text-main)' }}>{formatNumber(visitCount)} visits</span>
+                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: '600', display: 'flex', alignItems: 'center' }}>
+                        {formatNumber(visitCount)} visits
                     </div>
                 </div>
 
@@ -361,16 +373,20 @@ const SpotDetail = ({ lang }) => {
                         <MapPin size={24} />
                         VISITED
                         {visitCount > 0 && (
-                            <span style={{ 
-                                background: 'rgba(255,255,255,0.2)', 
-                                padding: '4px 8px', 
-                                borderRadius: '12px', 
-                                fontSize: '0.8rem', 
-                                fontWeight: '700',
-                                marginLeft: '8px'
-                            }}>
+                            <motion.span 
+                                animate={isCountAnimating ? { scale: [1, 1.3, 1] } : {}}
+                                transition={{ duration: 0.6, ease: "easeOut" }}
+                                style={{ 
+                                    background: 'rgba(255,255,255,0.2)', 
+                                    padding: '2px 6px', 
+                                    borderRadius: '8px', 
+                                    fontSize: '0.65rem', 
+                                    fontWeight: '700',
+                                    marginLeft: '6px'
+                                }}
+                            >
                                 {formatNumber(visitCount)}
-                            </span>
+                            </motion.span>
                         )}
                     </motion.button>
                 </div>
