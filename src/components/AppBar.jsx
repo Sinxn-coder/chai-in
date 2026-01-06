@@ -11,6 +11,7 @@ const AppBar = () => {
     const location = useLocation();
     const [showNotifications, setShowNotifications] = useState(false);
     const [unreadCount, setUnreadCount] = useState(0);
+    const [userPreferences, setUserPreferences] = useState(null);
 
     // Dynamic title/subtitle based on location
     const isHome = location.pathname.includes('/home');
@@ -25,7 +26,14 @@ const AppBar = () => {
                 .eq('is_read', false);
             setUnreadCount(count || 0);
         };
+        
+        const fetchUserPrefs = async () => {
+            const { data: prefs } = await supabase.from('user_preferences').select('*').eq('user_id', user.id).maybeSingle();
+            setUserPreferences(prefs);
+        };
+        
         fetchUnread();
+        fetchUserPrefs();
     }, [user]);
 
     return (
@@ -120,7 +128,7 @@ const AppBar = () => {
                     }}
                 >
                     <img
-                        src={user?.user_metadata?.avatar_url || `https://ui-avatars.com/api/?name=${user?.email}`}
+                        src={userPreferences?.avatar_url || user?.user_metadata?.avatar_url || `https://ui-avatars.com/api/?name=${user?.email}`}
                         style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                     />
                 </div>

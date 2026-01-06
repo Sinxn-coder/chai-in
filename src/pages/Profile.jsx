@@ -122,7 +122,7 @@ const Profile = ({ lang }) => {
                 </motion.div>
 
                 <h1 style={{ marginTop: '16px', fontSize: '1.6rem', fontWeight: '900', color: 'var(--text-main)', margin: '16px 0 4px 0' }}>
-                    {userPreferences?.username || user?.user_metadata?.full_name || 'Foodie Voyager'}
+                    {userPreferences?.display_name || user?.user_metadata?.full_name || 'Foodie Voyager'}
                 </h1>
                 <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem', fontWeight: '500' }}>
                     Elite Level Discoverer • Kerala, IN
