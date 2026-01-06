@@ -27,28 +27,34 @@ const BottomNav = ({ lang }) => {
                 bottom: 0,
                 left: 0,
                 right: 0,
-                height: 130,
+                height: 140,
                 pointerEvents: 'none',
                 zIndex: 1000,
             }}
         >
-            {/* Flat bar with soft valley */}
+            {/* Curved sides + flat center top edge */}
             <div style={{ position: 'absolute', inset: 0, pointerEvents: 'auto' }}>
                 <svg
                     width="100%"
-                    height="130"
-                    viewBox="0 0 400 130"
+                    height="140"
+                    viewBox="0 0 400 140"
                     preserveAspectRatio="none"
+                    style={{ display: 'block' }}
                 >
+                    {/* 
+                      Path notes:
+                        - left & right are smooth curves (rounded edges)
+                        - center is flat (straight line) across the middle top
+                        - there is no notch: the center is flat so the button stays separate (floating)
+                    */}
                     <path
                         d="
-                          M0 48
-                          C110 48 150 48 175 52
-                          C190 55 195 62 200 66
-                          C205 62 210 55 225 52
-                          C250 48 290 48 400 48
-                          L400 130
-                          L0 130
+                          M0 68
+                          C60 40 120 40 150 50
+                          L250 50
+                          C280 40 340 40 400 68
+                          L400 140
+                          L0 140
                           Z
                         "
                         fill="#EF2A39"
@@ -56,11 +62,12 @@ const BottomNav = ({ lang }) => {
                 </svg>
             </div>
 
-            {/* Floating action button (NOT embedded) */}
+            {/* Floating center button - intentionally separated (space) from the bar */}
             <div
                 style={{
                     position: 'absolute',
-                    top: -4,
+                    /* negative top floats button above the bar, leaving a visible gap */
+                    top: -18,
                     left: '50%',
                     transform: 'translateX(-50%)',
                     pointerEvents: 'auto',
@@ -68,17 +75,18 @@ const BottomNav = ({ lang }) => {
             >
                 <NavLink to={`/${currentLang}/add-spot`} style={{ textDecoration: 'none' }}>
                     <motion.div
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
+                        whileHover={{ scale: 1.06 }}
+                        whileTap={{ scale: 0.96 }}
                         style={{
-                            width: 72,
-                            height: 72,
+                            width: 78,
+                            height: 78,
                             borderRadius: '50%',
                             background: '#EF2A39',
-                            boxShadow: '0 10px 24px rgba(0,0,0,0.35)',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
+                            boxShadow: '0 18px 36px rgba(0,0,0,0.28)',
+                            border: '4px solid rgba(255,255,255,0.06)',
                         }}
                     >
                         <Plus size={30} color="white" strokeWidth={3} />
@@ -86,7 +94,7 @@ const BottomNav = ({ lang }) => {
                 </NavLink>
             </div>
 
-            {/* Nav items */}
+            {/* Nav icons (center column left empty) */}
             <div
                 style={{
                     position: 'absolute',
@@ -114,9 +122,9 @@ const BottomNav = ({ lang }) => {
                                     gap: 6,
                                     textDecoration: 'none',
                                     color: 'white',
-                                    opacity: active ? 1 : 0.7,
+                                    opacity: active ? 1 : 0.75,
                                     fontWeight: 700,
-                                    fontSize: '0.75rem',
+                                    fontSize: '0.78rem',
                                 }}
                             >
                                 <item.icon size={24} strokeWidth={active ? 2.6 : 2} />
