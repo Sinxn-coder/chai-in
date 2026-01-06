@@ -469,7 +469,7 @@ const Community = () => {
                                             </button>
                                         )}
                                     </div>
-                                ) : (
+                                )} : (
                                     <label style={{ width: '100%', height: '200px', border: '3px dashed var(--secondary)', borderRadius: '24px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', background: 'var(--secondary)' }}>
                                         <input type="file" accept="image/*" style={{ display: 'none' }} onChange={handleImageSelect} />
                                         <Camera size={40} color="var(--primary)" />
