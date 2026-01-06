@@ -74,12 +74,17 @@ const SpotDetail = ({ lang }) => {
 
     const toggleFavorite = async () => {
         if (!user) return alert("Please login!");
-        if (isFavorite) {
-            await supabase.from('user_favorites').delete().eq('spot_id', parseInt(id)).eq('user_id', user.id);
-            setIsFavorite(false);
-        } else {
-            await supabase.from('user_favorites').insert({ spot_id: parseInt(id), user_id: user.id });
-            setIsFavorite(true);
+        const prevFavorite = isFavorite;
+        setIsFavorite(!prevFavorite); // Optimistic update
+        try {
+            if (prevFavorite) {
+                await supabase.from('user_favorites').delete().eq('spot_id', parseInt(id)).eq('user_id', user.id);
+            } else {
+                await supabase.from('user_favorites').insert({ spot_id: parseInt(id), user_id: user.id });
+            }
+        } catch (error) {
+            console.error('Error toggling favorite:', error);
+            setIsFavorite(prevFavorite); // Revert on error
         }
     };
 
@@ -136,10 +141,9 @@ const SpotDetail = ({ lang }) => {
                 <motion.button
                     whileTap={{ scale: 0.9 }}
                     onClick={toggleFavorite}
-                    style={{ position: 'absolute', top: '24px', right: '20px', background: 'white', border: 'none', borderRadius: '16px', padding: '12px', boxShadow: 'var(--shadow-md)', zIndex: 10, display: 'flex', alignItems: 'center', gap: '8px' }}
+                    style={{ position: 'absolute', top: '24px', right: '20px', background: 'white', border: 'none', borderRadius: '16px', padding: '12px', boxShadow: 'var(--shadow-md)', zIndex: 10 }}
                 >
                     <Heart size={24} fill={isFavorite ? 'var(--primary)' : 'none'} color={isFavorite ? 'var(--primary)' : 'var(--text-main)'} />
-                    <span style={{ fontWeight: '800' }}>{favoriteCount}</span>
                 </motion.button>
             </div>
 

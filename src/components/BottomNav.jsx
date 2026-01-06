@@ -62,7 +62,7 @@ const BottomNav = ({ lang }) => {
 
                     if (item.isFab) {
                         return (
-                            <div key={item.to} style={{ position: 'relative', top: '-35px', zIndex: 1001 }}>
+                            <div key={item.to} style={{ position: 'relative', top: '-45px', zIndex: 1001 }}>
                                 <NavLink
                                     to={`/${currentLang}${item.to}`}
                                     style={{ textDecoration: 'none' }}
@@ -78,10 +78,11 @@ const BottomNav = ({ lang }) => {
                                             display: 'flex',
                                             alignItems: 'center',
                                             justifyContent: 'center',
-                                            boxShadow: '0 8px 25px rgba(239, 42, 57, 0.4)'
+                                            boxShadow: '0 8px 25px rgba(239, 42, 57, 0.4)',
+                                            border: '4px solid white'
                                         }}
                                     >
-                                        <Plus size={32} color="white" strokeWidth={3} />
+                                        <Plus size={28} color="white" strokeWidth={3} />
                                     </motion.div>
                                 </NavLink>
                             </div>
