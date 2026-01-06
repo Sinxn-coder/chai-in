@@ -21,7 +21,8 @@ const Settings = () => {
         notificationsEnabled: true,
         notifyNewSpots: true,
         notifyReviewReplies: true,
-        notifyWeeklyDigest: false
+        notifyWeeklyDigest: false,
+        lastDisplayNameChange: null
     });
 
     useEffect(() => {
@@ -38,7 +39,8 @@ const Settings = () => {
                 notificationsEnabled: prefs.notifications_enabled,
                 notifyNewSpots: prefs.notify_new_spots,
                 notifyReviewReplies: prefs.notify_review_replies,
-                notifyWeeklyDigest: prefs.notify_weekly_digest
+                notifyWeeklyDigest: prefs.notify_weekly_digest,
+                lastDisplayNameChange: prefs.last_display_name_change
             });
         }
         setLoading(false);
@@ -64,6 +66,21 @@ const Settings = () => {
     const handleSave = async () => {
         setSaving(true);
         try {
+            // Check 24-hour cooldown for display name changes
+            const now = new Date();
+            const lastChange = formData.lastDisplayNameChange ? new Date(formData.lastDisplayNameChange) : null;
+            const hoursSinceChange = lastChange ? (now - lastChange) / (1000 * 60 * 60) : 25; // 25 hours if no previous change
+            
+            if (hoursSinceChange < 24) {
+                const hoursLeft = Math.ceil(24 - hoursSinceChange);
+                setToast({ 
+                    message: `You can only change your display name once every 24 hours. Please wait ${hoursLeft} more hours.`, 
+                    type: 'error' 
+                });
+                setSaving(false);
+                return;
+            }
+            
             // Check for uniqueness
             const { data: existingUser } = await supabase
                 .from('user_preferences')
@@ -85,7 +102,8 @@ const Settings = () => {
                 notifications_enabled: formData.notificationsEnabled,
                 notify_new_spots: formData.notifyNewSpots,
                 notify_review_replies: formData.notifyReviewReplies,
-                notify_weekly_digest: formData.notifyWeeklyDigest
+                notify_weekly_digest: formData.notifyWeeklyDigest,
+                last_display_name_change: now.toISOString()
             };
             await supabase.from('user_preferences').upsert(prefsData, { onConflict: 'user_id' });
             
