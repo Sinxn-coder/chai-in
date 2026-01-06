@@ -155,6 +155,28 @@ const SpotDetail = ({ lang }) => {
         }
     };
 
+    const handleGetDirections = () => {
+        if (!spot.latitude || !spot.longitude) {
+            alert('Location coordinates not available for this spot.');
+            return;
+        }
+
+        const lat = spot.latitude;
+        const lng = spot.longitude;
+        const spotName = encodeURIComponent(spot.name || 'Spot');
+        
+        // Check if the device is iOS
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+        
+        if (isIOS) {
+            // For iOS devices, use Apple Maps
+            window.open(`maps://?daddr=${lat},${lng}&q=${spotName}`, '_blank');
+        } else {
+            // For Android and desktop, use Google Maps
+            window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}&destination_place_id=${spotName}`, '_blank');
+        }
+    };
+
     if (loading) return <div style={{ padding: '40px', textAlign: 'center' }}>Wait a moment...</div>;
     if (errorMessage) return <div style={{ padding: '40px', textAlign: 'center' }}>{errorMessage}</div>;
     if (!spot) return <div style={{ padding: '40px', textAlign: 'center' }}>Spot disappeared...</div>;
@@ -248,6 +270,13 @@ const SpotDetail = ({ lang }) => {
                             <MessageCircle size={20} /> WhatsApp
                         </a>
                     )}
+                    <motion.button
+                        whileTap={{ scale: 0.95 }}
+                        onClick={handleGetDirections}
+                        style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '14px', borderRadius: '16px', background: 'var(--primary)', color: 'white', border: 'none', textDecoration: 'none', fontWeight: '800', cursor: 'pointer' }}
+                    >
+                        <Navigation size={20} /> Directions
+                    </motion.button>
                 </div>
 
                 {/* Reviews Section */}
