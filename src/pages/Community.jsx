@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { supabase } from '../lib/supabaseClient';
 import { Heart, MessageCircle, Plus, Image as ImageIcon, Send, X, User as UserIcon, Loader, Camera, Crop, RotateCw } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
@@ -356,6 +356,24 @@ const Community = () => {
                                                 gap: '12px'
                                             }}>
                                                 <div style={{
+                                                    width: '250px',
+                                                    height: '250px',
+                                                    borderRadius: '12px',
+                                                    overflow: 'hidden',
+                                                    border: '2px solid white',
+                                                    position: 'relative'
+                                                }}>
+                                                    <img 
+                                                        ref={imageRef}
+                                                        src={imagePreview} 
+                                                        style={{ 
+                                                            width: '100%', 
+                                                            height: '100%', 
+                                                            objectFit: 'cover'
+                                                        }} 
+                                                    />
+                                                </div>
+                                                <div style={{
                                                     display: 'flex',
                                                     justifyContent: 'center',
                                                     gap: '10px',
@@ -498,16 +516,11 @@ const Community = () => {
                 )}
             </AnimatePresence>
 
-            {/* Image Cropper Overlay */}
-            <AnimatePresence>
-                {showCropper && originalImageFile && (
-                    <ImageCropper
-                        imageFile={originalImageFile}
-                        onCrop={handleCropComplete}
-                        onCancel={handleCropCancel}
-                    />
-                )}
-            </AnimatePresence>
+            {/* Hidden canvas for cropping */}
+            <canvas
+                ref={canvasRef}
+                style={{ display: 'none' }}
+            />
         </div>
     );
 };
