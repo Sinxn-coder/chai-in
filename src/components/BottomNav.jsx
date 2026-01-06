@@ -20,8 +20,6 @@ const BottomNav = ({ lang }) => {
             (location.pathname === `/${currentLang}` ||
                 location.pathname === `/${currentLang}/`));
 
-    const baseBarHeight = 120;
-
     return (
         <div
             style={{
@@ -29,29 +27,28 @@ const BottomNav = ({ lang }) => {
                 bottom: 0,
                 left: 0,
                 right: 0,
-                height: '150px',
+                height: 140,
                 pointerEvents: 'none',
                 zIndex: 1000,
             }}
         >
-            {/* Sculpted wave bar */}
+            {/* PERFECT sculpted wave */}
             <div style={{ position: 'absolute', inset: 0, pointerEvents: 'auto' }}>
                 <svg
                     width="100%"
-                    height="150"
-                    viewBox="0 0 400 150"
+                    height="140"
+                    viewBox="0 0 400 140"
                     preserveAspectRatio="none"
-                    style={{ display: 'block' }}
                 >
                     <path
                         d="
-                          M0 60
-                          C60 40 120 40 155 52
-                          C175 60 182 82 200 90
-                          C218 82 225 60 245 52
-                          C280 40 340 40 400 60
-                          L400 150
-                          L0 150
+                          M0 58
+                          C90 30 140 30 168 42
+                          C182 48 188 66 200 72
+                          C212 66 218 48 232 42
+                          C260 30 310 30 400 58
+                          L400 140
+                          L0 140
                           Z
                         "
                         fill="#EF2A39"
@@ -59,11 +56,11 @@ const BottomNav = ({ lang }) => {
                 </svg>
             </div>
 
-            {/* Embedded center action button */}
+            {/* LOCKED center button */}
             <div
                 style={{
                     position: 'absolute',
-                    top: 14,
+                    top: 6,
                     left: '50%',
                     transform: 'translateX(-50%)',
                     pointerEvents: 'auto',
@@ -74,63 +71,58 @@ const BottomNav = ({ lang }) => {
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.92 }}
                         style={{
-                            width: 82,
-                            height: 82,
+                            width: 76,
+                            height: 76,
                             borderRadius: '50%',
                             background: '#EF2A39',
                             boxShadow:
-                                '0 14px 28px rgba(239,42,57,0.45), inset 0 3px 8px rgba(255,255,255,0.35)',
+                                '0 18px 32px rgba(0,0,0,0.28), inset 0 3px 6px rgba(255,255,255,0.35)',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
                             border: '3px solid rgba(255,255,255,0.35)',
                         }}
                     >
-                        <Plus size={30} color="white" strokeWidth={3} />
+                        <Plus size={28} color="white" strokeWidth={3} />
                     </motion.div>
                 </NavLink>
             </div>
 
-            {/* Navigation items */}
+            {/* Nav icons */}
             <div
                 style={{
                     position: 'absolute',
-                    bottom: 18,
+                    bottom: 14,
                     left: 0,
                     right: 0,
                     display: 'grid',
                     gridTemplateColumns: 'repeat(5, 1fr)',
-                    alignItems: 'center',
-                    padding: '0 28px',
-                    height: baseBarHeight,
+                    padding: '0 30px',
                     pointerEvents: 'auto',
                 }}
             >
                 {navItems.map((item, idx) => {
                     const active = isActivePath(item);
-                    const isLeft = idx < 2;
-                    const gridPosition = isLeft ? idx + 1 : idx + 3;
+                    const gridColumn = idx < 2 ? idx + 1 : idx + 3;
 
                     return (
-                        <div key={item.to} style={{ gridColumn: gridPosition }}>
+                        <div key={item.to} style={{ gridColumn }}>
                             <NavLink
                                 to={`/${currentLang}${item.to}`}
                                 style={{
                                     display: 'flex',
                                     flexDirection: 'column',
                                     alignItems: 'center',
-                                    gap: 6,
+                                    gap: 4,
                                     textDecoration: 'none',
                                     color: 'white',
-                                    opacity: active ? 1 : 0.72,
-                                    fontWeight: 800,
-                                    fontSize: '0.8rem',
-                                    transition: 'all 0.25s ease',
+                                    opacity: active ? 1 : 0.75,
+                                    fontWeight: 700,
+                                    fontSize: '0.75rem',
                                 }}
                             >
                                 <item.icon
-                                    size={26}
-                                    color="white"
+                                    size={24}
                                     strokeWidth={active ? 2.6 : 2}
                                 />
                                 <span>{item.label}</span>
