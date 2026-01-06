@@ -18,45 +18,82 @@ const SpotDetail = ({ lang }) => {
     const [loading, setLoading] = useState(true);
     const [isOpen, setIsOpen] = useState(null);
     const [visited, setVisited] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
 
     useEffect(() => {
         fetchSpotDetails();
     }, [id, user]);
 
-    const fetchSpotDetails = async () => {
-        setLoading(true);
-        const { data: spotData, error } = await supabase.from('spots').select('*').eq('id', parseInt(id)).single();
-        if (error) { 
-            console.error('Error fetching spot:', error); 
-            setLoading(false); 
-            return; 
+    const getKeralaDate = () => new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }));
+
+    const computeOpenStatus = (opening_hours) => {
+        if (!opening_hours || !opening_hours.open || !opening_hours.close) return null;
+        const now = getKeralaDate();
+        const [openH, openM = 0] = opening_hours.open.split(':').map(Number);
+        const [closeH, closeM = 0] = opening_hours.close.split(':').map(Number);
+
+        const openTime = new Date(now);
+        openTime.setHours(openH, openM, 0, 0);
+        const closeTime = new Date(now);
+        closeTime.setHours(closeH, closeM, 0, 0);
+
+        if (closeTime <= openTime) {
+            // Overnight schedule
+            if (now < openTime) {
+                openTime.setDate(openTime.getDate() - 1);
+            } else {
+                closeTime.setDate(closeTime.getDate() + 1);
+            }
         }
-        if (!spotData) {
-            console.error('Spot not found');
-            setLoading(false);
-            return;
-        }
-        setSpot(spotData);
-        calculateAvailability(spotData);
-        fetchReviews();
-        if (user) {
-            const { data: fav } = await supabase.from('user_favorites').select('*').eq('spot_id', parseInt(id)).eq('user_id', user.id).maybeSingle();
-            setIsFavorite(!!fav);
-            const { data: vis } = await supabase.from('visited_spots').select('*').eq('spot_id', parseInt(id)).eq('user_id', user.id).maybeSingle();
-            setVisited(!!vis);
-        }
-        setLoading(false);
+
+        return now >= openTime && now <= closeTime;
     };
 
-    const calculateAvailability = (spotData) => {
-        const now = new Date();
-        const hour = (now.getUTCHours() + 5.5) % 24;
-        setIsOpen(hour >= 10 && hour <= 22);
+    const formatTime = (timeString) => {
+        if (!timeString) return '—';
+        const [h, m = '00'] = timeString.split(':');
+        const date = new Date();
+        date.setHours(Number(h), Number(m), 0, 0);
+        return date.toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit', hour12: true });
+    };
+
+    const fetchSpotDetails = async () => {
+        setLoading(true);
+        setErrorMessage('');
+        try {
+            const { data: spotData, error } = await supabase.from('spots').select('*').eq('id', parseInt(id)).single();
+            if (error) throw error;
+            if (!spotData) {
+                setErrorMessage('Spot not found');
+                setLoading(false);
+                return;
+            }
+
+            setSpot(spotData);
+            setIsOpen(computeOpenStatus(spotData.opening_hours));
+            fetchReviews();
+            if (user) {
+                const { data: fav } = await supabase.from('user_favorites').select('*').eq('spot_id', parseInt(id)).eq('user_id', user.id).maybeSingle();
+                setIsFavorite(!!fav);
+                const { data: vis } = await supabase.from('visited_spots').select('*').eq('spot_id', parseInt(id)).eq('user_id', user.id).maybeSingle();
+                setVisited(!!vis);
+            }
+        } catch (err) {
+            console.error('Error fetching spot:', err);
+            setErrorMessage('Unable to load this spot right now. Please try again.');
+        } finally {
+            setLoading(false);
+        }
     };
 
     const fetchReviews = async () => {
-        const { data: reviewsData } = await supabase.from('reviews').select('*').eq('spot_id', id).order('created_at', { ascending: false });
-        
+        const { data: reviewsData, error } = await supabase.from('reviews').select('*').eq('spot_id', id).order('created_at', { ascending: false });
+        if (error) {
+            console.error('Error loading reviews:', error);
+            setReviews([]);
+            return;
+        }
+
         if (reviewsData) {
             const userIds = [...new Set(reviewsData.map(r => r.user_id))];
             const { data: usersData } = await supabase.from('user_preferences').select('user_id, display_name, avatar_url').in('user_id', userIds);
@@ -119,6 +156,7 @@ const SpotDetail = ({ lang }) => {
     };
 
     if (loading) return <div style={{ padding: '40px', textAlign: 'center' }}>Wait a moment...</div>;
+    if (errorMessage) return <div style={{ padding: '40px', textAlign: 'center' }}>{errorMessage}</div>;
     if (!spot) return <div style={{ padding: '40px', textAlign: 'center' }}>Spot disappeared...</div>;
 
     return (
@@ -126,7 +164,7 @@ const SpotDetail = ({ lang }) => {
 
             {/* Header Image */}
             <div style={{ height: '45vh', position: 'relative', background: '#000' }}>
-                <ImageSlider images={spot.images} />
+                <ImageSlider images={spot.images && spot.images.length ? spot.images : ['https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=900&q=80']} />
 
                 {/* Back Button */}
                 <motion.button
@@ -166,6 +204,21 @@ const SpotDetail = ({ lang }) => {
                         <p style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--text-muted)', fontSize: '0.95rem', margin: '8px 0' }}>
                             <MapPin size={18} color="var(--primary)" /> {spot.location_text || 'Kerala, India'}
                         </p>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                            <span style={{
+                                background: isOpen === null ? '#E5E7EB' : (isOpen ? 'rgba(16, 185, 129, 0.12)' : 'rgba(239, 68, 68, 0.12)'),
+                                color: isOpen === null ? '#4B5563' : (isOpen ? '#0F9F6E' : '#B91C1C'),
+                                padding: '6px 12px',
+                                borderRadius: '12px',
+                                fontWeight: '800',
+                                fontSize: '0.8rem'
+                            }}>
+                                {isOpen === null ? 'HOURS NOT SET' : isOpen ? 'OPEN NOW' : 'CLOSED'}
+                            </span>
+                            <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem', fontWeight: '700' }}>
+                                {formatTime(spot.opening_hours?.open)} - {formatTime(spot.opening_hours?.close)} (Kerala)
+                            </span>
+                        </div>
                     </div>
                     <div style={{ background: 'var(--secondary)', padding: '10px 16px', borderRadius: '16px', display: 'flex', alignItems: 'center', gap: '6px' }}>
                         <Star size={18} fill="#FFB800" color="#FFB800" />

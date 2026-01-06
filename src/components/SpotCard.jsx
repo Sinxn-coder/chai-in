@@ -19,11 +19,15 @@ const SpotCard = memo(({ spot }) => {
         let isMounted = true;
         if (id) {
             fetchVisitStats(isMounted);
-            calculateAvailability(isMounted);
             checkFavorite(isMounted);
+            if (spot.opening_hours) {
+                setIsOpen(computeOpenStatus(spot.opening_hours));
+            } else {
+                setIsOpen(null);
+            }
         }
         return () => { isMounted = false; };
-    }, [id, user]);
+    }, [id, user, spot.opening_hours]);
 
     const checkFavorite = async (isMounted) => {
         if (!user) return;
@@ -47,28 +51,28 @@ const SpotCard = memo(({ spot }) => {
         }
     };
 
-    const calculateAvailability = async (isMounted) => {
-        const { data: recentVisits } = await supabase
-            .from('visited_spots')
-            .select('created_at')
-            .eq('spot_id', id)
-            .order('created_at', { ascending: false })
-            .limit(1);
+    const getKeralaDate = () => new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }));
 
-        const now = new Date();
-        const keralaOffset = 5.5 * 60 * 60 * 1000;
-        const keralaTime = new Date(now.getTime() + keralaOffset);
-        const hour = keralaTime.getUTCHours();
+    const computeOpenStatus = (opening_hours) => {
+        if (!opening_hours || !opening_hours.open || !opening_hours.close) return null;
+        const now = getKeralaDate();
+        const [openH, openM = 0] = opening_hours.open.split(':').map(Number);
+        const [closeH, closeM = 0] = opening_hours.close.split(':').map(Number);
 
-        if (recentVisits && recentVisits.length > 0) {
-            const lastVisit = new Date(recentVisits[0].created_at);
-            const diffInMinutes = (now - lastVisit) / (1000 * 60);
-            if (diffInMinutes < 60) {
-                if (isMounted) setIsOpen(true);
-                return;
+        const openTime = new Date(now);
+        openTime.setHours(openH, openM, 0, 0);
+        const closeTime = new Date(now);
+        closeTime.setHours(closeH, closeM, 0, 0);
+
+        if (closeTime <= openTime) {
+            if (now < openTime) {
+                openTime.setDate(openTime.getDate() - 1);
+            } else {
+                closeTime.setDate(closeTime.getDate() + 1);
             }
         }
-        if (isMounted) setIsOpen(hour >= 10 && hour <= 22);
+
+        return now >= openTime && now <= closeTime;
     };
 
     const fetchVisitStats = async (isMounted) => {
@@ -130,11 +134,11 @@ const SpotCard = memo(({ spot }) => {
                 <ImageSlider images={images} interval={4000} />
                 <div style={{
                     position: 'absolute', top: '8px', left: '50%', transform: 'translateX(-50%)',
-                    background: isOpen ? 'rgba(16, 185, 129, 0.9)' : 'rgba(100, 116, 139, 0.9)',
+                    background: isOpen === null ? 'rgba(100, 116, 139, 0.7)' : (isOpen ? 'rgba(16, 185, 129, 0.9)' : 'rgba(239, 68, 68, 0.9)'),
                     backdropFilter: 'blur(8px)', color: 'white', padding: '4px 10px', borderRadius: '20px', fontSize: '0.6rem', fontWeight: '800', display: 'flex', alignItems: 'center', gap: '4px'
                 }}>
                     <div style={{ width: '5px', height: '5px', borderRadius: '50%', background: 'white' }} />
-                    {isOpen ? 'OPEN' : 'CLOSED'}
+                    {isOpen === null ? 'HOURS N/A' : isOpen ? 'OPEN' : 'CLOSED'}
                 </div>
                 <div style={{ position: 'absolute', bottom: '8px', left: '8px', background: 'white', padding: '3px 7px', borderRadius: '10px', display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.7rem', fontWeight: '800' }}>
                     <Star size={10} fill="#FFB800" color="#FFB800" /> {rating}
@@ -159,6 +163,11 @@ const SpotCard = memo(({ spot }) => {
                         ))}
                     </div>
                     <span style={{ fontSize: '0.8rem', fontWeight: '900', color: 'var(--primary)' }}>{'₹'.repeat(price_level)}</span>
+                </div>
+                <div style={{ marginTop: '6px', fontSize: '0.7rem', color: 'var(--text-muted)', fontWeight: '700' }}>
+                    {spot.opening_hours?.open && spot.opening_hours?.close
+                        ? `Kerala time: ${spot.opening_hours.open} - ${spot.opening_hours.close}`
+                        : 'Hours not set'}
                 </div>
             </div>
         </motion.div>

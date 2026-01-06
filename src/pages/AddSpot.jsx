@@ -35,7 +35,8 @@ const AddSpot = ({ lang }) => {
         instagram: '',
         instagram_link: '',
         whatsapp: '',
-        google_maps: '',
+        opening_time: '10:00',
+        closing_time: '22:00',
         tags: [],
         images: []
     });
@@ -139,7 +140,10 @@ const AddSpot = ({ lang }) => {
                 description: formData.description,
                 instagram_handle: formData.instagram,
                 whatsapp_number: formData.whatsapp,
-                google_maps_link: formData.google_maps,
+                opening_hours: {
+                    open: formData.opening_time,
+                    close: formData.closing_time
+                },
                 tags: formData.tags,
                 images: formData.images,
                 created_by: user.id
@@ -303,7 +307,16 @@ const AddSpot = ({ lang }) => {
                                 />
                                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '16px' }}>
                                     <input placeholder="WhatsApp Number" value={formData.whatsapp} onChange={e => setFormData({ ...formData, whatsapp: e.target.value })} style={{ padding: '14px', borderRadius: '16px', background: 'var(--secondary)', border: 'none', fontWeight: '700' }} />
-                                    <input placeholder="Google Maps Link" value={formData.google_maps} onChange={e => setFormData({ ...formData, google_maps: e.target.value })} style={{ padding: '14px', borderRadius: '16px', background: 'var(--secondary)', border: 'none', fontWeight: '700' }} />
+                                    <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                                        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', flex: 1 }}>
+                                            <label style={{ fontSize: '0.75rem', fontWeight: '800', color: 'var(--text-muted)' }}>Opening</label>
+                                            <input type="time" value={formData.opening_time} onChange={e => setFormData({ ...formData, opening_time: e.target.value })} style={{ padding: '12px', borderRadius: '14px', background: 'var(--secondary)', border: 'none', fontWeight: '700' }} />
+                                        </div>
+                                        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', flex: 1 }}>
+                                            <label style={{ fontSize: '0.75rem', fontWeight: '800', color: 'var(--text-muted)' }}>Closing</label>
+                                            <input type="time" value={formData.closing_time} onChange={e => setFormData({ ...formData, closing_time: e.target.value })} style={{ padding: '12px', borderRadius: '14px', background: 'var(--secondary)', border: 'none', fontWeight: '700' }} />
+                                        </div>
+                                    </div>
                                 </div>
                                 <label style={{ fontSize: '0.85rem', fontWeight: '800', color: 'var(--text-muted)', marginBottom: '8px', display: 'block' }}>INSTAGRAM</label>
                                 <input placeholder="Insta @user or instagram.com/user" value={formData.instagram} onChange={e => setFormData({ ...formData, instagram: e.target.value })} style={{ width: '100%', padding: '14px', borderRadius: '16px', background: 'var(--secondary)', border: 'none', fontWeight: '700', marginBottom: '16px' }} />
