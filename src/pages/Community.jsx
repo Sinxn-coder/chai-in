@@ -106,11 +106,22 @@ const Community = () => {
         if (existingLike) {
             // Unlike
             await supabase.from('post_likes').delete().eq('id', existingLike.id);
+            // Update local state immediately without full reload
+            setPosts(posts.map(post => 
+                post.id === postId 
+                    ? { ...post, likes_count: Math.max(0, post.likes_count - 1), isLikedByUser: false }
+                    : post
+            ));
         } else {
             // Like
             await supabase.from('post_likes').insert({ post_id: postId, user_id: user.id });
+            // Update local state immediately without full reload
+            setPosts(posts.map(post => 
+                post.id === postId 
+                    ? { ...post, likes_count: (post.likes_count || 0) + 1, isLikedByUser: true }
+                    : post
+            ));
         }
-        fetchPosts();
     };
 
     return (
@@ -175,7 +186,7 @@ const Community = () => {
                                             <MessageCircle size={26} color="var(--text-main)" />
                                         </motion.div>
                                     </div>
-                                    <div style={{ fontWeight: '850', fontSize: '0.9rem', marginBottom: '8px' }}>{post.likes_count || 0} cravings</div>
+                                    <div style={{ fontWeight: '850', fontSize: '0.9rem', marginBottom: '8px' }}>{post.likes_count || 0} likes</div>
                                     <div style={{ fontSize: '0.95rem', lineHeight: '1.5', color: 'var(--text-main)' }}>
                                         <span style={{ fontWeight: '900', marginRight: '6px' }}>{post.author.username || post.author.display_name}</span>
                                         {post.caption}
