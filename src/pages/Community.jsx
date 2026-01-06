@@ -104,11 +104,12 @@ const Community = () => {
         const ctx = canvas.getContext('2d');
         const image = imageRef.current;
 
-        if (!crop || !canvas || !image) return;
+        if (!canvas || !image) return;
 
-        // Set canvas size to crop size (square for Instagram-like posts)
-        canvas.width = crop.width;
-        canvas.height = crop.height;
+        // Set canvas to Instagram square size (1080x1080)
+        const size = 1080;
+        canvas.width = size;
+        canvas.height = size;
 
         // Clear canvas
         ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -117,8 +118,8 @@ const Community = () => {
         ctx.save();
 
         // Apply transformations
-        const centerX = crop.width / 2;
-        const centerY = crop.height / 2;
+        const centerX = size / 2;
+        const centerY = size / 2;
 
         // Move to center
         ctx.translate(centerX, centerY);
@@ -129,13 +130,16 @@ const Community = () => {
         // Apply zoom
         ctx.scale(zoom, zoom);
 
-        // Draw image (centered at origin)
+        // Draw image centered and scaled to fit square
+        const imgSize = Math.min(image.naturalWidth, image.naturalHeight);
+        const scale = size / imgSize;
+        
         ctx.drawImage(
             image,
-            crop.x / zoom - centerX,
-            crop.y / zoom - centerY,
-            crop.width / zoom,
-            crop.height / zoom
+            -imgSize / 2,
+            -imgSize / 2,
+            imgSize,
+            imgSize
         );
 
         // Restore context state
@@ -361,7 +365,8 @@ const Community = () => {
                                                     borderRadius: '12px',
                                                     overflow: 'hidden',
                                                     border: '2px solid white',
-                                                    position: 'relative'
+                                                    position: 'relative',
+                                                    background: 'black'
                                                 }}>
                                                     <img 
                                                         ref={imageRef}
@@ -369,7 +374,9 @@ const Community = () => {
                                                         style={{ 
                                                             width: '100%', 
                                                             height: '100%', 
-                                                            objectFit: 'cover'
+                                                            objectFit: 'contain',
+                                                            transform: `scale(${zoom}) rotate(${rotation}deg)`,
+                                                            transition: 'transform 0.3s ease'
                                                         }} 
                                                     />
                                                 </div>
