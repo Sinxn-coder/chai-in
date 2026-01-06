@@ -19,10 +19,20 @@ const SpotDetail = ({ lang }) => {
     const [isOpen, setIsOpen] = useState(null);
     const [visited, setVisited] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
+    const [visitCount, setVisitCount] = useState(0);
 
     useEffect(() => {
         fetchSpotDetails();
     }, [id, user]);
+
+    const formatNumber = (num) => {
+        if (num >= 1000000) {
+            return (num / 1000000).toFixed(1) + 'M';
+        } else if (num >= 1000) {
+            return (num / 1000).toFixed(1) + 'K';
+        }
+        return num.toString();
+    };
 
     const getKeralaDate = () => new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }));
 
@@ -72,6 +82,7 @@ const SpotDetail = ({ lang }) => {
             setSpot(spotData);
             setIsOpen(computeOpenStatus(spotData.opening_hours));
             fetchReviews();
+            fetchVisitCount();
             if (user) {
                 const { data: fav } = await supabase.from('user_favorites').select('*').eq('spot_id', parseInt(id)).eq('user_id', user.id).maybeSingle();
                 setIsFavorite(!!fav);
@@ -109,6 +120,15 @@ const SpotDetail = ({ lang }) => {
         }
     };
 
+    const fetchVisitCount = async () => {
+        try {
+            const { count } = await supabase.from('visited_spots').select('*', { count: 'exact', head: true }).eq('spot_id', parseInt(id));
+            setVisitCount(count || 0);
+        } catch (error) {
+            console.error('Error fetching visit count:', error);
+        }
+    };
+
     const toggleFavorite = async () => {
         if (!user) return alert("Please login!");
         const prevFavorite = isFavorite;
@@ -127,12 +147,19 @@ const SpotDetail = ({ lang }) => {
 
     const handleVisitToggle = async () => {
         if (!user) return alert("Please login!");
-        if (visited) {
-            await supabase.from('visited_spots').delete().eq('spot_id', parseInt(id)).eq('user_id', user.id);
-            setVisited(false);
-        } else {
-            await supabase.from('visited_spots').insert({ spot_id: parseInt(id), user_id: user.id });
-            setVisited(true);
+        const prevVisited = visited;
+        setVisited(!prevVisited);
+        setVisitCount(prevVisited ? visitCount - 1 : visitCount + 1);
+        try {
+            if (prevVisited) {
+                await supabase.from('visited_spots').delete().eq('spot_id', parseInt(id)).eq('user_id', user.id);
+            } else {
+                await supabase.from('visited_spots').insert({ spot_id: parseInt(id), user_id: user.id });
+            }
+        } catch (error) {
+            console.error('Error toggling visit:', error);
+            setVisited(prevVisited);
+            setVisitCount(prevVisited ? visitCount + 1 : visitCount - 1);
         }
     };
 
@@ -246,6 +273,10 @@ const SpotDetail = ({ lang }) => {
                         <Star size={18} fill="#FFB800" color="#FFB800" />
                         <span style={{ fontWeight: '800', fontSize: '1.1rem' }}>{spot.rating || '4.5'}</span>
                     </div>
+                    <div style={{ background: 'var(--secondary)', padding: '10px 16px', borderRadius: '16px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <MapPin size={18} color="var(--primary)" />
+                        <span style={{ fontWeight: '800', fontSize: '1.1rem', color: 'var(--text-main)' }}>{formatNumber(visitCount)} visits</span>
+                    </div>
                 </div>
 
                 <div style={{ display: 'flex', gap: '10px', marginBottom: '24px' }}>
@@ -315,7 +346,7 @@ const SpotDetail = ({ lang }) => {
                             width: '100%',
                             padding: '18px',
                             borderRadius: '24px',
-                            background: visited ? 'var(--text-main)' : 'var(--primary)',
+                            background: visited ? '#10B981' : '#EF4444',
                             color: 'white',
                             border: 'none',
                             fontSize: '1.1rem',
@@ -327,8 +358,20 @@ const SpotDetail = ({ lang }) => {
                             boxShadow: 'var(--shadow-lg)'
                         }}
                     >
-                        {visited ? <Check size={24} /> : <MapPin size={24} />}
-                        {visited ? 'VISITED' : 'VISIT NOW'}
+                        <MapPin size={24} />
+                        VISITED
+                        {visitCount > 0 && (
+                            <span style={{ 
+                                background: 'rgba(255,255,255,0.2)', 
+                                padding: '4px 8px', 
+                                borderRadius: '12px', 
+                                fontSize: '0.8rem', 
+                                fontWeight: '700',
+                                marginLeft: '8px'
+                            }}>
+                                {formatNumber(visitCount)}
+                            </span>
+                        )}
                     </motion.button>
                 </div>
             </motion.div>
