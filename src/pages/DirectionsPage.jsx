@@ -209,30 +209,6 @@ const DirectionsPage = ({ lang }) => {
                         }}>
                             {spot.location_text || 'Kerala, India'}
                         </p>
-                        
-                        <motion.button
-                            whileTap={{ scale: 0.95 }}
-                            onClick={handleGetDirections}
-                            style={{
-                                width: '100%',
-                                padding: '20px',
-                                borderRadius: '16px',
-                                background: 'var(--primary)',
-                                color: 'white',
-                                border: 'none',
-                                fontSize: '1.2rem',
-                                fontWeight: '900',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                gap: '12px',
-                                cursor: 'pointer',
-                                boxShadow: 'var(--shadow-lg)'
-                            }}
-                        >
-                            <Navigation size={28} />
-                            Get Directions
-                        </motion.button>
                     </div>
 
                     <div style={{ 
