@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Outlet, useLocation } from 'react-router-dom';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import BottomNav from '../components/BottomNav';
 import FoodParticles from '../components/FoodParticles';
 import SetUsernameModal from '../components/SetUsernameModal';
@@ -8,6 +8,7 @@ import AppBar from '../components/AppBar';
 
 const MainLayout = ({ lang }) => {
     const location = useLocation();
+    const navigate = useNavigate();
 
     useEffect(() => {
         // Scroll to top when route changes
@@ -16,7 +17,18 @@ const MainLayout = ({ lang }) => {
             left: 0,
             behavior: 'smooth'
         });
-    }, [location.pathname]);
+
+        // Handle returning from maps - redirect to last spot page or home
+        if (location.pathname === '/' || location.pathname === `/${lang}`) {
+            const lastSpotPage = sessionStorage.getItem('lastSpotPage');
+            if (lastSpotPage) {
+                sessionStorage.removeItem('lastSpotPage');
+                navigate(lastSpotPage, { replace: true });
+            } else {
+                navigate(`/${lang}/home`, { replace: true });
+            }
+        }
+    }, [location.pathname, navigate, lang]);
 
     return (
         <div style={{ minHeight: '100vh', background: 'var(--bg-cream)', position: 'relative' }}>

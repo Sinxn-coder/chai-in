@@ -215,6 +215,9 @@ const SpotDetail = ({ lang }) => {
             // For Android and desktop, use Google Maps
             window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}&destination_place_id=${spotName}`, '_blank');
         }
+        
+        // Store current page for when user returns
+        sessionStorage.setItem('lastSpotPage', window.location.pathname);
     };
 
     if (loading) return <div style={{ padding: '40px', textAlign: 'center' }}>Wait a moment...</div>;
@@ -228,7 +231,7 @@ const SpotDetail = ({ lang }) => {
             <div style={{ height: '45vh', position: 'relative', background: '#000' }}>
                 <ImageSlider images={spot.images && spot.images.length ? spot.images : ['https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=900&q=80']} />
 
-                {/* Location Text Overlay */}
+                {/* Visit Count Overlay */}
                 <div style={{
                     position: 'absolute',
                     top: '20px',
@@ -236,16 +239,15 @@ const SpotDetail = ({ lang }) => {
                     transform: 'translateX(-50%)',
                     background: 'rgba(0, 0, 0, 0.6)',
                     backdropFilter: 'blur(8px)',
-                    padding: '8px 16px',
+                    padding: '6px 12px',
                     borderRadius: '20px',
                     display: 'flex',
                     alignItems: 'center',
-                    gap: '6px',
+                    gap: '4px',
                     zIndex: 5
                 }}>
-                    <MapPin size={16} color="white" />
-                    <span style={{ color: 'white', fontSize: '0.85rem', fontWeight: '700' }}>
-                        {spot.location_text || 'Kerala, India'}
+                    <span style={{ color: 'white', fontSize: '0.75rem', fontWeight: '700' }}>
+                        {formatNumber(visitCount)} visits
                     </span>
                 </div>
 
