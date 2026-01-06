@@ -46,14 +46,12 @@ const ProfileFavorites = ({ lang }) => {
                 padding: '24px', 
                 display: 'flex', 
                 alignItems: 'center', 
-                justifyContent: 'center',
+                justifyContent: 'space-between',
                 position: 'relative' 
             }}>
                 <button 
                     onClick={() => navigate(`/${lang}/profile`)} 
                     style={{ 
-                        position: 'absolute', 
-                        left: '20px', 
                         background: 'rgba(255,255,255,0.2)', 
                         border: 'none', 
                         padding: '10px', 
@@ -63,7 +61,8 @@ const ProfileFavorites = ({ lang }) => {
                 >
                     <ArrowLeft size={24} />
                 </button>
-                <h1 style={{ color: 'white', fontWeight: '900', fontSize: '1.4rem', margin: 0, textAlign: 'center' }}>My Favorites</h1>
+                <h1 style={{ color: 'white', fontWeight: '900', fontSize: '1.4rem', margin: 0 }}>My Favorites</h1>
+                <div style={{ width: '44px' }}></div>
             </div>
 
             {/* Content */}
