@@ -228,6 +228,27 @@ const SpotDetail = ({ lang }) => {
             <div style={{ height: '45vh', position: 'relative', background: '#000' }}>
                 <ImageSlider images={spot.images && spot.images.length ? spot.images : ['https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=900&q=80']} />
 
+                {/* Location Text Overlay */}
+                <div style={{
+                    position: 'absolute',
+                    top: '20px',
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    background: 'rgba(0, 0, 0, 0.6)',
+                    backdropFilter: 'blur(8px)',
+                    padding: '8px 16px',
+                    borderRadius: '20px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    zIndex: 5
+                }}>
+                    <MapPin size={16} color="white" />
+                    <span style={{ color: 'white', fontSize: '0.85rem', fontWeight: '700' }}>
+                        {spot.location_text || 'Kerala, India'}
+                    </span>
+                </div>
+
                 {/* Back Button */}
                 <motion.button
                     whileTap={{ scale: 0.9 }}
@@ -263,9 +284,6 @@ const SpotDetail = ({ lang }) => {
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
                     <div>
                         <h1 style={{ fontSize: '1.8rem', fontWeight: '900', margin: 0, color: 'var(--text-main)' }}>{spot.name}</h1>
-                        <p style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--text-muted)', fontSize: '0.95rem', margin: '8px 0' }}>
-                            <MapPin size={18} color="var(--primary)" /> {spot.location_text || 'Kerala, India'}
-                        </p>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
                             <span style={{
                                 background: isOpen === null ? '#E5E7EB' : (isOpen ? 'rgba(16, 185, 129, 0.12)' : 'rgba(239, 68, 68, 0.12)'),
