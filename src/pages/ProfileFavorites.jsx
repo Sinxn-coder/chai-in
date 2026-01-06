@@ -46,6 +46,7 @@ const ProfileFavorites = ({ lang }) => {
                 padding: '24px', 
                 display: 'flex', 
                 alignItems: 'center', 
+                justifyContent: 'center',
                 position: 'relative' 
             }}>
                 <button 
@@ -62,7 +63,7 @@ const ProfileFavorites = ({ lang }) => {
                 >
                     <ArrowLeft size={24} />
                 </button>
-                <h1 style={{ color: 'white', fontWeight: '900', fontSize: '1.4rem', margin: 0 }}>My Favorites</h1>
+                <h1 style={{ color: 'white', fontWeight: '900', fontSize: '1.4rem', margin: 0, textAlign: 'center' }}>My Favorites</h1>
             </div>
 
             {/* Content */}

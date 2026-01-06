@@ -147,42 +147,6 @@ const Profile = ({ lang }) => {
                 ))}
             </div>
 
-            {/* Tabs - Now Navigate to Separate Pages */}
-            <div style={{ padding: '0 20px', marginBottom: '20px' }}>
-                <div style={{ display: 'flex', gap: '8px', background: 'var(--secondary)', padding: '6px', borderRadius: '20px' }}>
-                    {tabs.map(tab => (
-                        <button
-                            key={tab.id}
-                            onClick={() => navigate(`/${lang}/profile/${tab.id}`)}
-                            style={{
-                                flex: 1,
-                                padding: '12px',
-                                borderRadius: '16px',
-                                background: 'transparent',
-                                border: 'none',
-                                fontWeight: '800',
-                                fontSize: '0.85rem',
-                                color: 'var(--text-muted)',
-                                cursor: 'pointer',
-                                transition: 'all 0.3s ease',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                gap: '6px'
-                            }}
-                        >
-                            <tab.icon size={16} />
-                            {tab.label} ({tab.count})
-                        </button>
-                    ))}
-                </div>
-                
-                <div style={{ textAlign: 'center', padding: '40px 20px', color: 'var(--text-muted)' }}>
-                    <p style={{ fontSize: '1.1rem', fontWeight: '600', marginBottom: '8px' }}>Select a section above</p>
-                    <p style={{ fontSize: '0.9rem' }}>Click on any tab to view your content</p>
-                </div>
-            </div>
-
             {/* Quick Actions */}
             <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '20px' }}>
                 <motion.div

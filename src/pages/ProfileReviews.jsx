@@ -60,6 +60,7 @@ const ProfileReviews = ({ lang }) => {
                 padding: '24px', 
                 display: 'flex', 
                 alignItems: 'center', 
+                justifyContent: 'center',
                 position: 'relative' 
             }}>
                 <button 
@@ -76,7 +77,7 @@ const ProfileReviews = ({ lang }) => {
                 >
                     <ArrowLeft size={24} />
                 </button>
-                <h1 style={{ color: 'white', fontWeight: '900', fontSize: '1.4rem', margin: 0 }}>My Reviews</h1>
+                <h1 style={{ color: 'white', fontWeight: '900', fontSize: '1.4rem', margin: 0, textAlign: 'center' }}>My Reviews</h1>
             </div>
 
             {/* Content */}
