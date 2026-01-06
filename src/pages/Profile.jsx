@@ -181,31 +181,37 @@ const Profile = ({ lang }) => {
 
             {/* Tab Content - Navigation Buttons */}
             <div style={{ padding: '0 20px' }}>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px' }}>
+                <div style={{ display: 'flex', gap: '8px', background: 'var(--secondary)', padding: '6px', borderRadius: '20px', marginBottom: '20px' }}>
                     {tabs.map(tab => (
-                        <motion.button
+                        <button
                             key={tab.id}
-                            whileTap={{ scale: 0.95 }}
                             onClick={() => navigate(`/${lang}/profile/${tab.id}`)}
                             style={{
-                                padding: '20px',
-                                borderRadius: '20px',
-                                background: 'white',
-                                border: '2px solid var(--secondary)',
-                                boxShadow: 'var(--shadow-md)',
+                                flex: 1,
+                                padding: '12px',
+                                borderRadius: '16px',
+                                background: 'transparent',
+                                border: 'none',
+                                fontWeight: '800',
+                                fontSize: '0.85rem',
+                                color: 'var(--text-muted)',
                                 cursor: 'pointer',
-                                textAlign: 'center'
+                                transition: 'all 0.3s ease',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                gap: '6px'
                             }}
                         >
-                            <tab.icon size={32} color="var(--primary)" style={{ marginBottom: '12px' }} />
-                            <div style={{ fontSize: '1.1rem', fontWeight: '900', color: 'var(--text-main)', marginBottom: '4px' }}>
-                                {tab.label}
-                            </div>
-                            <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: '600' }}>
-                                {tab.count} items
-                            </div>
-                        </motion.button>
+                            <tab.icon size={16} />
+                            {tab.label} ({tab.count})
+                        </button>
                     ))}
+                </div>
+                
+                <div style={{ textAlign: 'center', padding: '40px 20px', color: 'var(--text-muted)' }}>
+                    <p style={{ fontSize: '1.1rem', fontWeight: '600', marginBottom: '8px' }}>Select a section above</p>
+                    <p style={{ fontSize: '0.9rem' }}>Click on any tab to view your content</p>
                 </div>
             </div>
 
