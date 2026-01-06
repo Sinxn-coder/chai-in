@@ -223,8 +223,10 @@ const SpotDetail = ({ lang }) => {
             window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}&destination_place_id=${spotName}`, '_blank');
         }
         
-        // Also navigate to directions page in background
-        navigate(`/${window.location.pathname.includes('/ml/') ? 'ml' : 'en'}/directions/${id}`);
+        // Navigate to directions page after a small delay
+        setTimeout(() => {
+            navigate(`/${window.location.pathname.includes('/ml/') ? 'ml' : 'en'}/directions/${id}`);
+        }, 100);
     };
 
     if (loading) return <div style={{ padding: '40px', textAlign: 'center' }}>Wait a moment...</div>;
