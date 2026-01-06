@@ -13,6 +13,7 @@ const Community = () => {
     const [loading, setLoading] = useState(true);
     const [showCreate, setShowCreate] = useState(false);
     const [toast, setToast] = useState(null);
+    const [selectedPost, setSelectedPost] = useState(null);
 
     const fetchPosts = async () => {
         setLoading(true);
@@ -230,18 +231,17 @@ const Comments = ({ post, onClose }) => {
 
     useEffect(() => {
         fetchComments();
-    }, []);
+    }, [post.id]);
 
     const handleCommentSubmit = async () => {
-        if (!user) return;
-        if (!newComment.trim()) return;
-
+        if (!newComment.trim() || !user) return;
+        
         await supabase.from('post_comments').insert({
             post_id: post.id,
             user_id: user.id,
-            comment: newComment
+            comment: newComment.trim()
         });
-
+        
         setNewComment('');
         fetchComments();
     };
@@ -292,6 +292,5 @@ const Comments = ({ post, onClose }) => {
         </motion.div>
     )
 };
-
 
 export default Community;
