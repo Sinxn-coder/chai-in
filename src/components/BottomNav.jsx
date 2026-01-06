@@ -16,44 +16,74 @@ const BottomNav = ({ lang }) => {
 
     const isActivePath = (item) =>
         location.pathname.includes(`/${currentLang}${item.to}`) ||
-        (item.to === '/home' && (location.pathname === `/${currentLang}` || location.pathname === `/${currentLang}/`));
+        (item.to === '/home' &&
+            (location.pathname === `/${currentLang}` ||
+                location.pathname === `/${currentLang}/`));
 
     const baseBarHeight = 120;
 
     return (
-        <div style={{ position: 'fixed', bottom: 0, left: 0, right: 0, height: '150px', pointerEvents: 'none', zIndex: 1000 }}>
-            {/* Red wave bar */}
+        <div
+            style={{
+                position: 'fixed',
+                bottom: 0,
+                left: 0,
+                right: 0,
+                height: '150px',
+                pointerEvents: 'none',
+                zIndex: 1000,
+            }}
+        >
+            {/* Sculpted wave bar */}
             <div style={{ position: 'absolute', inset: 0, pointerEvents: 'auto' }}>
-                <svg width="100%" height="150" viewBox="0 0 400 150" preserveAspectRatio="none" style={{ display: 'block' }}>
+                <svg
+                    width="100%"
+                    height="150"
+                    viewBox="0 0 400 150"
+                    preserveAspectRatio="none"
+                    style={{ display: 'block' }}
+                >
                     <path
-                        d="M0 55 C70 35 130 35 170 45 C185 49 195 60 200 75 C205 60 215 49 230 45 C270 35 330 35 400 55 L400 150 L0 150 Z"
+                        d="
+                          M0 60
+                          C60 40 120 40 155 52
+                          C175 60 182 82 200 90
+                          C218 82 225 60 245 52
+                          C280 40 340 40 400 60
+                          L400 150
+                          L0 150
+                          Z
+                        "
                         fill="#EF2A39"
                     />
                 </svg>
             </div>
 
-            {/* Integrated action button */}
-            <div style={{
-                position: 'absolute',
-                top: 2,
-                left: '50%',
-                transform: 'translateX(-50%)',
-                pointerEvents: 'auto'
-            }}>
+            {/* Embedded center action button */}
+            <div
+                style={{
+                    position: 'absolute',
+                    top: 14,
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    pointerEvents: 'auto',
+                }}
+            >
                 <NavLink to={`/${currentLang}/add-spot`} style={{ textDecoration: 'none' }}>
                     <motion.div
-                        whileHover={{ scale: 1.04 }}
+                        whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.92 }}
                         style={{
                             width: 82,
                             height: 82,
                             borderRadius: '50%',
                             background: '#EF2A39',
-                            boxShadow: '0 10px 24px rgba(239,42,57,0.35), inset 0 2px 6px rgba(255,255,255,0.35)',
+                            boxShadow:
+                                '0 14px 28px rgba(239,42,57,0.45), inset 0 3px 8px rgba(255,255,255,0.35)',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            border: '4px solid rgba(255,255,255,0.3)'
+                            border: '3px solid rgba(255,255,255,0.35)',
                         }}
                     >
                         <Plus size={30} color="white" strokeWidth={3} />
@@ -61,23 +91,26 @@ const BottomNav = ({ lang }) => {
                 </NavLink>
             </div>
 
-            {/* Nav items with center gap */}
-            <div style={{
-                position: 'absolute',
-                bottom: 18,
-                left: 0,
-                right: 0,
-                display: 'grid',
-                gridTemplateColumns: 'repeat(5, 1fr)',
-                alignItems: 'center',
-                padding: '0 28px',
-                height: baseBarHeight,
-                pointerEvents: 'auto'
-            }}>
+            {/* Navigation items */}
+            <div
+                style={{
+                    position: 'absolute',
+                    bottom: 18,
+                    left: 0,
+                    right: 0,
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(5, 1fr)',
+                    alignItems: 'center',
+                    padding: '0 28px',
+                    height: baseBarHeight,
+                    pointerEvents: 'auto',
+                }}
+            >
                 {navItems.map((item, idx) => {
                     const active = isActivePath(item);
                     const isLeft = idx < 2;
-                    const gridPosition = isLeft ? idx + 1 : idx + 3; // leave center column empty (col 3)
+                    const gridPosition = isLeft ? idx + 1 : idx + 3;
+
                     return (
                         <div key={item.to} style={{ gridColumn: gridPosition }}>
                             <NavLink
@@ -92,10 +125,14 @@ const BottomNav = ({ lang }) => {
                                     opacity: active ? 1 : 0.72,
                                     fontWeight: 800,
                                     fontSize: '0.8rem',
-                                    transition: 'all 0.25s ease'
+                                    transition: 'all 0.25s ease',
                                 }}
                             >
-                                <item.icon size={26} color="white" strokeWidth={active ? 2.6 : 2} />
+                                <item.icon
+                                    size={26}
+                                    color="white"
+                                    strokeWidth={active ? 2.6 : 2}
+                                />
                                 <span>{item.label}</span>
                             </NavLink>
                         </div>
