@@ -214,19 +214,22 @@ const SpotDetail = ({ lang }) => {
         // Check if device is iOS
         const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
         
-        // Open maps immediately
-        if (isIOS) {
-            // For iOS devices, use Apple Maps
-            window.open(`maps://?daddr=${lat},${lng}&q=${spotName}`, '_blank');
-        } else {
-            // For Android and desktop, use Google Maps
-            window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}&destination_place_id=${spotName}`, '_blank');
-        }
+        // Navigate to directions page first
+        const directionsUrl = `/${window.location.pathname.includes('/ml/') ? 'ml' : 'en'}/directions/${id}`;
         
-        // Navigate to directions page after a small delay
-        setTimeout(() => {
-            navigate(`/${window.location.pathname.includes('/ml/') ? 'ml' : 'en'}/directions/${id}`);
-        }, 100);
+        if (isIOS) {
+            // For iOS: navigate to directions page, then open maps
+            navigate(directionsUrl);
+            setTimeout(() => {
+                window.open(`maps://?daddr=${lat},${lng}&q=${spotName}`, '_blank');
+            }, 100);
+        } else {
+            // For Android/desktop: open maps first, then navigate
+            window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}&destination_place_id=${spotName}`, '_blank');
+            setTimeout(() => {
+                navigate(directionsUrl);
+            }, 100);
+        }
     };
 
     if (loading) return <div style={{ padding: '40px', textAlign: 'center' }}>Wait a moment...</div>;
