@@ -31,6 +31,16 @@ const SpotDetail = ({ lang }) => {
             fetchSpotDetails();
             fetchReviews();
         }
+        
+        // Listen for profile updates to refresh review names
+        const handleProfileUpdate = () => {
+            fetchReviews();
+        };
+        window.addEventListener('userProfileUpdated', handleProfileUpdate);
+        
+        return () => {
+            window.removeEventListener('userProfileUpdated', handleProfileUpdate);
+        };
     }, [id, user]);
 
     const formatNumber = (num) => {

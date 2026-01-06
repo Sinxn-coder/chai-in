@@ -21,10 +21,13 @@ const Profile = ({ lang }) => {
         if (user) {
             fetchProfileData();
             window.addEventListener('focus', fetchProfileData);
+            // Listen for profile updates
+            window.addEventListener('userProfileUpdated', fetchProfileData);
         }
         return () => {
             if (user) {
                 window.removeEventListener('focus', fetchProfileData);
+                window.removeEventListener('userProfileUpdated', fetchProfileData);
             }
         };
     }, [user]);

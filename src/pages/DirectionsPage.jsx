@@ -17,6 +17,16 @@ const DirectionsPage = ({ lang }) => {
     useEffect(() => {
         fetchSpotDetails();
         fetchReviews();
+        
+        // Listen for profile updates to refresh review names
+        const handleProfileUpdate = () => {
+            fetchReviews();
+        };
+        window.addEventListener('userProfileUpdated', handleProfileUpdate);
+        
+        return () => {
+            window.removeEventListener('userProfileUpdated', handleProfileUpdate);
+        };
     }, [id]);
 
     const fetchSpotDetails = async () => {

@@ -32,8 +32,19 @@ const AppBar = () => {
             setUserPreferences(prefs);
         };
         
+        const handleProfileUpdate = () => {
+            fetchUserPrefs();
+        };
+        
         fetchUnread();
         fetchUserPrefs();
+        
+        // Listen for profile updates
+        window.addEventListener('userProfileUpdated', handleProfileUpdate);
+        
+        return () => {
+            window.removeEventListener('userProfileUpdated', handleProfileUpdate);
+        };
     }, [user]);
 
     return (

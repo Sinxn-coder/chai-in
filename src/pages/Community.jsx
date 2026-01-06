@@ -57,6 +57,16 @@ const Community = () => {
 
     useEffect(() => {
         fetchPosts();
+        
+        // Listen for profile updates to refresh post author names
+        const handleProfileUpdate = () => {
+            fetchPosts();
+        };
+        window.addEventListener('userProfileUpdated', handleProfileUpdate);
+        
+        return () => {
+            window.removeEventListener('userProfileUpdated', handleProfileUpdate);
+        };
     }, []);
 
     const handleCreatePost = async () => {

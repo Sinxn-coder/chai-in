@@ -88,6 +88,15 @@ const Settings = () => {
                 notify_weekly_digest: formData.notifyWeeklyDigest
             };
             await supabase.from('user_preferences').upsert(prefsData, { onConflict: 'user_id' });
+            
+            // Trigger global refresh for display name
+            window.dispatchEvent(new CustomEvent('userProfileUpdated', { 
+                detail: { 
+                    displayName: formData.displayName, 
+                    avatarUrl: formData.avatarUrl 
+                } 
+            }));
+            
             setToast({ message: 'Settings saved successfully! ✨', type: 'success' });
             setTimeout(() => navigate(-1), 1500);
         } catch (error) {
