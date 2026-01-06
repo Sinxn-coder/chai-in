@@ -147,6 +147,37 @@ const Profile = ({ lang }) => {
                 ))}
             </div>
 
+            {/* Navigation Buttons */}
+            <div style={{ padding: '0 20px', marginBottom: '20px' }}>
+                <div style={{ display: 'flex', gap: '8px', background: 'var(--secondary)', padding: '6px', borderRadius: '20px' }}>
+                    {tabs.map(tab => (
+                        <button
+                            key={tab.id}
+                            onClick={() => navigate(`/${lang}/profile/${tab.id}`)}
+                            style={{
+                                flex: 1,
+                                padding: '12px',
+                                borderRadius: '16px',
+                                background: 'transparent',
+                                border: 'none',
+                                fontWeight: '800',
+                                fontSize: '0.85rem',
+                                color: 'var(--text-muted)',
+                                cursor: 'pointer',
+                                transition: 'all 0.3s ease',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                gap: '6px'
+                            }}
+                        >
+                            <tab.icon size={16} />
+                            {tab.label} ({tab.count})
+                        </button>
+                    ))}
+                </div>
+            </div>
+
             {/* Quick Actions */}
             <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '20px' }}>
                 <motion.div
