@@ -18,61 +18,50 @@ const BottomNav = ({ lang }) => {
         location.pathname.includes(`/${currentLang}${item.to}`) ||
         (item.to === '/home' && (location.pathname === `/${currentLang}` || location.pathname === `/${currentLang}/`));
 
-    const baseBarHeight = 110;
+    const baseBarHeight = 120;
 
     return (
-        <div style={{ position: 'fixed', bottom: 0, left: 0, right: 0, height: '140px', pointerEvents: 'none', zIndex: 1000 }}>
-            {/* Red bar with concave cutout */}
+        <div style={{ position: 'fixed', bottom: 0, left: 0, right: 0, height: '150px', pointerEvents: 'none', zIndex: 1000 }}>
+            {/* Red wave bar */}
             <div style={{ position: 'absolute', inset: 0, pointerEvents: 'auto' }}>
-                <svg width="100%" height="140" viewBox="0 0 400 140" preserveAspectRatio="none" style={{ display: 'block' }}>
+                <svg width="100%" height="150" viewBox="0 0 400 150" preserveAspectRatio="none" style={{ display: 'block' }}>
                     <path
-                        d="M0 40 C60 40 120 40 170 30 C190 26 200 14 200 0 C200 14 210 26 230 30 C280 40 340 40 400 40 L400 140 L0 140 Z"
+                        d="M0 55 C70 35 130 35 170 45 C185 49 195 60 200 75 C205 60 215 49 230 45 C270 35 330 35 400 55 L400 150 L0 150 Z"
                         fill="#EF2A39"
                     />
                 </svg>
             </div>
 
-            {/* Floating action button */}
+            {/* Integrated action button */}
             <div style={{
                 position: 'absolute',
-                top: -4,
+                top: 2,
                 left: '50%',
                 transform: 'translateX(-50%)',
                 pointerEvents: 'auto'
             }}>
                 <NavLink to={`/${currentLang}/add-spot`} style={{ textDecoration: 'none' }}>
                     <motion.div
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.9 }}
+                        whileHover={{ scale: 1.04 }}
+                        whileTap={{ scale: 0.92 }}
                         style={{
                             width: 82,
                             height: 82,
                             borderRadius: '50%',
-                            background: 'white',
-                            boxShadow: '0 14px 30px rgba(0,0,0,0.18)',
+                            background: '#EF2A39',
+                            boxShadow: '0 10px 24px rgba(239,42,57,0.35), inset 0 2px 6px rgba(255,255,255,0.35)',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            border: '6px solid #EF2A39'
+                            border: '4px solid rgba(255,255,255,0.3)'
                         }}
                     >
-                        <div style={{
-                            width: 64,
-                            height: 64,
-                            borderRadius: '50%',
-                            background: '#EF2A39',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            boxShadow: '0 8px 18px rgba(239,42,57,0.35)'
-                        }}>
-                            <Plus size={30} color="white" strokeWidth={3} />
-                        </div>
+                        <Plus size={30} color="white" strokeWidth={3} />
                     </motion.div>
                 </NavLink>
             </div>
 
-            {/* Nav items, spaced with center gap */}
+            {/* Nav items with center gap */}
             <div style={{
                 position: 'absolute',
                 bottom: 18,
@@ -88,7 +77,7 @@ const BottomNav = ({ lang }) => {
                 {navItems.map((item, idx) => {
                     const active = isActivePath(item);
                     const isLeft = idx < 2;
-                    const gridPosition = isLeft ? idx + 1 : idx + 2; // skip center slot
+                    const gridPosition = isLeft ? idx + 1 : idx + 3; // leave center column empty (col 3)
                     return (
                         <div key={item.to} style={{ gridColumn: gridPosition }}>
                             <NavLink
@@ -100,7 +89,7 @@ const BottomNav = ({ lang }) => {
                                     gap: 6,
                                     textDecoration: 'none',
                                     color: 'white',
-                                    opacity: active ? 1 : 0.7,
+                                    opacity: active ? 1 : 0.72,
                                     fontWeight: 800,
                                     fontSize: '0.8rem',
                                     transition: 'all 0.25s ease'
