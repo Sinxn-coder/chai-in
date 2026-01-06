@@ -26,7 +26,7 @@ const BottomNav = ({ lang = 'en' }) => {
         bottom: 0,
         left: 0,
         right: 0,
-        height: 110, // ⬅️ more breathing room
+        height: 80, // ⬅️ more breathing room
         zIndex: 1000,
         pointerEvents: 'none',
       }}
