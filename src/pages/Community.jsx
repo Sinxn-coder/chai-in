@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabaseClient';
-import { Heart, MessageCircle, Plus, Image as ImageIcon, Send, X, User as UserIcon, Loader, Camera } from 'lucide-react';
+import { Heart, MessageCircle, Plus, Image as ImageIcon, Send, X, User as UserIcon, Loader, Camera, Crop, RotateCw } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { useAuth } from '../context/AuthContext';
 import Toast from '../components/Toast';
 import { motion, AnimatePresence } from 'framer-motion';
-import ImageCropper from '../components/ImageCropper';
 
 const Community = () => {
     const { user } = useAuth();
@@ -20,6 +19,11 @@ const Community = () => {
     const [selectedPost, setSelectedPost] = useState(null);
     const [showCropper, setShowCropper] = useState(false);
     const [originalImageFile, setOriginalImageFile] = useState(null);
+    const [crop, setCrop] = useState({ x: 0, y: 0, width: 100, height: 100 });
+    const [zoom, setZoom] = useState(1);
+    const [rotation, setRotation] = useState(0);
+    const canvasRef = useRef(null);
+    const imageRef = useRef(null);
 
     const fetchPosts = async () => {
         setLoading(true);
@@ -76,20 +80,97 @@ const Community = () => {
         const file = e.target.files[0];
         if (file) {
             setOriginalImageFile(file);
+            setImagePreview(URL.createObjectURL(file));
             setShowCropper(true);
+            
+            // Initialize crop to square (1:1) like Instagram
+            const img = new Image();
+            img.onload = () => {
+                const aspectRatio = img.naturalWidth / img.naturalHeight;
+                const size = Math.min(img.naturalWidth, img.naturalHeight);
+                setCrop({
+                    x: (img.naturalWidth - size) / 2,
+                    y: (img.naturalHeight - size) / 2,
+                    width: size,
+                    height: size
+                });
+            };
+            img.src = URL.createObjectURL(file);
         }
     };
 
-    const handleCropComplete = (croppedFile) => {
-        setNewImage(croppedFile);
-        setImagePreview(URL.createObjectURL(croppedFile));
-        setShowCropper(false);
-        setOriginalImageFile(null);
+    const handleCropComplete = () => {
+        const canvas = canvasRef.current;
+        const ctx = canvas.getContext('2d');
+        const image = imageRef.current;
+
+        if (!crop || !canvas || !image) return;
+
+        // Set canvas size to crop size (square for Instagram-like posts)
+        canvas.width = crop.width;
+        canvas.height = crop.height;
+
+        // Clear canvas
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Save context state
+        ctx.save();
+
+        // Apply transformations
+        const centerX = crop.width / 2;
+        const centerY = crop.height / 2;
+
+        // Move to center
+        ctx.translate(centerX, centerY);
+
+        // Apply rotation
+        ctx.rotate((rotation * Math.PI) / 180);
+
+        // Apply zoom
+        ctx.scale(zoom, zoom);
+
+        // Draw image (centered at origin)
+        ctx.drawImage(
+            image,
+            crop.x / zoom - centerX,
+            crop.y / zoom - centerY,
+            crop.width / zoom,
+            crop.height / zoom
+        );
+
+        // Restore context state
+        ctx.restore();
+
+        const croppedDataUrl = canvas.toDataURL('image/jpeg', 0.9);
+        if (croppedDataUrl) {
+            // Convert data URL to blob
+            fetch(croppedDataUrl)
+                .then(res => res.blob())
+                .then(blob => {
+                    const file = new File([blob], 'cropped-image.jpg', { type: 'image/jpeg' });
+                    setNewImage(file);
+                    setImagePreview(URL.createObjectURL(file));
+                    setShowCropper(false);
+                    setOriginalImageFile(null);
+                });
+        }
     };
 
     const handleCropCancel = () => {
         setShowCropper(false);
         setOriginalImageFile(null);
+    };
+
+    const handleRotate = () => {
+        setRotation((prev) => (prev + 90) % 360);
+    };
+
+    const handleZoomIn = () => {
+        setZoom((prev) => Math.min(prev + 0.1, 3));
+    };
+
+    const handleZoomOut = () => {
+        setZoom((prev) => Math.max(prev - 0.1, 0.5));
     };
 
     const handleCreatePost = async () => {
@@ -245,10 +326,148 @@ const Community = () => {
                             </div>
 
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                                {imagePreview ? (
+                                {imagePreview && (
                                     <div style={{ width: '100%', borderRadius: '24px', overflow: 'hidden', position: 'relative' }}>
-                                        <img src={imagePreview} style={{ width: '100%', height: '300px', objectFit: 'cover' }} />
-                                        <button onClick={() => { setImagePreview(null); setNewImage(null) }} style={{ position: 'absolute', top: '10px', right: '10px', background: 'rgba(0,0,0,0.5)', color: 'white', border: 'none', borderRadius: '50%', padding: '6px' }}><X size={16} /></button>
+                                        <img 
+                                            ref={imageRef}
+                                            src={imagePreview} 
+                                            style={{ 
+                                                width: '100%', 
+                                                height: '300px', 
+                                                objectFit: 'contain',
+                                                display: showCropper ? 'none' : 'block'
+                                            }} 
+                                        />
+                                        
+                                        {/* Cropping Controls Overlay */}
+                                        {showCropper && (
+                                            <div style={{
+                                                position: 'absolute',
+                                                top: 0,
+                                                left: 0,
+                                                right: 0,
+                                                bottom: 0,
+                                                background: 'rgba(0, 0, 0, 0.8)',
+                                                display: 'flex',
+                                                flexDirection: 'column',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                padding: '20px',
+                                                gap: '12px'
+                                            }}>
+                                                <div style={{
+                                                    display: 'flex',
+                                                    justifyContent: 'center',
+                                                    gap: '10px',
+                                                    marginBottom: '16px'
+                                                }}>
+                                                    <button
+                                                        onClick={handleZoomOut}
+                                                        style={{
+                                                            background: 'var(--secondary)',
+                                                            border: 'none',
+                                                            padding: '8px 12px',
+                                                            borderRadius: '8px',
+                                                            cursor: 'pointer',
+                                                            fontSize: '0.9rem',
+                                                            fontWeight: '600'
+                                                        }}
+                                                    >
+                                                        Zoom -
+                                                    </button>
+                                                    <button
+                                                        onClick={handleZoomIn}
+                                                        style={{
+                                                            background: 'var(--secondary)',
+                                                            border: 'none',
+                                                            padding: '8px 12px',
+                                                            borderRadius: '8px',
+                                                            cursor: 'pointer',
+                                                            fontSize: '0.9rem',
+                                                            fontWeight: '600'
+                                                        }}
+                                                    >
+                                                        Zoom +
+                                                    </button>
+                                                    <button
+                                                        onClick={handleRotate}
+                                                        style={{
+                                                            background: 'var(--secondary)',
+                                                            border: 'none',
+                                                            padding: '8px 12px',
+                                                            borderRadius: '8px',
+                                                            cursor: 'pointer',
+                                                            fontSize: '0.9rem',
+                                                            fontWeight: '600',
+                                                            display: 'flex',
+                                                            alignItems: 'center',
+                                                            gap: '6px'
+                                                        }}
+                                                    >
+                                                        <RotateCw size={16} />
+                                                        Rotate
+                                                    </button>
+                                                </div>
+                                                
+                                                <div style={{
+                                                    display: 'flex',
+                                                    justifyContent: 'center',
+                                                    gap: '10px'
+                                                }}>
+                                                    <button
+                                                        onClick={handleCropComplete}
+                                                        style={{
+                                                            background: 'var(--primary)',
+                                                            color: 'white',
+                                                            border: 'none',
+                                                            padding: '12px 24px',
+                                                            borderRadius: '12px',
+                                                            cursor: 'pointer',
+                                                            fontSize: '1rem',
+                                                            fontWeight: '800',
+                                                            display: 'flex',
+                                                            alignItems: 'center',
+                                                            gap: '8px'
+                                                        }}
+                                                    >
+                                                        <Crop size={18} />
+                                                        Apply Crop
+                                                    </button>
+                                                    <button
+                                                        onClick={handleCropCancel}
+                                                        style={{
+                                                            background: 'var(--secondary)',
+                                                            border: 'none',
+                                                            padding: '8px 16px',
+                                                            borderRadius: '12px',
+                                                            cursor: 'pointer',
+                                                            fontSize: '0.9rem',
+                                                            fontWeight: '600'
+                                                        }}
+                                                    >
+                                                        Cancel
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        )}
+                                        
+                                        {!showCropper && (
+                                            <button 
+                                                onClick={() => { setImagePreview(null); setNewImage(null) }} 
+                                                style={{ 
+                                                    position: 'absolute', 
+                                                    top: '10px', 
+                                                    right: '10px', 
+                                                    background: 'rgba(0,0,0,0.5)', 
+                                                    color: 'white', 
+                                                    border: 'none', 
+                                                    borderRadius: '50%', 
+                                                    padding: '6px' 
+                                                }}
+                                            >
+                                                <X size={16} />
+                                            </button>
+                                        )}
                                     </div>
                                 ) : (
                                     <label style={{ width: '100%', height: '200px', border: '3px dashed var(--secondary)', borderRadius: '24px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', background: 'var(--secondary)' }}>
