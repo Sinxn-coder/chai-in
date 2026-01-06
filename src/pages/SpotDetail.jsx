@@ -25,6 +25,12 @@ const SpotDetail = ({ lang }) => {
 
     useEffect(() => {
         fetchSpotDetails();
+        // Check if coming back from directions page and refresh data
+        if (sessionStorage.getItem('refreshSpotDetail')) {
+            sessionStorage.removeItem('refreshSpotDetail');
+            fetchSpotDetails();
+            fetchReviews();
+        }
     }, [id, user]);
 
     const formatNumber = (num) => {
@@ -196,28 +202,7 @@ const SpotDetail = ({ lang }) => {
     };
 
     const handleGetDirections = () => {
-        if (!spot.latitude || !spot.longitude) {
-            alert('Location coordinates not available for this spot.');
-            return;
-        }
-
-        const lat = spot.latitude;
-        const lng = spot.longitude;
-        const spotName = encodeURIComponent(spot.name || 'Spot');
-        
-        // Check if the device is iOS
-        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-        
-        if (isIOS) {
-            // For iOS devices, use Apple Maps
-            window.open(`maps://?daddr=${lat},${lng}&q=${spotName}`, '_blank');
-        } else {
-            // For Android and desktop, use Google Maps
-            window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}&destination_place_id=${spotName}`, '_blank');
-        }
-        
-        // Store current page for when user returns
-        sessionStorage.setItem('lastSpotPage', window.location.pathname);
+        navigate(`/${window.location.pathname.includes('/ml/') ? 'ml' : 'en'}/directions/${id}`);
     };
 
     if (loading) return <div style={{ padding: '40px', textAlign: 'center' }}>Wait a moment...</div>;
@@ -306,9 +291,6 @@ const SpotDetail = ({ lang }) => {
                         <Star size={18} fill="#FFB800" color="#FFB800" />
                         <span style={{ fontWeight: '800', fontSize: '1.1rem' }}>{spot.rating || '4.5'}</span>
                     </div>
-                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: '600', display: 'flex', alignItems: 'center' }}>
-                        {formatNumber(visitCount)} visits
-                    </div>
                 </div>
 
                 <div style={{ display: 'flex', gap: '10px', marginBottom: '24px' }}>
@@ -392,22 +374,6 @@ const SpotDetail = ({ lang }) => {
                     >
                         <MapPin size={24} />
                         VISITED
-                        {visitCount > 0 && (
-                            <motion.span 
-                                animate={isCountAnimating ? { scale: [1, 1.3, 1] } : {}}
-                                transition={{ duration: 0.6, ease: "easeOut" }}
-                                style={{ 
-                                    background: 'rgba(255,255,255,0.2)', 
-                                    padding: '2px 6px', 
-                                    borderRadius: '8px', 
-                                    fontSize: '0.65rem', 
-                                    fontWeight: '700',
-                                    marginLeft: '6px'
-                                }}
-                            >
-                                {formatNumber(visitCount)}
-                            </motion.span>
-                        )}
                     </motion.button>
                 </div>
             </motion.div>

@@ -13,6 +13,7 @@ import EditSpot from './pages/EditSpot';
 import Favorites from './pages/Favorites';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import ContactAdmin from './pages/ContactAdmin';
+import DirectionsPage from './pages/DirectionsPage';
 import MainLayout from './layouts/MainLayout';
 import { useAuth } from './context/AuthContext';
 
@@ -68,6 +69,7 @@ function AppRoutes({ lang }) {
         <Route path="settings" element={<Settings lang={lang} />} />
         <Route path="privacy-policy" element={<PrivacyPolicy lang={lang} />} />
         <Route path="contact-admin" element={<ContactAdmin lang={lang} />} />
+        <Route path="directions/:id" element={<DirectionsPage lang={lang} />} />
         <Route path="spot/:id" element={<SpotDetail lang={lang} />} />
         <Route path="edit-spot/:id" element={<EditSpot lang={lang} />} />
         <Route path="admin" element={<Admin />} />
