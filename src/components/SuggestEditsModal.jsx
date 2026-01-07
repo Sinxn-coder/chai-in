@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Edit3, MapPin, Phone, Globe, Clock, Tag, DollarSign, FileText } from 'lucide-react';
+import { X, Edit3, MapPin, Clock, Tag, DollarSign, FileText, Globe, Phone } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const SuggestEditsModal = ({ spot, onClose, onSubmit }) => {
@@ -7,9 +7,8 @@ const SuggestEditsModal = ({ spot, onClose, onSubmit }) => {
         name: spot.name || '',
         description: spot.description || '',
         location_text: spot.location_text || '',
-        phone: spot.phone || '',
-        website: spot.website || '',
-        opening_hours: spot.opening_hours || '',
+        opening_time: spot.opening_hours?.open || '10:00',
+        closing_time: spot.opening_hours?.close || '22:00',
         tags: spot.tags ? spot.tags.join(', ') : '',
         price_level: spot.price_level || 1,
         category: spot.category || '',
@@ -24,14 +23,40 @@ const SuggestEditsModal = ({ spot, onClose, onSubmit }) => {
         setFormData(prev => ({ ...prev, [field]: value }));
         
         // Track what has changed
-        if (value !== spot[field]) {
-            setChanges(prev => ({ ...prev, [field]: { old: spot[field], new: value } }));
+        if (field === 'opening_time' || field === 'closing_time') {
+            // For opening hours, check if the combined opening_hours object has changed
+            const currentHours = {
+                open: spot.opening_hours?.open || '10:00',
+                close: spot.opening_hours?.close || '22:00'
+            };
+            const newHours = {
+                open: field === 'opening_time' ? value : formData.opening_time,
+                close: field === 'closing_time' ? value : formData.closing_time
+            };
+            
+            if (JSON.stringify(currentHours) !== JSON.stringify(newHours)) {
+                setChanges(prev => ({ 
+                    ...prev, 
+                    opening_hours: { old: currentHours, new: newHours } 
+                }));
+            } else {
+                setChanges(prev => {
+                    const newChanges = { ...prev };
+                    delete newChanges.opening_hours;
+                    return newChanges;
+                });
+            }
         } else {
-            setChanges(prev => {
-                const newChanges = { ...prev };
-                delete newChanges[field];
-                return newChanges;
-            });
+            // For other fields, check direct comparison
+            if (value !== spot[field]) {
+                setChanges(prev => ({ ...prev, [field]: { old: spot[field], new: value } }));
+            } else {
+                setChanges(prev => {
+                    const newChanges = { ...prev };
+                    delete newChanges[field];
+                    return newChanges;
+                });
+            }
         }
     };
 
@@ -44,11 +69,20 @@ const SuggestEditsModal = ({ spot, onClose, onSubmit }) => {
 
         setSubmitting(true);
         try {
+            // Prepare the suggested data, including opening_hours as an object
+            const suggestedData = {
+                ...formData,
+                opening_hours: {
+                    open: formData.opening_time,
+                    close: formData.closing_time
+                }
+            };
+            
             await onSubmit({
                 spot_id: spot.id,
                 suggested_changes: changes,
                 original_data: spot,
-                suggested_data: formData
+                suggested_data: suggestedData
             });
             onClose();
         } catch (error) {
@@ -183,9 +217,57 @@ const SuggestEditsModal = ({ spot, onClose, onSubmit }) => {
                     {renderField('name', 'Spot Name', <MapPin size={16} />, 'text', 'Enter spot name')}
                     {renderField('description', 'Description', <FileText size={16} />, 'textarea', 'Describe the spot...')}
                     {renderField('location_text', 'Location', <MapPin size={16} />, 'text', 'Enter location details')}
-                    {renderField('phone', 'Phone Number', <Phone size={16} />, 'tel', 'Enter phone number')}
-                    {renderField('website', 'Website', <Globe size={16} />, 'url', 'Enter website URL')}
-                    {renderField('opening_hours', 'Opening Hours', <Clock size={16} />, 'text', 'e.g., 9:00 AM - 10:00 PM')}
+
+                    {/* Opening Hours - like AddSpot */}
+                    <div style={{ marginBottom: '16px' }}>
+                        <label style={{ 
+                            display: 'flex', 
+                            alignItems: 'center', 
+                            gap: '8px', 
+                            marginBottom: '8px',
+                            fontSize: '0.9rem',
+                            fontWeight: '600',
+                            color: 'var(--text-main)'
+                        }}>
+                            <Clock size={16} />
+                            Opening Hours
+                        </label>
+                        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', flex: 1 }}>
+                                <label style={{ fontSize: '0.75rem', fontWeight: '800', color: 'var(--text-muted)' }}>Opening</label>
+                                <input 
+                                    type="time" 
+                                    value={formData.opening_time} 
+                                    onChange={e => handleChange('opening_time', e.target.value)}
+                                    style={{ 
+                                        padding: '12px', 
+                                        borderRadius: '14px', 
+                                        background: 'var(--secondary)', 
+                                        border: 'none', 
+                                        fontWeight: '700',
+                                        width: '100%'
+                                    }} 
+                                />
+                            </div>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', flex: 1 }}>
+                                <label style={{ fontSize: '0.75rem', fontWeight: '800', color: 'var(--text-muted)' }}>Closing</label>
+                                <input 
+                                    type="time" 
+                                    value={formData.closing_time} 
+                                    onChange={e => handleChange('closing_time', e.target.value)}
+                                    style={{ 
+                                        padding: '12px', 
+                                        borderRadius: '14px', 
+                                        background: 'var(--secondary)', 
+                                        border: 'none', 
+                                        fontWeight: '700',
+                                        width: '100%'
+                                    }} 
+                                />
+                            </div>
+                        </div>
+                    </div>
+
                     {renderField('tags', 'Tags', <Tag size={16} />, 'text', 'e.g., biryani, tea, snacks (comma separated)')}
                     {renderField('instagram_handle', 'Instagram', <Globe size={16} />, 'text', '@username')}
                     {renderField('whatsapp_number', 'WhatsApp', <Phone size={16} />, 'tel', 'Enter WhatsApp number')}
@@ -267,7 +349,10 @@ const SuggestEditsModal = ({ spot, onClose, onSubmit }) => {
                             </h4>
                             {Object.entries(changes).map(([field, { old, new: newValue }]) => (
                                 <div key={field} style={{ marginBottom: '8px', fontSize: '0.85rem', color: '#166534' }}>
-                                    <strong>{field}:</strong> "{old}" → "{newValue}"
+                                    <strong>{field}:</strong> {field === 'opening_hours' ? 
+                                        `"${old?.open || '10:00'} - ${old?.close || '22:00'}" → "${newValue?.open || '10:00'} - ${newValue?.close || '22:00'}"` :
+                                        `"${old}" → "${newValue}"`
+                                    }
                                 </div>
                             ))}
                         </div>
