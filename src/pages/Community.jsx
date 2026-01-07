@@ -84,6 +84,17 @@ const Community = () => {
     }, [user]);
 
     const handlePostComplete = async (imageFile, caption) => {
+        // Ensure user has preferences entry
+        await supabase.from('user_preferences').upsert({
+            user_id: user.id,
+            display_name: user.user_metadata?.full_name || 'User',
+            avatar_url: user.user_metadata?.avatar_url || null,
+            notifications_enabled: true,
+            notify_new_spots: true,
+            notify_review_replies: true,
+            notify_weekly_digest: false
+        }, { onConflict: 'user_id' });
+
         const fileName = `${user.id}-${Date.now()}.${imageFile.name.split('.').pop()}`;
         await supabase.storage.from('food-images').upload(`community/${fileName}`, imageFile);
         const { data: { publicUrl } } = supabase.storage.from('food-images').getPublicUrl(`community/${fileName}`);
@@ -92,9 +103,8 @@ const Community = () => {
             user_id: user.id, 
             image_url: publicUrl, 
             caption: caption, 
-            likes_count: 0 
+            likes: 0 
         }]);
-
         setToast({ message: "Shared with community! ✨", type: 'success' });
         fetchPosts();
     };
@@ -279,6 +289,17 @@ const Comments = ({ post, onClose }) => {
 
     const handleCommentSubmit = async () => {
         if (!newComment.trim() || !user) return;
+        
+        // Ensure user has preferences entry
+        await supabase.from('user_preferences').upsert({
+            user_id: user.id,
+            display_name: user.user_metadata?.full_name || 'User',
+            avatar_url: user.user_metadata?.avatar_url || null,
+            notifications_enabled: true,
+            notify_new_spots: true,
+            notify_review_replies: true,
+            notify_weekly_digest: false
+        }, { onConflict: 'user_id' });
         
         await supabase.from('post_comments').insert({
             post_id: post.id,

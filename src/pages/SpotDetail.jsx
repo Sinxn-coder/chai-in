@@ -212,6 +212,17 @@ const SpotDetail = ({ lang }) => {
         if (!user) return alert("Please login to submit a review!");
         if (!newReview.trim()) return;
 
+        // Ensure user has preferences entry
+        await supabase.from('user_preferences').upsert({
+            user_id: user.id,
+            display_name: user.user_metadata?.full_name || 'User',
+            avatar_url: user.user_metadata?.avatar_url || null,
+            notifications_enabled: true,
+            notify_new_spots: true,
+            notify_review_replies: true,
+            notify_weekly_digest: false
+        }, { onConflict: 'user_id' });
+
         const { error } = await supabase.from('reviews').insert({
             spot_id: parseInt(id),
             user_id: user.id,
@@ -377,6 +388,46 @@ const SpotDetail = ({ lang }) => {
                     </motion.button>
                 </div>
 
+                {/* Primary Action */}
+                <div style={{ position: 'sticky', bottom: '20px', left: 0, right: 0, zIndex: 10, padding: '0 4px', marginBottom: '40px' }}>
+                    <motion.button
+                        whileTap={{ scale: 0.95 }}
+                        onClick={handleVisitToggle}
+                        style={{
+                            width: '100%',
+                            padding: '18px',
+                            borderRadius: '24px',
+                            background: visited ? '#10B981' : '#EF4444',
+                            color: 'white',
+                            border: 'none',
+                            fontSize: '1.1rem',
+                            fontWeight: '900',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            gap: '10px',
+                            boxShadow: 'var(--shadow-lg)'
+                        }}
+                    >
+                        <MapPin size={24} />
+                        VISITED
+                        <AnimatePresence mode="wait">
+                            {isCountAnimating && (
+                                <motion.span
+                                    key={visitCount}
+                                    initial={{ scale: 0.5, opacity: 0 }}
+                                    animate={{ scale: 1, opacity: 1 }}
+                                    exit={{ scale: 1.5, opacity: 0 }}
+                                    transition={{ duration: 0.5, ease: 'easeOut' }}
+                                    style={{ background: 'rgba(255,255,255,0.2)', padding: '2px 8px', borderRadius: '12px', fontSize: '0.9rem' }}
+                                >
+                                    {formatNumber(visitCount)}
+                                </motion.span>
+                            )}
+                        </AnimatePresence>
+                    </motion.button>
+                </div>
+
                 {/* Reviews Section */}
                 <div style={{ marginBottom: '40px' }}>
                     <h2 style={{ fontSize: '1.4rem', fontWeight: '900', marginBottom: '20px' }}>Reviews ({reviews.length})</h2>
@@ -402,32 +453,6 @@ const SpotDetail = ({ lang }) => {
                         />
                         <button onClick={handleReviewSubmit} style={{ padding: '14px 20px', borderRadius: '16px', background: 'var(--primary)', color: 'white', border: 'none', fontWeight: '800' }}>Send</button>
                     </div>
-                </div>
-
-                {/* Primary Action */}
-                <div style={{ position: 'sticky', bottom: '20px', left: 0, right: 0, zIndex: 10, padding: '0 4px', marginBottom: '12px' }}>
-                    <motion.button
-                        whileTap={{ scale: 0.95 }}
-                        onClick={handleVisitToggle}
-                        style={{
-                            width: '100%',
-                            padding: '18px',
-                            borderRadius: '24px',
-                            background: visited ? '#10B981' : '#EF4444',
-                            color: 'white',
-                            border: 'none',
-                            fontSize: '1.1rem',
-                            fontWeight: '900',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            gap: '10px',
-                            boxShadow: 'var(--shadow-lg)'
-                        }}
-                    >
-                        <MapPin size={24} />
-                        VISITED
-                    </motion.button>
                 </div>
             </motion.div>
         </div>
