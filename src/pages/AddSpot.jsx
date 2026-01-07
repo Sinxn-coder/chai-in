@@ -43,6 +43,13 @@ const AddSpot = ({ lang }) => {
 
     const categories = ['Cafe', 'Restaurant', 'Street Food', 'Bakery', 'Juice Shop', 'Tea Stall'];
 
+    const priceRanges = [
+        { level: 1, label: '₹50-150', description: 'Budget Friendly' },
+        { level: 2, label: '₹150-300', description: 'Moderate' },
+        { level: 3, label: '₹300-600', description: 'Premium' },
+        { level: 4, label: '₹600+', description: 'Fine Dining' }
+    ];
+
 
     const showToast = (msg, type = 'success') => {
         setToast({ message: msg, type });
@@ -255,15 +262,29 @@ const AddSpot = ({ lang }) => {
                                         </button>
                                     ))}
                                 </div>
-                                <label style={{ fontSize: '0.85rem', fontWeight: '800', color: 'var(--text-muted)', marginBottom: '12px', display: 'block' }}>PRICE LEVEL</label>
-                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '10px', marginBottom: '24px' }}>
-                                    {[1, 2, 3, 4].map(p => (
+                                <label style={{ fontSize: '0.85rem', fontWeight: '800', color: 'var(--text-muted)', marginBottom: '12px', display: 'block' }}>PRICE RANGE</label>
+                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '10px', marginBottom: '24px' }}>
+                                    {priceRanges.map(range => (
                                         <button
-                                            key={p}
-                                            onClick={() => setFormData({ ...formData, price: p })}
-                                            style={{ padding: '14px', borderRadius: '18px', border: 'none', background: formData.price === p ? 'var(--primary)' : 'var(--secondary)', color: formData.price === p ? 'white' : 'var(--text-main)', fontWeight: '800', transition: 'all 0.2s' }}
+                                            key={range.level}
+                                            onClick={() => setFormData({ ...formData, price: range.level })}
+                                            style={{ 
+                                                padding: '16px 12px', 
+                                                borderRadius: '18px', 
+                                                border: 'none', 
+                                                background: formData.price === range.level ? 'var(--primary)' : 'var(--secondary)', 
+                                                color: formData.price === range.level ? 'white' : 'var(--text-main)', 
+                                                fontWeight: '800', 
+                                                transition: 'all 0.2s',
+                                                textAlign: 'left',
+                                                display: 'flex',
+                                                flexDirection: 'column',
+                                                alignItems: 'flex-start',
+                                                gap: '4px'
+                                            }}
                                         >
-                                            {'₹'.repeat(p)}
+                                            <div style={{ fontSize: '1.1rem', fontWeight: '900' }}>{range.label}</div>
+                                            <div style={{ fontSize: '0.75rem', opacity: 0.8 }}>{range.description}</div>
                                         </button>
                                     ))}
                                 </div>
