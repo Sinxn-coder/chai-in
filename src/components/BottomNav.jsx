@@ -26,7 +26,7 @@ const BottomNav = ({ lang = 'en' }) => {
         bottom: 0,
         left: 0,
         right: 0,
-        height: 80, // ⬅️ more breathing room
+        height: 70, // Reduced height for small screens
         zIndex: 1000,
         pointerEvents: 'none',
       }}
@@ -34,8 +34,8 @@ const BottomNav = ({ lang = 'en' }) => {
       {/* NAV BAR SHAPE */}
       <svg
         width="100%"
-        height="140"
-        viewBox="0 0 400 140"
+        height="120" // Reduced height
+        viewBox="0 0 400 120"
         preserveAspectRatio="none"
         style={{ display: 'block', pointerEvents: 'auto' }}
       >
@@ -49,7 +49,7 @@ const BottomNav = ({ lang = 'en' }) => {
             C235 12 245 0 265 0
             H360
             Q400 0 400 40
-            V140
+            V120
             H0
             Z
           "
@@ -61,7 +61,7 @@ const BottomNav = ({ lang = 'en' }) => {
       <div
         style={{
           position: 'absolute',
-          top: -44, // ⬅️ creates visible space
+          top: -40, // Adjusted for smaller nav
           left: '50%',
           transform: 'translateX(-50%)',
           pointerEvents: 'auto',
@@ -72,8 +72,8 @@ const BottomNav = ({ lang = 'en' }) => {
             whileTap={{ scale: 0.9 }}
             whileHover={{ scale: 1.05 }}
             style={{
-              width: 76,
-              height: 76,
+              width: 60, // Reduced size for small screens
+              height: 60,
               borderRadius: '50%',
               background: '#EF2A39',
               display: 'flex',
@@ -81,10 +81,10 @@ const BottomNav = ({ lang = 'en' }) => {
               justifyContent: 'center',
               boxShadow:
                 '0 16px 32px rgba(239,42,57,0.45), inset 0 2px 6px rgba(255,255,255,0.35)',
-              border: '4px solid rgba(255,255,255,0.4)',
+              border: '3px solid rgba(255,255,255,0.4)',
             }}
           >
-            <Plus size={32} color="#fff" strokeWidth={3} />
+            <Plus size={24} color="#fff" strokeWidth={3} />
           </motion.div>
         </NavLink>
       </div>
@@ -93,13 +93,13 @@ const BottomNav = ({ lang = 'en' }) => {
       <div
         style={{
           position: 'absolute',
-          bottom: 22,
+          bottom: 18, // Adjusted bottom position
           left: 0,
           right: 0,
           display: 'flex',
           justifyContent: 'space-around',
           alignItems: 'center',
-          padding: '0 40px',
+          padding: '0 20px', // Reduced padding for small screens
           pointerEvents: 'auto',
         }}
       >
@@ -116,20 +116,21 @@ const BottomNav = ({ lang = 'en' }) => {
                   display: 'flex',
                   flexDirection: 'column',
                   alignItems: 'center',
-                  gap: 6,
+                  gap: 4, // Reduced gap
                   color: 'white',
                   textDecoration: 'none',
                   opacity: active ? 1 : 0.7,
-                  fontSize: '0.78rem',
+                  fontSize: '0.7rem', // Smaller font for small screens
                   fontWeight: 800,
-                  ...(item.to === '/home' && { marginLeft: '10px' }),
-                  ...(item.to === '/map' && { marginRight: '40px' }),
-                  ...(item.to === '/community' && { marginLeft: '40px' }),
-                  ...(item.to === '/leaderboard' && { marginRight: '10px' }),
+                  // Adjust margins for smaller screens
+                  ...(item.to === '/home' && { marginLeft: '5px' }),
+                  ...(item.to === '/map' && { marginRight: '25px' }),
+                  ...(item.to === '/community' && { marginLeft: '25px' }),
+                  ...(item.to === '/leaderboard' && { marginRight: '5px' }),
                 }}
               >
                 <item.icon
-                  size={26}
+                  size={20} // Smaller icons for small screens
                   strokeWidth={active ? 2.6 : 2}
                   color="white"
                 />

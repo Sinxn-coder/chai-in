@@ -132,38 +132,41 @@ const SpotCard = memo(({ spot }) => {
             style={{
                 background: 'var(--bg-white)',
                 borderRadius: 'var(--radius-lg)',
-                padding: '10px',
+                padding: '8px', // Reduced padding for small screens
                 boxShadow: 'var(--shadow-md)',
                 cursor: 'pointer',
-                marginBottom: '10px',
+                marginBottom: '8px', // Reduced margin
                 display: 'flex',
                 flexDirection: 'column',
-                gap: '8px'
+                gap: '6px', // Reduced gap
+                width: '100%', // Ensure it fits container
+                maxWidth: '100%', // Prevent overflow
+                boxSizing: 'border-box' // Include padding in width calculation
             }}
         >
-            <div style={{ position: 'relative', height: '140px', borderRadius: '24px', overflow: 'hidden' }} onClick={(e) => e.stopPropagation()}>
+            <div style={{ position: 'relative', height: '120px', borderRadius: '20px', overflow: 'hidden' }} onClick={(e) => e.stopPropagation()}>
                 <ImageSlider images={images} interval={4000} />
                 <div style={{
-                    position: 'absolute', top: '8px', left: '50%', transform: 'translateX(-50%)',
+                    position: 'absolute', top: '6px', left: '50%', transform: 'translateX(-50%)',
                     background: isOpen === null ? 'rgba(100, 116, 139, 0.7)' : (isOpen ? 'rgba(16, 185, 129, 0.9)' : 'rgba(239, 68, 68, 0.9)'),
-                    backdropFilter: 'blur(8px)', color: 'white', padding: '4px 10px', borderRadius: '20px', fontSize: '0.6rem', fontWeight: '800', display: 'flex', alignItems: 'center', gap: '4px'
+                    backdropFilter: 'blur(8px)', color: 'white', padding: '3px 8px', borderRadius: '16px', fontSize: '0.55rem', fontWeight: '800', display: 'flex', alignItems: 'center', gap: '3px'
                 }}>
-                    <div style={{ width: '5px', height: '5px', borderRadius: '50%', background: 'white' }} />
+                    <div style={{ width: '4px', height: '4px', borderRadius: '50%', background: 'white' }} />
                     {isOpen === null ? 'HOURS N/A' : isOpen ? 'OPEN' : 'CLOSED'}
                 </div>
-                <div style={{ position: 'absolute', bottom: '8px', left: '8px', background: 'white', padding: '3px 7px', borderRadius: '10px', display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.7rem', fontWeight: '800' }}>
-                    <Star size={10} fill="#FFB800" color="#FFB800" /> {rating}
+                <div style={{ position: 'absolute', bottom: '6px', left: '6px', background: 'white', padding: '2px 6px', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '3px', fontSize: '0.65rem', fontWeight: '800' }}>
+                    <Star size={8} fill="#FFB800" color="#FFB800" /> {rating}
                 </div>
             </div>
 
-            <div style={{ padding: '0 4px' }}>
+            <div style={{ padding: '0 2px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                        <h3 style={{ fontSize: '0.95rem', fontWeight: '900', margin: '0 0 2px 0', color: 'var(--text-main)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{name}</h3>
-                        <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', margin: 0 }}>{distance} km</p>
+                    <div style={{ flex: 1, minWidth: 0, marginRight: '8px' }}>
+                        <h3 style={{ fontSize: '0.85rem', fontWeight: '900', margin: '0 0 2px 0', color: 'var(--text-main)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', lineHeight: '1.2' }}>{name}</h3>
+                        <p style={{ fontSize: '0.7rem', color: 'var(--text-muted)', margin: 0, lineHeight: '1.2' }}>{distance} km</p>
                     </div>
-                    <motion.button whileTap={{ scale: 0.8 }} onClick={toggleFavorite} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '2px' }}>
-                        <Heart size={20} fill={isFavorite ? 'var(--primary)' : 'none'} color={isFavorite ? 'var(--primary)' : 'var(--text-muted)'} />
+                    <motion.button whileTap={{ scale: 0.8 }} onClick={toggleFavorite} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '2px', flexShrink: 0 }}>
+                        <Heart size={18} fill={isFavorite ? 'var(--primary)' : 'none'} color={isFavorite ? 'var(--primary)' : 'var(--text-muted)'} />
                     </motion.button>
                 </div>
 

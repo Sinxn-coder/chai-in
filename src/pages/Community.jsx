@@ -166,12 +166,11 @@ const Community = () => {
             console.log('Image uploaded successfully:', publicUrl);
 
             console.log('Creating post in database...');
-            const { data: postData, error: postError } = await supabase.from('community_posts').insert([{ 
+            const { data: postData, error: postError } = await supabase.from('community_posts').insert({ 
                 user_id: user.id, 
                 image_url: publicUrl, 
-                caption: caption, 
-                likes: 0 
-            }]).select().single();
+                caption: caption
+            }).select().single();
             
             if (postError) {
                 console.error('Post creation error:', postError);
