@@ -76,7 +76,7 @@ const AppBar = () => {
                 onClick={() => navigate('/en/home')}
             >
                 <img
-                    src="/chai-in/chai_icon.png"
+                    src="./chai_icon.png"
                     alt="Chai-in"
                     style={{
                         height: '40px',

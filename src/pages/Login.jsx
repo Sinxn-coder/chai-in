@@ -43,7 +43,7 @@ const Login = () => {
             >
                 <div style={{ position: 'relative', width: '120px', height: '120px', margin: '0 auto' }}>
                     <img
-                        src="/chai-in/chai_logo.png"
+                        src="./chai_logo.png"
                         alt="Chai-in Logo"
                         style={{ width: '120px', height: '120px', objectFit: 'contain' }}
                         onError={(e) => { e.target.src = 'https://ui-avatars.com/api/?name=Chai-in&background=EF2A39&color=fff&rounded=true' }}
