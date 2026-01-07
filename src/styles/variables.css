@@ -87,6 +87,53 @@ body.dark-mode {
   --shadow-xl: 0 20px 60px rgba(0, 0, 0, 0.7);
 }
 
+/* Dark mode overrides for better text visibility */
+body.dark-mode {
+  color: #FFFFFF !important;
+}
+
+body.dark-mode * {
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+body.dark-mode .glass-card,
+body.dark-mode .container {
+  background: var(--bg-white) !important;
+  color: var(--text-main) !important;
+}
+
+body.dark-mode input,
+body.dark-mode textarea,
+body.dark-mode select {
+  background: var(--bg-cream) !important;
+  color: var(--text-main) !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+body.dark-mode button {
+  color: var(--text-main) !important;
+}
+
+body.dark-mode h1,
+body.dark-mode h2,
+body.dark-mode h3,
+body.dark-mode h4,
+body.dark-mode h5,
+body.dark-mode h6 {
+  color: var(--text-main) !important;
+}
+
+body.dark-mode p,
+body.dark-mode span,
+body.dark-mode div {
+  color: var(--text-main) !important;
+}
+
+body.dark-mode .motion-div {
+  background: var(--bg-white) !important;
+  color: var(--text-main) !important;
+}
+
 /* Dark mode scrollbar fixes */
 body.dark-mode * {
   scrollbar-width: thin;

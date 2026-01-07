@@ -113,8 +113,7 @@ const Admin = () => {
                 .from('spots')
                 .update({ is_verified: !currentStatus })
                 .eq('id', id)
-                .select()
-                .single();
+                .select();
                 
             if (error) {
                 console.error('Verification error:', error);
@@ -124,10 +123,12 @@ const Admin = () => {
             
             console.log('Verification successful, updated data:', data);
             
-            // Update local state with the actual database data
-            setSpots(spots.map(s => 
-                s.id === id ? data : s
-            ));
+            // Update local state with the first updated record
+            if (data && data.length > 0) {
+                setSpots(spots.map(s => 
+                    s.id === id ? data[0] : s
+                ));
+            }
             
             showToast(`Spot ${!currentStatus ? 'verified' : 'unverified'} successfully`, 'success');
             
