@@ -170,7 +170,7 @@ const Home = ({ lang }) => {
                 </motion.button>
                 
                 <div style={{ flex: 1, minWidth: '200px' }}>
-                    <div style={{ position: 'relative' }}>
+                    <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
                         <input
                             type="text"
                             placeholder="Search location in Kerala..."
@@ -179,17 +179,18 @@ const Home = ({ lang }) => {
                             onKeyPress={(e) => e.key === 'Enter' && searchLocation()}
                             style={{
                                 width: '100%',
-                                padding: '12px 20px 12px 45px',
+                                padding: '12px 70px 12px 45px',
                                 borderRadius: '25px',
                                 border: '2px solid var(--primary)',
                                 background: 'var(--bg-white)',
                                 fontSize: '0.85rem',
                                 fontWeight: '600',
                                 boxShadow: '0 4px 15px rgba(239, 42, 57, 0.15)',
-                                transition: 'all 0.3s ease'
+                                transition: 'all 0.3s ease',
+                                boxSizing: 'border-box'
                             }}
                         />
-                        <Search size={20} color="var(--primary)" style={{ position: 'absolute', left: '15px', top: '50%', transform: 'translateY(-50%)' }} />
+                        <Search size={20} color="var(--primary)" style={{ position: 'absolute', left: '15px', top: '50%', transform: 'translateY(-50%)', zIndex: 2 }} />
                         <motion.button
                             whileTap={{ scale: 0.95 }}
                             onClick={searchLocation}
@@ -208,7 +209,8 @@ const Home = ({ lang }) => {
                                 fontWeight: '700',
                                 cursor: searchingLocation ? 'not-allowed' : 'pointer',
                                 opacity: searchingLocation ? 0.6 : 1,
-                                boxShadow: '0 2px 8px rgba(239, 42, 57, 0.3)'
+                                boxShadow: '0 2px 8px rgba(239, 42, 57, 0.3)',
+                                zIndex: 2
                             }}
                         >
                             {searchingLocation ? '...' : 'Go'}
@@ -234,7 +236,7 @@ const Home = ({ lang }) => {
                             boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
                         }}
                     >
-                        Back to All Kerala
+                        Clear
                     </motion.button>
                 )}
             </div>
