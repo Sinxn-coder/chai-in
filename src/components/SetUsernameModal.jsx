@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabaseClient';
 import { useAuth } from '../context/AuthContext';
-import { Check, X, CircleAlert } from 'lucide-react';
+import { Check, X, CircleAlert, Camera, User } from 'lucide-react';
 import Toast from './Toast';
 
 const SetUsernameModal = () => {
@@ -12,6 +12,9 @@ const SetUsernameModal = () => {
     const [available, setAvailable] = useState(null); // true, false, null
     const [error, setError] = useState(null);
     const [isOldUser, setIsOldUser] = useState(false);
+    const [avatarUrl, setAvatarUrl] = useState(null);
+    const [uploading, setUploading] = useState(false);
+    const [skipAvatar, setSkipAvatar] = useState(false);
 
     useEffect(() => {
         if (user?.created_at) {
@@ -21,6 +24,11 @@ const SetUsernameModal = () => {
             if (diffHours > 1) setIsOldUser(true); // Account created more than 1 hour ago
         }
         checkStatus();
+        
+        // Set initial avatar from Google profile
+        if (user?.user_metadata?.avatar_url) {
+            setAvatarUrl(user.user_metadata.avatar_url);
+        }
     }, [user]);
 
     const checkStatus = async () => {
@@ -55,17 +63,48 @@ const SetUsernameModal = () => {
         setAvailable(!data); // If data exists, not available
     };
 
+    const handleImageUpload = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        setUploading(true);
+        try {
+            const fileName = `${user.id}-${Date.now()}.${file.name.split('.').pop()}`;
+            await supabase.storage.from('avatars').upload(`avatars/${fileName}`, file);
+            const { data: { publicUrl } } = supabase.storage.from('avatars').getPublicUrl(`avatars/${fileName}`);
+            setAvatarUrl(publicUrl);
+            setSkipAvatar(false);
+        } catch (error) {
+            console.error('Error uploading avatar:', error);
+        } finally {
+            setUploading(false);
+        }
+    };
+
     const handleSubmit = async () => {
         if (!available || username.length < 3) return;
         setLoading(true);
         setError(null);
 
         try {
+            // Determine final avatar URL
+            let finalAvatarUrl = avatarUrl;
+            if (skipAvatar && user?.user_metadata?.avatar_url) {
+                finalAvatarUrl = user.user_metadata.avatar_url;
+            } else if (skipAvatar) {
+                finalAvatarUrl = null;
+            }
+
             const { error: updateError } = await supabase
                 .from('user_preferences')
                 .upsert({
                     user_id: user.id,
                     username: username,
+                    display_name: username, // Use the username as display name
+                    avatar_url: finalAvatarUrl,
+                    notifications_enabled: true,
+                    notify_new_spots: true,
+                    notify_review_replies: true,
+                    notify_weekly_digest: false,
                     updated_at: new Date()
                 }, { onConflict: 'user_id' });
 
@@ -76,7 +115,7 @@ const SetUsernameModal = () => {
             window.location.reload(); // Refresh to propagate changes
         } catch (err) {
             console.error(err);
-            setError("Failed to save username. Try again.");
+            setError("Failed to save profile. Try again.");
         } finally {
             setLoading(false);
         }
@@ -103,6 +142,61 @@ const SetUsernameModal = () => {
                         ? "We've introduced usernames! Please choose a unique handle to continue."
                         : "Please choose a unique username to continue."}
                 </p>
+
+                {/* Avatar Section */}
+                <div style={{ marginBottom: '24px' }}>
+                    <div style={{ position: 'relative', display: 'inline-block', marginBottom: '16px' }}>
+                        <div style={{ 
+                            width: '80px', height: '80px', borderRadius: '50%', 
+                            border: '3px solid var(--primary)', overflow: 'hidden',
+                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            background: 'var(--secondary)'
+                        }}>
+                            {avatarUrl ? (
+                                <img src={avatarUrl} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                            ) : (
+                                <User size={40} color="var(--text-muted)" />
+                            )}
+                        </div>
+                        <label htmlFor="avatar-upload" style={{ 
+                            position: 'absolute', bottom: '-5px', right: '-5px', 
+                            background: 'var(--primary)', color: 'white', 
+                            padding: '8px', borderRadius: '12px', cursor: 'pointer',
+                            boxShadow: 'var(--shadow-md)'
+                        }}>
+                            <Camera size={16} />
+                        </label>
+                        <input id="avatar-upload" type="file" accept="image/*" onChange={handleImageUpload} style={{ display: 'none' }} />
+                    </div>
+                    
+                    <div style={{ display: 'flex', gap: '8px', justifyContent: 'center', marginBottom: '16px' }}>
+                        <button
+                            onClick={() => setSkipAvatar(false)}
+                            style={{
+                                padding: '6px 12px', borderRadius: '8px', border: '1px solid var(--primary)',
+                                background: !skipAvatar ? 'var(--primary)' : 'white', color: !skipAvatar ? 'white' : 'var(--primary)',
+                                fontSize: '0.75rem', fontWeight: '600', cursor: 'pointer'
+                            }}
+                        >
+                            Upload Photo
+                        </button>
+                        <button
+                            onClick={() => setSkipAvatar(true)}
+                            style={{
+                                padding: '6px 12px', borderRadius: '8px', border: '1px solid var(--secondary)',
+                                background: skipAvatar ? 'var(--secondary)' : 'white', color: skipAvatar ? 'var(--text-main)' : 'var(--text-muted)',
+                                fontSize: '0.75rem', fontWeight: '600', cursor: 'pointer'
+                            }}
+                        >
+                            Maybe Later
+                        </button>
+                    </div>
+                    {skipAvatar && user?.user_metadata?.avatar_url && (
+                        <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', margin: 0 }}>
+                            Using your Google profile picture
+                        </p>
+                    )}
+                </div>
 
                 <div style={{ position: 'relative', marginBottom: '20px' }}>
                     <span style={{ position: 'absolute', left: '16px', top: '14px', color: '#999', fontWeight: 'bold' }}>@</span>
