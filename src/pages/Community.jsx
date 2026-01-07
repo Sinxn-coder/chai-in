@@ -45,7 +45,7 @@ const Community = () => {
             setPosts(postsData.map(p => ({
                 ...p,
                 likes_count: likesCountMap[p.id] || 0,
-                author: userMap[p.user_id] || { display_name: 'Foodie' },
+                author: userMap[p.user_id] || { display_name: 'Foodie', username: null },
                 isLikedByUser: !!userLikesMap[p.id]
             })));
         }
@@ -221,7 +221,7 @@ const Comments = ({ post, onClose }) => {
             
             setComments(commentsData.map(c => ({
                 ...c,
-                user: userMap[c.user_id] || { display_name: 'User' }
+                user: userMap[c.user_id] || { display_name: 'User', avatar_url: null }
             })));
         } else {
             setComments([]);
@@ -231,6 +231,16 @@ const Comments = ({ post, onClose }) => {
 
     useEffect(() => {
         fetchComments();
+        
+        // Listen for profile updates to refresh comment names
+        const handleProfileUpdate = () => {
+            fetchComments();
+        };
+        window.addEventListener('userProfileUpdated', handleProfileUpdate);
+        
+        return () => {
+            window.removeEventListener('userProfileUpdated', handleProfileUpdate);
+        };
     }, [post.id]);
 
     const handleCommentSubmit = async () => {

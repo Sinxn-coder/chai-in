@@ -23,11 +23,14 @@ const Profile = ({ lang }) => {
             window.addEventListener('focus', fetchProfileData);
             // Listen for profile updates
             window.addEventListener('userProfileUpdated', fetchProfileData);
+            // Listen for visit updates to refresh stats in real-time
+            window.addEventListener('visitUpdated', fetchProfileData);
         }
         return () => {
             if (user) {
                 window.removeEventListener('focus', fetchProfileData);
                 window.removeEventListener('userProfileUpdated', fetchProfileData);
+                window.removeEventListener('visitUpdated', fetchProfileData);
             }
         };
     }, [user]);
@@ -44,12 +47,14 @@ const Profile = ({ lang }) => {
         const { count: spotsCount } = await supabase.from('spots').select('*', { count: 'exact', head: true }).eq('created_by', user.id);
         const { count: reviewsCount } = await supabase.from('reviews').select('*', { count: 'exact', head: true }).eq('user_id', user.id);
         const { count: favCount } = await supabase.from('user_favorites').select('*', { count: 'exact', head: true }).eq('user_id', user.id);
+        const { count: visitsCount } = await supabase.from('visited_spots').select('*', { count: 'exact', head: true }).eq('user_id', user.id);
 
         setStats({
             spots: spotsCount || 0,
             reviews: reviewsCount || 0,
             favorites: favCount || 0,
-            xp: ((spotsCount || 0) * 100) + ((reviewsCount || 0) * 10)
+            visits: visitsCount || 0,
+            xp: ((spotsCount || 0) * 100) + ((reviewsCount || 0) * 10) + ((visitsCount || 0) * 5)
         });
         setLoading(false);
     };
@@ -133,10 +138,11 @@ const Profile = ({ lang }) => {
             </div>
 
             {/* Stats Deck */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px', padding: '24px 20px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '12px', padding: '24px 20px' }}>
                 {[
-                    { label: 'Visits', value: stats.spots, icon: MapPin },
+                    { label: 'Visits', value: stats.visits, icon: MapPin },
                     { label: 'Reviews', value: stats.reviews, icon: Star },
+                    { label: 'Added', value: stats.spots, icon: Plus },
                     { label: 'XP', value: stats.xp, icon: Zap },
                 ].map((stat, i) => (
                     <div key={i} style={{ background: 'var(--secondary)', padding: '16px 8px', borderRadius: '24px', textAlign: 'center' }}>

@@ -11,6 +11,16 @@ const Leaderboard = () => {
 
     useEffect(() => {
         fetchLeaderboard();
+        
+        // Listen for profile updates to refresh leaderboard names
+        const handleProfileUpdate = () => {
+            fetchLeaderboard();
+        };
+        window.addEventListener('userProfileUpdated', handleProfileUpdate);
+        
+        return () => {
+            window.removeEventListener('userProfileUpdated', handleProfileUpdate);
+        };
     }, []);
 
     const fetchLeaderboard = async () => {

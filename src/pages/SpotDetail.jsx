@@ -185,6 +185,11 @@ const SpotDetail = ({ lang }) => {
             } else {
                 await supabase.from('visited_spots').insert({ spot_id: parseInt(id), user_id: user.id });
             }
+            
+            // Emit event to update profile stats in real-time
+            window.dispatchEvent(new CustomEvent('visitUpdated', { 
+                detail: { userId: user.id, visited: newVisited } 
+            }));
         } catch (error) {
             console.error('Error toggling visit:', error);
             setVisited(prevVisited);
