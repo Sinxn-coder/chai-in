@@ -52,3 +52,39 @@
   --transition-base: 250ms ease;
   --transition-slow: 350ms ease;
 }
+
+/* Dark Mode Theme */
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Primary Colors - Enhanced for Dark Mode */
+    --primary: #FF4757;
+    --primary-dark: #FF3838;
+    --primary-light: #FF6B7A;
+    --secondary: #1A1A2E;
+    --accent: #FFD93D;
+
+    /* Background Colors - Dark Theme */
+    --bg-main: #0F0F1E;
+    --bg-white: #1A1A2E;
+    --bg-cream: #16213E;
+    --bg-light-red: rgba(255, 71, 87, 0.1);
+
+    /* Text Colors - High Contrast */
+    --text-main: #FFFFFF;
+    --text-secondary: #E8E8E8;
+    --text-muted: #B8B8B8;
+    --text-light: #888888;
+
+    /* Status Colors - Enhanced for Dark Mode */
+    --success: #00D68F;
+    --warning: #FFB84D;
+    --danger: #FF4757;
+    --info: #4DABF7;
+
+    /* Shadows - Dark Mode Optimized */
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 10px 30px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 15px 45px rgba(0, 0, 0, 0.5);
+    --shadow-xl: 0 20px 60px rgba(0, 0, 0, 0.6);
+  }
+}

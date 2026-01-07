@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { User, Settings, LogOut, Award, Star, MapPin, Zap, ChevronRight, Heart, MessageSquare, Plus, Shield, MessageCircle } from 'lucide-react';
+import { User, Settings, LogOut, Award, Star, MapPin, Zap, ChevronRight, Heart, MessageSquare, Plus, Shield, MessageCircle, Trash2, AlertTriangle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabaseClient';
 import { motion } from 'framer-motion';
@@ -16,6 +16,8 @@ const Profile = ({ lang }) => {
     const [activeTab, setActiveTab] = useState('favorites');
     const [tabData, setTabData] = useState([]);
     const [tabLoading, setTabLoading] = useState(false);
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+    const [deleteLoading, setDeleteLoading] = useState(false);
 
     useEffect(() => {
         if (user) {
@@ -83,6 +85,78 @@ const Profile = ({ lang }) => {
     const handleSignOut = async () => {
         await signOut();
         navigate(`/${lang || 'en'}/login`);
+    };
+
+    const handleDeleteAccount = async () => {
+        if (!user) return;
+        
+        setDeleteLoading(true);
+        try {
+            // Get admin user ID (you'll need to set this up)
+            const { data: adminUser } = await supabase
+                .from('user_preferences')
+                .select('user_id')
+                .eq('username', 'admin')
+                .maybeSingle();
+            
+            const adminId = adminUser?.user_id || user.id; // fallback to current user if no admin
+            
+            // 1. Delete user's community posts
+            await supabase
+                .from('community_posts')
+                .delete()
+                .eq('user_id', user.id);
+            
+            // 2. Delete user's post comments
+            await supabase
+                .from('post_comments')
+                .delete()
+                .eq('user_id', user.id);
+            
+            // 3. Delete user's reviews
+            await supabase
+                .from('reviews')
+                .delete()
+                .eq('user_id', user.id);
+            
+            // 4. Delete user's favorites
+            await supabase
+                .from('user_favorites')
+                .delete()
+                .eq('user_id', user.id);
+            
+            // 5. Delete user's visit records
+            await supabase
+                .from('visited_spots')
+                .delete()
+                .eq('user_id', user.id);
+            
+            // 6. Update user's spots to admin
+            await supabase
+                .from('spots')
+                .update({ created_by: adminId })
+                .eq('created_by', user.id);
+            
+            // 7. Delete user preferences
+            await supabase
+                .from('user_preferences')
+                .delete()
+                .eq('user_id', user.id);
+            
+            // 8. Delete auth user
+            await supabase.auth.admin.deleteUser(user.id);
+            
+            // Sign out and redirect
+            await signOut();
+            navigate(`/${lang || 'en'}/login`);
+            
+        } catch (error) {
+            console.error('Error deleting account:', error);
+            alert('Error deleting account. Please contact admin.');
+        } finally {
+            setDeleteLoading(false);
+            setShowDeleteConfirm(false);
+        }
     };
 
     const tabs = [
@@ -305,7 +379,112 @@ const Profile = ({ lang }) => {
                     </div>
                     <ChevronRight size={20} color="var(--text-muted)" />
                 </motion.div>
+
+                <motion.div
+                    whileTap={{ scale: 0.98 }}
+                    onClick={() => setShowDeleteConfirm(true)}
+                    style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        padding: '16px 20px',
+                        background: 'white',
+                        borderRadius: '24px',
+                        boxShadow: '0 4px 15px rgba(0,0,0,0.03)',
+                        cursor: 'pointer',
+                        border: '1px solid #FEE2E2'
+                    }}
+                >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                        <div style={{ padding: '10px', borderRadius: '14px', background: '#FEE2E2' }}>
+                            <Trash2 size={22} color="#DC2626" />
+                        </div>
+                        <span style={{ fontWeight: '800', fontSize: '1.05rem', color: '#DC2626' }}>Delete Account</span>
+                    </div>
+                    <ChevronRight size={20} color="#DC2626" />
+                </motion.div>
             </div>
+
+            {/* Delete Account Confirmation Modal */}
+            {showDeleteConfirm && (
+                <div style={{
+                    position: 'fixed',
+                    inset: 0,
+                    background: 'rgba(0,0,0,0.5)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    zIndex: 9999,
+                    padding: '20px'
+                }}>
+                    <div style={{
+                        background: 'white',
+                        borderRadius: '24px',
+                        padding: '32px',
+                        maxWidth: '400px',
+                        width: '100%',
+                        textAlign: 'center'
+                    }}>
+                        <div style={{
+                            width: '60px',
+                            height: '60px',
+                            borderRadius: '50%',
+                            background: '#FEE2E2',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            margin: '0 auto 20px'
+                        }}>
+                            <AlertTriangle size={30} color="#DC2626" />
+                        </div>
+                        
+                        <h2 style={{ fontSize: '1.5rem', fontWeight: '900', color: 'var(--text-main)', marginBottom: '12px' }}>
+                            Delete Account?
+                        </h2>
+                        
+                        <p style={{ color: 'var(--text-muted)', lineHeight: '1.6', marginBottom: '24px' }}>
+                            This action cannot be undone. All your data including posts, reviews, favorites, and visits will be permanently deleted. Your added spots will be transferred to admin.
+                        </p>
+                        
+                        <div style={{ display: 'flex', gap: '12px' }}>
+                            <button
+                                onClick={() => setShowDeleteConfirm(false)}
+                                disabled={deleteLoading}
+                                style={{
+                                    flex: 1,
+                                    padding: '16px',
+                                    borderRadius: '16px',
+                                    border: '2px solid var(--secondary)',
+                                    background: 'white',
+                                    color: 'var(--text-main)',
+                                    fontWeight: '800',
+                                    cursor: deleteLoading ? 'not-allowed' : 'pointer'
+                                }}
+                            >
+                                Cancel
+                            </button>
+                            
+                            <button
+                                onClick={handleDeleteAccount}
+                                disabled={deleteLoading}
+                                style={{
+                                    flex: 1,
+                                    padding: '16px',
+                                    borderRadius: '16px',
+                                    border: 'none',
+                                    background: '#DC2626',
+                                    color: 'white',
+                                    fontWeight: '800',
+                                    cursor: deleteLoading ? 'not-allowed' : 'pointer',
+                                    opacity: deleteLoading ? 0.7 : 1
+                                }}
+                            >
+                                {deleteLoading ? 'Deleting...' : 'Delete Forever'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

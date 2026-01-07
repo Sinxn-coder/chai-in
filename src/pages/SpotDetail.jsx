@@ -455,6 +455,37 @@ const SpotDetail = ({ lang }) => {
                     </motion.button>
                 </div>
 
+                {/* Suggest Edits Button */}
+                <motion.button
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => {
+                        // Open email or form for suggesting edits
+                        const subject = encodeURIComponent(`Suggest Edit for ${spot?.name || 'Spot'}`);
+                        const body = encodeURIComponent(`I'd like to suggest the following edits for this spot:\n\nSpot Name: ${spot?.name || ''}\n\nChanges:\n1. \n2. \n3. \n\nAdditional notes:\n`);
+                        window.open(`mailto:admin@chai-in.com?subject=${subject}&body=${body}`);
+                    }}
+                    style={{
+                        width: '100%',
+                        padding: '16px',
+                        borderRadius: '20px',
+                        background: 'var(--bg-white)',
+                        color: 'var(--text-main)',
+                        border: '2px solid var(--primary)',
+                        fontWeight: '800',
+                        fontSize: '1rem',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '8px',
+                        boxShadow: 'var(--shadow-md)',
+                        marginBottom: '40px'
+                    }}
+                >
+                    <MapPin size={20} />
+                    Suggest Edits
+                </motion.button>
+
                 {/* Reviews Section */}
                 <div style={{ marginBottom: '40px' }}>
                     <h2 style={{ fontSize: '1.4rem', fontWeight: '900', marginBottom: '20px' }}>Reviews ({reviews.length})</h2>
