@@ -17,6 +17,9 @@ const Home = ({ lang }) => {
     const [activeLocation, setActiveLocation] = useState(null);
     const [locationName, setLocationName] = useState('All Kerala');
     const [activeCategory, setActiveCategory] = useState('All');
+    const [showLocationSearch, setShowLocationSearch] = useState(false);
+    const [locationSearchTerm, setLocationSearchTerm] = useState('');
+    const [searchingLocation, setSearchingLocation] = useState(false);
 
     useEffect(() => {
         fetchSpots();
@@ -52,6 +55,39 @@ const Home = ({ lang }) => {
         var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
         return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)));
     }
+
+    const searchLocation = async () => {
+        if (!locationSearchTerm.trim()) return;
+        
+        setSearchingLocation(true);
+        try {
+            const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(locationSearchTerm + ', Kerala, India')}&limit=1`);
+            const data = await response.json();
+            
+            if (data && data.length > 0) {
+                const location = {
+                    lat: parseFloat(data[0].lat),
+                    lng: parseFloat(data[0].lon),
+                    name: data[0].display_name.split(',')[0]
+                };
+                setActiveLocation(location);
+                setLocationName(location.name);
+                setShowLocationSearch(false);
+                setLocationSearchTerm('');
+            }
+        } catch (error) {
+            console.error('Error searching location:', error);
+        } finally {
+            setSearchingLocation(false);
+        }
+    };
+
+    const resetToAllKerala = () => {
+        setActiveLocation(null);
+        setLocationName('All Kerala');
+        setShowLocationSearch(false);
+        setLocationSearchTerm('');
+    };
 
     return (
         <div style={{ padding: '20px', paddingBottom: '120px', background: 'var(--bg-white)', minHeight: '100vh' }}>
@@ -111,10 +147,100 @@ const Home = ({ lang }) => {
             </div>
 
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '20px' }}>
-                <div style={{ background: 'rgba(239, 42, 57, 0.1)', color: 'var(--primary)', padding: '6px 12px', borderRadius: '12px', fontSize: '0.85rem', fontWeight: '800', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <motion.button
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => setShowLocationSearch(!showLocationSearch)}
+                    style={{
+                        background: 'rgba(239, 42, 57, 0.1)',
+                        color: 'var(--primary)',
+                        padding: '8px 16px',
+                        borderRadius: '12px',
+                        fontSize: '0.85rem',
+                        fontWeight: '800',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '6px',
+                        border: 'none',
+                        cursor: 'pointer',
+                        transition: 'all 0.3s ease'
+                    }}
+                >
                     <MapPin size={16} /> {locationName}
-                </div>
+                </motion.button>
+                
+                {activeLocation && (
+                    <motion.button
+                        whileTap={{ scale: 0.95 }}
+                        onClick={resetToAllKerala}
+                        style={{
+                            background: 'var(--secondary)',
+                            color: 'var(--text-muted)',
+                            padding: '6px 12px',
+                            borderRadius: '8px',
+                            fontSize: '0.75rem',
+                            fontWeight: '600',
+                            border: 'none',
+                            cursor: 'pointer',
+                            transition: 'all 0.3s ease'
+                        }}
+                    >
+                        Back to All Kerala
+                    </motion.button>
+                )}
             </div>
+
+            <AnimatePresence>
+                {showLocationSearch && (
+                    <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        style={{ marginBottom: '20px' }}
+                    >
+                        <div style={{ position: 'relative' }}>
+                            <input
+                                type="text"
+                                placeholder="Search location in Kerala..."
+                                value={locationSearchTerm}
+                                onChange={(e) => setLocationSearchTerm(e.target.value)}
+                                onKeyPress={(e) => e.key === 'Enter' && searchLocation()}
+                                style={{
+                                    width: '100%',
+                                    padding: '14px 20px 14px 50px',
+                                    borderRadius: 'var(--radius-lg)',
+                                    border: '2px solid var(--primary)',
+                                    background: 'var(--bg-white)',
+                                    fontSize: '0.9rem',
+                                    fontWeight: '600'
+                                }}
+                            />
+                            <Search size={20} color="var(--primary)" style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)' }} />
+                            <motion.button
+                                whileTap={{ scale: 0.95 }}
+                                onClick={searchLocation}
+                                disabled={searchingLocation}
+                                style={{
+                                    position: 'absolute',
+                                    right: '8px',
+                                    top: '50%',
+                                    transform: 'translateY(-50%)',
+                                    background: 'var(--primary)',
+                                    color: 'white',
+                                    border: 'none',
+                                    padding: '8px 16px',
+                                    borderRadius: '8px',
+                                    fontSize: '0.8rem',
+                                    fontWeight: '700',
+                                    cursor: searchingLocation ? 'not-allowed' : 'pointer',
+                                    opacity: searchingLocation ? 0.6 : 1
+                                }}
+                            >
+                                {searchingLocation ? 'Searching...' : 'Search'}
+                            </motion.button>
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
 
             {loading ? (
                 <FoodLoader message="Finding delicious spots..." />
