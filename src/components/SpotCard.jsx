@@ -15,6 +15,17 @@ const SpotCard = memo(({ spot }) => {
     const [visitCount, setVisitCount] = React.useState(0);
     const [isOpen, setIsOpen] = React.useState(null);
 
+    // Price range mapping
+    const getPriceRange = (level) => {
+        const ranges = {
+            1: '₹50-150',
+            2: '₹150-300', 
+            3: '₹300-600',
+            4: '₹600+'
+        };
+        return ranges[level] || '₹50-150';
+    };
+
     useEffect(() => {
         let isMounted = true;
         if (id) {
@@ -162,7 +173,7 @@ const SpotCard = memo(({ spot }) => {
                             <span key={i} style={{ fontSize: '0.65rem', color: 'var(--primary)', fontWeight: '700' }}>#{tag}</span>
                         ))}
                     </div>
-                    <span style={{ fontSize: '0.8rem', fontWeight: '900', color: 'var(--primary)' }}>{'₹'.repeat(price_level)}</span>
+                    <span style={{ fontSize: '0.8rem', fontWeight: '900', color: 'var(--primary)', background: 'rgba(239, 42, 57, 0.1)', padding: '4px 8px', borderRadius: '8px' }}>{getPriceRange(price_level)}</span>
                 </div>
                 <div style={{ marginTop: '6px', fontSize: '0.7rem', color: 'var(--text-muted)', fontWeight: '700' }}>
                     {spot.opening_hours?.open && spot.opening_hours?.close
