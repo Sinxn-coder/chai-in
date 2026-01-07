@@ -170,7 +170,7 @@ const Home = ({ lang }) => {
                 </motion.button>
                 
                 <div style={{ flex: 1, minWidth: '200px' }}>
-                    <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+                    <div style={{ position: 'relative' }}>
                         <input
                             type="text"
                             placeholder="Search location in Kerala..."
@@ -179,7 +179,8 @@ const Home = ({ lang }) => {
                             onKeyPress={(e) => e.key === 'Enter' && searchLocation()}
                             style={{
                                 width: '100%',
-                                padding: '12px 70px 12px 45px',
+                                height: '44px',
+                                padding: '0 70px 0 45px',
                                 borderRadius: '25px',
                                 border: '2px solid var(--primary)',
                                 background: 'var(--bg-white)',
@@ -187,10 +188,11 @@ const Home = ({ lang }) => {
                                 fontWeight: '600',
                                 boxShadow: '0 4px 15px rgba(239, 42, 57, 0.15)',
                                 transition: 'all 0.3s ease',
-                                boxSizing: 'border-box'
+                                boxSizing: 'border-box',
+                                lineHeight: '44px'
                             }}
                         />
-                        <Search size={20} color="var(--primary)" style={{ position: 'absolute', left: '15px', top: '50%', transform: 'translateY(-50%)', zIndex: 2 }} />
+                        <Search size={20} color="var(--primary)" style={{ position: 'absolute', left: '15px', top: '12px', zIndex: 2 }} />
                         <motion.button
                             whileTap={{ scale: 0.95 }}
                             onClick={searchLocation}
@@ -198,8 +200,7 @@ const Home = ({ lang }) => {
                             style={{
                                 position: 'absolute',
                                 right: '8px',
-                                top: '50%',
-                                transform: 'translateY(-50%)',
+                                top: '7px',
                                 background: 'var(--primary)',
                                 color: 'white',
                                 border: 'none',
@@ -210,7 +211,8 @@ const Home = ({ lang }) => {
                                 cursor: searchingLocation ? 'not-allowed' : 'pointer',
                                 opacity: searchingLocation ? 0.6 : 1,
                                 boxShadow: '0 2px 8px rgba(239, 42, 57, 0.3)',
-                                zIndex: 2
+                                zIndex: 2,
+                                height: '30px'
                             }}
                         >
                             {searchingLocation ? '...' : 'Go'}
