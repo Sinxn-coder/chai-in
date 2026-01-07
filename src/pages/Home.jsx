@@ -169,58 +169,52 @@ const Home = ({ lang }) => {
                     <MapPin size={16} /> {locationName}
                 </motion.button>
                 
-                <AnimatePresence>
-                    {showLocationSearch && (
-                        <motion.div
-                            initial={{ opacity: 0, width: 0 }}
-                            animate={{ opacity: 1, width: 'auto' }}
-                            exit={{ opacity: 0, width: 0 }}
-                            style={{ flex: 1, minWidth: '200px' }}
+                <div style={{ flex: 1, minWidth: '200px' }}>
+                    <div style={{ position: 'relative' }}>
+                        <input
+                            type="text"
+                            placeholder="Search location in Kerala..."
+                            value={locationSearchTerm}
+                            onChange={(e) => setLocationSearchTerm(e.target.value)}
+                            onKeyPress={(e) => e.key === 'Enter' && searchLocation()}
+                            style={{
+                                width: '100%',
+                                padding: '12px 20px 12px 45px',
+                                borderRadius: '25px',
+                                border: '2px solid var(--primary)',
+                                background: 'var(--bg-white)',
+                                fontSize: '0.85rem',
+                                fontWeight: '600',
+                                boxShadow: '0 4px 15px rgba(239, 42, 57, 0.15)',
+                                transition: 'all 0.3s ease'
+                            }}
+                        />
+                        <Search size={20} color="var(--primary)" style={{ position: 'absolute', left: '15px', top: '50%', transform: 'translateY(-50%)' }} />
+                        <motion.button
+                            whileTap={{ scale: 0.95 }}
+                            onClick={searchLocation}
+                            disabled={searchingLocation}
+                            style={{
+                                position: 'absolute',
+                                right: '8px',
+                                top: '50%',
+                                transform: 'translateY(-50%)',
+                                background: 'var(--primary)',
+                                color: 'white',
+                                border: 'none',
+                                padding: '8px 16px',
+                                borderRadius: '20px',
+                                fontSize: '0.75rem',
+                                fontWeight: '700',
+                                cursor: searchingLocation ? 'not-allowed' : 'pointer',
+                                opacity: searchingLocation ? 0.6 : 1,
+                                boxShadow: '0 2px 8px rgba(239, 42, 57, 0.3)'
+                            }}
                         >
-                            <div style={{ position: 'relative' }}>
-                                <input
-                                    type="text"
-                                    placeholder="Search location in Kerala..."
-                                    value={locationSearchTerm}
-                                    onChange={(e) => setLocationSearchTerm(e.target.value)}
-                                    onKeyPress={(e) => e.key === 'Enter' && searchLocation()}
-                                    style={{
-                                        width: '100%',
-                                        padding: '10px 16px 10px 40px',
-                                        borderRadius: '10px',
-                                        border: '2px solid var(--primary)',
-                                        background: 'var(--bg-white)',
-                                        fontSize: '0.85rem',
-                                        fontWeight: '600'
-                                    }}
-                                />
-                                <Search size={18} color="var(--primary)" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
-                                <motion.button
-                                    whileTap={{ scale: 0.95 }}
-                                    onClick={searchLocation}
-                                    disabled={searchingLocation}
-                                    style={{
-                                        position: 'absolute',
-                                        right: '6px',
-                                        top: '50%',
-                                        transform: 'translateY(-50%)',
-                                        background: 'var(--primary)',
-                                        color: 'white',
-                                        border: 'none',
-                                        padding: '6px 12px',
-                                        borderRadius: '6px',
-                                        fontSize: '0.75rem',
-                                        fontWeight: '700',
-                                        cursor: searchingLocation ? 'not-allowed' : 'pointer',
-                                        opacity: searchingLocation ? 0.6 : 1
-                                    }}
-                                >
-                                    {searchingLocation ? '...' : 'Go'}
-                                </motion.button>
-                            </div>
-                        </motion.div>
-                    )}
-                </AnimatePresence>
+                            {searchingLocation ? '...' : 'Go'}
+                        </motion.button>
+                    </div>
+                </div>
                 
                 {activeLocation && (
                     <motion.button
@@ -229,14 +223,15 @@ const Home = ({ lang }) => {
                         style={{
                             background: 'var(--secondary)',
                             color: 'var(--text-muted)',
-                            padding: '6px 12px',
-                            borderRadius: '8px',
+                            padding: '8px 16px',
+                            borderRadius: '15px',
                             fontSize: '0.75rem',
                             fontWeight: '600',
                             border: 'none',
                             cursor: 'pointer',
                             transition: 'all 0.3s ease',
-                            flexShrink: 0
+                            flexShrink: 0,
+                            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
                         }}
                     >
                         Back to All Kerala
