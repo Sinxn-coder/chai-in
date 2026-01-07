@@ -97,109 +97,45 @@ const BottomNav = ({ lang = 'en' }) => {
           left: 0,
           right: 0,
           display: 'flex',
+          justifyContent: 'space-around',
           alignItems: 'center',
-          padding: '0 20px',
+          padding: '0 40px',
           pointerEvents: 'auto',
         }}
       >
-        {/* Left side items */}
-        <div style={{ display: 'flex', flex: 1, justifyContent: 'flex-end', gap: '20px' }}>
-          <NavLink
-            to={`/${lang}/home`}
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              gap: 6,
-              color: 'white',
-              textDecoration: 'none',
-              opacity: location.pathname.includes(`/${lang}/home`) || (location.pathname === `/${lang}` || location.pathname === `/${lang}/`) ? 1 : 0.7,
-              fontSize: '0.78rem',
-              fontWeight: 800,
-            }}
-          >
-            <Home
-              size={26}
-              strokeWidth={location.pathname.includes(`/${lang}/home`) || (location.pathname === `/${lang}` || location.pathname === `/${lang}/`) ? 2.6 : 2}
-              color="white"
-            />
-            <span>Home</span>
-          </NavLink>
-          
-          <NavLink
-            to={`/${lang}/map`}
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              gap: 6,
-              color: 'white',
-              textDecoration: 'none',
-              opacity: location.pathname.includes(`/${lang}/map`) ? 1 : 0.7,
-              fontSize: '0.78rem',
-              fontWeight: 800,
-              marginRight: '15px',
-            }}
-          >
-            <Map
-              size={26}
-              strokeWidth={location.pathname.includes(`/${lang}/map`) ? 2.6 : 2}
-              color="white"
-            />
-            <span>Map</span>
-          </NavLink>
-        </div>
+        {navItems.map((item, idx) => {
+          const active = isActivePath(item);
+          const isLeft = idx < 2;
+          const col = isLeft ? idx + 1 : idx + 3;
 
-        {/* Plus button space */}
-        <div style={{ width: '76px' }} />
-
-        {/* Right side items */}
-        <div style={{ display: 'flex', flex: 1, justifyContent: 'flex-start', gap: '20px' }}>
-          <NavLink
-            to={`/${lang}/community`}
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              gap: 6,
-              color: 'white',
-              textDecoration: 'none',
-              opacity: location.pathname.includes(`/${lang}/community`) ? 1 : 0.7,
-              fontSize: '0.78rem',
-              fontWeight: 800,
-              marginLeft: '15px',
-            }}
-          >
-            <Users
-              size={26}
-              strokeWidth={location.pathname.includes(`/${lang}/community`) ? 2.6 : 2}
-              color="white"
-            />
-            <span>Club</span>
-          </NavLink>
-          
-          <NavLink
-            to={`/${lang}/leaderboard`}
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              gap: 6,
-              color: 'white',
-              textDecoration: 'none',
-              opacity: location.pathname.includes(`/${lang}/leaderboard`) ? 1 : 0.7,
-              fontSize: '0.78rem',
-              fontWeight: 800,
-            }}
-          >
-            <Crown
-              size={26}
-              strokeWidth={location.pathname.includes(`/${lang}/leaderboard`) ? 2.6 : 2}
-              color="white"
-            />
-            <span>Top</span>
-          </NavLink>
-        </div>
+          return (
+            <div key={item.to} style={{ gridColumn: col }}>
+              <NavLink
+                to={`/${lang}${item.to}`}
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  gap: 6,
+                  color: 'white',
+                  textDecoration: 'none',
+                  opacity: active ? 1 : 0.7,
+                  fontSize: '0.78rem',
+                  fontWeight: 800,
+                  ...(item.to === '/map' && { marginRight: '15px' }),
+                  ...(item.to === '/community' && { marginLeft: '15px' }),
+                }}
+              >
+                <item.icon
+                  size={26}
+                  strokeWidth={active ? 2.6 : 2}
+                  color="white"
+                />
+                <span>{item.label}</span>
+              </NavLink>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
