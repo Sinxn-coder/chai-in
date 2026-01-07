@@ -162,11 +162,65 @@ const Home = ({ lang }) => {
                         gap: '6px',
                         border: 'none',
                         cursor: 'pointer',
-                        transition: 'all 0.3s ease'
+                        transition: 'all 0.3s ease',
+                        flexShrink: 0
                     }}
                 >
                     <MapPin size={16} /> {locationName}
                 </motion.button>
+                
+                <AnimatePresence>
+                    {showLocationSearch && (
+                        <motion.div
+                            initial={{ opacity: 0, width: 0 }}
+                            animate={{ opacity: 1, width: 'auto' }}
+                            exit={{ opacity: 0, width: 0 }}
+                            style={{ flex: 1, minWidth: '200px' }}
+                        >
+                            <div style={{ position: 'relative' }}>
+                                <input
+                                    type="text"
+                                    placeholder="Search location in Kerala..."
+                                    value={locationSearchTerm}
+                                    onChange={(e) => setLocationSearchTerm(e.target.value)}
+                                    onKeyPress={(e) => e.key === 'Enter' && searchLocation()}
+                                    style={{
+                                        width: '100%',
+                                        padding: '10px 16px 10px 40px',
+                                        borderRadius: '10px',
+                                        border: '2px solid var(--primary)',
+                                        background: 'var(--bg-white)',
+                                        fontSize: '0.85rem',
+                                        fontWeight: '600'
+                                    }}
+                                />
+                                <Search size={18} color="var(--primary)" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
+                                <motion.button
+                                    whileTap={{ scale: 0.95 }}
+                                    onClick={searchLocation}
+                                    disabled={searchingLocation}
+                                    style={{
+                                        position: 'absolute',
+                                        right: '6px',
+                                        top: '50%',
+                                        transform: 'translateY(-50%)',
+                                        background: 'var(--primary)',
+                                        color: 'white',
+                                        border: 'none',
+                                        padding: '6px 12px',
+                                        borderRadius: '6px',
+                                        fontSize: '0.75rem',
+                                        fontWeight: '700',
+                                        cursor: searchingLocation ? 'not-allowed' : 'pointer',
+                                        opacity: searchingLocation ? 0.6 : 1
+                                    }}
+                                >
+                                    {searchingLocation ? '...' : 'Go'}
+                                </motion.button>
+                            </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
                 
                 {activeLocation && (
                     <motion.button
@@ -181,66 +235,14 @@ const Home = ({ lang }) => {
                             fontWeight: '600',
                             border: 'none',
                             cursor: 'pointer',
-                            transition: 'all 0.3s ease'
+                            transition: 'all 0.3s ease',
+                            flexShrink: 0
                         }}
                     >
                         Back to All Kerala
                     </motion.button>
                 )}
             </div>
-
-            <AnimatePresence>
-                {showLocationSearch && (
-                    <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: 'auto' }}
-                        exit={{ opacity: 0, height: 0 }}
-                        style={{ marginBottom: '20px' }}
-                    >
-                        <div style={{ position: 'relative' }}>
-                            <input
-                                type="text"
-                                placeholder="Search location in Kerala..."
-                                value={locationSearchTerm}
-                                onChange={(e) => setLocationSearchTerm(e.target.value)}
-                                onKeyPress={(e) => e.key === 'Enter' && searchLocation()}
-                                style={{
-                                    width: '100%',
-                                    padding: '14px 20px 14px 50px',
-                                    borderRadius: 'var(--radius-lg)',
-                                    border: '2px solid var(--primary)',
-                                    background: 'var(--bg-white)',
-                                    fontSize: '0.9rem',
-                                    fontWeight: '600'
-                                }}
-                            />
-                            <Search size={20} color="var(--primary)" style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)' }} />
-                            <motion.button
-                                whileTap={{ scale: 0.95 }}
-                                onClick={searchLocation}
-                                disabled={searchingLocation}
-                                style={{
-                                    position: 'absolute',
-                                    right: '8px',
-                                    top: '50%',
-                                    transform: 'translateY(-50%)',
-                                    background: 'var(--primary)',
-                                    color: 'white',
-                                    border: 'none',
-                                    padding: '8px 16px',
-                                    borderRadius: '8px',
-                                    fontSize: '0.8rem',
-                                    fontWeight: '700',
-                                    cursor: searchingLocation ? 'not-allowed' : 'pointer',
-                                    opacity: searchingLocation ? 0.6 : 1
-                                }}
-                            >
-                                {searchingLocation ? 'Searching...' : 'Search'}
-                            </motion.button>
-                        </div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
 
             {loading ? (
                 <FoodLoader message="Finding delicious spots..." />
