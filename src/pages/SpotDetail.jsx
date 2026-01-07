@@ -24,8 +24,7 @@ const SpotDetail = ({ lang }) => {
     const [isCountAnimating, setIsCountAnimating] = useState(false);
 
     useEffect(() => {
-        fetchSpot();
-        fetchReviews();
+        fetchSpotDetails();
         
         // Listen for profile updates to refresh review names
         const handleProfileUpdate = () => {
