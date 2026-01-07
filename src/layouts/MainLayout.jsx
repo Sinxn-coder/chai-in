@@ -21,8 +21,10 @@ const MainLayout = ({ lang }) => {
 
     return (
         <div style={{ minHeight: '100vh', background: 'var(--bg-cream)', position: 'relative' }}>
-            {/* Top Navigation Bar - Mobile */}
-            <AppBar />
+            {/* Top Navigation Bar - Mobile Only */}
+            <div style={{ display: 'none' }} className="mobile-only">
+                <AppBar />
+            </div>
 
             {/* Desktop Navigation - Right Side */}
             <DesktopNav />
@@ -37,8 +39,10 @@ const MainLayout = ({ lang }) => {
             {/* Content Area */}
             <Outlet />
 
-            {/* Bottom Navigation - Mobile */}
-            <BottomNav lang={lang} />
+            {/* Bottom Navigation - Mobile Only */}
+            <div style={{ display: 'none' }} className="mobile-only">
+                <BottomNav lang={lang} />
+            </div>
         </div>
     );
 };

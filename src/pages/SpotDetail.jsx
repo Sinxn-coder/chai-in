@@ -395,23 +395,23 @@ const SpotDetail = ({ lang }) => {
                 </p>
 
                 {/* Social Links */}
-                <div style={{ display: 'flex', gap: '12px', marginBottom: '40px' }}>
+                <div style={{ display: 'flex', gap: '8px', marginBottom: '40px', flexWrap: 'wrap' }}>
                     {spot.instagram_handle && (
-                        <a href={`https://instagram.com/${spot.instagram_handle}`} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '14px', borderRadius: '16px', background: 'linear-gradient(45deg, #f09433 0%, #dc2743 100%)', color: 'white', textDecoration: 'none', fontWeight: '800' }}>
-                            <Instagram size={20} /> Instagram
+                        <a href={`https://instagram.com/${spot.instagram_handle}`} style={{ flex: '1 1 120px', minWidth: '120px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', padding: '10px 12px', borderRadius: '12px', background: 'linear-gradient(45deg, #f09433 0%, #dc2743 100%)', color: 'white', textDecoration: 'none', fontWeight: '700', fontSize: '0.85rem' }}>
+                            <Instagram size={16} /> Instagram
                         </a>
                     )}
                     {spot.whatsapp_number && (
-                        <a href={`https://wa.me/${spot.whatsapp_number}`} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '14px', borderRadius: '16px', background: '#25D366', color: 'white', textDecoration: 'none', fontWeight: '800' }}>
-                            <MessageCircle size={20} /> WhatsApp
+                        <a href={`https://wa.me/${spot.whatsapp_number}`} style={{ flex: '1 1 120px', minWidth: '120px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', padding: '10px 12px', borderRadius: '12px', background: '#25D366', color: 'white', textDecoration: 'none', fontWeight: '700', fontSize: '0.85rem' }}>
+                            <MessageCircle size={16} /> WhatsApp
                         </a>
                     )}
                     <motion.button
                         whileTap={{ scale: 0.95 }}
                         onClick={handleGetDirections}
-                        style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '14px', borderRadius: '16px', background: 'var(--primary)', color: 'white', border: 'none', textDecoration: 'none', fontWeight: '800', cursor: 'pointer' }}
+                        style={{ flex: '1 1 120px', minWidth: '120px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', padding: '10px 12px', borderRadius: '12px', background: 'var(--primary)', color: 'white', border: 'none', textDecoration: 'none', fontWeight: '700', cursor: 'pointer', fontSize: '0.85rem' }}
                     >
-                        <Navigation size={20} /> Directions
+                        <Navigation size={16} /> Directions
                     </motion.button>
                 </div>
 

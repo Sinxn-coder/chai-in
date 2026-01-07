@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Bell, User, MapPin, Home, Map, Users, Crown, Settings } from 'lucide-react';
+import { Bell, User, MapPin, Home, Map, Users, Crown, Settings, Plus } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import NotificationsSheet from './NotificationsSheet';
 import { supabase } from '../lib/supabaseClient';
@@ -16,10 +16,16 @@ const addDesktopNavCSS = () => {
                 .desktop-nav {
                     display: block !important;
                 }
+                .mobile-only {
+                    display: none !important;
+                }
             }
             @media (max-width: 767px) {
                 .desktop-nav {
                     display: none !important;
+                }
+                .mobile-only {
+                    display: block !important;
                 }
             }
         `;
@@ -71,12 +77,12 @@ const DesktopNav = () => {
     }, [user]);
 
     const navItems = [
-        { to: '/home', icon: Home, label: 'Home' },
-        { to: '/map', icon: Map, label: 'Map' },
-        { to: '/community', icon: Users, label: 'Club' },
-        { to: '/leaderboard', icon: Crown, label: 'Top' },
-        { to: '/profile', icon: User, label: 'Profile' },
-        { to: '/settings', icon: Settings, label: 'Settings' },
+        { to: '/home', icon: Home },
+        { to: '/map', icon: Map },
+        { to: '/add-spot', icon: Plus },
+        { to: '/community', icon: Users },
+        { to: '/leaderboard', icon: Crown },
+        { to: '/profile', icon: User },
     ];
 
     return (
@@ -94,13 +100,13 @@ const DesktopNav = () => {
                 top: '50%',
                 right: '20px',
                 transform: 'translateY(-50%)',
-                background: 'rgba(255, 255, 255, 0.9)',
-                backdropFilter: 'blur(10px)',
-                borderRadius: '16px',
-                padding: '8px',
+                background: 'rgba(255, 255, 255, 0.1)',
+                backdropFilter: 'blur(20px)',
+                borderRadius: '20px',
+                padding: '12px',
                 boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
                 zIndex: 1000,
-                display: 'none' // Hidden by default, shown on desktop
+                display: 'none'
             }} className="desktop-nav">
                 
                 {/* Logo */}
@@ -128,7 +134,7 @@ const DesktopNav = () => {
                     }}>Chai.in</span>
                 </div>
 
-                {/* Navigation Items */}
+                {/* Navigation Items - Icons Only */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
                     {navItems.map((item, idx) => {
                         const isActive = location.pathname.includes(item.to);
@@ -139,22 +145,20 @@ const DesktopNav = () => {
                                 style={{
                                     display: 'flex',
                                     alignItems: 'center',
-                                    gap: '10px',
-                                    padding: '10px 14px',
+                                    justifyContent: 'center',
+                                    padding: '12px',
                                     borderRadius: '12px',
                                     border: 'none',
-                                    background: isActive ? 'var(--primary)' : 'transparent',
-                                    color: isActive ? 'white' : 'var(--text-main)',
+                                    background: isActive ? 'rgba(239, 42, 57, 0.8)' : 'transparent',
+                                    color: isActive ? 'white' : 'white',
                                     cursor: 'pointer',
                                     transition: 'all 0.2s ease',
-                                    fontSize: '0.85rem',
-                                    fontWeight: '700',
-                                    width: '100%',
-                                    textAlign: 'left'
+                                    width: '44px',
+                                    height: '44px'
                                 }}
                                 onMouseEnter={(e) => {
                                     if (!isActive) {
-                                        e.target.style.background = 'var(--secondary)';
+                                        e.target.style.background = 'rgba(255, 255, 255, 0.2)';
                                     }
                                 }}
                                 onMouseLeave={(e) => {
@@ -163,73 +167,10 @@ const DesktopNav = () => {
                                     }
                                 }}
                             >
-                                <item.icon size={18} />
-                                <span>{item.label}</span>
+                                <item.icon size={20} />
                             </button>
                         );
                     })}
-                </div>
-
-                {/* User Actions */}
-                <div style={{ 
-                    borderTop: '1px solid rgba(0,0,0,0.1)', 
-                    paddingTop: '8px', marginTop: '8px' 
-                }}>
-                    {/* Notifications */}
-                    <button
-                        onClick={() => setShowNotifications(true)}
-                        style={{
-                            position: 'relative',
-                            background: 'white',
-                            border: 'none',
-                            borderRadius: '12px',
-                            width: '40px',
-                            height: '40px',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            cursor: 'pointer',
-                            boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
-                            marginBottom: '8px'
-                        }}
-                    >
-                        <Bell size={18} color="#333" />
-                        {unreadCount > 0 && (
-                            <span style={{
-                                position: 'absolute', top: '2px', right: '2px',
-                                background: '#EF2A39', color: 'white',
-                                fontSize: '0.6rem', fontWeight: '900',
-                                minWidth: '16px', height: '16px',
-                                borderRadius: '50%',
-                                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                padding: '0 3px',
-                                border: '1px solid white',
-                                boxShadow: '0 2px 4px rgba(239, 42, 57, 0.3)'
-                            }}>
-                                {unreadCount > 9 ? '9+' : unreadCount}
-                            </span>
-                        )}
-                    </button>
-
-                    {/* Profile Avatar */}
-                    <div
-                        onClick={() => navigate('/en/profile')}
-                        style={{
-                            width: '40px',
-                            height: '40px',
-                            borderRadius: '12px',
-                            background: '#eee',
-                            overflow: 'hidden',
-                            border: '2px solid white',
-                            boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-                            cursor: 'pointer'
-                        }}
-                    >
-                        <img
-                            src={userPreferences?.avatar_url || user?.user_metadata?.avatar_url || `https://ui-avatars.com/api/?name=${user?.email}`}
-                            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                        />
-                    </div>
                 </div>
             </div>
         </>
