@@ -442,8 +442,19 @@ const SpotDetail = ({ lang }) => {
                         </div>
                     </div>
                     <div style={{ background: 'var(--secondary)', padding: '10px 16px', borderRadius: '16px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                        <Star size={18} fill="#FFB800" color="#FFB800" />
-                        <span style={{ fontWeight: '800', fontSize: '1.1rem' }}>{spot.rating || '4.5'}</span>
+                        <StarRating 
+                            rating={spot.average_rating || spot.rating || 0} 
+                            readonly={true} 
+                            size={18}
+                        />
+                        <span style={{ fontWeight: '800', fontSize: '1.1rem' }}>
+                            {(spot.average_rating || spot.rating || 0).toFixed(1)}
+                        </span>
+                        {spot.total_ratings && (
+                            <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginLeft: '4px' }}>
+                                ({spot.total_ratings})
+                            </span>
+                        )}
                     </div>
                 </div>
 
