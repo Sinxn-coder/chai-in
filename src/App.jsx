@@ -35,10 +35,31 @@ const ProtectedRoute = ({ children }) => {
   return children;
 };
 
+// Root route handler that checks authentication
+const RootRoute = () => {
+  const { user, loading } = useAuth();
+  
+  if (loading) {
+    return (
+      <div style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'white' }}>
+        <FoodLoader message="Welcome to Chai-in..." />
+      </div>
+    );
+  }
+  
+  // If user is authenticated, redirect to home
+  if (user) {
+    return <Navigate to="/en/home" replace />;
+  }
+  
+  // If not authenticated, show landing page
+  return <LandingPage />;
+};
+
 function App() {
   return (
     <Routes>
-      <Route path="/" element={<LandingPage />} />
+      <Route path="/" element={<RootRoute />} />
       <Route path="/login" element={<Login />} />
 
       {/* English Routes - PROTECTED */}

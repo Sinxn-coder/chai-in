@@ -10,18 +10,39 @@ export const AuthProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        // Check active session
-        supabase.auth.getSession().then(({ data: { session } }) => {
-            setUser(session?.user ?? null);
-            setLoading(false);
-        }).catch((error) => {
-            console.error('Error getting session:', error);
-            setLoading(false);
-        });
+        // Check active session on mount
+        const initializeAuth = async () => {
+            try {
+                const { data: { session }, error } = await supabase.auth.getSession();
+                if (error) {
+                    console.error('Error getting session:', error);
+                } else {
+                    setUser(session?.user ?? null);
+                }
+            } catch (error) {
+                console.error('Error initializing auth:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
 
-        // Listen for changes
-        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-            setUser(session?.user ?? null);
+        initializeAuth();
+
+        // Listen for auth changes
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+            console.log('Auth state changed:', event, session?.user?.id);
+            
+            if (event === 'SIGNED_IN' && session) {
+                setUser(session.user);
+                // Navigate to home after successful sign in
+                const currentPath = window.location.pathname;
+                const basePath = currentPath.includes('/chai-in') ? '/chai-in' : '';
+                window.location.hash = '#/en/home';
+            } else if (event === 'SIGNED_OUT') {
+                setUser(null);
+            } else {
+                setUser(session?.user ?? null);
+            }
             setLoading(false);
         });
 
@@ -39,7 +60,7 @@ export const AuthProvider = ({ children }) => {
             const { error } = await supabase.auth.signInWithOAuth({
                 provider: 'google',
                 options: {
-                    redirectTo: `${window.location.origin}${window.location.pathname.includes('/chai-in') ? '/chai-in' : ''}/#/en/home`
+                    redirectTo: `${window.location.origin}${window.location.pathname.includes('/chai-in') ? '/chai-in' : ''}/`
                 }
             });
             if (error) throw error;
