@@ -1,5 +1,5 @@
 import React from 'react';
-import { Home, Map, Plus, Flame, Crown } from 'lucide-react';
+import { Home, Map, Plus, Users, Crown } from 'lucide-react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 
@@ -9,7 +9,7 @@ const BottomNav = ({ lang = 'en' }) => {
   const navItems = [
     { to: '/home', icon: Home, label: 'Home' },
     { to: '/map', icon: Map, label: 'Map' },
-    { to: '/community', icon: Flame, label: 'Club' },
+    { to: '/community', icon: Users, label: 'Club' },
     { to: '/leaderboard', icon: Crown, label: 'Top' },
   ];
 
@@ -96,42 +96,41 @@ const BottomNav = ({ lang = 'en' }) => {
           bottom: 22,
           left: 0,
           right: 0,
-          display: 'grid',
-          gridTemplateColumns: 'repeat(5, 1fr)',
+          display: 'flex',
+          justifyContent: 'space-around',
           alignItems: 'center',
-          padding: '0 28px',
+          padding: '0 40px',
           pointerEvents: 'auto',
         }}
       >
-        {navItems.map((item, idx) => {
+        {navItems.map((item) => {
           const active = isActivePath(item);
-          const isLeft = idx < 2;
-          const col = isLeft ? idx + 1 : idx + 3;
 
           return (
-            <div key={item.to} style={{ gridColumn: col }}>
-              <NavLink
-                to={`/${lang}${item.to}`}
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  gap: 6,
-                  color: 'white',
-                  textDecoration: 'none',
-                  opacity: active ? 1 : 0.7,
-                  fontSize: '0.78rem',
-                  fontWeight: 800,
-                }}
-              >
-                <item.icon
-                  size={26}
-                  strokeWidth={active ? 2.6 : 2}
-                  color="white"
-                />
-                <span>{item.label}</span>
-              </NavLink>
-            </div>
+            <NavLink
+              key={item.to}
+              to={`/${lang}${item.to}`}
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: 6,
+                color: 'white',
+                textDecoration: 'none',
+                opacity: active ? 1 : 0.7,
+                fontSize: '0.78rem',
+                fontWeight: 800,
+                flex: 1,
+                maxWidth: '80px',
+              }}
+            >
+              <item.icon
+                size={26}
+                strokeWidth={active ? 2.6 : 2}
+                color="white"
+              />
+              <span>{item.label}</span>
+            </NavLink>
           );
         })}
       </div>
