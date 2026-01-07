@@ -5,23 +5,42 @@ import { motion } from 'framer-motion';
 import { supabase } from '../lib/supabaseClient';
 
 const Login = () => {
-    const { signInWithGoogle, user } = useAuth();
+    const { signInWithGoogle, user, loading } = useAuth();
     const navigate = useNavigate();
-    const [loading, setLoading] = useState(false);
+    const [loginLoading, setLoginLoading] = useState(false);
 
     useEffect(() => {
-        if (user) navigate('/en/home');
+        if (user) {
+            console.log('User logged in, redirecting to home:', user);
+            navigate('/en/home');
+        }
     }, [user, navigate]);
 
     const handleLogin = async () => {
-        setLoading(true);
+        setLoginLoading(true);
         try {
+            console.log('Starting Google sign in...');
             await signInWithGoogle();
+            console.log('Google sign in initiated');
         } catch (error) {
-            console.error(error);
-            setLoading(false);
+            console.error('Login error:', error);
+            setLoginLoading(false);
         }
     };
+
+    if (loading) {
+        return (
+            <div style={{
+                minHeight: '100vh',
+                background: 'var(--bg-white)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+            }}>
+                <div>Loading...</div>
+            </div>
+        );
+    }
 
     return (
         <div style={{
@@ -61,7 +80,7 @@ const Login = () => {
             >
                 <button
                     onClick={handleLogin}
-                    disabled={loading}
+                    disabled={loginLoading}
                     style={{
                         width: '100%',
                         padding: '18px',
@@ -72,14 +91,14 @@ const Login = () => {
                         fontSize: '1.1rem',
                         fontWeight: '800',
                         boxShadow: 'var(--shadow-lg)',
-                        cursor: 'pointer',
+                        cursor: loginLoading ? 'not-allowed' : 'pointer',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
                         gap: '12px'
                     }}
                 >
-                    {loading ? 'Connecting...' : (
+                    {loginLoading ? 'Connecting...' : (
                         <>
                             <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="20" alt="Google" />
                             Sign in with Google

@@ -22,7 +22,7 @@ const MainLayout = ({ lang }) => {
     return (
         <div style={{ minHeight: '100vh', background: 'var(--bg-cream)', position: 'relative' }}>
             {/* Top Navigation Bar - Mobile Only */}
-            <div style={{ display: 'none' }} className="mobile-only">
+            <div className="mobile-only">
                 <AppBar />
             </div>
 
@@ -40,7 +40,7 @@ const MainLayout = ({ lang }) => {
             <Outlet />
 
             {/* Bottom Navigation - Mobile Only */}
-            <div style={{ display: 'none' }} className="mobile-only">
+            <div className="mobile-only">
                 <BottomNav lang={lang} />
             </div>
         </div>
