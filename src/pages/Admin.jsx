@@ -109,7 +109,7 @@ const Admin = () => {
         try {
             console.log('Toggling verification for spot:', id, 'current status:', currentStatus);
             
-            // First, get the current spot data to verify it exists
+            // First, get current spot data to verify it exists
             const { data: currentSpot, error: fetchError } = await supabase
                 .from('spots')
                 .select('*')
@@ -118,13 +118,13 @@ const Admin = () => {
                 
             if (fetchError) {
                 console.error('Error fetching current spot:', fetchError);
-                showToast("Failed to fetch spot data", 'error');
+                showToast("Failed to fetch spot data: " + fetchError.message, 'error');
                 return;
             }
             
             console.log('Current spot data:', currentSpot);
             
-            // Update the spot
+            // Update spot with better error handling
             const newStatus = !currentStatus;
             const { data, error } = await supabase
                 .from('spots')
@@ -134,18 +134,28 @@ const Admin = () => {
                 
             if (error) {
                 console.error('Verification error:', error);
-                showToast("Failed to update: " + error.message, 'error');
+                console.error('Error details:', {
+                    message: error.message,
+                    details: error.details,
+                    hint: error.hint,
+                    code: error.code
+                });
+                
+                // If it's a permission error, provide specific guidance
+                if (error.code === '42501' || error.message.includes('permission')) {
+                    showToast("Permission denied. Check RLS policies in Supabase.", 'error');
+                } else {
+                    showToast("Failed to update: " + error.message, 'error');
+                }
                 return;
             }
             
             console.log('Verification successful, updated data:', data);
             
-            // Update local state with the first updated record
-            if (data && data.length > 0) {
-                setSpots(spots.map(s => 
-                    s.id === id ? { ...s, is_verified: newStatus } : s
-                ));
-            }
+            // Update local state with the new status
+            setSpots(spots.map(s => 
+                s.id === id ? { ...s, is_verified: newStatus } : s
+            ));
             
             showToast(`Spot ${newStatus ? 'verified' : 'unverified'} successfully`, 'success');
             
@@ -162,7 +172,7 @@ const Admin = () => {
             
         } catch (error) {
             console.error('Toggle verification error:', error);
-            showToast("Failed to update", 'error');
+            showToast("Failed to update: " + error.message, 'error');
         }
     };
 
