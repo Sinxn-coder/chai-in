@@ -39,7 +39,7 @@ export const AuthProvider = ({ children }) => {
             const { error } = await supabase.auth.signInWithOAuth({
                 provider: 'google',
                 options: {
-                    redirectTo: `${window.location.origin}/en/home`
+                    redirectTo: `${window.location.origin}${window.location.pathname.includes('/chai-in') ? '/chai-in' : ''}/en/home`
                 }
             });
             if (error) throw error;
