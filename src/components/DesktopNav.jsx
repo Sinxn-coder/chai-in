@@ -103,37 +103,13 @@ const DesktopNav = () => {
                 background: 'rgba(255, 255, 255, 0.1)',
                 backdropFilter: 'blur(20px)',
                 borderRadius: '20px',
-                padding: '12px',
+                padding: '8px',
                 boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
                 zIndex: 1000,
-                display: 'none'
+                display: 'none',
+                width: 'fit-content'
             }} className="desktop-nav">
                 
-                {/* Logo */}
-                <div
-                    style={{ 
-                        display: 'flex', alignItems: 'center', gap: '8px', 
-                        padding: '8px 12px', cursor: 'pointer',
-                        borderRadius: '12px', marginBottom: '8px'
-                    }}
-                    onClick={() => navigate('/en/home')}
-                >
-                    <img
-                        src="/chai-in/chai_icon.png"
-                        alt="Chai-in"
-                        style={{
-                            height: '24px',
-                            width: '24px',
-                            objectFit: 'contain',
-                            borderRadius: '6px'
-                        }}
-                    />
-                    <span style={{ 
-                        fontSize: '0.9rem', color: 'var(--text-main)', 
-                        fontWeight: '800', fontFamily: "'Outfit', sans-serif" 
-                    }}>Chai.in</span>
-                </div>
-
                 {/* Navigation Items - Icons Only */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
                     {navItems.map((item, idx) => {
@@ -146,28 +122,30 @@ const DesktopNav = () => {
                                     display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'center',
-                                    padding: '12px',
+                                    padding: '10px',
                                     borderRadius: '12px',
                                     border: 'none',
                                     background: isActive ? 'rgba(239, 42, 57, 0.8)' : 'transparent',
-                                    color: isActive ? 'white' : 'white',
+                                    color: isActive ? 'white' : '#333333',
                                     cursor: 'pointer',
                                     transition: 'all 0.2s ease',
-                                    width: '44px',
-                                    height: '44px'
+                                    width: '40px',
+                                    height: '40px'
                                 }}
                                 onMouseEnter={(e) => {
                                     if (!isActive) {
                                         e.target.style.background = 'rgba(255, 255, 255, 0.2)';
+                                        e.target.style.color = '#333333';
                                     }
                                 }}
                                 onMouseLeave={(e) => {
                                     if (!isActive) {
                                         e.target.style.background = 'transparent';
+                                        e.target.style.color = '#333333';
                                     }
                                 }}
                             >
-                                <item.icon size={20} />
+                                <item.icon size={18} />
                             </button>
                         );
                     })}
