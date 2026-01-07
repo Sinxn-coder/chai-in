@@ -92,14 +92,18 @@ const Profile = ({ lang }) => {
         
         setDeleteLoading(true);
         try {
-            // Get admin user ID (you'll need to set this up)
+            // Get admin user ID
             const { data: adminUser } = await supabase
                 .from('user_preferences')
                 .select('user_id')
                 .eq('username', 'admin')
                 .maybeSingle();
             
-            const adminId = adminUser?.user_id || user.id; // fallback to current user if no admin
+            const adminId = adminUser?.user_id;
+            
+            if (!adminId) {
+                throw new Error('Admin user not found. Please contact support.');
+            }
             
             // 1. Delete user's community posts
             await supabase
@@ -143,8 +147,13 @@ const Profile = ({ lang }) => {
                 .delete()
                 .eq('user_id', user.id);
             
-            // 8. Delete auth user
-            await supabase.auth.admin.deleteUser(user.id);
+            // 8. Mark user as deleted (safer than actual deletion)
+            await supabase.auth.updateUser({
+                data: { 
+                    deleted: true,
+                    email: `deleted_${user.id}@deleted.com`
+                }
+            });
             
             // Sign out and redirect
             await signOut();
@@ -152,7 +161,7 @@ const Profile = ({ lang }) => {
             
         } catch (error) {
             console.error('Error deleting account:', error);
-            alert('Error deleting account. Please contact admin.');
+            alert('Error deleting account: ' + error.message);
         } finally {
             setDeleteLoading(false);
             setShowDeleteConfirm(false);
