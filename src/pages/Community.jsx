@@ -84,16 +84,21 @@ const Community = () => {
     }, [user]);
 
     const handlePostComplete = async (imageFile, caption) => {
-        // Ensure user has preferences entry
-        await supabase.from('user_preferences').upsert({
-            user_id: user.id,
-            display_name: user.user_metadata?.full_name || 'User',
-            avatar_url: user.user_metadata?.avatar_url || null,
-            notifications_enabled: true,
-            notify_new_spots: true,
-            notify_review_replies: true,
-            notify_weekly_digest: false
-        }, { onConflict: 'user_id' });
+        // Check if user already has preferences
+        const { data: existingPrefs } = await supabase.from('user_preferences').select('*').eq('user_id', user.id).maybeSingle();
+        
+        if (!existingPrefs) {
+            // Only create preferences if they don't exist
+            await supabase.from('user_preferences').insert({
+                user_id: user.id,
+                display_name: user.user_metadata?.full_name || user.email?.split('@')[0] || 'User',
+                avatar_url: user.user_metadata?.avatar_url || null,
+                notifications_enabled: true,
+                notify_new_spots: true,
+                notify_review_replies: true,
+                notify_weekly_digest: false
+            });
+        }
 
         const fileName = `${user.id}-${Date.now()}.${imageFile.name.split('.').pop()}`;
         await supabase.storage.from('food-images').upload(`community/${fileName}`, imageFile);
@@ -290,16 +295,21 @@ const Comments = ({ post, onClose }) => {
     const handleCommentSubmit = async () => {
         if (!newComment.trim() || !user) return;
         
-        // Ensure user has preferences entry
-        await supabase.from('user_preferences').upsert({
-            user_id: user.id,
-            display_name: user.user_metadata?.full_name || 'User',
-            avatar_url: user.user_metadata?.avatar_url || null,
-            notifications_enabled: true,
-            notify_new_spots: true,
-            notify_review_replies: true,
-            notify_weekly_digest: false
-        }, { onConflict: 'user_id' });
+        // Check if user already has preferences
+        const { data: existingPrefs } = await supabase.from('user_preferences').select('*').eq('user_id', user.id).maybeSingle();
+        
+        if (!existingPrefs) {
+            // Only create preferences if they don't exist
+            await supabase.from('user_preferences').insert({
+                user_id: user.id,
+                display_name: user.user_metadata?.full_name || user.email?.split('@')[0] || 'User',
+                avatar_url: user.user_metadata?.avatar_url || null,
+                notifications_enabled: true,
+                notify_new_spots: true,
+                notify_review_replies: true,
+                notify_weekly_digest: false
+            });
+        }
         
         await supabase.from('post_comments').insert({
             post_id: post.id,

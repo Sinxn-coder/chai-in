@@ -140,10 +140,32 @@ const SpotDetail = ({ lang }) => {
             const userMap = {};
             usersData?.forEach(u => userMap[u.user_id] = u);
             
-            setReviews(reviewsData.map(r => ({
-                ...r,
-                user: userMap[r.user_id] || { display_name: 'User', avatar_url: null }
-            })));
+            // Get current user data for fallback
+            const { data: { user: currentUser } } = await supabase.auth.getUser();
+            
+            setReviews(reviewsData.map(r => {
+                const prefUser = userMap[r.user_id];
+                if (prefUser) {
+                    return {
+                        ...r,
+                        user: prefUser
+                    };
+                } else if (currentUser && r.user_id === currentUser.id) {
+                    // Use current user's auth data as fallback
+                    return {
+                        ...r,
+                        user: {
+                            display_name: currentUser.user_metadata?.full_name || currentUser.email?.split('@')[0] || 'User',
+                            avatar_url: currentUser.user_metadata?.avatar_url || null
+                        }
+                    };
+                } else {
+                    return {
+                        ...r,
+                        user: { display_name: 'User', avatar_url: null }
+                    };
+                }
+            }));
         } else {
             setReviews([]);
         }
@@ -212,16 +234,21 @@ const SpotDetail = ({ lang }) => {
         if (!user) return alert("Please login to submit a review!");
         if (!newReview.trim()) return;
 
-        // Ensure user has preferences entry
-        await supabase.from('user_preferences').upsert({
-            user_id: user.id,
-            display_name: user.user_metadata?.full_name || 'User',
-            avatar_url: user.user_metadata?.avatar_url || null,
-            notifications_enabled: true,
-            notify_new_spots: true,
-            notify_review_replies: true,
-            notify_weekly_digest: false
-        }, { onConflict: 'user_id' });
+        // Check if user already has preferences
+        const { data: existingPrefs } = await supabase.from('user_preferences').select('*').eq('user_id', user.id).maybeSingle();
+        
+        if (!existingPrefs) {
+            // Only create preferences if they don't exist
+            await supabase.from('user_preferences').insert({
+                user_id: user.id,
+                display_name: user.user_metadata?.full_name || user.email?.split('@')[0] || 'User',
+                avatar_url: user.user_metadata?.avatar_url || null,
+                notifications_enabled: true,
+                notify_new_spots: true,
+                notify_review_replies: true,
+                notify_weekly_digest: false
+            });
+        }
 
         const { error } = await supabase.from('reviews').insert({
             spot_id: parseInt(id),
