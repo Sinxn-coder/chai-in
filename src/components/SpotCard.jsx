@@ -4,10 +4,11 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabaseClient';
 import { useAuth } from '../context/AuthContext';
 import ImageSlider from './ImageSlider';
+import StarRating from './StarRating';
 import { motion } from 'framer-motion';
 
 const SpotCard = memo(({ spot }) => {
-    const { name, rating, reviews_count, images, distance, tags, price_level, id, instagram_handle, whatsapp_number } = spot;
+    const { name, average_rating, total_ratings, images, distance, tags, price_level, id, instagram_handle, whatsapp_number } = spot;
     const navigate = useNavigate();
     const { user } = useAuth();
     const [visited, setVisited] = React.useState(false);
@@ -155,7 +156,21 @@ const SpotCard = memo(({ spot }) => {
                     {isOpen === null ? 'HOURS N/A' : isOpen ? 'OPEN' : 'CLOSED'}
                 </div>
                 <div style={{ position: 'absolute', bottom: '6px', left: '6px', background: 'white', padding: '2px 6px', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '3px', fontSize: '0.65rem', fontWeight: '800' }}>
-                    <Star size={8} fill="#FFB800" color="#FFB800" /> {rating}
+                    {average_rating && total_ratings > 0 ? (
+                        <>
+                            <StarRating 
+                                rating={average_rating} 
+                                readonly={true} 
+                                size={8}
+                            />
+                            <span style={{ marginLeft: '2px' }}>{average_rating.toFixed(1)}</span>
+                        </>
+                    ) : (
+                        <>
+                            <Star size={8} fill="#FFB800" color="#FFB800" /> 
+                            <span>New</span>
+                        </>
+                    )}
                 </div>
             </div>
 

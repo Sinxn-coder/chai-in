@@ -6,6 +6,7 @@ import { ArrowLeft, MapPin, Star, Heart, Share2, Navigation, Edit3, Instagram, M
 import { motion, AnimatePresence } from 'framer-motion';
 import ImageSlider from '../components/ImageSlider';
 import SuggestEditsModal from '../components/SuggestEditsModal';
+import StarRating from '../components/StarRating';
 
 const SpotDetail = ({ lang }) => {
     const { id } = useParams();
@@ -24,6 +25,8 @@ const SpotDetail = ({ lang }) => {
     const [visitCount, setVisitCount] = useState(0);
     const [prevVisitCount, setPrevVisitCount] = useState(0);
     const [isCountAnimating, setIsCountAnimating] = useState(false);
+    const [userRating, setUserRating] = useState(0);
+    const [isSubmittingRating, setIsSubmittingRating] = useState(false);
 
     useEffect(() => {
         fetchSpotDetails();
@@ -145,6 +148,9 @@ const SpotDetail = ({ lang }) => {
                 setIsFavorite(!!fav);
                 const { data: vis } = await supabase.from('visited_spots').select('*').eq('spot_id', parseInt(id)).eq('user_id', user.id).maybeSingle();
                 setVisited(!!vis);
+                // Fetch user's rating
+                const { data: userRatingData } = await supabase.from('spot_ratings').select('rating').eq('spot_id', parseInt(id)).eq('user_id', user.id).maybeSingle();
+                setUserRating(userRatingData?.rating || 0);
             }
         } catch (err) {
             console.error('Error fetching spot:', err);
@@ -255,6 +261,35 @@ const SpotDetail = ({ lang }) => {
             console.error('Error toggling visit:', error);
             setVisited(prevVisited);
             setVisitCount(prevVisited ? visitCount + 1 : visitCount - 1);
+        }
+    };
+
+    const handleRatingChange = async (rating) => {
+        if (!user) return alert("Please login to rate!");
+        if (isSubmittingRating) return;
+
+        setIsSubmittingRating(true);
+        try {
+            const { error } = await supabase.from('spot_ratings').upsert({
+                spot_id: parseInt(id),
+                user_id: user.id,
+                rating: rating
+            });
+
+            if (error) throw error;
+
+            setUserRating(rating);
+            
+            // Refresh spot data to get updated average
+            const { data: updatedSpot } = await supabase.from('spots').select('*').eq('id', parseInt(id)).single();
+            if (updatedSpot) {
+                setSpot(updatedSpot);
+            }
+        } catch (error) {
+            console.error('Error submitting rating:', error);
+            alert('Failed to submit rating. Please try again.');
+        } finally {
+            setIsSubmittingRating(false);
         }
     };
 
@@ -441,6 +476,45 @@ const SpotDetail = ({ lang }) => {
                     >
                         <Navigation size={16} /> Directions
                     </motion.button>
+                </div>
+
+                {/* Rating Section */}
+                <div style={{ marginBottom: '32px', padding: '20px', background: 'var(--bg-white)', borderRadius: '20px', border: '1px solid rgba(0,0,0,0.05)' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                        <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: '800', color: 'var(--text-main)' }}>Rate this spot</h3>
+                        {spot.total_ratings > 0 && (
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <StarRating 
+                                    rating={spot.average_rating || 0} 
+                                    readonly={true} 
+                                    size={20}
+                                    showValue={true}
+                                />
+                                <span style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>
+                                    ({spot.total_ratings} {spot.total_ratings === 1 ? 'rating' : 'ratings'})
+                                </span>
+                            </div>
+                        )}
+                    </div>
+                    
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                        <StarRating 
+                            rating={userRating}
+                            onRatingChange={handleRatingChange}
+                            readonly={!user || isSubmittingRating}
+                            size={32}
+                        />
+                        <div>
+                            <div style={{ fontSize: '0.9rem', color: 'var(--text-muted)', marginBottom: '4px' }}>
+                                {user ? (userRating > 0 ? 'Your rating' : 'Tap stars to rate') : 'Login to rate'}
+                            </div>
+                            {isSubmittingRating && (
+                                <div style={{ fontSize: '0.8rem', color: 'var(--primary)' }}>
+                                    Saving...
+                                </div>
+                            )}
+                        </div>
+                    </div>
                 </div>
 
                 {/* Primary Action */}
