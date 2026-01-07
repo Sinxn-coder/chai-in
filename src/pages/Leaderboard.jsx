@@ -65,21 +65,38 @@ const Leaderboard = () => {
 
         const userIds = Object.keys(stats);
         const { data: userPrefs } = await supabase.from('user_preferences').select('user_id, username, display_name, avatar_url').in('user_id', userIds);
+        const { data: { user: currentUser } } = await supabase.auth.getUser();
+        
         const prefsMap = {};
         userPrefs?.forEach(p => prefsMap[p.user_id] = p);
 
-        const { data: { user } } = await supabase.auth.getUser();
+        // Filter out admin users by checking usernames and display names
+        const adminUserIds = new Set();
+        Object.values(prefsMap).forEach(prefs => {
+            const adminPatterns = ['admin', 'sinxn', 'moderator'];
+            const username = (prefs.username || '').toLowerCase();
+            const displayName = (prefs.display_name || '').toLowerCase();
+            
+            if (adminPatterns.some(pattern => 
+                username.includes(pattern) || displayName.includes(pattern)
+            )) {
+                adminUserIds.add(prefs.user_id);
+            }
+        });
 
-        const sorted = userIds.map(uid => {
-            const prefs = prefsMap[uid];
-            return {
-                id: uid,
-                name: prefs?.display_name || prefs?.username || user?.user_metadata?.full_name || 'Foodie',
-                avatar: prefs?.avatar_url,
-                isMe: user && uid === user.id,
-                ...stats[uid]
-            };
-        }).sort((a, b) => b.xp - a.xp);
+        const sorted = userIds
+            .filter(uid => !adminUserIds.has(uid)) // Exclude admin users
+            .map(uid => {
+                const prefs = prefsMap[uid];
+                return {
+                    id: uid,
+                    name: prefs?.display_name || prefs?.username || currentUser?.user_metadata?.full_name || 'Foodie',
+                    avatar: prefs?.avatar_url,
+                    isMe: currentUser && uid === currentUser.id,
+                    ...stats[uid]
+                };
+            })
+            .sort((a, b) => b.xp - a.xp);
 
         setLeaders(sorted);
         setLoading(false);
