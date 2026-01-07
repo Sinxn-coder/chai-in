@@ -30,6 +30,7 @@ const Home = ({ lang }) => {
             .on('postgres_changes', 
                 { event: 'UPDATE', schema: 'public', table: 'spots', filter: 'is_verified=eq.true' },
                 (payload) => {
+                    console.log('Home page received real-time update:', payload);
                     if (payload.new.is_verified) {
                         fetchSpots(); // Refresh spots when a spot is verified
                     }
@@ -39,6 +40,7 @@ const Home = ({ lang }) => {
             
         // Listen for custom verification events from admin
         const handleSpotVerified = (event) => {
+            console.log('Home page received custom verification event:', event.detail);
             fetchSpots(); // Refresh when admin verifies a spot
         };
         
@@ -52,14 +54,17 @@ const Home = ({ lang }) => {
 
     const fetchSpots = async () => {
         setLoading(true);
+        console.log('Fetching spots from database...');
         const { data, error } = await supabase.from('spots').select('*').eq('is_verified', true).order('created_at', { ascending: false });
         if (error) {
-            console.error(error);
+            console.error('Error fetching spots:', error);
         } else {
+            console.log('Fetched spots:', data);
             let all = data || [];
             if (activeLocation) {
                 all = all.filter(s => getDistanceFromLatLonInKm(activeLocation.lat, activeLocation.lng, s.latitude, s.longitude) <= 30);
             }
+            console.log('Setting spots state:', all);
             setSpots(all);
         }
         setLoading(false);

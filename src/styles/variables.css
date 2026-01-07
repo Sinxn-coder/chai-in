@@ -134,6 +134,79 @@ body.dark-mode .motion-div {
   color: var(--text-main) !important;
 }
 
+/* Additional dark mode fixes for buttons and interactive elements */
+body.dark-mode [style*="color:"] {
+  color: var(--text-main) !important;
+}
+
+body.dark-mode [style*="background: white"],
+body.dark-mode [style*="background: #ffffff"],
+body.dark-mode [style*="background: rgb(255, 255, 255)"] {
+  background: var(--bg-white) !important;
+}
+
+body.dark-mode [style*="background: #F0FDF4"],
+body.dark-mode [style*="background: #FEF2F2"],
+body.dark-mode [style*="background: #FEF3C7"],
+body.dark-mode [style*="background: #1F2937"] {
+  background: var(--bg-cream) !important;
+}
+
+body.dark-mode button,
+body.dark-mode .button,
+body.dark-mode [role="button"] {
+  background: var(--bg-cream) !important;
+  color: var(--text-main) !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+body.dark-mode .tab-button,
+body.dark-mode .nav-button {
+  background: var(--bg-white) !important;
+  color: var(--text-main) !important;
+}
+
+/* Profile page specific fixes */
+body.dark-mode .profile-header {
+  background: var(--bg-white) !important;
+  color: var(--text-main) !important;
+}
+
+body.dark-mode .stat-card {
+  background: var(--bg-cream) !important;
+  color: var(--text-main) !important;
+}
+
+body.dark-mode .settings-button {
+  background: var(--bg-white) !important;
+  color: var(--text-main) !important;
+}
+
+/* Leaderboard specific fixes */
+body.dark-mode .leaderboard-item {
+  background: var(--bg-white) !important;
+  color: var(--text-main) !important;
+}
+
+body.dark-mode .leaderboard-name {
+  color: var(--text-main) !important;
+}
+
+body.dark-mode .leaderboard-rank {
+  color: var(--text-main) !important;
+}
+
+/* Force all text to be visible */
+body.dark-mode * {
+  text-shadow: none !important;
+}
+
+body.dark-mode [style*="color: #3C2F2F"],
+body.dark-mode [style*="color: #424242"],
+body.dark-mode [style*="color: #808080"] {
+  color: var(--text-main) !important;
+}
+
 /* Dark mode scrollbar fixes */
 body.dark-mode * {
   scrollbar-width: thin;

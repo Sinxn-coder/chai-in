@@ -109,9 +109,26 @@ const Admin = () => {
         try {
             console.log('Toggling verification for spot:', id, 'current status:', currentStatus);
             
+            // First, get the current spot data to verify it exists
+            const { data: currentSpot, error: fetchError } = await supabase
+                .from('spots')
+                .select('*')
+                .eq('id', id)
+                .single();
+                
+            if (fetchError) {
+                console.error('Error fetching current spot:', fetchError);
+                showToast("Failed to fetch spot data", 'error');
+                return;
+            }
+            
+            console.log('Current spot data:', currentSpot);
+            
+            // Update the spot
+            const newStatus = !currentStatus;
             const { data, error } = await supabase
                 .from('spots')
-                .update({ is_verified: !currentStatus })
+                .update({ is_verified: newStatus })
                 .eq('id', id)
                 .select();
                 
@@ -126,15 +143,15 @@ const Admin = () => {
             // Update local state with the first updated record
             if (data && data.length > 0) {
                 setSpots(spots.map(s => 
-                    s.id === id ? data[0] : s
+                    s.id === id ? { ...s, is_verified: newStatus } : s
                 ));
             }
             
-            showToast(`Spot ${!currentStatus ? 'verified' : 'unverified'} successfully`, 'success');
+            showToast(`Spot ${newStatus ? 'verified' : 'unverified'} successfully`, 'success');
             
             // Force refresh of home page by dispatching custom event
             window.dispatchEvent(new CustomEvent('spotVerified', { 
-                detail: { spotId: id, isVerified: !currentStatus } 
+                detail: { spotId: id, isVerified: newStatus } 
             }));
             
             // Force immediate database refresh to ensure persistence
