@@ -122,8 +122,10 @@ const BottomNav = ({ lang = 'en' }) => {
                   opacity: active ? 1 : 0.7,
                   fontSize: '0.78rem',
                   fontWeight: 800,
-                  ...(item.to === '/map' && { marginRight: '30px' }),
-                  ...(item.to === '/community' && { marginLeft: '30px' }),
+                  ...(item.to === '/home' && { marginLeft: '10px' }),
+                  ...(item.to === '/map' && { marginRight: '40px' }),
+                  ...(item.to === '/community' && { marginLeft: '40px' }),
+                  ...(item.to === '/leaderboard' && { marginRight: '10px' }),
                 }}
               >
                 <item.icon
