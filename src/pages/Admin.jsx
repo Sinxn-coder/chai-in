@@ -4,6 +4,7 @@ import { supabase } from '../lib/supabaseClient';
 import { Trash2, CheckCircle, XCircle, ShieldAlert, Bell, Send, BarChart2, Download, Users, MapPin, Award } from 'lucide-react';
 import Button from '../components/Button';
 import Toast from '../components/Toast';
+import ModerationTab from '../components/ModerationTab';
 
 const Admin = () => {
     const [spots, setSpots] = useState([]);
@@ -477,7 +478,7 @@ const Admin = () => {
 
             {!loading && activeTab === 'community' && <CommunityManager />}
             {!loading && activeTab === 'reviews' && <ReviewManager />}
-            {!loading && activeTab === 'moderation' && <ModerationManager showToast={showToast} />}
+            {!loading && activeTab === 'moderation' && <ModerationTab showToast={showToast} />}
 
         </div>
     );
@@ -601,76 +602,6 @@ const AnalyticsGraph = ({ data }) => {
                 );
             })}
         </svg>
-    );
-};
-
-const ModerationManager = ({ showToast }) => {
-    const [edits, setEdits] = useState([]);
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => { fetchEdits(); }, []);
-
-    const fetchEdits = async () => {
-        const { data } = await supabase.from('spot_edits').select('*, spots(name)').eq('status', 'pending');
-        setEdits(data || []);
-        setLoading(false);
-    };
-
-    const handleModeration = async (editId, status, spotId, newData) => {
-        try {
-            if (status === 'approved') {
-                // Apply the changes to the main spot table
-                const { error: spotError } = await supabase.from('spots').update({
-                    name: newData.name,
-                    category: newData.category,
-                    price_level: newData.price,
-                    description: newData.description,
-                    location_text: newData.location_text,
-                    latitude: newData.latitude,
-                    longitude: newData.longitude,
-                    images: newData.images
-                }).eq('id', spotId);
-                if (spotError) throw spotError;
-            }
-
-            // Update the edit record status
-            const { error: editError } = await supabase.from('spot_edits').update({ status }).eq('id', editId);
-            if (editError) throw editError;
-
-            showToast(`Edit ${status}`, 'success');
-            setEdits(edits.filter(e => e.id !== editId));
-        } catch (err) {
-            console.error(err);
-            showToast("Moderation failed", 'error');
-        }
-    };
-
-    if (loading) return <div>Loading pendings...</div>;
-
-    return (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-            {edits.length === 0 ? <p>No pending edits to review.</p> : edits.map(edit => (
-                <div key={edit.id} className="glass-card" style={{ padding: '20px' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
-                        <h4 style={{ margin: 0 }}>Edit Suggestion for: {edit.spots?.name}</h4>
-                        <span style={{ fontSize: '0.8rem', color: '#888' }}>{new Date(edit.created_at).toLocaleDateString()}</span>
-                    </div>
-                    <div style={{ background: '#f8fafc', padding: '10px', borderRadius: '8px', fontSize: '0.9rem', marginBottom: '15px', color: '#475569' }}>
-                        <strong>Suggested Name:</strong> {edit.data.name}<br />
-                        <strong>Suggested Category:</strong> {edit.data.category}<br />
-                        <strong>New Desc:</strong> {edit.data.description?.substring(0, 100)}...
-                    </div>
-                    <div style={{ display: 'flex', gap: '10px' }}>
-                        <button onClick={() => handleModeration(edit.id, 'approved', edit.spot_id, edit.data)} style={{ flex: 1, padding: '10px', background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)', color: 'white', border: 'none', borderRadius: '8px', fontWeight: '700', cursor: 'pointer' }}>
-                            Approve & Apply
-                        </button>
-                        <button onClick={() => handleModeration(edit.id, 'rejected')} style={{ flex: 1, padding: '10px', background: '#fee2e2', color: '#991b1b', border: 'none', borderRadius: '8px', fontWeight: '700', cursor: 'pointer' }}>
-                            Reject
-                        </button>
-                    </div>
-                </div>
-            ))}
-        </div>
     );
 };
 

@@ -5,6 +5,7 @@ import { useAuth } from '../context/AuthContext';
 import { ArrowLeft, MapPin, Star, Heart, Share2, Navigation, Edit3, Instagram, MessageCircle, Check } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import ImageSlider from '../components/ImageSlider';
+import SuggestEditsModal from '../components/SuggestEditsModal';
 
 const SpotDetail = ({ lang }) => {
     const { id } = useParams();
@@ -18,6 +19,7 @@ const SpotDetail = ({ lang }) => {
     const [loading, setLoading] = useState(true);
     const [isOpen, setIsOpen] = useState(null);
     const [visited, setVisited] = useState(false);
+    const [showSuggestEdits, setShowSuggestEdits] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
     const [visitCount, setVisitCount] = useState(0);
     const [prevVisitCount, setPrevVisitCount] = useState(0);
@@ -61,6 +63,32 @@ const SpotDetail = ({ lang }) => {
             return (num / 1000).toFixed(1) + 'K';
         }
         return num.toString();
+    };
+
+    const handleSubmitEditSuggestion = async (suggestionData) => {
+        try {
+            const { data, error } = await supabase
+                .from('spot_edit_suggestions')
+                .insert([{
+                    spot_id: suggestionData.spot_id,
+                    user_id: user.id,
+                    suggested_changes: suggestionData.suggested_changes,
+                    original_data: suggestionData.original_data,
+                    suggested_data: suggestionData.suggested_data,
+                    status: 'pending'
+                }]);
+
+            if (error) {
+                console.error('Error submitting suggestion:', error);
+                throw error;
+            }
+
+            // Show success message
+            alert('Edit suggestion submitted successfully! The admin will review it soon.');
+        } catch (error) {
+            console.error('Error submitting edit suggestion:', error);
+            throw error;
+        }
     };
 
     const getKeralaDate = () => new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }));
@@ -458,12 +486,7 @@ const SpotDetail = ({ lang }) => {
                 {/* Suggest Edits Button */}
                 <motion.button
                     whileTap={{ scale: 0.95 }}
-                    onClick={() => {
-                        // Open email or form for suggesting edits
-                        const subject = encodeURIComponent(`Suggest Edit for ${spot?.name || 'Spot'}`);
-                        const body = encodeURIComponent(`I'd like to suggest the following edits for this spot:\n\nSpot Name: ${spot?.name || ''}\n\nChanges:\n1. \n2. \n3. \n\nAdditional notes:\n`);
-                        window.open(`mailto:admin@chai-in.com?subject=${subject}&body=${body}`);
-                    }}
+                    onClick={() => setShowSuggestEdits(true)}
                     style={{
                         width: '100%',
                         padding: '16px',
@@ -482,7 +505,7 @@ const SpotDetail = ({ lang }) => {
                         marginBottom: '40px'
                     }}
                 >
-                    <MapPin size={20} />
+                    <Edit3 size={20} />
                     Suggest Edits
                 </motion.button>
 
@@ -513,6 +536,15 @@ const SpotDetail = ({ lang }) => {
                     </div>
                 </div>
             </motion.div>
+            
+            {/* Suggest Edits Modal */}
+            {showSuggestEdits && spot && (
+                <SuggestEditsModal
+                    spot={spot}
+                    onClose={() => setShowSuggestEdits(false)}
+                    onSubmit={handleSubmitEditSuggestion}
+                />
+            )}
         </div>
     );
 };
