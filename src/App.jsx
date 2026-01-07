@@ -17,6 +17,7 @@ import DirectionsPage from './pages/DirectionsPage';
 import ProfileFavorites from './pages/ProfileFavorites';
 import ProfileReviews from './pages/ProfileReviews';
 import ProfileAdded from './pages/ProfileAdded';
+import LandingPage from './pages/LandingPage';
 import MainLayout from './layouts/MainLayout';
 import { useAuth } from './context/AuthContext';
 
@@ -37,7 +38,7 @@ const ProtectedRoute = ({ children }) => {
 function App() {
   return (
     <Routes>
-      <Route path="/" element={<Navigate to="/login" replace />} />
+      <Route path="/" element={<LandingPage />} />
       <Route path="/login" element={<Login />} />
 
       {/* English Routes - PROTECTED */}
