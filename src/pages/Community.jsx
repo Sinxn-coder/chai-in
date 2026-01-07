@@ -16,40 +16,76 @@ const Community = () => {
     const [selectedPost, setSelectedPost] = useState(null);
 
     const fetchPosts = async () => {
+        console.log('Fetching posts...');
         setLoading(true);
-        const { data: postsData } = await supabase.from('community_posts').select('*').order('created_at', { ascending: false });
+        
+        try {
+            const { data: postsData, error: postsError } = await supabase.from('community_posts').select('*').order('created_at', { ascending: false });
 
-        if (postsData) {
-            const userIds = [...new Set(postsData.map(p => p.user_id))];
-            const { data: usersData } = await supabase.from('user_preferences').select('user_id, username, display_name, avatar_url').in('user_id', userIds);
-            const userMap = {};
-            usersData?.forEach(u => userMap[u.user_id] = u);
+            if (postsError) {
+                console.error('Error fetching posts:', postsError);
+                setLoading(false);
+                return;
+            }
 
-            // Fetch all likes for these posts
-            const postIds = postsData.map(p => p.id);
-            const { data: allLikesData } = await supabase
-                .from('post_likes')
-                .select('post_id, user_id')
-                .in('post_id', postIds);
+            console.log('Raw posts data:', postsData);
 
-            // Count likes per post
-            const likesCountMap = {};
-            const userLikesMap = {};
-            allLikesData?.forEach(like => {
-                likesCountMap[like.post_id] = (likesCountMap[like.post_id] || 0) + 1;
-                if (like.user_id === user?.id) {
-                    userLikesMap[like.post_id] = true;
+            if (postsData && postsData.length > 0) {
+                const userIds = [...new Set(postsData.map(p => p.user_id))];
+                console.log('User IDs to fetch:', userIds);
+                
+                const { data: usersData, error: usersError } = await supabase.from('user_preferences').select('user_id, username, display_name, avatar_url').in('user_id', userIds);
+                
+                if (usersError) {
+                    console.error('Error fetching users:', usersError);
                 }
-            });
+                
+                console.log('Users data:', usersData);
+                
+                const userMap = {};
+                usersData?.forEach(u => userMap[u.user_id] = u);
 
-            setPosts(postsData.map(p => ({
-                ...p,
-                likes_count: likesCountMap[p.id] || 0,
-                author: userMap[p.user_id] || { display_name: 'Foodie', username: null },
-                isLikedByUser: !!userLikesMap[p.id]
-            })));
+                // Fetch all likes for these posts
+                const postIds = postsData.map(p => p.id);
+                const { data: allLikesData, error: likesError } = await supabase
+                    .from('post_likes')
+                    .select('post_id, user_id')
+                    .in('post_id', postIds);
+
+                if (likesError) {
+                    console.error('Error fetching likes:', likesError);
+                }
+
+                console.log('Likes data:', allLikesData);
+
+                // Count likes per post
+                const likesCountMap = {};
+                const userLikesMap = {};
+                allLikesData?.forEach(like => {
+                    likesCountMap[like.post_id] = (likesCountMap[like.post_id] || 0) + 1;
+                    if (like.user_id === user?.id) {
+                        userLikesMap[like.post_id] = true;
+                    }
+                });
+
+                const processedPosts = postsData.map(p => ({
+                    ...p,
+                    likes_count: likesCountMap[p.id] || 0,
+                    author: userMap[p.user_id] || { display_name: 'Foodie', username: null },
+                    isLikedByUser: !!userLikesMap[p.id]
+                }));
+
+                console.log('Processed posts:', processedPosts);
+                setPosts(processedPosts);
+            } else {
+                console.log('No posts found');
+                setPosts([]);
+            }
+        } catch (error) {
+            console.error('Error in fetchPosts:', error);
+        } finally {
+            setLoading(false);
         }
-        setLoading(false);
     };
 
     useEffect(() => {
@@ -84,34 +120,75 @@ const Community = () => {
     }, [user]);
 
     const handlePostComplete = async (imageFile, caption) => {
-        // Check if user already has preferences
-        const { data: existingPrefs } = await supabase.from('user_preferences').select('*').eq('user_id', user.id).maybeSingle();
+        console.log('Starting post creation...', { imageFile: imageFile.name, caption });
         
-        if (!existingPrefs) {
-            // Only create preferences if they don't exist
-            await supabase.from('user_preferences').insert({
-                user_id: user.id,
-                display_name: user.user_metadata?.full_name || user.email?.split('@')[0] || 'User',
-                avatar_url: user.user_metadata?.avatar_url || null,
-                notifications_enabled: true,
-                notify_new_spots: true,
-                notify_review_replies: true,
-                notify_weekly_digest: false
-            });
+        try {
+            // Check if user already has preferences
+            const { data: existingPrefs, error: prefsError } = await supabase.from('user_preferences').select('*').eq('user_id', user.id).maybeSingle();
+            
+            if (prefsError) {
+                console.error('Error checking user preferences:', prefsError);
+            }
+            
+            console.log('User preferences check:', existingPrefs);
+            
+            if (!existingPrefs) {
+                console.log('Creating user preferences...');
+                // Only create preferences if they don't exist
+                const { data: newPrefs, error: createPrefsError } = await supabase.from('user_preferences').insert({
+                    user_id: user.id,
+                    display_name: user.user_metadata?.full_name || user.email?.split('@')[0] || 'User',
+                    avatar_url: user.user_metadata?.avatar_url || null,
+                    notifications_enabled: true,
+                    notify_new_spots: true,
+                    notify_review_replies: true,
+                    notify_weekly_digest: false
+                }).select().single();
+                
+                if (createPrefsError) {
+                    console.error('Error creating user preferences:', createPrefsError);
+                    throw createPrefsError;
+                }
+                
+                console.log('User preferences created:', newPrefs);
+            }
+
+            console.log('Uploading image...');
+            const fileName = `${user.id}-${Date.now()}.${imageFile.name.split('.').pop()}`;
+            const { error: uploadError } = await supabase.storage.from('food-images').upload(`community/${fileName}`, imageFile);
+            
+            if (uploadError) {
+                console.error('Image upload error:', uploadError);
+                throw uploadError;
+            }
+            
+            const { data: { publicUrl } } = supabase.storage.from('food-images').getPublicUrl(`community/${fileName}`);
+            console.log('Image uploaded successfully:', publicUrl);
+
+            console.log('Creating post in database...');
+            const { data: postData, error: postError } = await supabase.from('community_posts').insert([{ 
+                user_id: user.id, 
+                image_url: publicUrl, 
+                caption: caption, 
+                likes: 0 
+            }]).select().single();
+            
+            if (postError) {
+                console.error('Post creation error:', postError);
+                throw postError;
+            }
+            
+            console.log('Post created successfully:', postData);
+            
+            setToast({ message: "Shared with community! ✨", type: 'success' });
+            
+            console.log('Refreshing posts...');
+            await fetchPosts();
+            
+        } catch (error) {
+            console.error('Complete post creation error:', error);
+            setToast({ message: "Failed to share post: " + error.message, type: 'error' });
         }
-
-        const fileName = `${user.id}-${Date.now()}.${imageFile.name.split('.').pop()}`;
-        await supabase.storage.from('food-images').upload(`community/${fileName}`, imageFile);
-        const { data: { publicUrl } } = supabase.storage.from('food-images').getPublicUrl(`community/${fileName}`);
-
-        await supabase.from('community_posts').insert([{ 
-            user_id: user.id, 
-            image_url: publicUrl, 
-            caption: caption, 
-            likes: 0 
-        }]);
-        setToast({ message: "Shared with community! ✨", type: 'success' });
-        fetchPosts();
     };
 
     const handleLike = async (postId, currentLikes) => {
