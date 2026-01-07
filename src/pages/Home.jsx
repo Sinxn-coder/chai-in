@@ -37,8 +37,16 @@ const Home = ({ lang }) => {
             )
             .subscribe();
             
+        // Listen for custom verification events from admin
+        const handleSpotVerified = (event) => {
+            fetchSpots(); // Refresh when admin verifies a spot
+        };
+        
+        window.addEventListener('spotVerified', handleSpotVerified);
+            
         return () => {
             spotsSubscription.unsubscribe();
+            window.removeEventListener('spotVerified', handleSpotVerified);
         };
     }, [activeLocation]);
 
