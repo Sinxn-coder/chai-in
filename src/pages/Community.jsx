@@ -61,8 +61,25 @@ const Community = () => {
         };
         window.addEventListener('userProfileUpdated', handleProfileUpdate);
         
+        // Set up real-time subscription for user_preferences changes
+        const subscription = supabase
+            .channel('user_preferences_changes')
+            .on('postgres_changes', 
+                { 
+                    event: 'UPDATE', 
+                    schema: 'public', 
+                    table: 'user_preferences' 
+                }, 
+                (payload) => {
+                    // When any user updates their profile, refresh posts
+                    fetchPosts();
+                }
+            )
+            .subscribe();
+        
         return () => {
             window.removeEventListener('userProfileUpdated', handleProfileUpdate);
+            supabase.removeChannel(subscription);
         };
     }, [user]);
 
@@ -238,8 +255,25 @@ const Comments = ({ post, onClose }) => {
         };
         window.addEventListener('userProfileUpdated', handleProfileUpdate);
         
+        // Set up real-time subscription for user_preferences changes
+        const subscription = supabase
+            .channel('user_preferences_changes_comments')
+            .on('postgres_changes', 
+                { 
+                    event: 'UPDATE', 
+                    schema: 'public', 
+                    table: 'user_preferences' 
+                }, 
+                (payload) => {
+                    // When any user updates their profile, refresh comments
+                    fetchComments();
+                }
+            )
+            .subscribe();
+        
         return () => {
             window.removeEventListener('userProfileUpdated', handleProfileUpdate);
+            supabase.removeChannel(subscription);
         };
     }, [post.id]);
 

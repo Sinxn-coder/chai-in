@@ -24,13 +24,8 @@ const SpotDetail = ({ lang }) => {
     const [isCountAnimating, setIsCountAnimating] = useState(false);
 
     useEffect(() => {
-        fetchSpotDetails();
-        // Check if coming back from directions page and refresh data
-        if (sessionStorage.getItem('refreshSpotDetail')) {
-            sessionStorage.removeItem('refreshSpotDetail');
-            fetchSpotDetails();
-            fetchReviews();
-        }
+        fetchSpot();
+        fetchReviews();
         
         // Listen for profile updates to refresh review names
         const handleProfileUpdate = () => {
@@ -38,10 +33,27 @@ const SpotDetail = ({ lang }) => {
         };
         window.addEventListener('userProfileUpdated', handleProfileUpdate);
         
+        // Set up real-time subscription for user_preferences changes
+        const subscription = supabase
+            .channel('user_preferences_changes_reviews')
+            .on('postgres_changes', 
+                { 
+                    event: 'UPDATE', 
+                    schema: 'public', 
+                    table: 'user_preferences' 
+                }, 
+                (payload) => {
+                    // When any user updates their profile, refresh reviews
+                    fetchReviews();
+                }
+            )
+            .subscribe();
+        
         return () => {
             window.removeEventListener('userProfileUpdated', handleProfileUpdate);
+            supabase.removeChannel(subscription);
         };
-    }, [id, user]);
+    }, [id]);
 
     const formatNumber = (num) => {
         if (num >= 1000000) {

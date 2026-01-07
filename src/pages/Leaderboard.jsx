@@ -18,8 +18,25 @@ const Leaderboard = () => {
         };
         window.addEventListener('userProfileUpdated', handleProfileUpdate);
         
+        // Set up real-time subscription for user_preferences changes
+        const subscription = supabase
+            .channel('user_preferences_changes_leaderboard')
+            .on('postgres_changes', 
+                { 
+                    event: 'UPDATE', 
+                    schema: 'public', 
+                    table: 'user_preferences' 
+                }, 
+                (payload) => {
+                    // When any user updates their profile, refresh leaderboard
+                    fetchLeaderboard();
+                }
+            )
+            .subscribe();
+        
         return () => {
             window.removeEventListener('userProfileUpdated', handleProfileUpdate);
+            supabase.removeChannel(subscription);
         };
     }, []);
 
