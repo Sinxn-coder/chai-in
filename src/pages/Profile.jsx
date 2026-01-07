@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { User, Settings, LogOut, Award, Star, MapPin, Zap, ChevronRight, Heart, MessageSquare, Plus, Shield, MessageCircle, Trash2, AlertTriangle } from 'lucide-react';
+import { User, Settings, LogOut, Award, Star, MapPin, Zap, ChevronRight, Heart, MessageSquare, Plus, Shield, MessageCircle, Trash2, AlertTriangle, Moon, Sun } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabaseClient';
 import { motion } from 'framer-motion';
@@ -18,6 +18,7 @@ const Profile = ({ lang }) => {
     const [tabLoading, setTabLoading] = useState(false);
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
     const [deleteLoading, setDeleteLoading] = useState(false);
+    const [isDarkMode, setIsDarkMode] = useState(false);
 
     useEffect(() => {
         if (user) {
@@ -27,13 +28,18 @@ const Profile = ({ lang }) => {
             window.addEventListener('userProfileUpdated', fetchProfileData);
             // Listen for visit updates to refresh stats in real-time
             window.addEventListener('visitUpdated', fetchProfileData);
+            
+            // Check for saved dark mode preference
+            const savedDarkMode = localStorage.getItem('darkMode') === 'true';
+            setIsDarkMode(savedDarkMode);
+            if (savedDarkMode) {
+                document.body.classList.add('dark-mode');
+            }
         }
         return () => {
-            if (user) {
-                window.removeEventListener('focus', fetchProfileData);
-                window.removeEventListener('userProfileUpdated', fetchProfileData);
-                window.removeEventListener('visitUpdated', fetchProfileData);
-            }
+            window.removeEventListener('focus', fetchProfileData);
+            window.removeEventListener('userProfileUpdated', fetchProfileData);
+            window.removeEventListener('visitUpdated', fetchProfileData);
         };
     }, [user]);
 
@@ -85,6 +91,19 @@ const Profile = ({ lang }) => {
     const handleSignOut = async () => {
         await signOut();
         navigate(`/${lang || 'en'}/login`);
+    };
+
+    const toggleDarkMode = () => {
+        const newDarkMode = !isDarkMode;
+        setIsDarkMode(newDarkMode);
+        
+        if (newDarkMode) {
+            document.body.classList.add('dark-mode');
+        } else {
+            document.body.classList.remove('dark-mode');
+        }
+        
+        localStorage.setItem('darkMode', newDarkMode.toString());
     };
 
     const handleDeleteAccount = async () => {
@@ -361,6 +380,32 @@ const Profile = ({ lang }) => {
                             <MessageCircle size={22} color="#EF4444" />
                         </div>
                         <span style={{ fontWeight: '800', fontSize: '1.05rem', color: 'var(--text-main)' }}>Contact Admin</span>
+                    </div>
+                    <ChevronRight size={20} color="var(--text-muted)" />
+                </motion.div>
+
+                <motion.div
+                    whileTap={{ scale: 0.98 }}
+                    onClick={toggleDarkMode}
+                    style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        padding: '16px 20px',
+                        background: 'white',
+                        borderRadius: '24px',
+                        boxShadow: '0 4px 15px rgba(0,0,0,0.03)',
+                        cursor: 'pointer',
+                        border: '1px solid var(--secondary)'
+                    }}
+                >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                        <div style={{ padding: '10px', borderRadius: '14px', background: isDarkMode ? '#1F2937' : '#FEF3C7' }}>
+                            {isDarkMode ? <Moon size={22} color="#F59E0B" /> : <Sun size={22} color="#F59E0B" />}
+                        </div>
+                        <span style={{ fontWeight: '800', fontSize: '1.05rem', color: 'var(--text-main)' }}>
+                            {isDarkMode ? 'Dark Mode' : 'Light Mode'}
+                        </span>
                     </div>
                     <ChevronRight size={20} color="var(--text-muted)" />
                 </motion.div>

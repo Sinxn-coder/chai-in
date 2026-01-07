@@ -107,20 +107,26 @@ const Admin = () => {
 
     const toggleVerify = async (id, currentStatus) => {
         try {
-            const { error } = await supabase
+            console.log('Toggling verification for spot:', id, 'current status:', currentStatus);
+            
+            const { data, error } = await supabase
                 .from('spots')
                 .update({ is_verified: !currentStatus })
-                .eq('id', id);
+                .eq('id', id)
+                .select()
+                .single();
                 
             if (error) {
                 console.error('Verification error:', error);
-                showToast("Failed to update", 'error');
+                showToast("Failed to update: " + error.message, 'error');
                 return;
             }
             
-            // Update local state immediately
+            console.log('Verification successful, updated data:', data);
+            
+            // Update local state with the actual database data
             setSpots(spots.map(s => 
-                s.id === id ? { ...s, is_verified: !currentStatus } : s
+                s.id === id ? data : s
             ));
             
             showToast(`Spot ${!currentStatus ? 'verified' : 'unverified'} successfully`, 'success');
@@ -132,8 +138,9 @@ const Admin = () => {
             
             // Force immediate database refresh to ensure persistence
             setTimeout(() => {
-                fetchSpots(); // Re-fetch to ensure data is persisted
-            }, 500);
+                console.log('Re-fetching spots to ensure persistence...');
+                fetchSpots();
+            }, 1000);
             
         } catch (error) {
             console.error('Toggle verification error:', error);
