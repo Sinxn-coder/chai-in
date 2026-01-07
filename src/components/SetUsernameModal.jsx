@@ -73,6 +73,11 @@ const SetUsernameModal = () => {
             const { data: { publicUrl } } = supabase.storage.from('avatars').getPublicUrl(`avatars/${fileName}`);
             setAvatarUrl(publicUrl);
             setSkipAvatar(false);
+            
+            // Also update user metadata to keep avatar in sync
+            await supabase.auth.updateUser({
+                data: { avatar_url: publicUrl }
+            });
         } catch (error) {
             console.error('Error uploading avatar:', error);
         } finally {

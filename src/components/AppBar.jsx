@@ -5,6 +5,28 @@ import { useAuth } from '../context/AuthContext';
 import NotificationsSheet from './NotificationsSheet';
 import { supabase } from '../lib/supabaseClient';
 
+// Add CSS to head
+const addResponsiveCSS = () => {
+    const styleId = 'responsive-nav-css';
+    if (!document.getElementById(styleId)) {
+        const style = document.createElement('style');
+        style.id = styleId;
+        style.textContent = `
+            @media (max-width: 767px) {
+                .mobile-app-bar {
+                    display: flex !important;
+                }
+            }
+            @media (min-width: 768px) {
+                .mobile-app-bar {
+                    display: none !important;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+};
+
 const AppBar = () => {
     const { user } = useAuth();
     const navigate = useNavigate();
@@ -18,6 +40,7 @@ const AppBar = () => {
 
     useEffect(() => {
         if (!user) return;
+        addResponsiveCSS();
         const fetchUnread = async () => {
             const { count } = await supabase
                 .from('notifications')
@@ -63,7 +86,7 @@ const AppBar = () => {
             padding: '0 20px',
             zIndex: 1000,
             boxShadow: '0 4px 20px rgba(0,0,0,0.03)'
-        }}>
+        }} className="mobile-app-bar">
             <NotificationsSheet
                 isOpen={showNotifications}
                 onClose={() => { setShowNotifications(false); setUnreadCount(0); }}

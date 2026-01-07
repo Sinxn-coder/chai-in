@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import BottomNav from '../components/BottomNav';
+import DesktopNav from '../components/DesktopNav';
 import FoodParticles from '../components/FoodParticles';
 import SetUsernameModal from '../components/SetUsernameModal';
 import SetAvatarModal from '../components/SetAvatarModal';
@@ -20,8 +21,11 @@ const MainLayout = ({ lang }) => {
 
     return (
         <div style={{ minHeight: '100vh', background: 'var(--bg-cream)', position: 'relative' }}>
-            {/* Top Navigation Bar */}
+            {/* Top Navigation Bar - Mobile */}
             <AppBar />
+
+            {/* Desktop Navigation - Right Side */}
+            <DesktopNav />
 
             {/* Animated Food Particles Background */}
             <FoodParticles />
@@ -33,7 +37,7 @@ const MainLayout = ({ lang }) => {
             {/* Content Area */}
             <Outlet />
 
-            {/* Bottom Navigation */}
+            {/* Bottom Navigation - Mobile */}
             <BottomNav lang={lang} />
         </div>
     );
