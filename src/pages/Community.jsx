@@ -64,7 +64,7 @@ const Community = () => {
         return () => {
             window.removeEventListener('userProfileUpdated', handleProfileUpdate);
         };
-    }, []);
+    }, [user]);
 
     const handlePostComplete = async (imageFile, caption) => {
         const fileName = `${user.id}-${Date.now()}.${imageFile.name.split('.').pop()}`;

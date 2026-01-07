@@ -131,7 +131,7 @@ const SpotDetail = ({ lang }) => {
             
             setReviews(reviewsData.map(r => ({
                 ...r,
-                user: userMap[r.user_id] || { display_name: 'User' }
+                user: userMap[r.user_id] || { display_name: 'User', avatar_url: null }
             })));
         } else {
             setReviews([]);

@@ -57,7 +57,7 @@ const Leaderboard = () => {
             const prefs = prefsMap[uid];
             return {
                 id: uid,
-                name: prefs?.username || prefs?.display_name || user?.user_metadata?.full_name || 'Foodie',
+                name: prefs?.display_name || prefs?.username || user?.user_metadata?.full_name || 'Foodie',
                 avatar: prefs?.avatar_url,
                 isMe: user && uid === user.id,
                 ...stats[uid]
