@@ -35,6 +35,10 @@ CREATE POLICY "Users can update their own ratings" ON spot_ratings
 CREATE POLICY "Users can delete their own ratings" ON spot_ratings
     FOR DELETE USING (auth.uid() = user_id);
 
+-- Additional policy to allow upsert operations
+CREATE POLICY "Users can upsert their own ratings" ON spot_ratings
+    FOR ALL USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
+
 -- Grant permissions
 GRANT ALL ON spot_ratings TO authenticated;
 GRANT SELECT ON spot_ratings TO anon;

@@ -52,10 +52,23 @@ const SpotDetail = ({ lang }) => {
                 }
             )
             .subscribe();
+            
+        // Set up real-time subscription for rating changes
+        const ratingsSubscription = supabase
+            .channel('spot_ratings_changes_detail')
+            .on('postgres_changes',
+                { event: '*', schema: 'public', table: 'spot_ratings', filter: `spot_id=eq.${id}` },
+                (payload) => {
+                    console.log('SpotDetail received rating change:', payload);
+                    fetchSpotDetails(); // Refresh to update ratings
+                }
+            )
+            .subscribe();
         
         return () => {
             window.removeEventListener('userProfileUpdated', handleProfileUpdate);
             supabase.removeChannel(subscription);
+            supabase.removeChannel(ratingsSubscription);
         };
     }, [id]);
 

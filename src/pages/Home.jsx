@@ -38,6 +38,18 @@ const Home = ({ lang }) => {
             )
             .subscribe();
             
+        // Set up real-time subscription for rating changes
+        const ratingsSubscription = supabase
+            .channel('home_ratings_changes')
+            .on('postgres_changes',
+                { event: '*', schema: 'public', table: 'spot_ratings' },
+                (payload) => {
+                    console.log('Home page received rating change:', payload);
+                    fetchSpots(); // Refresh spots to update ratings
+                }
+            )
+            .subscribe();
+            
         // Listen for custom verification events from admin
         const handleSpotVerified = (event) => {
             console.log('Home page received custom verification event:', event.detail);
@@ -48,6 +60,7 @@ const Home = ({ lang }) => {
             
         return () => {
             spotsSubscription.unsubscribe();
+            ratingsSubscription.unsubscribe();
             window.removeEventListener('spotVerified', handleSpotVerified);
         };
     }, [activeLocation]);
