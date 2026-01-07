@@ -197,7 +197,7 @@ const LandingPage = () => {
                             fontSize: 'clamp(1.1rem, 3vw, 1.4rem)',
                             fontWeight: '600',
                             color: '#7c2d12',
-                            margin: '0 0 40px 0',
+                            margin: '0 0 20px 0',
                             maxWidth: '600px',
                             lineHeight: '1.4'
                         }}
@@ -205,6 +205,24 @@ const LandingPage = () => {
                         Discover the best food spots in Kerala 🌶️
                         <br />
                         Share your experiences with the community
+                    </motion.p>
+
+                    {/* SEO Description */}
+                    <motion.p
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.8, delay: 0.7 }}
+                        style={{
+                            fontSize: '1.1rem',
+                            fontWeight: '400',
+                            color: '#92400e',
+                            margin: '0 0 40px 0',
+                            maxWidth: '700px',
+                            lineHeight: '1.6',
+                            textAlign: 'center'
+                        }}
+                    >
+                        Chai-in is a community-driven food spot discovery platform that helps you find authentic chai kadas, street food vendors, and local eateries across Kerala. Built for food lovers by food lovers, our platform connects you with Kerala's vibrant food culture through real user experiences, not advertisements. Whether you're searching for "chai near me" or exploring food spots in your neighborhood, Chai-in makes it easy to discover and share the best local flavors.
                     </motion.p>
 
                     {/* Discover Button */}
