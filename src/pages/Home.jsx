@@ -23,6 +23,23 @@ const Home = ({ lang }) => {
 
     useEffect(() => {
         fetchSpots();
+        
+        // Set up real-time subscription for spots
+        const spotsSubscription = supabase
+            .channel('home_spots_changes')
+            .on('postgres_changes', 
+                { event: 'UPDATE', schema: 'public', table: 'spots', filter: 'is_verified=eq.true' },
+                (payload) => {
+                    if (payload.new.is_verified) {
+                        fetchSpots(); // Refresh spots when a spot is verified
+                    }
+                }
+            )
+            .subscribe();
+            
+        return () => {
+            spotsSubscription.unsubscribe();
+        };
     }, [activeLocation]);
 
     const fetchSpots = async () => {
@@ -90,38 +107,39 @@ const Home = ({ lang }) => {
     };
 
     return (
-        <div style={{ padding: '20px', paddingBottom: '120px', background: 'var(--bg-white)', minHeight: '100vh' }}>
-            <header style={{ marginBottom: '24px' }}>
-                <p style={{ margin: 0, fontSize: '1rem', color: 'var(--text-muted)' }}>Hello {user?.user_metadata?.full_name?.split(' ')[0] || 'Foodie'},</p>
-                <h1 style={{ margin: '4px 0', fontSize: '1.6rem', fontWeight: '900', color: 'var(--text-main)' }}>What do you want to eat today?</h1>
-            </header>
+        <div style={{ paddingBottom: '100px', background: 'var(--bg-main)', minHeight: '100vh' }}>
+            <div className="container" style={{ padding: '0 16px', maxWidth: '100%', boxSizing: 'border-box' }}>
+                <header style={{ marginBottom: '24px' }}>
+                    <p style={{ margin: 0, fontSize: '1rem', color: 'var(--text-muted)' }}>Hello {user?.user_metadata?.full_name?.split(' ')[0] || 'Foodie'},</p>
+                    <h1 style={{ margin: '4px 0', fontSize: '1.6rem', fontWeight: '900', color: 'var(--text-main)' }}>What do you want to eat today?</h1>
+                </header>
 
-            <div style={{ position: 'relative', marginBottom: '24px' }}>
-                <input
-                    type="text"
-                    placeholder="Search dishes, restaurants..."
-                    value={searchTerm}
-                    onChange={(e) => {
-                        const value = e.target.value;
-                        if (value === '#admin') {
-                            navigate(`/${lang}/admin`);
-                            setSearchTerm('');
-                        } else {
-                            setSearchTerm(value);
-                        }
-                    }}
-                    style={{
-                        width: '100%',
-                        padding: '16px 20px 16px 50px',
-                        borderRadius: 'var(--radius-lg)',
-                        border: 'none',
-                        background: 'var(--secondary)',
-                        fontSize: '1rem',
-                        fontWeight: '600'
-                    }}
-                />
-                <Search size={22} color="var(--text-muted)" style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)' }} />
-            </div>
+                <div style={{ position: 'relative', marginBottom: '24px' }}>
+                    <input
+                        type="text"
+                        placeholder="Search dishes, restaurants..."
+                        value={searchTerm}
+                        onChange={(e) => {
+                            const value = e.target.value;
+                            if (value === '#admin') {
+                                navigate(`/${lang}/admin`);
+                                setSearchTerm('');
+                            } else {
+                                setSearchTerm(value);
+                            }
+                        }}
+                        style={{
+                            width: '100%',
+                            padding: '16px 20px 16px 50px',
+                            borderRadius: 'var(--radius-lg)',
+                            border: 'none',
+                            background: 'var(--secondary)',
+                            fontSize: '1rem',
+                            fontWeight: '600'
+                        }}
+                    />
+                    <Search size={22} color="var(--text-muted)" style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)' }} />
+                </div>
 
             <div className="hide-scrollbar" style={{ display: 'flex', gap: '12px', overflowX: 'auto', marginBottom: '30px', padding: '4px 0' }}>
                 {['All', 'Trending', 'Arabian', 'Burger', 'Cafes', 'Desserts'].map(cat => (
@@ -268,6 +286,7 @@ const Home = ({ lang }) => {
                     100% { opacity: 0.6; }
                 }
             `}</style>
+            </div>
         </div>
     );
 };

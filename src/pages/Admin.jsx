@@ -37,6 +37,31 @@ const Admin = () => {
         fetchNotifications();
         fetchAnalytics();
 
+        // Set up real-time subscription for spots
+        const spotsSubscription = supabase
+            .channel('spots_changes')
+            .on('postgres_changes', 
+                { event: '*', schema: 'public', table: 'spots' },
+                (payload) => {
+                    if (payload.eventType === 'UPDATE') {
+                        setSpots(prevSpots => 
+                            prevSpots.map(spot => 
+                                spot.id === payload.new.id 
+                                    ? { ...spot, ...payload.new }
+                                    : spot
+                            )
+                        );
+                    } else if (payload.eventType === 'DELETE') {
+                        setSpots(prevSpots => 
+                            prevSpots.filter(spot => spot.id !== payload.old.id)
+                        );
+                    } else if (payload.eventType === 'INSERT') {
+                        setSpots(prevSpots => [...prevSpots, payload.new]);
+                    }
+                }
+            )
+            .subscribe();
+
         const handleHash = () => {
             const hash = window.location.hash.replace('#', '');
             if (['analytics', 'spots', 'community', 'reviews', 'notifications', 'moderation'].includes(hash)) {
@@ -45,7 +70,11 @@ const Admin = () => {
         };
         handleHash();
         window.addEventListener('hashchange', handleHash);
-        return () => window.removeEventListener('hashchange', handleHash);
+        
+        return () => {
+            window.removeEventListener('hashchange', handleHash);
+            spotsSubscription.unsubscribe();
+        };
     }, [range, isAuthorized]);
 
     const showToast = (msg, type = 'success') => {

@@ -67,7 +67,7 @@
     --bg-main: #0F0F1E;
     --bg-white: #1A1A2E;
     --bg-cream: #16213E;
-    --bg-light-red: rgba(255, 71, 87, 0.1);
+    --bg-light-red: rgba(255, 71, 87, 0.15);
 
     /* Text Colors - High Contrast */
     --text-main: #FFFFFF;
@@ -82,9 +82,29 @@
     --info: #4DABF7;
 
     /* Shadows - Dark Mode Optimized */
-    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
-    --shadow-md: 0 10px 30px rgba(0, 0, 0, 0.4);
-    --shadow-lg: 0 15px 45px rgba(0, 0, 0, 0.5);
-    --shadow-xl: 0 20px 60px rgba(0, 0, 0, 0.6);
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.4);
+    --shadow-md: 0 10px 30px rgba(0, 0, 0, 0.5);
+    --shadow-lg: 0 15px 45px rgba(0, 0, 0, 0.6);
+    --shadow-xl: 0 20px 60px rgba(0, 0, 0, 0.7);
+  }
+
+  /* Additional dark mode fixes */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: #4A4A6A #1A1A2E;
+  }
+  
+  *::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  
+  *::-webkit-scrollbar-track {
+    background: #1A1A2E;
+  }
+  
+  *::-webkit-scrollbar-thumb {
+    background: #4A4A6A;
+    border-radius: 4px;
   }
 }

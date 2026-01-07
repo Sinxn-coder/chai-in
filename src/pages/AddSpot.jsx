@@ -180,7 +180,7 @@ const AddSpot = ({ lang }) => {
                 <h1 style={{ color: 'white', fontSize: '1.4rem', fontWeight: '900' }}>Add New Spot</h1>
             </div>
 
-            <div className="container" style={{ marginTop: '-40px', padding: '0 20px' }}>
+            <div className="container" style={{ marginTop: '-40px', padding: '0 16px', maxWidth: '100%', boxSizing: 'border-box' }}>
                 {/* Step Indicator */}
                 <div style={{ display: 'flex', gap: '8px', marginBottom: '20px', justifyContent: 'center' }}>
                     {[1, 2, 3, 4].map(i => (
@@ -248,22 +248,22 @@ const AddSpot = ({ lang }) => {
                                     placeholder="Enter spot name..."
                                     value={formData.name}
                                     onChange={e => setFormData({ ...formData, name: e.target.value })}
-                                    style={{ width: '100%', padding: '16px', borderRadius: '18px', border: '2px solid var(--secondary)', background: 'var(--secondary)', fontSize: '1rem', fontWeight: '700', outline: 'none', marginBottom: '20px' }}
+                                    style={{ width: '100%', padding: '16px', borderRadius: '18px', border: '2px solid var(--secondary)', background: 'var(--secondary)', fontSize: '1rem', fontWeight: '700', outline: 'none', marginBottom: '20px', boxSizing: 'border-box' }}
                                 />
                                 <label style={{ fontSize: '0.85rem', fontWeight: '800', color: 'var(--text-muted)', marginBottom: '12px', display: 'block' }}>CATEGORY</label>
-                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '10px', marginBottom: '24px' }}>
+                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '10px', marginBottom: '24px' }}>
                                     {categories.map(cat => (
                                         <button
                                             key={cat}
                                             onClick={() => setFormData({ ...formData, category: cat })}
-                                            style={{ padding: '14px', borderRadius: '18px', border: 'none', background: formData.category === cat ? 'var(--primary)' : 'var(--secondary)', color: formData.category === cat ? 'white' : 'var(--text-main)', fontWeight: '800', transition: 'all 0.2s' }}
+                                            style={{ padding: '14px', borderRadius: '18px', border: 'none', background: formData.category === cat ? 'var(--primary)' : 'var(--secondary)', color: formData.category === cat ? 'white' : 'var(--text-main)', fontWeight: '800', transition: 'all 0.2s', fontSize: '0.9rem' }}
                                         >
                                             {cat}
                                         </button>
                                     ))}
                                 </div>
                                 <label style={{ fontSize: '0.85rem', fontWeight: '800', color: 'var(--text-muted)', marginBottom: '12px', display: 'block' }}>PRICE RANGE</label>
-                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '10px', marginBottom: '24px' }}>
+                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '10px', marginBottom: '24px' }}>
                                     {priceRanges.map(range => (
                                         <button
                                             key={range.level}
