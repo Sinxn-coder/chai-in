@@ -122,8 +122,8 @@ const BottomNav = ({ lang = 'en' }) => {
                   opacity: active ? 1 : 0.7,
                   fontSize: '0.78rem',
                   fontWeight: 800,
-                  ...(item.to === '/map' && { marginRight: '20px' }),
-                  ...(item.to === '/community' && { marginLeft: '20px' }),
+                  ...(item.to === '/map' && { marginRight: '30px' }),
+                  ...(item.to === '/community' && { marginLeft: '30px' }),
                 }}
               >
                 <item.icon
