@@ -12,6 +12,11 @@ const Leaderboard = () => {
     useEffect(() => {
         fetchLeaderboard();
         
+        // Show XP info popup
+        setTimeout(() => {
+            alert('🎮 XP Points: Your XP points can be used for future features and rewards in the app! Keep exploring and reviewing to earn more XP.');
+        }, 2000);
+        
         // Listen for profile updates to refresh leaderboard names
         const handleProfileUpdate = () => {
             fetchLeaderboard();

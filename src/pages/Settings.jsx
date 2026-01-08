@@ -65,8 +65,12 @@ const Settings = () => {
 
     const handleSave = async () => {
         setSaving(true);
-        try {
-            // Check 24-hour cooldown for display name changes
+        
+        // Check if display name is being changed
+        const { data: currentPrefs } = await supabase.from('user_preferences').select('display_name').eq('user_id', user.id).single();
+        const isChangingDisplayName = currentPrefs?.display_name !== formData.displayName;
+        
+        if (isChangingDisplayName) {
             const now = new Date();
             const lastChange = formData.lastDisplayNameChange ? new Date(formData.lastDisplayNameChange) : null;
             const hoursSinceChange = lastChange ? (now - lastChange) / (1000 * 60 * 60) : 25; // 25 hours if no previous change
@@ -74,14 +78,16 @@ const Settings = () => {
             if (hoursSinceChange < 24) {
                 const hoursLeft = Math.ceil(24 - hoursSinceChange);
                 setToast({ 
-                    message: `You can only change your display name once every 24 hours. Please wait ${hoursLeft} more hours.`, 
+                    message: `You can only change your display name once every 24 hours. Please wait ${hoursLeft} more hours. Profile picture can be changed anytime!`, 
                     type: 'error' 
                 });
                 setSaving(false);
                 return;
             }
-            
-            // Check for uniqueness
+        }
+
+        // Check for uniqueness
+        if (isChangingDisplayName) {
             const { data: existingUser } = await supabase
                 .from('user_preferences')
                 .select('display_name')
@@ -94,17 +100,20 @@ const Settings = () => {
                 setSaving(false);
                 return;
             }
+        }
 
-            const prefsData = {
-                user_id: user.id,
-                display_name: formData.displayName,
-                avatar_url: formData.avatarUrl,
-                notifications_enabled: formData.notificationsEnabled,
-                notify_new_spots: formData.notifyNewSpots,
-                notify_review_replies: formData.notifyReviewReplies,
-                notify_weekly_digest: formData.notifyWeeklyDigest,
-                last_display_name_change: now.toISOString()
-            };
+        const now = new Date();
+        const prefsData = {
+            user_id: user.id,
+            display_name: formData.displayName,
+            avatar_url: formData.avatarUrl,
+            notifications_enabled: formData.notificationsEnabled,
+            notify_new_spots: formData.notifyNewSpots,
+            notify_review_replies: formData.notifyReviewReplies,
+            notify_weekly_digest: formData.notifyWeeklyDigest,
+            last_display_name_change: isChangingDisplayName ? now.toISOString() : formData.lastDisplayNameChange
+        };
+        try {
             await supabase.from('user_preferences').upsert(prefsData, { onConflict: 'user_id' });
             
             // Trigger global refresh for display name
@@ -115,7 +124,10 @@ const Settings = () => {
                 } 
             }));
             
-            setToast({ message: 'Settings saved successfully! ✨', type: 'success' });
+            const message = isChangingDisplayName ? 
+                'Settings saved successfully! Display name updated ✨' : 
+                'Profile picture updated successfully! 📸';
+            setToast({ message, type: 'success' });
             setTimeout(() => navigate(-1), 1500);
         } catch (error) {
             setToast({ message: 'Failed to save', type: 'error' });
