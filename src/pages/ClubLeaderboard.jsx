@@ -71,20 +71,25 @@ const ClubLeaderboard = ({ lang }) => {
                 )}
             </div>
 
-            {/* Tab Navigation - Fixed at bottom */}
+            {/* Tab Navigation - Fixed at bottom with transparency */}
             <div style={{ 
                 position: 'fixed',
-                bottom: '0',
-                left: '0',
-                right: '0',
+                bottom: '20px',
+                left: '50%',
+                transform: 'translateX(-50%)',
                 height: '60px',
+                width: '90%',
+                maxWidth: '400px',
                 display: 'flex', 
                 alignItems: 'center',
                 justifyContent: 'space-around',
                 padding: '0 20px',
-                background: 'var(--primary)',
+                background: 'rgba(239, 68, 68, 0.8)', // Semi-transparent red
+                backdropFilter: 'blur(10px)',
+                borderRadius: '20px',
                 zIndex: 1000,
-                boxShadow: '0 -2px 10px rgba(0,0,0,0.1)'
+                boxShadow: '0 8px 32px rgba(0,0,0,0.2)',
+                border: '1px solid rgba(255,255,255,0.2)'
             }}>
                 {tabs.map(tab => (
                     <button
