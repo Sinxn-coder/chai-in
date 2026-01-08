@@ -10,8 +10,9 @@ const BottomNav = ({ lang = 'en' }) => {
     { to: '/home', icon: Home, label: 'Home' },
     { to: '/explore', icon: Compass, label: 'Explore' },
     { to: '', icon: null, label: 'spacer1' },
-    { to: '/map', icon: Map, label: 'Map' },
     { to: '', icon: null, label: 'spacer2' },
+    { to: '/map', icon: Map, label: 'Map' },
+    { to: '', icon: null, label: 'spacer3' },
     { to: '/club-leaderboard', icon: Users, label: 'Club' },
   ];
 
