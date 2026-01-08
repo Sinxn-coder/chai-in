@@ -76,6 +76,18 @@ const MapScreen = () => {
         return R * c;
     };
 
+    const formatDistance = (distance) => {
+        if (distance < 0.1) {
+            return `${(distance * 1000).toFixed(0)} m away`;
+        } else if (distance < 1) {
+            return `${(distance * 1000).toFixed(0)} m away`;
+        } else if (distance < 10) {
+            return `${distance.toFixed(1)} km away`;
+        } else {
+            return `${distance.toFixed(0)} km away`;
+        }
+    };
+
     const handleViewDetails = (spotId) => {
         const currentLang = window.location.pathname.includes('/ml/') ? 'ml' : 'en';
         navigate(`/${currentLang}/spot/${spotId}`);
@@ -158,7 +170,7 @@ const MapScreen = () => {
                                     <div style={{ fontWeight: '700', fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '8px' }}>{spot.category}</div>
                                     {distance !== null && (
                                         <div style={{ fontWeight: '600', fontSize: '0.8rem', color: '#059669', marginBottom: '8px' }}>
-                                            📍 {distance.toFixed(1)} km away
+                                            📍 {formatDistance(distance)}
                                         </div>
                                     )}
                                     <button
