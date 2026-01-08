@@ -174,14 +174,14 @@ const Leaderboard = () => {
                             onClick={() => setShowXPPopup(false)}
                         />
                         <motion.div
-                            initial={{ opacity: 0, scale: 0.8 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0, scale: 0.8 }}
+                            initial={{ opacity: 0, y: -100, scale: 0.9 }}
+                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                            exit={{ opacity: 0, y: -100, scale: 0.9 }}
                             style={{
                                 position: 'fixed',
-                                top: '50vh',
-                                left: '50vw',
-                                transform: 'translate(-50%, -50%)',
+                                top: '80px',
+                                left: '50%',
+                                transform: 'translateX(-50%)',
                                 background: 'white',
                                 padding: '32px',
                                 borderRadius: '24px',
