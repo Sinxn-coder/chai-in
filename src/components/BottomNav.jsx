@@ -11,8 +11,9 @@ const BottomNav = ({ lang = 'en' }) => {
     { to: '/explore', icon: Compass, label: 'Explore' },
     { to: '', icon: null, label: 'spacer1' },
     { to: '', icon: null, label: 'spacer2' },
-    { to: '/map', icon: Map, label: 'Map' },
     { to: '', icon: null, label: 'spacer3' },
+    { to: '/map', icon: Map, label: 'Map' },
+    { to: '', icon: null, label: 'spacer4' },
     { to: '/club-leaderboard', icon: Users, label: 'Club' },
   ];
 
