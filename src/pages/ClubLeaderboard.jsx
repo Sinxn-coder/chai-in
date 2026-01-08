@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Trophy, Users, Crown } from 'lucide-react';
-import { motion } from 'framer-motion';
 
 const ClubLeaderboard = ({ lang }) => {
     const [activeTab, setActiveTab] = useState('club');
@@ -57,23 +56,16 @@ const ClubLeaderboard = ({ lang }) => {
                 </div>
 
                 {/* Tab Content */}
-                <motion.div
-                    key={activeTab}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.3 }}
+                <div
                     style={{
                         minHeight: '400px'
                     }}
                 >
                     {activeTab === 'club' && (
                         <div style={{ textAlign: 'center', padding: '40px' }}>
-                            <motion.div
-                                animate={{ scale: [1, 1.05, 1] }}
-                                transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-                            >
+                            <div>
                                 <Users size={48} color="#ef4444" />
-                            </motion.div>
+                            </div>
                             <h3 style={{ 
                                 marginTop: '20px', 
                                 fontSize: '1.5rem', 
@@ -94,12 +86,9 @@ const ClubLeaderboard = ({ lang }) => {
 
                     {activeTab === 'leaderboard' && (
                         <div style={{ textAlign: 'center', padding: '40px' }}>
-                            <motion.div
-                                animate={{ scale: [1, 1.05, 1] }}
-                                transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-                            >
+                            <div>
                                 <Trophy size={48} color="#ef4444" />
-                            </motion.div>
+                            </div>
                             <h3 style={{ 
                                 marginTop: '20px', 
                                 fontSize: '1.5rem', 
@@ -117,7 +106,7 @@ const ClubLeaderboard = ({ lang }) => {
                             </p>
                         </div>
                     )}
-                </motion.div>
+                </div>
             </div>
         </div>
     );
