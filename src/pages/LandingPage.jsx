@@ -142,7 +142,21 @@ const LandingPage = () => {
                             animate={{ rotate: [0, 10, -10, 0] }}
                             transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
                         >
-                            <Coffee size={60} color="#f59e0b" strokeWidth={2.5} />
+                            <motion.img
+                                src="./chai_icon.png"
+                                alt="Chai-in Logo"
+                                style={{ 
+                                    width: '70px', 
+                                    height: '70px',
+                                    objectFit: 'contain'
+                                }}
+                                animate={{ scale: [1, 1.1, 1] }}
+                                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                                onError={(e) => { 
+                                    e.target.style.display = 'none';
+                                    e.target.parentElement.innerHTML = '<div style="font-size: 60px; color: #f59e0b;">☕</div>';
+                                }}
+                            />
                         </motion.div>
                         
                         {/* Sparkle Effects */}

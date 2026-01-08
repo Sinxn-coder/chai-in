@@ -46,7 +46,7 @@ const Login = () => {
     return (
         <div style={{
             minHeight: '100vh',
-            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            background: 'var(--bg-white)',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
@@ -61,12 +61,12 @@ const Login = () => {
             <motion.div
                 animate={{ rotate: 360 }}
                 transition={{ repeat: Infinity, duration: 20, ease: "linear" }}
-                style={{ position: 'absolute', top: '-100px', right: '-100px', width: '300px', height: '300px', borderRadius: '50%', background: 'rgba(255,255,255,0.1)', zIndex: 0 }}
+                style={{ position: 'absolute', top: '-100px', right: '-100px', width: '300px', height: '300px', borderRadius: '50%', background: 'rgba(239, 42, 57, 0.05)', zIndex: 0 }}
             />
             <motion.div
                 animate={{ rotate: -360 }}
                 transition={{ repeat: Infinity, duration: 25, ease: "linear" }}
-                style={{ position: 'absolute', bottom: '-80px', left: '-80px', width: '250px', height: '250px', borderRadius: '50%', background: 'rgba(255,255,255,0.1)', zIndex: 0 }}
+                style={{ position: 'absolute', bottom: '-80px', left: '-80px', width: '250px', height: '250px', borderRadius: '50%', background: 'rgba(239, 42, 57, 0.05)', zIndex: 0 }}
             />
 
             <motion.div
@@ -75,36 +75,57 @@ const Login = () => {
                 transition={{ type: 'spring', damping: 12 }}
                 style={{ marginBottom: '40px', zIndex: 1 }}
             >
-                {/* Custom Chai-in Icon */}
-                <div style={{ 
-                    position: 'relative', 
-                    width: '120px', 
-                    height: '120px', 
-                    margin: '0 auto',
-                    background: 'white',
-                    borderRadius: '30px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    boxShadow: '0 20px 40px rgba(0,0,0,0.2)',
-                    marginBottom: '24px'
-                }}>
-                    <Coffee size={60} color="#EF2A39" strokeWidth={2} />
-                </div>
-                <h1 style={{ 
-                    marginTop: '20px', 
-                    fontSize: '3rem', 
-                    fontWeight: '900', 
-                    color: 'white', 
-                    letterSpacing: '-2px',
-                    textShadow: '0 4px 8px rgba(0,0,0,0.3)',
-                    marginBottom: '8px'
-                }}>Chai-in</h1>
+                {/* Animated Chai-in Icon */}
+                <motion.div
+                    animate={{ rotate: [0, 10, -10, 0] }}
+                    transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
+                    style={{ 
+                        position: 'relative', 
+                        width: '120px', 
+                        height: '120px', 
+                        margin: '0 auto',
+                        background: 'white',
+                        borderRadius: '24px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        boxShadow: 'var(--shadow-lg)',
+                        marginBottom: '24px',
+                        border: '3px solid var(--secondary)'
+                    }}
+                >
+                    <motion.img
+                        src="./chai_icon.png"
+                        alt="Chai-in Logo"
+                        style={{ 
+                            width: '80px', 
+                            height: '80px',
+                            objectFit: 'contain'
+                        }}
+                        animate={{ scale: [1, 1.1, 1] }}
+                        transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
+                        onError={(e) => { 
+                            e.target.style.display = 'none';
+                            e.target.parentElement.innerHTML = '<div style="font-size: 48px; color: var(--primary);">☕</div>';
+                        }}
+                    />
+                </motion.div>
+                <motion.h1 
+                    animate={{ scale: [1, 1.05, 1] }}
+                    transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
+                    style={{ 
+                        marginTop: '20px', 
+                        fontSize: '2.5rem', 
+                        fontWeight: '900', 
+                        color: 'var(--primary)', 
+                        letterSpacing: '-1px',
+                        marginBottom: '8px'
+                    }}
+                >Chai-in</motion.h1>
                 <p style={{ 
-                    color: 'rgba(255,255,255,0.9)', 
-                    fontSize: '1.2rem', 
-                    fontWeight: '600',
-                    textShadow: '0 2px 4px rgba(0,0,0,0.3)'
+                    color: 'var(--text-muted)', 
+                    fontSize: '1.1rem', 
+                    fontWeight: '600'
                 }}>Discover Kerala's Best Eats</p>
             </motion.div>
 
@@ -121,14 +142,14 @@ const Login = () => {
                     disabled={loginLoading}
                     style={{
                         width: '100%',
-                        padding: '20px',
+                        padding: '18px',
                         borderRadius: '24px',
-                        background: 'white',
-                        color: '#764ba2',
+                        background: 'var(--primary)',
+                        color: 'white',
                         border: 'none',
-                        fontSize: '1.2rem',
+                        fontSize: '1.1rem',
                         fontWeight: '800',
-                        boxShadow: '0 10px 30px rgba(0,0,0,0.3)',
+                        boxShadow: 'var(--shadow-lg)',
                         cursor: loginLoading ? 'not-allowed' : 'pointer',
                         display: 'flex',
                         alignItems: 'center',
@@ -139,11 +160,19 @@ const Login = () => {
                 >
                     {loginLoading ? (
                         <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1 }}>
-                            <Coffee size={24} color="#764ba2" />
+                            <motion.img
+                                src="./chai_icon.png"
+                                alt="Loading"
+                                style={{ width: '24px', height: '24px', objectFit: 'contain', filter: 'brightness(0) invert(1)' }}
+                                onError={(e) => { 
+                                    e.target.style.display = 'none';
+                                    e.target.parentElement.innerHTML = '<div style="font-size: 24px; color: white;">☕</div>';
+                                }}
+                            />
                         </motion.div>
                     ) : (
                         <>
-                            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="24" alt="Google" />
+                            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="20" alt="Google" />
                             Sign in with Google
                         </>
                     )}
@@ -154,29 +183,37 @@ const Login = () => {
                     display: 'flex', 
                     justifyContent: 'center', 
                     gap: '24px',
-                    color: 'rgba(255,255,255,0.8)',
+                    color: 'var(--text-muted)',
                     fontSize: '0.9rem'
                 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <MapPin size={16} />
+                    <motion.div 
+                        whileHover={{ scale: 1.1 }}
+                        style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
+                    >
+                        <MapPin size={16} color="var(--primary)" />
                         <span>Discover</span>
-                    </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <Star size={16} />
+                    </motion.div>
+                    <motion.div 
+                        whileHover={{ scale: 1.1 }}
+                        style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
+                    >
+                        <Star size={16} color="var(--primary)" />
                         <span>Rate</span>
-                    </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <Heart size={16} />
+                    </motion.div>
+                    <motion.div 
+                        whileHover={{ scale: 1.1 }}
+                        style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
+                    >
+                        <Heart size={16} color="var(--primary)" />
                         <span>Share</span>
-                    </div>
+                    </motion.div>
                 </div>
                 
                 <p style={{ 
                     marginTop: '24px', 
-                    color: 'rgba(255,255,255,0.7)', 
-                    fontSize: '0.85rem', 
-                    lineHeight: '1.5',
-                    fontStyle: 'italic'
+                    color: 'var(--text-muted)', 
+                    fontSize: '0.9rem', 
+                    lineHeight: '1.5'
                 }}>
                     Join thousands of foodies exploring Kerala's hidden gems
                 </p>

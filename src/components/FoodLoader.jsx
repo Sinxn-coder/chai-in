@@ -26,7 +26,21 @@ const FoodLoader = ({ message = "Tasting the flavors..." }) => {
                         justifyContent: 'center'
                     }}
                 >
-                    <Pizza size={40} color="var(--primary)" />
+                    <motion.img
+                        src="./chai_icon.png"
+                        alt="Loading"
+                        style={{ 
+                            width: '40px', 
+                            height: '40px',
+                            objectFit: 'contain'
+                        }}
+                        animate={{ rotate: 360 }}
+                        transition={{ repeat: Infinity, duration: 2, ease: "linear" }}
+                        onError={(e) => { 
+                            e.target.style.display = 'none';
+                            e.target.parentElement.innerHTML = '<div style="font-size: 40px; color: var(--primary);">☕</div>';
+                        }}
+                    />
                 </motion.div>
 
                 <motion.div
