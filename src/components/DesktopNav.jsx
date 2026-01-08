@@ -80,6 +80,7 @@ const DesktopNav = () => {
         { to: '/home', icon: Home },
         { to: '/explore', icon: Compass },
         { to: '/map', icon: MapPin },
+        { to: '/add-spot', icon: Plus },
         { to: '/club-leaderboard', icon: Users },
         { to: '/profile', icon: User },
     ];

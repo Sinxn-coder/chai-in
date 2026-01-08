@@ -16,6 +16,9 @@ const Home = ({ lang }) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [activeLocation, setActiveLocation] = useState(null);
     const [locationName, setLocationName] = useState('All Kerala');
+    const [showLocationSearch, setShowLocationSearch] = useState(false);
+    const [locationSearchTerm, setLocationSearchTerm] = useState('');
+    const [searchingLocation, setSearchingLocation] = useState(false);
     const [trendingSpots, setTrendingSpots] = useState([]);
     const [mostVisited, setMostVisited] = useState([]);
 
@@ -227,6 +230,58 @@ const Home = ({ lang }) => {
                     >
                         <MapPin size={16} /> {locationName}
                     </motion.button>
+                    
+                    {showLocationSearch && (
+                        <div style={{ flex: 1, minWidth: '200px' }}>
+                            <div style={{ position: 'relative' }}>
+                                <input
+                                    type="text"
+                                    placeholder="Search location in Kerala..."
+                                    value={locationSearchTerm}
+                                    onChange={(e) => setLocationSearchTerm(e.target.value)}
+                                    onKeyPress={(e) => e.key === 'Enter' && searchLocation()}
+                                    style={{
+                                        width: '100%',
+                                        padding: '0 70px 0 45px',
+                                        borderRadius: '25px',
+                                        border: '2px solid var(--primary)',
+                                        background: 'var(--bg-white)',
+                                        fontSize: '0.85rem',
+                                        fontWeight: '600',
+                                        boxShadow: '0 4px 15px rgba(239, 42, 57, 0.15)',
+                                        transition: 'all 0.3s ease',
+                                        boxSizing: 'border-box',
+                                        lineHeight: '44px'
+                                    }}
+                                />
+                                <Search size={20} color="var(--primary)" style={{ position: 'absolute', left: '15px', top: '12px', zIndex: 2 }} />
+                                <motion.button
+                                    whileTap={{ scale: 0.95 }}
+                                    onClick={searchLocation}
+                                    disabled={searchingLocation}
+                                    style={{
+                                        position: 'absolute',
+                                        right: '8px',
+                                        top: '7px',
+                                        background: 'var(--primary)',
+                                        color: 'white',
+                                        border: 'none',
+                                        padding: '8px 16px',
+                                        borderRadius: '20px',
+                                        fontSize: '0.75rem',
+                                        fontWeight: '700',
+                                        cursor: searchingLocation ? 'not-allowed' : 'pointer',
+                                        opacity: searchingLocation ? 0.6 : 1,
+                                        boxShadow: '0 2px 8px rgba(239, 42, 57, 0.3)',
+                                        zIndex: 2,
+                                        height: '30px'
+                                    }}
+                                >
+                                    {searchingLocation ? '...' : 'Go'}
+                                </motion.button>
+                            </div>
+                        </div>
+                    )}
                 </div>
 
                 {/* Trending Spots Section */}

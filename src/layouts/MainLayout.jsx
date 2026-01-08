@@ -12,14 +12,9 @@ const MainLayout = ({ lang }) => {
     const location = useLocation();
     const [showNewNav, setShowNewNav] = useState(false);
 
-    // Hide main nav bar when user navigates to main app sections (but not home page)
+    // Hide main nav bar only when user navigates to club-leaderboard page
     useEffect(() => {
-        const shouldHideMainNav = location.pathname.includes('/explore') || 
-                                  location.pathname.includes('/club-leaderboard') ||
-                                  location.pathname.includes('/community') ||
-                                  location.pathname.includes('/map') ||
-                                  location.pathname.includes('/add-spot') ||
-                                  location.pathname.includes('/profile');
+        const shouldHideMainNav = location.pathname.includes('/club-leaderboard');
         
         setShowNewNav(shouldHideMainNav);
     }, [location.pathname]);
