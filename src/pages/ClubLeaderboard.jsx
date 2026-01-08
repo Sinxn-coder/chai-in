@@ -14,18 +14,23 @@ const ClubLeaderboard = ({ lang }) => {
         <div style={{ 
             minHeight: '100vh',
             background: 'linear-gradient(135deg, #fef3c7 0%, #fbbf24 50%, #f59e0b 100%)',
-            padding: '20px'
+            padding: '20px',
+            marginTop: '-60px' // Compensate for hidden main nav
         }}>
-            {/* Tab Navigation */}
+            {/* Tab Navigation - Fixed in main nav space */}
             <div style={{ 
+                position: 'fixed',
+                top: '0',
+                left: '0',
+                right: '0',
                 display: 'flex', 
                 gap: '8px', 
-                marginBottom: '20px',
+                padding: '12px 20px',
+                background: 'rgba(255,255,255,0.95)',
+                backdropFilter: 'blur(10px)',
+                zIndex: 1000,
                 borderBottom: '2px solid #f3f4f6',
-                background: 'rgba(255,255,255,0.9)',
-                padding: '20px',
-                borderRadius: '20px 20px 0 0',
-                backdropFilter: 'blur(10px)'
+                boxShadow: '0 4px 20px rgba(0,0,0,0.1)'
             }}>
                 {tabs.map(tab => (
                     <button
@@ -65,11 +70,9 @@ const ClubLeaderboard = ({ lang }) => {
             {/* Tab Content - Full Page */}
             <div
                 style={{
-                    minHeight: 'calc(100vh - 120px)',
-                    background: 'rgba(255,255,255,0.95)',
-                    borderRadius: '0 0 20px 20px',
-                    padding: '40px',
-                    backdropFilter: 'blur(10px)'
+                    minHeight: '100vh',
+                    paddingTop: '80px', // Space for fixed nav
+                    background: 'transparent'
                 }}
             >
                 {activeTab === 'club' && (

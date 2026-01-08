@@ -30,52 +30,12 @@ const MainLayout = ({ lang }) => {
 
     return (
         <div style={{ minHeight: '100vh', background: 'var(--bg-cream)', position: 'relative' }}>
-            {/* New Navigation Bar - Shows when main nav is hidden */}
-            {showNewNav && (
-                <div
-                    style={{
-                        position: 'fixed',
-                        top: '0',
-                        left: '0',
-                        right: '0',
-                        background: 'var(--primary)',
-                        padding: '12px 20px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        zIndex: 1000,
-                        boxShadow: '0 4px 20px rgba(0,0,0,0.1)'
-                    }}
-                >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            <Users size={20} color="white" />
-                            <span style={{ color: 'white', fontWeight: '600', fontSize: '1rem' }}>Club</span>
-                        </div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            <Crown size={20} color="white" />
-                            <span style={{ color: 'white', fontWeight: '600', fontSize: '1rem' }}>Leaderboard</span>
-                        </div>
-                    </div>
-                    <button
-                        onClick={() => setShowNewNav(false)}
-                        style={{
-                            background: 'none',
-                            border: 'none',
-                            color: 'white',
-                            cursor: 'pointer',
-                            padding: '4px'
-                        }}
-                    >
-                        <X size={20} />
-                    </button>
+            {/* Original Top Navigation Bar - Hidden when new nav is shown */}
+            {!showNewNav && (
+                <div className="mobile-only" style={{ transition: 'opacity 0.3s ease' }}>
+                    <AppBar />
                 </div>
             )}
-
-            {/* Original Top Navigation Bar - Hidden when new nav is shown */}
-            <div className="mobile-only" style={{ transition: 'opacity 0.3s ease' }}>
-                <AppBar />
-            </div>
 
             {/* Desktop Navigation - Right Side */}
             <DesktopNav />
