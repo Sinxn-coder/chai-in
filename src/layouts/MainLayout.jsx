@@ -64,10 +64,6 @@ const MainLayout = ({ lang }) => {
                             <Crown size={20} color="white" />
                             <span style={{ color: 'white', fontWeight: '600', fontSize: '1rem' }}>Leaderboard</span>
                         </div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            <Plus size={20} color="white" />
-                            <span style={{ color: 'white', fontWeight: '600', fontSize: '1rem' }}>Explore</span>
-                        </div>
                     </div>
                     <button
                         onClick={() => setShowNewNav(false)}

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Home, Map, Plus, Users, Crown } from 'lucide-react';
+import { Home, Map, Plus, Users, Crown, Compass } from 'lucide-react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 
@@ -8,9 +8,9 @@ const BottomNav = ({ lang = 'en' }) => {
 
   const navItems = [
     { to: '/home', icon: Home, label: 'Home' },
+    { to: '/explore', icon: Compass, label: 'Explore' },
     { to: '/map', icon: Map, label: 'Map' },
-    { to: '/community', icon: Users, label: 'Club' },
-    { to: '/leaderboard', icon: Crown, label: 'Top' },
+    { to: '/club-leaderboard', icon: Users, label: 'Club' },
   ];
 
   const isActivePath = (item) =>

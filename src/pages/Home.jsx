@@ -290,22 +290,6 @@ const Home = ({ lang }) => {
                         </div>
                     </motion.div>
                 )}
-
-                {/* All Spots Grid */}
-                <motion.div
-                    layout
-                    style={{
-                        display: 'grid',
-                        gridTemplateColumns: 'repeat(2, 1fr)',
-                        gap: '16px'
-                    }}
-                >
-                    <AnimatePresence>
-                        {filteredSpots.map(spot => (
-                            <SpotCard key={spot.id} spot={spot} />
-                        ))}
-                    </AnimatePresence>
-                </motion.div>
             </div>
         </div>
     );
