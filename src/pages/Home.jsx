@@ -86,9 +86,22 @@ const Home = ({ lang }) => {
     const filteredSpots = useMemo(() => {
         return spots.filter(s => {
             const searchLower = searchTerm.toLowerCase();
+            const searchWithoutSpaces = searchLower.replace(/\s+/g, '');
+            const searchWithHyphens = searchLower.replace(/\s+/g, '-');
+            
             const matchesSearch = s.name.toLowerCase().includes(searchLower) || 
                                (s.category && s.category.toLowerCase().includes(searchLower)) ||
-                               (s.tags && s.tags.some(tag => tag.toLowerCase().includes(searchLower)));
+                               (s.tags && s.tags.some(tag => {
+                                   const tagLower = tag.toLowerCase();
+                                   const tagWithoutSpaces = tagLower.replace(/\s+/g, '');
+                                   const tagWithHyphens = tagLower.replace(/\s+/g, '-');
+                                   return tagLower.includes(searchLower) || 
+                                          tagWithoutSpaces.includes(searchWithoutSpaces) ||
+                                          tagWithHyphens.includes(searchWithHyphens) ||
+                                          searchLower.includes(tagLower) ||
+                                          searchWithoutSpaces.includes(tagWithoutSpaces) ||
+                                          searchWithHyphens.includes(tagWithHyphens);
+                               }));
             const matchesCategory = activeCategory === 'All' || s.category === activeCategory;
             return matchesSearch && matchesCategory;
         });
