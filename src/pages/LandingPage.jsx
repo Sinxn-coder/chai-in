@@ -139,8 +139,10 @@ const LandingPage = () => {
                         }}
                     >
                         <motion.div
-                            animate={{ rotate: [0, 10, -10, 0] }}
-                            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                            animate={{ 
+                                opacity: [0.9, 1, 0.9]
+                            }}
+                            transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
                         >
                             <motion.img
                                 src="./chai_icon.png"
@@ -150,8 +152,10 @@ const LandingPage = () => {
                                     height: '70px',
                                     objectFit: 'contain'
                                 }}
-                                animate={{ scale: [1, 1.1, 1] }}
-                                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                                animate={{ 
+                                    opacity: [0.8, 1, 0.8]
+                                }}
+                                transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
                                 onError={(e) => { 
                                     e.target.style.display = 'none';
                                     e.target.parentElement.innerHTML = '<div style="font-size: 60px; color: #f59e0b;">☕</div>';

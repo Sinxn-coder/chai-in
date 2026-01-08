@@ -12,8 +12,10 @@ const Logo = ({ size = 40, showText = true, color = "var(--primary)" }) => {
                     height: size,
                     objectFit: 'contain'
                 }}
-                animate={{ rotate: [0, 10, -10, 0] }}
-                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                animate={{ 
+                    opacity: [0.9, 1, 0.9]
+                }}
+                transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
                 onError={(e) => { 
                     e.target.style.display = 'none';
                     e.target.parentElement.innerHTML = `
@@ -28,9 +30,7 @@ const Logo = ({ size = 40, showText = true, color = "var(--primary)" }) => {
             />
 
             {showText && (
-                <motion.h1 
-                    animate={{ scale: [1, 1.05, 1] }}
-                    transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                <h1 
                     style={{
                         fontSize: `${size * 0.6}px`,
                         fontWeight: '800',
@@ -41,7 +41,7 @@ const Logo = ({ size = 40, showText = true, color = "var(--primary)" }) => {
                     }}
                 >
                     Chai.in
-                </motion.h1>
+                </h1>
             )}
         </div>
     );

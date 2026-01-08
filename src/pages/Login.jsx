@@ -77,8 +77,10 @@ const Login = () => {
             >
                 {/* Animated Chai-in Icon */}
                 <motion.div
-                    animate={{ rotate: [0, 10, -10, 0] }}
-                    transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
+                    animate={{ 
+                        opacity: [0.9, 1, 0.9]
+                    }}
+                    transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
                     style={{ 
                         position: 'relative', 
                         width: '120px', 
@@ -102,26 +104,24 @@ const Login = () => {
                             height: '80px',
                             objectFit: 'contain'
                         }}
-                        animate={{ scale: [1, 1.1, 1] }}
-                        transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
+                        animate={{ 
+                            opacity: [0.8, 1, 0.8]
+                        }}
+                        transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
                         onError={(e) => { 
                             e.target.style.display = 'none';
                             e.target.parentElement.innerHTML = '<div style="font-size: 48px; color: var(--primary);">☕</div>';
                         }}
                     />
                 </motion.div>
-                <motion.h1 
-                    animate={{ scale: [1, 1.05, 1] }}
-                    transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
-                    style={{ 
-                        marginTop: '20px', 
-                        fontSize: '2.5rem', 
-                        fontWeight: '900', 
-                        color: 'var(--primary)', 
-                        letterSpacing: '-1px',
-                        marginBottom: '8px'
-                    }}
-                >Chai-in</motion.h1>
+                <h1 style={{ 
+                    marginTop: '20px', 
+                    fontSize: '2.5rem', 
+                    fontWeight: '900', 
+                    color: 'var(--primary)', 
+                    letterSpacing: '-1px',
+                    marginBottom: '8px'
+                }}>Chai-in</h1>
                 <p style={{ 
                     color: 'var(--text-muted)', 
                     fontSize: '1.1rem', 
