@@ -156,26 +156,44 @@ const Leaderboard = () => {
             {/* Custom XP Popup */}
             <AnimatePresence>
                 {showXPPopup && (
-                    <motion.div
-                        initial={{ opacity: 0, scale: 0.8 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.8 }}
-                        style={{
-                            position: 'fixed',
-                            top: '50%',
-                            left: '50%',
-                            transform: 'translate(-50%, -50%)',
-                            background: 'white',
-                            padding: '32px',
-                            borderRadius: '24px',
-                            boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
-                            zIndex: 9999,
-                            maxWidth: '90vw',
-                            width: '400px',
-                            maxHeight: '80vh',
-                            overflow: 'auto'
-                        }}
-                    >
+                    <>
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            style={{
+                                position: 'fixed',
+                                top: 0,
+                                left: 0,
+                                right: 0,
+                                bottom: 0,
+                                background: 'rgba(0,0,0,0.5)',
+                                zIndex: 9998,
+                                backdropFilter: 'blur(4px)'
+                            }}
+                            onClick={() => setShowXPPopup(false)}
+                        />
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.8 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.8 }}
+                            style={{
+                                position: 'fixed',
+                                top: '50vh',
+                                left: '50vw',
+                                transform: 'translate(-50%, -50%)',
+                                background: 'white',
+                                padding: '32px',
+                                borderRadius: '24px',
+                                boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
+                                zIndex: 9999,
+                                maxWidth: '90vw',
+                                width: '400px',
+                                maxHeight: '80vh',
+                                overflow: 'auto',
+                                boxSizing: 'border-box'
+                            }}
+                        >
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                                 <div style={{ 
@@ -232,6 +250,7 @@ const Leaderboard = () => {
                             </motion.button>
                         </div>
                     </motion.div>
+                    </>
                 )}
             </AnimatePresence>
         </div>
