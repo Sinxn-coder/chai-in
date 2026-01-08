@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import React, { useEffect, useState, useRef } from 'react';
+import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import { supabase } from '../lib/supabaseClient';
 import L from 'leaflet';
@@ -27,6 +27,19 @@ const createUserIcon = () => {
         iconAnchor: [20, 20],
         popupAnchor: [0, -20]
     });
+};
+
+// Component to control map center
+const MapController = ({ center, zoom }) => {
+    const map = useMap();
+    
+    useEffect(() => {
+        if (center) {
+            map.setView(center, zoom || 13);
+        }
+    }, [center, zoom, map]);
+    
+    return null;
 };
 
 const MapScreen = () => {
@@ -131,7 +144,8 @@ const MapScreen = () => {
                 </motion.button>
             </div>
 
-            <MapContainer center={userLocation || defaultPosition} zoom={13} style={{ height: '100%', width: '100%' }}>
+            <MapContainer center={defaultPosition} zoom={13} style={{ height: '100%', width: '100%' }}>
+                <MapController center={userLocation} zoom={14} />
                 <TileLayer
                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                     url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
