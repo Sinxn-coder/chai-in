@@ -52,8 +52,23 @@ const StyledCommunity = () => {
                 </p>
             </div>
 
-            {/* Community Content - Full Width */}
-            <Community />
+            {/* Community Content - Override styles */}
+            <div style={{
+                background: 'transparent',
+                minHeight: 'calc(100vh - 200px)'
+            }}>
+                <style>
+                    {`
+                        div[style*="var(--secondary)"] {
+                            background: transparent !important;
+                        }
+                        div[style*="borderBottomLeftRadius"] {
+                            display: none !important;
+                        }
+                    `}
+                </style>
+                <Community />
+            </div>
         </div>
     );
 };
@@ -106,8 +121,26 @@ const StyledLeaderboard = () => {
                 </p>
             </div>
 
-            {/* Leaderboard Content - Full Width */}
-            <Leaderboard />
+            {/* Leaderboard Content - Override styles */}
+            <div style={{
+                background: 'transparent',
+                minHeight: 'calc(100vh - 200px)'
+            }}>
+                <style>
+                    {`
+                        div[style*="var(--secondary)"] {
+                            background: transparent !important;
+                        }
+                        div[style*="var(--primary)"] {
+                            display: none !important;
+                        }
+                        button[onclick*="navigate(-1)"] {
+                            display: none !important;
+                        }
+                    `}
+                </style>
+                <Leaderboard />
+            </div>
         </div>
     );
 };
