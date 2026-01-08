@@ -109,8 +109,24 @@ const Leaderboard = () => {
     };
 
     return (
-        <div style={{ minHeight: '100vh', background: 'var(--secondary)', paddingBottom: '120px' }}>
-            <div style={{ height: '180px', background: 'var(--primary)', borderBottomLeftRadius: '40px', borderBottomRightRadius: '40px', padding: '24px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
+        <div style={{ 
+            minHeight: '100vh', 
+            background: 'linear-gradient(135deg, #fef3c7 0%, #fbbf24 50%, #f59e0b 100%)', 
+            paddingBottom: '120px' 
+        }}>
+            <div style={{ 
+                height: '180px', 
+                background: 'linear-gradient(135deg, #f59e0b, #d97706)', 
+                borderBottomLeftRadius: '40px', 
+                borderBottomRightRadius: '40px', 
+                padding: '24px', 
+                display: 'flex', 
+                flexDirection: 'column', 
+                alignItems: 'center', 
+                justifyContent: 'center', 
+                position: 'relative',
+                boxShadow: '0 8px 32px rgba(245, 158, 11, 0.3)'
+            }}>
                 <button onClick={() => navigate(-1)} style={{ position: 'absolute', left: '20px', top: '30px', background: 'rgba(255,255,255,0.2)', border: 'none', padding: '10px', borderRadius: '15px', color: 'white' }}>
                     <ChevronLeft size={24} />
                 </button>
@@ -130,21 +146,41 @@ const Leaderboard = () => {
                                 initial={{ opacity: 0, x: -20 }}
                                 animate={{ opacity: 1, x: 0 }}
                                 transition={{ delay: i * 0.05 }}
-                                style={{ background: 'white', padding: '16px', borderRadius: '24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', boxShadow: 'var(--shadow-sm)', border: u.isMe ? '2px solid var(--primary)' : 'none' }}
+                                style={{ 
+                                    background: i === 0 ? 'linear-gradient(135deg, rgba(254, 243, 199, 0.8), rgba(251, 191, 36, 0.8))' : 
+                                               i === 1 ? 'linear-gradient(135deg, rgba(229, 231, 235, 0.8), rgba(209, 213, 219, 0.8))' :
+                                               'rgba(255,255,255,0.1)', 
+                                    padding: '16px', 
+                                    borderRadius: '24px', 
+                                    display: 'flex', 
+                                    alignItems: 'center', 
+                                    justifyContent: 'space-between', 
+                                    boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
+                                    backdropFilter: 'blur(10px)',
+                                    border: u.isMe ? '2px solid #f59e0b' : '1px solid rgba(255,255,255,0.2)'
+                                }}
                             >
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                                    <div style={{ width: '28px', fontWeight: '900', color: i < 3 ? 'var(--primary)' : 'var(--text-muted)', fontSize: '1.1rem' }}>
+                                    <div style={{ width: '28px', fontWeight: '900', color: i < 3 ? '#f59e0b' : '#6b7280', fontSize: '1.1rem' }}>
                                         {i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `#${i + 1}`}
                                     </div>
-                                    <div style={{ width: '48px', height: '48px', borderRadius: '16px', background: 'var(--secondary)', overflow: 'hidden' }}>
-                                        {u.avatar ? <img src={u.avatar} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><User size={24} color="var(--text-muted)" /></div>}
+                                    <div style={{ width: '48px', height: '48px', borderRadius: '16px', background: 'linear-gradient(135deg, #f59e0b, #d97706)', overflow: 'hidden' }}>
+                                        {u.avatar ? <img src={u.avatar} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><User size={24} color="white" /></div>}
                                     </div>
                                     <div>
-                                        <div style={{ fontWeight: '800', fontSize: '1rem', color: u.isMe ? 'var(--primary)' : 'var(--text-main)' }}>{u.name} {u.isMe && '(You!)'}</div>
-                                        <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: '600' }}>{u.spots} Spots shared</div>
+                                        <div style={{ fontWeight: '800', fontSize: '1rem', color: u.isMe ? '#f59e0b' : '#1f2937' }}>{u.name} {u.isMe && '(You!)'}</div>
+                                        <div style={{ fontSize: '0.8rem', color: '#6b7280', fontWeight: '600' }}>{u.spots} Spots shared</div>
                                     </div>
                                 </div>
-                                <div style={{ background: 'var(--secondary)', padding: '8px 16px', borderRadius: '14px', fontWeight: '900', color: 'var(--primary)', fontSize: '0.9rem' }}>
+                                <div style={{ 
+                                    background: 'linear-gradient(135deg, #f59e0b, #d97706)', 
+                                    padding: '8px 16px', 
+                                    borderRadius: '14px', 
+                                    fontWeight: '900', 
+                                    color: 'white', 
+                                    fontSize: '0.9rem',
+                                    boxShadow: '0 4px 20px rgba(245, 158, 11, 0.3)'
+                                }}>
                                     {u.xp} XP
                                 </div>
                             </motion.div>

@@ -223,19 +223,44 @@ const Community = () => {
     };
 
     return (
-        <div style={{ paddingBottom: '120px', background: 'var(--secondary)', minHeight: '100vh' }}>
+        <div style={{ 
+            paddingBottom: '120px', 
+            background: 'linear-gradient(135deg, #fef3c7 0%, #fbbf24 50%, #f59e0b 100%)', 
+            minHeight: '100vh' 
+        }}>
             {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
 
             {/* Header Area */}
-            <div style={{ padding: '24px 20px', background: 'white', borderBottomLeftRadius: '32px', borderBottomRightRadius: '32px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', boxShadow: 'var(--shadow-sm)' }}>
+            <div style={{ 
+                padding: '24px 20px', 
+                background: 'rgba(255,255,255,0.1)', 
+                backdropFilter: 'blur(10px)',
+                borderBottomLeftRadius: '32px', 
+                borderBottomRightRadius: '32px', 
+                display: 'flex', 
+                justifyContent: 'space-between', 
+                alignItems: 'center', 
+                boxShadow: '0 8px 32px rgba(0,0,0,0.1)',
+                border: '1px solid rgba(255,255,255,0.2)'
+            }}>
                 <div>
-                    <h1 style={{ fontSize: '1.5rem', fontWeight: '900', color: 'var(--text-main)', margin: 0 }}>Community</h1>
-                    <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: '600', margin: 0 }}>Discover Kerala's tastes</p>
+                    <h1 style={{ fontSize: '1.5rem', fontWeight: '900', color: '#1f2937', margin: 0 }}>Community</h1>
+                    <p style={{ fontSize: '0.85rem', color: '#6b7280', fontWeight: '600', margin: 0 }}>Discover Kerala's tastes</p>
                 </div>
                 <motion.button
                     whileTap={{ scale: 0.9 }}
                     onClick={() => setShowCreate(true)}
-                    style={{ background: 'var(--primary)', color: 'white', border: 'none', padding: '12px', borderRadius: '18px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                    style={{ 
+                        background: 'linear-gradient(135deg, #ef4444, #dc2626)', 
+                        color: 'white', 
+                        border: 'none', 
+                        padding: '12px', 
+                        borderRadius: '18px', 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        justifyContent: 'center',
+                        boxShadow: '0 4px 20px rgba(239, 68, 68, 0.3)'
+                    }}
                 >
                     <Plus size={24} />
                 </motion.button>
@@ -252,20 +277,33 @@ const Community = () => {
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: i * 0.1 }}
-                                style={{ background: 'white', borderRadius: '32px', overflow: 'hidden', boxShadow: 'var(--shadow-md)' }}
+                                style={{ 
+                                    background: 'rgba(255,255,255,0.1)', 
+                                    borderRadius: '32px', 
+                                    overflow: 'hidden', 
+                                    boxShadow: '0 8px 32px rgba(0,0,0,0.1)',
+                                    backdropFilter: 'blur(10px)',
+                                    border: '1px solid rgba(255,255,255,0.2)'
+                                }}
                             >
                                 {/* Post Header */}
                                 <div style={{ padding: '16px', display: 'flex', alignItems: 'center', gap: '12px' }}>
-                                    <div style={{ width: '40px', height: '40px', borderRadius: '14px', background: 'var(--secondary)', overflow: 'hidden' }}>
+                                    <div style={{ 
+                                        width: '40px', 
+                                        height: '40px', 
+                                        borderRadius: '14px', 
+                                        background: 'linear-gradient(135deg, #f59e0b, #d97706)', 
+                                        overflow: 'hidden' 
+                                    }}>
                                         {post.author.avatar_url ? (
                                             <img src={post.author.avatar_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                                         ) : (
-                                            <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><UserIcon size={20} color="var(--text-muted)" /></div>
+                                            <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><UserIcon size={20} color="white" /></div>
                                         )}
                                     </div>
                                     <div>
-                                        <div style={{ fontWeight: '800', fontSize: '0.95rem' }}>{post.author.username || post.author.display_name}</div>
-                                        <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: '600' }}>{formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}</div>
+                                        <div style={{ fontWeight: '800', fontSize: '0.95rem', color: '#1f2937' }}>{post.author.username || post.author.display_name}</div>
+                                        <div style={{ fontSize: '0.75rem', color: '#6b7280', fontWeight: '600' }}>{formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}</div>
                                     </div>
                                 </div>
 
@@ -278,15 +316,15 @@ const Community = () => {
                                 <div style={{ padding: '20px' }}>
                                     <div style={{ display: 'flex', gap: '16px', marginBottom: '12px' }}>
                                         <motion.div whileTap={{ scale: 0.8 }} onClick={() => handleLike(post.id, post.likes_count)} style={{ cursor: 'pointer' }}>
-                                            <Heart size={26} color="var(--primary)" fill={post.isLikedByUser ? "var(--primary)" : "none"} />
+                                            <Heart size={26} color="#ef4444" fill={post.isLikedByUser ? "#ef4444" : "none"} />
                                         </motion.div>
                                         <motion.div whileTap={{ scale: 0.8 }} onClick={() => setSelectedPost(post)} style={{ cursor: 'pointer' }}>
-                                            <MessageCircle size={26} color="var(--text-main)" />
+                                            <MessageCircle size={26} color="#6b7280" />
                                         </motion.div>
                                     </div>
-                                    <div style={{ fontWeight: '850', fontSize: '0.9rem', marginBottom: '8px' }}>{post.likes_count || 0} likes</div>
-                                    <div style={{ fontSize: '0.95rem', lineHeight: '1.5', color: 'var(--text-main)' }}>
-                                        <span style={{ fontWeight: '900', marginRight: '6px' }}>{post.author.username || post.author.display_name}</span>
+                                    <div style={{ fontWeight: '850', fontSize: '0.9rem', marginBottom: '8px', color: '#1f2937' }}>{post.likes_count || 0} likes</div>
+                                    <div style={{ fontSize: '0.95rem', lineHeight: '1.5', color: '#1f2937' }}>
+                                        <span style={{ fontWeight: '900', marginRight: '6px', color: '#1f2937' }}>{post.author.username || post.author.display_name}</span>
                                         {post.caption}
                                     </div>
                                 </div>
