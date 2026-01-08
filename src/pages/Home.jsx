@@ -85,7 +85,10 @@ const Home = ({ lang }) => {
 
     const filteredSpots = useMemo(() => {
         return spots.filter(s => {
-            const matchesSearch = s.name.toLowerCase().includes(searchTerm.toLowerCase());
+            const searchLower = searchTerm.toLowerCase();
+            const matchesSearch = s.name.toLowerCase().includes(searchLower) || 
+                               (s.category && s.category.toLowerCase().includes(searchLower)) ||
+                               (s.tags && s.tags.some(tag => tag.toLowerCase().includes(searchLower)));
             const matchesCategory = activeCategory === 'All' || s.category === activeCategory;
             return matchesSearch && matchesCategory;
         });
@@ -168,7 +171,7 @@ const Home = ({ lang }) => {
                 </div>
 
             <div className="hide-scrollbar" style={{ display: 'flex', gap: '12px', overflowX: 'auto', marginBottom: '30px', padding: '4px 0' }}>
-                {['All', 'Trending', 'Arabian', 'Burger', 'Cafes', 'Desserts'].map(cat => (
+                {['All', 'Trending', 'Arabian', 'Burger', 'Cafes', 'Desserts', 'Non-Veg'].map(cat => (
                     <motion.button
                         key={cat}
                         whileTap={{ scale: 0.95 }}
