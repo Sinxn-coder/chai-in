@@ -9,8 +9,9 @@ const BottomNav = ({ lang = 'en' }) => {
   const navItems = [
     { to: '/home', icon: Home, label: 'Home' },
     { to: '/explore', icon: Compass, label: 'Explore' },
+    { to: '', icon: null, label: 'spacer1' },
     { to: '/map', icon: Map, label: 'Map' },
-    { to: '', icon: null, label: 'spacer' },
+    { to: '', icon: null, label: 'spacer2' },
     { to: '/club-leaderboard', icon: Users, label: 'Club' },
   ];
 
@@ -106,8 +107,8 @@ const BottomNav = ({ lang = 'en' }) => {
       >
         {navItems.map((item, idx) => {
           const active = isActivePath(item);
-          const isLeft = idx < 2;
-          const col = isLeft ? idx + 1 : idx + 3;
+          // For 6 items: Home(0), Explore(1), spacer1(2), Map(3), spacer2(4), Club(5)
+          const col = idx + 1;
 
           return (
             <div key={item.to} style={{ gridColumn: col }}>

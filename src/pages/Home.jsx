@@ -169,7 +169,6 @@ const Home = ({ lang }) => {
     const resetToAllKerala = () => {
         setActiveLocation(null);
         setLocationName('All Kerala');
-        setShowLocationSearch(false);
         setLocationSearchTerm('');
     };
 
