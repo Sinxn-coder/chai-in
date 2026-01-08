@@ -1,20 +1,21 @@
 import React, { useEffect, useState } from 'react';
-import { Trophy, Crown, User, ChevronLeft } from 'lucide-react';
+import { Trophy, Crown, User, ChevronLeft, X, Star } from 'lucide-react';
 import { supabase } from '../lib/supabaseClient';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 
 const Leaderboard = () => {
     const navigate = useNavigate();
     const [leaders, setLeaders] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [showXPPopup, setShowXPPopup] = useState(false);
 
     useEffect(() => {
         fetchLeaderboard();
         
         // Show XP info popup
         setTimeout(() => {
-            alert('🎮 XP Points: Your XP points can be used for future features and rewards in the app! Keep exploring and reviewing to earn more XP.');
+            setShowXPPopup(true);
         }, 2000);
         
         // Listen for profile updates to refresh leaderboard names
@@ -151,6 +152,86 @@ const Leaderboard = () => {
                     </div>
                 )}
             </div>
+
+            {/* Custom XP Popup */}
+            <AnimatePresence>
+                {showXPPopup && (
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.8 }}
+                        style={{
+                            position: 'fixed',
+                            top: '50%',
+                            left: '50%',
+                            transform: 'translate(-50%, -50%)',
+                            background: 'white',
+                            padding: '32px',
+                            borderRadius: '24px',
+                            boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
+                            zIndex: 9999,
+                            maxWidth: '400px',
+                            width: '90%'
+                        }}
+                    >
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                <div style={{ 
+                                    width: '48px', 
+                                    height: '48px', 
+                                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', 
+                                    borderRadius: '16px', 
+                                    display: 'flex', 
+                                    alignItems: 'center', 
+                                    justifyContent: 'center',
+                                    boxShadow: '0 4px 12px rgba(102, 126, 234, 0.4)'
+                                }}>
+                                    <Star size={24} color="white" />
+                                </div>
+                                <div>
+                                    <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: '900', color: 'var(--text-main)' }}>XP Points</h3>
+                                    <p style={{ margin: '8px 0 0 0', fontSize: '0.9rem', color: 'var(--text-muted)', lineHeight: '1.4' }}>
+                                        Your XP points can be used for future features and rewards in the app! Keep exploring and reviewing to earn more XP.
+                                    </p>
+                                </div>
+                            </div>
+                            <motion.button
+                                whileTap={{ scale: 0.9 }}
+                                onClick={() => setShowXPPopup(false)}
+                                style={{
+                                    background: 'none',
+                                    border: 'none',
+                                    cursor: 'pointer',
+                                    padding: '8px',
+                                    borderRadius: '12px',
+                                    color: 'var(--text-muted)'
+                                }}
+                            >
+                                <X size={20} />
+                            </motion.button>
+                        </div>
+                        <div style={{ textAlign: 'center' }}>
+                            <motion.button
+                                whileTap={{ scale: 0.95 }}
+                                onClick={() => setShowXPPopup(false)}
+                                style={{
+                                    background: 'var(--primary)',
+                                    color: 'white',
+                                    border: 'none',
+                                    padding: '12px 24px',
+                                    borderRadius: '16px',
+                                    fontWeight: '800',
+                                    fontSize: '1rem',
+                                    cursor: 'pointer',
+                                    width: '100%'
+                                }}
+                            >
+                                Got it! 🎮
+                            </motion.button>
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </div>
     );
 };
