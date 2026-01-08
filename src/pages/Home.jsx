@@ -157,7 +157,7 @@ const Home = ({ lang }) => {
                 setActiveLocation(location);
                 setLocationName(location.name);
                 setShowLocationSearch(false);
-                setLocationSearchTerm('');
+                // Don't clear the search term so clear button appears
             }
         } catch (error) {
             console.error('Error searching location:', error);

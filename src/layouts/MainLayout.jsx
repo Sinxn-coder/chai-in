@@ -32,10 +32,7 @@ const MainLayout = ({ lang }) => {
         <div style={{ minHeight: '100vh', background: 'var(--bg-cream)', position: 'relative' }}>
             {/* New Navigation Bar - Shows when main nav is hidden */}
             {showNewNav && (
-                <motion.div
-                    initial={{ opacity: 0, y: -80 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.3 }}
+                <div
                     style={{
                         position: 'fixed',
                         top: '0',
@@ -72,7 +69,7 @@ const MainLayout = ({ lang }) => {
                     >
                         <X size={20} />
                     </button>
-                </motion.div>
+                </div>
             )}
 
             {/* Original Top Navigation Bar - Hidden when new nav is shown */}
