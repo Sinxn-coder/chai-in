@@ -37,8 +37,8 @@ const MainLayout = ({ lang }) => {
                 </div>
             )}
 
-            {/* Desktop Navigation - Right Side */}
-            <DesktopNav />
+            {/* Desktop Navigation - Hidden when new nav is shown */}
+            {!showNewNav && <DesktopNav />}
 
             {/* Animated Food Particles Background */}
             <FoodParticles />

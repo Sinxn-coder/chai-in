@@ -17,20 +17,20 @@ const ClubLeaderboard = ({ lang }) => {
             padding: '20px',
             marginTop: '-60px' // Compensate for hidden main nav
         }}>
-            {/* Tab Navigation - Fixed in main nav space */}
+            {/* Tab Navigation - Fixed in main nav space with only icons */}
             <div style={{ 
                 position: 'fixed',
                 top: '0',
                 left: '0',
                 right: '0',
+                height: '60px', // Same height as main nav
                 display: 'flex', 
-                gap: '8px', 
-                padding: '12px 20px',
-                background: 'rgba(255,255,255,0.95)',
-                backdropFilter: 'blur(10px)',
+                alignItems: 'center',
+                justifyContent: 'space-around',
+                padding: '0 20px',
+                background: 'var(--primary)', // Same as main nav
                 zIndex: 1000,
-                borderBottom: '2px solid #f3f4f6',
-                boxShadow: '0 4px 20px rgba(0,0,0,0.1)'
+                boxShadow: '0 2px 10px rgba(0,0,0,0.1)'
             }}>
                 {tabs.map(tab => (
                     <button
@@ -47,22 +47,20 @@ const ClubLeaderboard = ({ lang }) => {
                             }
                         }}
                         style={{
-                            flex: 1,
-                            padding: '12px',
+                            background: 'none',
                             border: 'none',
-                            background: activeTab === tab.id ? '#ef4444' : 'transparent',
-                            color: activeTab === tab.id ? 'white' : '#6b7280',
-                            borderRadius: '12px',
-                            fontWeight: '600',
+                            color: 'white',
                             cursor: 'pointer',
+                            padding: '8px',
+                            borderRadius: '8px',
                             display: 'flex',
                             alignItems: 'center',
-                            gap: '8px',
-                            transition: 'all 0.3s ease'
+                            justifyContent: 'center',
+                            transition: 'all 0.3s ease',
+                            opacity: activeTab === tab.id ? 1 : 0.7
                         }}
                     >
-                        <tab.icon size={18} />
-                        <span>{tab.label}</span>
+                        <tab.icon size={24} />
                     </button>
                 ))}
             </div>
