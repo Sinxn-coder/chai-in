@@ -13,17 +13,18 @@ const ClubLeaderboard = ({ lang }) => {
     return (
         <div style={{ 
             padding: '20px',
-            background: 'var(--bg-white)',
+            background: '#ffffff',
             borderRadius: '20px',
-            boxShadow: 'var(--shadow-md)',
-            margin: '20px'
+            boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
+            margin: '20px',
+            minHeight: '80vh'
         }}>
             {/* Tab Navigation */}
             <div style={{ 
                 display: 'flex', 
                 gap: '8px', 
                 marginBottom: '20px',
-                borderBottom: '2px solid var(--secondary)'
+                borderBottom: '2px solid #f3f4f6'
             }}>
                 {tabs.map(tab => (
                     <button
@@ -33,8 +34,8 @@ const ClubLeaderboard = ({ lang }) => {
                             flex: 1,
                             padding: '12px',
                             border: 'none',
-                            background: activeTab === tab.id ? 'var(--primary)' : 'transparent',
-                            color: activeTab === tab.id ? 'white' : 'var(--text-muted)',
+                            background: activeTab === tab.id ? '#ef4444' : 'transparent',
+                            color: activeTab === tab.id ? 'white' : '#6b7280',
                             borderRadius: '12px',
                             fontWeight: '600',
                             cursor: 'pointer',
@@ -66,18 +67,18 @@ const ClubLeaderboard = ({ lang }) => {
                             animate={{ scale: [1, 1.05, 1] }}
                             transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
                         >
-                            <Users size={48} color="var(--primary)" />
+                            <Users size={48} color="#ef4444" />
                         </motion.div>
                         <h3 style={{ 
                             marginTop: '20px', 
                             fontSize: '1.5rem', 
                             fontWeight: '800', 
-                            color: 'var(--text-main)' 
+                            color: '#1f2937' 
                         }}>
                             Join the Community
                         </h3>
                         <p style={{ 
-                            color: 'var(--text-muted)', 
+                            color: '#6b7280', 
                             fontSize: '1rem', 
                             lineHeight: '1.5' 
                         }}>
@@ -92,18 +93,18 @@ const ClubLeaderboard = ({ lang }) => {
                             animate={{ scale: [1, 1.05, 1] }}
                             transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
                         >
-                            <Trophy size={48} color="var(--primary)" />
+                            <Trophy size={48} color="#ef4444" />
                         </motion.div>
                         <h3 style={{ 
                             marginTop: '20px', 
                             fontSize: '1.5rem', 
                             fontWeight: '800', 
-                            color: 'var(--text-main)' 
+                            color: '#1f2937' 
                         }}>
                             Top Contributors
                         </h3>
                         <p style={{ 
-                            color: 'var(--text-muted)', 
+                            color: '#6b7280', 
                             fontSize: '1rem', 
                             lineHeight: '1.5' 
                         }}>

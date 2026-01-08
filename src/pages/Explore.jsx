@@ -11,7 +11,6 @@ const Explore = ({ lang }) => {
     const [spots, setSpots] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
-    const [searchLocation, setSearchLocation] = useState('');
     const [trendingSpots, setTrendingSpots] = useState([]);
     const [mostVisited, setMostVisited] = useState([]);
     const [toast, setToast] = useState(null);
@@ -67,7 +66,7 @@ const Explore = ({ lang }) => {
     };
 
     const handleSearch = async () => {
-        if (!searchTerm.trim() && !searchLocation.trim()) return;
+        if (!searchTerm.trim()) return;
 
         setLoading(true);
         let query = supabase
@@ -75,14 +74,9 @@ const Explore = ({ lang }) => {
             .select('*')
             .eq('is_verified', true);
 
-        // Search by dish name
+        // Search by dish name only
         if (searchTerm.trim()) {
             query = query.ilike('name', searchTerm);
-        }
-
-        // Search by location
-        if (searchLocation.trim()) {
-            query = query.ilike('location', searchLocation);
         }
 
         const { data, error } = await query;
@@ -98,8 +92,7 @@ const Explore = ({ lang }) => {
 
     const filteredSpots = spots.filter(spot => {
         const matchesSearch = !searchTerm || spot.name.toLowerCase().includes(searchTerm.toLowerCase());
-        const matchesLocation = !searchLocation || spot.location?.toLowerCase().includes(searchLocation.toLowerCase());
-        return matchesSearch && matchesLocation;
+        return matchesSearch;
     });
 
     return (
@@ -153,25 +146,6 @@ const Explore = ({ lang }) => {
                             placeholder="Search for dishes..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-                            style={{
-                                width: '100%',
-                                padding: '12px 12px 12px 40px',
-                                borderRadius: '16px',
-                                border: '2px solid var(--secondary)',
-                                background: 'var(--bg-cream)',
-                                fontSize: '1rem',
-                                outline: 'none'
-                            }}
-                        />
-                    </div>
-                    <div style={{ flex: 1, position: 'relative' }}>
-                        <MapPin size={20} color="var(--text-muted)" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
-                        <input
-                            type="text"
-                            placeholder="Search by location..."
-                            value={searchLocation}
-                            onChange={(e) => setSearchLocation(e.target.value)}
                             onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
                             style={{
                                 width: '100%',
