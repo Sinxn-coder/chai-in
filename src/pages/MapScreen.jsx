@@ -84,7 +84,7 @@ const MapScreen = () => {
     return (
         <div style={{ height: '100vh', width: '100%', position: 'relative' }}>
             {/* Overlay UI */}
-            <div style={{ position: 'absolute', top: '20px', left: '20px', zIndex: 1000, display: 'flex', gap: '12px' }}>
+            <div style={{ position: 'absolute', top: '20px', left: '20px', zIndex: 1000, display: 'flex', gap: '12px', alignItems: 'center' }}>
                 <motion.button
                     whileTap={{ scale: 0.9 }}
                     onClick={() => navigate(-1)}
@@ -96,10 +96,6 @@ const MapScreen = () => {
                     <MapPin size={20} color="var(--primary)" />
                     <span style={{ fontWeight: '800', fontSize: '0.95rem' }}>Eats Around You</span>
                 </div>
-            </div>
-
-            {/* Find Me Button */}
-            <div style={{ position: 'absolute', bottom: '20px', right: '20px', zIndex: 1000 }}>
                 <motion.button
                     whileTap={{ scale: 0.9 }}
                     onClick={handleFindMe}
@@ -107,16 +103,19 @@ const MapScreen = () => {
                     style={{ 
                         background: 'white', 
                         border: 'none', 
-                        padding: '14px', 
-                        borderRadius: '50%', 
-                        boxShadow: 'var(--shadow-lg)', 
+                        padding: '12px 20px', 
+                        borderRadius: '18px', 
+                        boxShadow: 'var(--shadow-md)', 
                         cursor: 'pointer',
                         display: 'flex',
                         alignItems: 'center',
-                        justifyContent: 'center'
+                        gap: '8px'
                     }}
                 >
-                    <Navigation size={24} color={isLoadingLocation ? '#9CA3AF' : '#3B82F6'} />
+                    <Navigation size={20} color={isLoadingLocation ? '#9CA3AF' : '#3B82F6'} />
+                    <span style={{ fontWeight: '800', fontSize: '0.9rem', color: isLoadingLocation ? '#9CA3AF' : '#3B82F6' }}>
+                        {isLoadingLocation ? 'Finding...' : 'Find Me'}
+                    </span>
                 </motion.button>
             </div>
 
