@@ -158,11 +158,7 @@ const SpotCard = memo(({ spot }) => {
                 <div style={{ position: 'absolute', bottom: '6px', left: '6px', background: 'white', padding: '2px 6px', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '3px', fontSize: '0.65rem', fontWeight: '800' }}>
                     {average_rating && total_ratings > 0 ? (
                         <>
-                            <StarRating 
-                                rating={average_rating} 
-                                readonly={true} 
-                                size={8}
-                            />
+                            <Star size={8} fill="#FFB800" color="#FFB800" />
                             <span style={{ marginLeft: '2px' }}>{average_rating.toFixed(1)}</span>
                         </>
                     ) : (

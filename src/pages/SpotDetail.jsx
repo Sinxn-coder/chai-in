@@ -455,11 +455,7 @@ const SpotDetail = ({ lang }) => {
                         </div>
                     </div>
                     <div style={{ background: 'var(--secondary)', padding: '10px 16px', borderRadius: '16px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                        <StarRating 
-                            rating={spot.average_rating || spot.rating || 0} 
-                            readonly={true} 
-                            size={18}
-                        />
+                        <Star size={18} fill="#FFB800" color="#FFB800" />
                         <span style={{ fontWeight: '800', fontSize: '1.1rem' }}>
                             {(spot.average_rating || spot.rating || 0).toFixed(1)}
                         </span>
@@ -508,12 +504,10 @@ const SpotDetail = ({ lang }) => {
                         <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: '800', color: 'var(--text-main)' }}>Rate this spot</h3>
                         {spot.total_ratings > 0 && (
                             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                <StarRating 
-                                    rating={spot.average_rating || 0} 
-                                    readonly={true} 
-                                    size={20}
-                                    showValue={true}
-                                />
+                                <Star size={20} fill="#FFB800" color="#FFB800" />
+                                <span style={{ fontWeight: '700', fontSize: '1rem' }}>
+                                    {(spot.average_rating || 0).toFixed(1)}
+                                </span>
                                 <span style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>
                                     ({spot.total_ratings} {spot.total_ratings === 1 ? 'rating' : 'ratings'})
                                 </span>
