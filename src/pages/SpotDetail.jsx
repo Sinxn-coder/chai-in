@@ -284,17 +284,46 @@ const SpotDetail = ({ lang }) => {
         console.log('Submitting rating:', rating, 'for spot:', id, 'by user:', user.id);
         setIsSubmittingRating(true);
         try {
-            const { data, error } = await supabase.from('spot_ratings').upsert({
-                spot_id: parseInt(id),
-                user_id: user.id,
-                rating: rating
-            });
+            // First try to update existing rating
+            const { data: existingRating, error: fetchError } = await supabase
+                .from('spot_ratings')
+                .select('*')
+                .eq('spot_id', parseInt(id))
+                .eq('user_id', user.id)
+                .single();
 
-            console.log('Rating submission result:', { data, error });
+            if (fetchError && fetchError.code !== 'PGRST116') {
+                console.error('Error fetching existing rating:', fetchError);
+                throw fetchError;
+            }
 
-            if (error) {
-                console.error('Supabase error:', error);
-                throw error;
+            let result;
+            if (existingRating) {
+                // Update existing rating
+                const { data, error } = await supabase
+                    .from('spot_ratings')
+                    .update({ rating: rating })
+                    .eq('id', existingRating.id);
+                
+                result = { data, error };
+                console.log('Updated existing rating:', { data, error });
+            } else {
+                // Insert new rating
+                const { data, error } = await supabase
+                    .from('spot_ratings')
+                    .insert({
+                        spot_id: parseInt(id),
+                        user_id: user.id,
+                        rating: rating
+                    });
+                
+                result = { data, error };
+                console.log('Inserted new rating:', { data, error });
+            }
+
+            if (result.error) {
+                console.error('Supabase error:', result.error);
+                throw result.error;
             }
 
             setUserRating(rating);
