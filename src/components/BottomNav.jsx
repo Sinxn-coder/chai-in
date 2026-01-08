@@ -6,6 +6,12 @@ import { motion } from 'framer-motion';
 const BottomNav = ({ lang = 'en' }) => {
   const location = useLocation();
 
+  // Hide BottomNav when ClubLeaderboard is open
+  const isClubLeaderboardPage = location.pathname.includes('/club-leaderboard');
+  if (isClubLeaderboardPage) {
+    return null;
+  }
+
   const navItems = [
     { to: '/home', icon: Home, label: 'Home' },
     { to: '/explore', icon: Compass, label: 'Explore' },

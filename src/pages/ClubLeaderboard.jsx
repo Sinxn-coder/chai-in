@@ -14,62 +14,13 @@ const ClubLeaderboard = ({ lang }) => {
         <div style={{ 
             minHeight: '100vh',
             background: 'linear-gradient(135deg, #fef3c7 0%, #fbbf24 50%, #f59e0b 100%)',
-            padding: '20px',
-            marginTop: '-60px' // Compensate for hidden main nav
+            padding: '20px'
         }}>
-            {/* Tab Navigation - Fixed in main nav space with only icons */}
-            <div style={{ 
-                position: 'fixed',
-                top: '0',
-                left: '0',
-                right: '0',
-                height: '60px', // Same height as main nav
-                display: 'flex', 
-                alignItems: 'center',
-                justifyContent: 'space-around',
-                padding: '0 20px',
-                background: 'var(--primary)', // Same as main nav
-                zIndex: 1000,
-                boxShadow: '0 2px 10px rgba(0,0,0,0.1)'
-            }}>
-                {tabs.map(tab => (
-                    <button
-                        key={tab.id}
-                        onClick={() => {
-                            if (tab.id === 'home') {
-                                window.location.href = '/en/home';
-                            } else if (tab.id === 'leaderboard') {
-                                window.location.href = '/en/leaderboard';
-                            } else if (tab.id === 'club') {
-                                window.location.href = '/en/community';
-                            } else {
-                                setActiveTab(tab.id);
-                            }
-                        }}
-                        style={{
-                            background: 'none',
-                            border: 'none',
-                            color: 'white',
-                            cursor: 'pointer',
-                            padding: '8px',
-                            borderRadius: '8px',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            transition: 'all 0.3s ease',
-                            opacity: activeTab === tab.id ? 1 : 0.7
-                        }}
-                    >
-                        <tab.icon size={24} />
-                    </button>
-                ))}
-            </div>
-
             {/* Tab Content - Full Page */}
             <div
                 style={{
-                    minHeight: '100vh',
-                    paddingTop: '80px', // Space for fixed nav
+                    minHeight: 'calc(100vh - 60px)', // Account for bottom nav
+                    paddingBottom: '20px',
                     background: 'transparent'
                 }}
             >
@@ -118,6 +69,54 @@ const ClubLeaderboard = ({ lang }) => {
                         </p>
                     </div>
                 )}
+            </div>
+
+            {/* Tab Navigation - Fixed at bottom */}
+            <div style={{ 
+                position: 'fixed',
+                bottom: '0',
+                left: '0',
+                right: '0',
+                height: '60px',
+                display: 'flex', 
+                alignItems: 'center',
+                justifyContent: 'space-around',
+                padding: '0 20px',
+                background: 'var(--primary)',
+                zIndex: 1000,
+                boxShadow: '0 -2px 10px rgba(0,0,0,0.1)'
+            }}>
+                {tabs.map(tab => (
+                    <button
+                        key={tab.id}
+                        onClick={() => {
+                            if (tab.id === 'home') {
+                                window.location.href = '/en/home';
+                            } else if (tab.id === 'leaderboard') {
+                                window.location.href = '/en/leaderboard';
+                            } else if (tab.id === 'club') {
+                                window.location.href = '/en/community';
+                            } else {
+                                setActiveTab(tab.id);
+                            }
+                        }}
+                        style={{
+                            background: 'none',
+                            border: 'none',
+                            color: 'white',
+                            cursor: 'pointer',
+                            padding: '8px',
+                            borderRadius: '8px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            transition: 'all 0.3s ease',
+                            opacity: activeTab === tab.id ? 1 : 0.7
+                        }}
+                    >
+                        <tab.icon size={24} />
+                    </button>
+                ))}
             </div>
         </div>
     );
