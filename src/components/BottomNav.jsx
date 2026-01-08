@@ -9,10 +9,10 @@ const BottomNav = ({ lang = 'en' }) => {
   const navItems = [
     { to: '/home', icon: Home, label: 'Home' },
     { to: '/explore', icon: Compass, label: 'Explore' },
-    { to: '/club-leaderboard', icon: Users, label: 'Club' },
     { to: '', icon: null, label: 'spacer1' },
     { to: '', icon: null, label: 'spacer2' },
     { to: '/map', icon: Map, label: 'Map' },
+    { to: '/club-leaderboard', icon: Users, label: 'Club' },
   ];
 
   const isActivePath = (item) =>
