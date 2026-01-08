@@ -12,13 +12,18 @@ const ClubLeaderboard = ({ lang }) => {
 
     return (
         <div style={{ 
-            padding: '20px',
-            background: '#ffffff',
-            borderRadius: '20px',
-            boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
-            margin: '20px',
-            minHeight: '80vh'
+            minHeight: '100vh',
+            background: 'linear-gradient(135deg, #fef3c7 0%, #fbbf24 50%, #f59e0b 100%)',
+            padding: '20px'
         }}>
+            <div style={{ 
+                padding: '20px',
+                background: '#ffffff',
+                borderRadius: '20px',
+                boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
+                margin: '20px',
+                minHeight: '80vh'
+            }}>
             {/* Tab Navigation */}
             <div style={{ 
                 display: 'flex', 
@@ -113,6 +118,7 @@ const ClubLeaderboard = ({ lang }) => {
                     </div>
                 )}
             </motion.div>
+        </div>
         </div>
     );
 };
