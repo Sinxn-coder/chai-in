@@ -170,8 +170,10 @@ const Leaderboard = () => {
                             borderRadius: '24px',
                             boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
                             zIndex: 9999,
-                            maxWidth: '400px',
-                            width: '90%'
+                            maxWidth: '90vw',
+                            width: '400px',
+                            maxHeight: '80vh',
+                            overflow: 'auto'
                         }}
                     >
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
