@@ -281,15 +281,21 @@ const SpotDetail = ({ lang }) => {
         if (!user) return alert("Please login to rate!");
         if (isSubmittingRating) return;
 
+        console.log('Submitting rating:', rating, 'for spot:', id, 'by user:', user.id);
         setIsSubmittingRating(true);
         try {
-            const { error } = await supabase.from('spot_ratings').upsert({
+            const { data, error } = await supabase.from('spot_ratings').upsert({
                 spot_id: parseInt(id),
                 user_id: user.id,
                 rating: rating
             });
 
-            if (error) throw error;
+            console.log('Rating submission result:', { data, error });
+
+            if (error) {
+                console.error('Supabase error:', error);
+                throw error;
+            }
 
             setUserRating(rating);
             
@@ -300,7 +306,7 @@ const SpotDetail = ({ lang }) => {
             }
         } catch (error) {
             console.error('Error submitting rating:', error);
-            alert('Failed to submit rating. Please try again.');
+            alert(`Failed to submit rating: ${error.message || error.details || 'Unknown error'}`);
         } finally {
             setIsSubmittingRating(false);
         }
