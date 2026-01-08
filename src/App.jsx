@@ -6,6 +6,7 @@ import Settings from './pages/Settings';
 import AddSpot from './pages/AddSpot';
 import MapScreen from './pages/MapScreen';
 import ClubLeaderboard from './pages/ClubLeaderboard';
+import Leaderboard from './pages/Leaderboard';
 import Admin from './pages/Admin';
 import SpotDetail from './pages/SpotDetail';
 import Community from './pages/Community';
@@ -88,6 +89,7 @@ function AppRoutes({ lang }) {
         <Route path="map" element={<MapScreen lang={lang} />} />
         <Route path="add-spot" element={<AddSpot lang={lang} />} />
         <Route path="club-leaderboard" element={<ClubLeaderboard lang={lang} />} />
+        <Route path="leaderboard" element={<Leaderboard lang={lang} />} />
         <Route path="explore" element={<Explore lang={lang} />} />
         <Route path="community" element={<Community lang={lang} />} />
         <Route path="favorites" element={<Favorites lang={lang} />} />
