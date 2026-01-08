@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Bell, User, MapPin, Home, Map, Users, Crown, Settings, Plus } from 'lucide-react';
+import { Bell, User, MapPin, Home, Users, Crown, Settings, Plus } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import NotificationsSheet from './NotificationsSheet';
 import { supabase } from '../lib/supabaseClient';
@@ -78,10 +78,9 @@ const DesktopNav = () => {
 
     const navItems = [
         { to: '/home', icon: Home },
-        { to: '/map', icon: Map },
-        { to: '/add-spot', icon: Plus },
+        { to: '/explore', icon: Plus },
+        { to: '/club-leaderboard', icon: Users },
         { to: '/community', icon: Users },
-        { to: '/leaderboard', icon: Crown },
         { to: '/profile', icon: User },
     ];
 

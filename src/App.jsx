@@ -5,7 +5,7 @@ import Profile from './pages/Profile';
 import Settings from './pages/Settings';
 import AddSpot from './pages/AddSpot';
 import MapScreen from './pages/MapScreen';
-import Leaderboard from './pages/Leaderboard';
+import ClubLeaderboard from './pages/ClubLeaderboard';
 import Admin from './pages/Admin';
 import SpotDetail from './pages/SpotDetail';
 import Community from './pages/Community';
@@ -18,9 +18,9 @@ import ProfileFavorites from './pages/ProfileFavorites';
 import ProfileReviews from './pages/ProfileReviews';
 import ProfileAdded from './pages/ProfileAdded';
 import LandingPage from './pages/LandingPage';
+import Explore from './pages/Explore';
 import MainLayout from './layouts/MainLayout';
 import { useAuth } from './context/AuthContext';
-
 import FoodLoader from './components/FoodLoader';
 
 // Protected Route Wrapper
@@ -87,9 +87,10 @@ function AppRoutes({ lang }) {
         <Route path="home" element={<Home lang={lang} />} />
         <Route path="map" element={<MapScreen lang={lang} />} />
         <Route path="add-spot" element={<AddSpot lang={lang} />} />
+        <Route path="club-leaderboard" element={<ClubLeaderboard lang={lang} />} />
+        <Route path="explore" element={<Explore lang={lang} />} />
         <Route path="community" element={<Community lang={lang} />} />
         <Route path="favorites" element={<Favorites lang={lang} />} />
-        <Route path="leaderboard" element={<Leaderboard lang={lang} />} />
         <Route path="profile" element={<Profile lang={lang} />} />
         <Route path="profile/favorites" element={<ProfileFavorites lang={lang} />} />
         <Route path="profile/reviews" element={<ProfileReviews lang={lang} />} />

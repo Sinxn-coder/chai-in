@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import { supabase } from '../lib/supabaseClient';
 import SpotCard from '../components/SpotCard';
-import { Search, MapPin, Filter, X } from 'lucide-react';
+import { Search, MapPin, X, TrendingUp, Clock } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -16,13 +16,13 @@ const Home = ({ lang }) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [activeLocation, setActiveLocation] = useState(null);
     const [locationName, setLocationName] = useState('All Kerala');
-    const [activeCategory, setActiveCategory] = useState('All');
-    const [showLocationSearch, setShowLocationSearch] = useState(false);
-    const [locationSearchTerm, setLocationSearchTerm] = useState('');
-    const [searchingLocation, setSearchingLocation] = useState(false);
+    const [trendingSpots, setTrendingSpots] = useState([]);
+    const [mostVisited, setMostVisited] = useState([]);
 
     useEffect(() => {
         fetchSpots();
+        fetchTrendingSpots();
+        fetchMostVisited();
         
         // Set up real-time subscription for spots
         const spotsSubscription = supabase
@@ -33,6 +33,8 @@ const Home = ({ lang }) => {
                     console.log('Home page received real-time update:', payload);
                     if (payload.new.is_verified) {
                         fetchSpots(); // Refresh spots when a spot is verified
+                        fetchTrendingSpots(); // Refresh trending spots
+                        fetchMostVisited(); // Refresh most visited spots
                     }
                 }
             )
@@ -46,6 +48,8 @@ const Home = ({ lang }) => {
                 (payload) => {
                     console.log('Home page received rating change:', payload);
                     fetchSpots(); // Refresh spots to update ratings
+                    fetchTrendingSpots(); // Refresh trending spots
+                    fetchMostVisited(); // Refresh most visited spots
                 }
             )
             .subscribe();
@@ -64,6 +68,33 @@ const Home = ({ lang }) => {
             window.removeEventListener('spotVerified', handleSpotVerified);
         };
     }, [activeLocation]);
+
+    const fetchTrendingSpots = async () => {
+        // Simple trending logic: spots with most reviews in last 7 days
+        const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+        
+        const { data } = await supabase
+            .from('spots')
+            .select('*, reviews(count)')
+            .eq('is_verified', true)
+            .gte('created_at', sevenDaysAgo.toISOString())
+            .order('reviews.count', { ascending: false })
+            .limit(5);
+
+        setTrendingSpots(data || []);
+    };
+
+    const fetchMostVisited = async () => {
+        // This would require a visits table - for now, show recently added spots
+        const { data } = await supabase
+            .from('spots')
+            .select('*')
+            .eq('is_verified', true)
+            .order('created_at', { ascending: false })
+            .limit(5);
+
+        setMostVisited(data || []);
+    };
 
     const fetchSpots = async () => {
         setLoading(true);
@@ -89,29 +120,20 @@ const Home = ({ lang }) => {
             const searchWithoutSpaces = searchLower.replace(/\s+/g, '');
             const searchWithHyphens = searchLower.replace(/\s+/g, '-');
             
-            const matchesSearch = s.name.toLowerCase().includes(searchLower) || 
-                               (s.category && s.category.toLowerCase().includes(searchLower)) ||
-                               (s.tags && s.tags.some(tag => {
-                                   const tagLower = tag.toLowerCase();
-                                   const tagWithoutSpaces = tagLower.replace(/\s+/g, '');
-                                   const tagWithHyphens = tagLower.replace(/\s+/g, '-');
-                                   return tagLower.includes(searchLower) || 
-                                          tagWithoutSpaces.includes(searchWithoutSpaces) ||
-                                          tagWithHyphens.includes(searchWithHyphens) ||
-                                          searchLower.includes(tagLower) ||
-                                          searchWithoutSpaces.includes(tagWithoutSpaces) ||
-                                          searchWithHyphens.includes(tagWithHyphens);
-                               }));
-            const matchesCategory = activeCategory === 'All' || s.category === activeCategory;
-            return matchesSearch && matchesCategory;
+            // Search by dish name or location
+            const matchesSearch = !searchTerm || 
+                s.name.toLowerCase().includes(searchLower) || 
+                s.location?.toLowerCase().includes(searchLower);
+            
+            return matchesSearch;
         });
-    }, [spots, searchTerm, activeCategory]);
+    }, [spots, searchTerm]);
 
     function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
         var R = 6371;
         var dLat = (lat2 - lat1) * Math.PI / 180;
         var dLon = (lon2 - lon1) * Math.PI / 180;
-        var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon / 2);
         return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)));
     }
 
@@ -183,129 +205,93 @@ const Home = ({ lang }) => {
                     <Search size={22} color="var(--text-muted)" style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)' }} />
                 </div>
 
-            <div className="hide-scrollbar" style={{ display: 'flex', gap: '12px', overflowX: 'auto', marginBottom: '30px', padding: '4px 0' }}>
-                {['All', 'Trending', 'Arabian', 'Burger', 'Cafes', 'Desserts', 'Non-Veg'].map(cat => (
-                    <motion.button
-                        key={cat}
-                        whileTap={{ scale: 0.95 }}
-                        onClick={() => setActiveCategory(cat)}
-                        style={{
-                            padding: '10px 24px',
-                            borderRadius: '16px',
-                            background: activeCategory === cat ? 'var(--primary)' : 'var(--secondary)',
-                            color: activeCategory === cat ? 'white' : 'var(--text-muted)',
-                            border: 'none',
-                            fontWeight: '800',
-                            whiteSpace: 'nowrap',
-                            boxShadow: activeCategory === cat ? 'var(--shadow-sm)' : 'none',
-                            transition: 'all 0.3s ease'
-                        }}
-                    >
-                        {cat}
-                    </motion.button>
-                ))}
-            </div>
-
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '20px' }}>
-                <motion.button
-                    whileTap={{ scale: 0.95 }}
-                    onClick={() => setShowLocationSearch(!showLocationSearch)}
-                    style={{
-                        background: 'rgba(239, 42, 57, 0.1)',
-                        color: 'var(--primary)',
-                        padding: '8px 16px',
-                        borderRadius: '12px',
-                        fontSize: '0.85rem',
-                        fontWeight: '800',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '6px',
-                        border: 'none',
-                        cursor: 'pointer',
-                        transition: 'all 0.3s ease',
-                        flexShrink: 0
-                    }}
-                >
-                    <MapPin size={16} /> {locationName}
-                </motion.button>
-                
-                <div style={{ flex: 1, minWidth: '200px' }}>
-                    <div style={{ position: 'relative' }}>
-                        <input
-                            type="text"
-                            placeholder="Search location in Kerala..."
-                            value={locationSearchTerm}
-                            onChange={(e) => setLocationSearchTerm(e.target.value)}
-                            onKeyPress={(e) => e.key === 'Enter' && searchLocation()}
-                            style={{
-                                width: '100%',
-                                height: '44px',
-                                padding: '0 70px 0 45px',
-                                borderRadius: '25px',
-                                border: '2px solid var(--primary)',
-                                background: 'var(--bg-white)',
-                                fontSize: '0.85rem',
-                                fontWeight: '600',
-                                boxShadow: '0 4px 15px rgba(239, 42, 57, 0.15)',
-                                transition: 'all 0.3s ease',
-                                boxSizing: 'border-box',
-                                lineHeight: '44px'
-                            }}
-                        />
-                        <Search size={20} color="var(--primary)" style={{ position: 'absolute', left: '15px', top: '12px', zIndex: 2 }} />
-                        <motion.button
-                            whileTap={{ scale: 0.95 }}
-                            onClick={searchLocation}
-                            disabled={searchingLocation}
-                            style={{
-                                position: 'absolute',
-                                right: '8px',
-                                top: '7px',
-                                background: 'var(--primary)',
-                                color: 'white',
-                                border: 'none',
-                                padding: '8px 16px',
-                                borderRadius: '20px',
-                                fontSize: '0.75rem',
-                                fontWeight: '700',
-                                cursor: searchingLocation ? 'not-allowed' : 'pointer',
-                                opacity: searchingLocation ? 0.6 : 1,
-                                boxShadow: '0 2px 8px rgba(239, 42, 57, 0.3)',
-                                zIndex: 2,
-                                height: '30px'
-                            }}
-                        >
-                            {searchingLocation ? '...' : 'Go'}
-                        </motion.button>
-                    </div>
-                </div>
-                
-                {activeLocation && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '20px' }}>
                     <motion.button
                         whileTap={{ scale: 0.95 }}
-                        onClick={resetToAllKerala}
+                        onClick={() => setShowLocationSearch(!showLocationSearch)}
                         style={{
-                            background: 'var(--secondary)',
-                            color: 'var(--text-muted)',
+                            background: 'rgba(239, 42, 57, 0.1)',
+                            color: 'var(--primary)',
                             padding: '8px 16px',
-                            borderRadius: '15px',
-                            fontSize: '0.75rem',
-                            fontWeight: '600',
+                            borderRadius: '12px',
+                            fontSize: '0.85rem',
+                            fontWeight: '800',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '6px',
                             border: 'none',
                             cursor: 'pointer',
                             transition: 'all 0.3s ease',
-                            flexShrink: 0,
-                            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
+                            flexShrink: 0
                         }}
                     >
-                        Clear
+                        <MapPin size={16} /> {locationName}
                     </motion.button>
-                )}
-            </div>
+                </div>
 
-            {loading ? (
-                <FoodLoader message="Finding delicious spots..." />
-            ) : (
+                {/* Trending Spots Section */}
+                {trendingSpots.length > 0 && (
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.5, delay: 0.4 }}
+                        style={{ marginBottom: '30px' }}
+                    >
+                        <div style={{ 
+                            display: 'flex', 
+                            alignItems: 'center', 
+                            gap: '12px', 
+                            marginBottom: '16px' 
+                        }}>
+                            <TrendingUp size={24} color="var(--primary)" />
+                            <h3 style={{ 
+                                fontSize: '1.3rem', 
+                                fontWeight: '800', 
+                                color: 'var(--text-main)' 
+                            }}>
+                                Trending This Week
+                            </h3>
+                        </div>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '16px' }}>
+                            {trendingSpots.map(spot => (
+                                <SpotCard key={spot.id} spot={spot} />
+                            ))}
+                        </div>
+                    </motion.div>
+                )}
+
+                {/* Most Visited Section */}
+                {mostVisited.length > 0 && (
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.5, delay: 0.6 }}
+                        style={{ marginBottom: '30px' }}
+                    >
+                        <div style={{ 
+                            display: 'flex', 
+                            alignItems: 'center', 
+                            gap: '12px', 
+                            marginBottom: '16px' 
+                        }}>
+                            <Clock size={24} color="var(--primary)" />
+                            <h3 style={{ 
+                                fontSize: '1.3rem', 
+                                fontWeight: '800', 
+                                color: 'var(--text-main)' 
+                            }}>
+                                Popular Spots
+                            </h3>
+                        </div>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '16px' }}>
+                            {mostVisited.map(spot => (
+                                <SpotCard key={spot.id} spot={spot} />
+                            ))}
+                        </div>
+                    </motion.div>
+                )}
+
+                {/* All Spots Grid */}
                 <motion.div
                     layout
                     style={{
@@ -320,14 +306,6 @@ const Home = ({ lang }) => {
                         ))}
                     </AnimatePresence>
                 </motion.div>
-            )}
-            <style>{`
-                @keyframes pulse {
-                    0% { opacity: 0.6; }
-                    50% { opacity: 0.3; }
-                    100% { opacity: 0.6; }
-                }
-            `}</style>
             </div>
         </div>
     );
