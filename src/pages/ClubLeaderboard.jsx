@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { Trophy, Users, Crown, Home } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const ClubLeaderboard = ({ lang }) => {
     const [activeTab, setActiveTab] = useState('club');
+    const navigate = useNavigate();
 
     const tabs = [
         { id: 'club', label: 'Club', icon: Users },
@@ -96,11 +98,11 @@ const ClubLeaderboard = ({ lang }) => {
                         key={tab.id}
                         onClick={() => {
                             if (tab.id === 'home') {
-                                window.location.href = '/en/home';
+                                navigate(`/${lang}/home`);
                             } else if (tab.id === 'leaderboard') {
-                                window.location.href = '/en/leaderboard';
+                                navigate(`/${lang}/leaderboard`);
                             } else if (tab.id === 'club') {
-                                window.location.href = '/en/community';
+                                navigate(`/${lang}/community`);
                             } else {
                                 setActiveTab(tab.id);
                             }
