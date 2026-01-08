@@ -62,7 +62,7 @@ $$ LANGUAGE plpgsql;
 CREATE TRIGGER update_spot_average_trigger
     AFTER INSERT OR UPDATE OR DELETE ON spot_ratings
     FOR EACH ROW
-    EXECUTE FUNCTION update_spot_average_rating(NEW.spot_id);
+    EXECUTE FUNCTION update_spot_average_rating(COALESCE(NEW.spot_id, OLD.spot_id));
 
 -- Update existing spots
 UPDATE spots 
