@@ -278,6 +278,29 @@ const Home = ({ lang }) => {
                             >
                                 {searchingLocation ? '...' : 'Go'}
                             </motion.button>
+                            {locationSearchTerm && (
+                                <motion.button
+                                    whileTap={{ scale: 0.95 }}
+                                    onClick={resetToAllKerala}
+                                    style={{
+                                        position: 'absolute',
+                                        right: '70px',
+                                        top: '7px',
+                                        background: 'transparent',
+                                        color: '#6b7280',
+                                        border: 'none',
+                                        padding: '8px',
+                                        borderRadius: '20px',
+                                        fontSize: '0.75rem',
+                                        fontWeight: '700',
+                                        cursor: 'pointer',
+                                        zIndex: 2,
+                                        height: '30px'
+                                    }}
+                                >
+                                    <X size={16} />
+                                </motion.button>
+                            )}
                         </div>
                     </div>
                 </div>

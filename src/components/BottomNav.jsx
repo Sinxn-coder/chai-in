@@ -10,6 +10,7 @@ const BottomNav = ({ lang = 'en' }) => {
     { to: '/home', icon: Home, label: 'Home' },
     { to: '/explore', icon: Compass, label: 'Explore' },
     { to: '/map', icon: Map, label: 'Map' },
+    { to: '', icon: null, label: 'spacer' },
     { to: '/club-leaderboard', icon: Users, label: 'Club' },
   ];
 
@@ -110,32 +111,36 @@ const BottomNav = ({ lang = 'en' }) => {
 
           return (
             <div key={item.to} style={{ gridColumn: col }}>
-              <NavLink
-                to={`/${lang}${item.to}`}
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  gap: 4, // Reduced gap
-                  color: 'white',
-                  textDecoration: 'none',
-                  opacity: active ? 1 : 0.7,
-                  fontSize: '0.7rem', // Smaller font for small screens
-                  fontWeight: 800,
-                  // Adjust margins for smaller screens
-                  ...(item.to === '/home' && { marginLeft: '5px' }),
-                  ...(item.to === '/map' && { marginRight: '25px' }),
-                  ...(item.to === '/community' && { marginLeft: '25px' }),
-                  ...(item.to === '/leaderboard' && { marginRight: '5px' }),
-                }}
-              >
-                <item.icon
-                  size={20} // Smaller icons for small screens
+              {item.icon ? (
+                <NavLink
+                  to={`/${lang}${item.to}`}
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: 4, // Reduced gap
+                    color: 'white',
+                    textDecoration: 'none',
+                    opacity: active ? 1 : 0.7,
+                    fontSize: '0.7rem', // Smaller font for small screens
+                    fontWeight: 800,
+                    // Adjust margins for smaller screens
+                    ...(item.to === '/home' && { marginLeft: '5px' }),
+                    ...(item.to === '/map' && { marginRight: '25px' }),
+                    ...(item.to === '/community' && { marginLeft: '25px' }),
+                    ...(item.to === '/leaderboard' && { marginRight: '5px' }),
+                  }}
+                >
+                  <item.icon
+                    size={20} // Smaller icons for small screens
                   strokeWidth={active ? 2.6 : 2}
                   color="white"
                 />
                 <span>{item.label}</span>
               </NavLink>
+              ) : (
+                <div style={{ width: '20px' }}></div>
+              )}
             </div>
           );
         })}

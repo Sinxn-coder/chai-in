@@ -176,68 +176,6 @@ const Explore = ({ lang }) => {
                 </button>
             </motion.div>
 
-            {/* Trending Spots */}
-            {trendingSpots.length > 0 && (
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: 0.4 }}
-                    style={{ marginBottom: '30px' }}
-                >
-                    <div style={{ 
-                        display: 'flex', 
-                        alignItems: 'center', 
-                        gap: '12px', 
-                        marginBottom: '16px' 
-                    }}>
-                        <TrendingUp size={24} color="var(--primary)" />
-                        <h3 style={{ 
-                            fontSize: '1.3rem', 
-                            fontWeight: '800', 
-                            color: 'var(--text-main)' 
-                        }}>
-                            Trending This Week
-                        </h3>
-                    </div>
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '16px' }}>
-                        {trendingSpots.map(spot => (
-                            <SpotCard key={spot.id} spot={spot} lang={lang} />
-                        ))}
-                    </div>
-                </motion.div>
-            )}
-
-            {/* Most Visited */}
-            {mostVisited.length > 0 && (
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: 0.6 }}
-                    style={{ marginBottom: '30px' }}
-                >
-                    <div style={{ 
-                        display: 'flex', 
-                        alignItems: 'center', 
-                        gap: '12px', 
-                        marginBottom: '16px' 
-                    }}>
-                        <Clock size={24} color="var(--primary)" />
-                        <h3 style={{ 
-                            fontSize: '1.3rem', 
-                            fontWeight: '800', 
-                            color: 'var(--text-main)' 
-                        }}>
-                            Popular Spots
-                        </h3>
-                    </div>
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '16px' }}>
-                        {mostVisited.map(spot => (
-                            <SpotCard key={spot.id} spot={spot} lang={lang} />
-                        ))}
-                    </div>
-                </motion.div>
-            )}
-
             {/* All Spots */}
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -249,7 +187,7 @@ const Explore = ({ lang }) => {
                         <div style={{ fontSize: '1.1rem', color: 'var(--text-muted)' }}>Loading spots...</div>
                     </div>
                 ) : (
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '16px' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px' }}>
                         {filteredSpots.map(spot => (
                             <SpotCard key={spot.id} spot={spot} lang={lang} />
                         ))}
