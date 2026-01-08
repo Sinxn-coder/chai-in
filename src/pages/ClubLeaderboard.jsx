@@ -4,6 +4,146 @@ import { useNavigate } from 'react-router-dom';
 import Community from './Community';
 import Leaderboard from './Leaderboard';
 
+// Styled Community component that matches ClubLeaderboard design
+const StyledCommunity = () => {
+    return (
+        <div style={{
+            minHeight: 'calc(100vh - 60px)',
+            background: 'linear-gradient(135deg, #fef3c7 0%, #fbbf24 50%, #f59e0b 100%)',
+            padding: '20px',
+            paddingBottom: '80px'
+        }}>
+            <div style={{
+                maxWidth: '800px',
+                margin: '0 auto'
+            }}>
+                {/* Community Header */}
+                <div style={{
+                    textAlign: 'center',
+                    marginBottom: '30px',
+                    padding: '20px',
+                    background: 'rgba(255,255,255,0.9)',
+                    borderRadius: '20px',
+                    backdropFilter: 'blur(10px)',
+                    border: '1px solid rgba(255,255,255,0.2)',
+                    boxShadow: '0 8px 32px rgba(0,0,0,0.1)'
+                }}>
+                    <div style={{
+                        width: '60px',
+                        height: '60px',
+                        background: 'linear-gradient(135deg, #ef4444, #dc2626)',
+                        borderRadius: '50%',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        margin: '0 auto 16px',
+                        boxShadow: '0 4px 20px rgba(239, 68, 68, 0.3)'
+                    }}>
+                        <Users size={30} color="white" />
+                    </div>
+                    <h2 style={{
+                        fontSize: '1.8rem',
+                        fontWeight: '800',
+                        color: '#1f2937',
+                        marginBottom: '8px'
+                    }}>
+                        Community
+                    </h2>
+                    <p style={{
+                        color: '#6b7280',
+                        fontSize: '1rem',
+                        margin: 0
+                    }}>
+                        Share your food experiences with the community
+                    </p>
+                </div>
+
+                {/* Community Content */}
+                <div style={{
+                    background: 'rgba(255,255,255,0.95)',
+                    borderRadius: '20px',
+                    padding: '20px',
+                    backdropFilter: 'blur(10px)',
+                    border: '1px solid rgba(255,255,255,0.2)',
+                    boxShadow: '0 8px 32px rgba(0,0,0,0.1)'
+                }}>
+                    <Community />
+                </div>
+            </div>
+        </div>
+    );
+};
+
+// Styled Leaderboard component that matches ClubLeaderboard design  
+const StyledLeaderboard = () => {
+    return (
+        <div style={{
+            minHeight: 'calc(100vh - 60px)',
+            background: 'linear-gradient(135deg, #fef3c7 0%, #fbbf24 50%, #f59e0b 100%)',
+            padding: '20px',
+            paddingBottom: '80px'
+        }}>
+            <div style={{
+                maxWidth: '800px',
+                margin: '0 auto'
+            }}>
+                {/* Leaderboard Header */}
+                <div style={{
+                    textAlign: 'center',
+                    marginBottom: '30px',
+                    padding: '20px',
+                    background: 'rgba(255,255,255,0.9)',
+                    borderRadius: '20px',
+                    backdropFilter: 'blur(10px)',
+                    border: '1px solid rgba(255,255,255,0.2)',
+                    boxShadow: '0 8px 32px rgba(0,0,0,0.1)'
+                }}>
+                    <div style={{
+                        width: '60px',
+                        height: '60px',
+                        background: 'linear-gradient(135deg, #f59e0b, #d97706)',
+                        borderRadius: '50%',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        margin: '0 auto 16px',
+                        boxShadow: '0 4px 20px rgba(245, 158, 11, 0.3)'
+                    }}>
+                        <Trophy size={30} color="white" />
+                    </div>
+                    <h2 style={{
+                        fontSize: '1.8rem',
+                        fontWeight: '800',
+                        color: '#1f2937',
+                        marginBottom: '8px'
+                    }}>
+                        Leaderboard
+                    </h2>
+                    <p style={{
+                        color: '#6b7280',
+                        fontSize: '1rem',
+                        margin: 0
+                    }}>
+                        Top contributors in our food community
+                    </p>
+                </div>
+
+                {/* Leaderboard Content */}
+                <div style={{
+                    background: 'rgba(255,255,255,0.95)',
+                    borderRadius: '20px',
+                    padding: '20px',
+                    backdropFilter: 'blur(10px)',
+                    border: '1px solid rgba(255,255,255,0.2)',
+                    boxShadow: '0 8px 32px rgba(0,0,0,0.1)'
+                }}>
+                    <Leaderboard />
+                </div>
+            </div>
+        </div>
+    );
+};
+
 const ClubLeaderboard = ({ lang }) => {
     const [activeTab, setActiveTab] = useState('club');
     const navigate = useNavigate();
@@ -28,23 +168,9 @@ const ClubLeaderboard = ({ lang }) => {
                     background: 'transparent'
                 }}
             >
-                {activeTab === 'club' && (
-                    <div style={{ 
-                        minHeight: 'calc(100vh - 60px)',
-                        paddingBottom: '80px' // Account for bottom nav
-                    }}>
-                        <Community />
-                    </div>
-                )}
+                {activeTab === 'club' && <StyledCommunity />}
 
-                {activeTab === 'leaderboard' && (
-                    <div style={{ 
-                        minHeight: 'calc(100vh - 60px)',
-                        paddingBottom: '80px' // Account for bottom nav
-                    }}>
-                        <Leaderboard />
-                    </div>
-                )}
+                {activeTab === 'leaderboard' && <StyledLeaderboard />}
             </div>
 
             {/* Tab Navigation - Fixed at bottom with transparency */}
