@@ -63,32 +63,19 @@ const MainLayout = ({ lang }) => {
             position: 'relative',
             willChange: 'transform' // Performance optimization
         }}>
-            {/* Original Top Navigation Bar - Animated */}
-            <AnimatePresence mode="wait">
-                {!showNewNav && (
-                    <motion.div 
-                        key="main-nav"
-                        className="mobile-only" 
-                        {...navVariants.mainNav}
-                        style={{ willChange: 'transform' }}
-                    >
-                        <AppBar />
-                    </motion.div>
-                )}
-            </AnimatePresence>
+            {/* Original Top Navigation Bar - Fixed with own animations */}
+            {!showNewNav && (
+                <div className="mobile-only">
+                    <AppBar />
+                </div>
+            )}
 
-            {/* Desktop Navigation - Animated */}
-            <AnimatePresence mode="wait">
-                {!showNewNav && (
-                    <motion.div 
-                        key="desktop-nav"
-                        {...navVariants.desktopNav}
-                        style={{ willChange: 'transform' }}
-                    >
-                        <DesktopNav />
-                    </motion.div>
-                )}
-            </AnimatePresence>
+            {/* Desktop Navigation - Fixed with own animations */}
+            {!showNewNav && (
+                <div>
+                    <DesktopNav />
+                </div>
+            )}
 
             {/* Animated Food Particles Background - Optimized */}
             <FoodParticles />
@@ -108,17 +95,10 @@ const MainLayout = ({ lang }) => {
                 </motion.div>
             </AnimatePresence>
 
-            {/* Bottom Navigation - Animated */}
-            <AnimatePresence mode="wait">
-                <motion.div 
-                    key="bottom-nav"
-                    className="mobile-only"
-                    {...navVariants.bottomNav}
-                    style={{ willChange: 'transform' }}
-                >
-                    <BottomNav lang={lang} />
-                </motion.div>
-            </AnimatePresence>
+            {/* Bottom Navigation - Fixed with own animations */}
+            <div className="mobile-only">
+                <BottomNav lang={lang} />
+            </div>
         </div>
     );
 };

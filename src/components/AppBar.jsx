@@ -4,6 +4,7 @@ import { Bell, User, MapPin } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import NotificationsSheet from './NotificationsSheet';
 import { supabase } from '../lib/supabaseClient';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const AppBar = () => {
     const { user } = useAuth();
@@ -48,22 +49,33 @@ const AppBar = () => {
     }, [user]);
 
     return (
-        <div style={{
-            position: 'sticky',
-            top: 0,
-            left: 0,
-            right: 0,
-            height: '70px',
-            background: 'rgba(255, 255, 255, 0.8)',
-            backdropFilter: 'blur(10px)',
-            borderBottom: '1px solid rgba(0,0,0,0.05)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            padding: '0 20px',
-            zIndex: 1000,
-            boxShadow: '0 4px 20px rgba(0,0,0,0.03)'
-        }}>
+        <motion.div 
+            initial={{ opacity: 0, y: -100 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -100 }}
+            transition={{ 
+                duration: 0.4, 
+                ease: [0.25, 0.46, 0.45, 0.94] // Cool spring animation
+            }}
+            style={{
+                position: 'fixed',
+                top: 0,
+                left: 0,
+                right: 0,
+                height: '70px',
+                background: 'rgba(255, 255, 255, 0.95)',
+                backdropFilter: 'blur(20px)',
+                WebkitBackdropFilter: 'blur(20px)',
+                borderBottom: '1px solid rgba(0,0,0,0.05)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                padding: '0 20px',
+                zIndex: 1000,
+                boxShadow: '0 8px 32px rgba(0,0,0,0.1)',
+                willChange: 'transform'
+            }}
+        >
             <NotificationsSheet
                 isOpen={showNotifications}
                 onClose={() => { setShowNotifications(false); setUnreadCount(0); }}
@@ -144,7 +156,7 @@ const AppBar = () => {
                     />
                 </div>
             </div>
-        </div>
+        </motion.div>
     );
 };
 
