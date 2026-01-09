@@ -763,7 +763,7 @@ const Community = () => {
             </div>
 
             {/* Posts with top padding to account for fixed header */}
-            <div style={{ padding: '20px', paddingTop: '50px' }}>
+            <div style={{ padding: '20px', paddingTop: '120px' }}>
                 {loading ? (
                     <div style={{ textAlign: 'center', padding: '60px 20px' }}>
                         <Loader className="animate-spin" color="#666" size={32} />
