@@ -813,7 +813,7 @@ const Community = () => {
                         </motion.button>
                     </div>
                 ) : (
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', padding: '0 12px' }}>
+                    <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', gap: '20px', padding: '0 12px', justifyContent: 'center' }}>
                         {posts.map((post, index) => (
                             <motion.div
                                 key={post.id}
@@ -827,7 +827,9 @@ const Community = () => {
                                     boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
                                     border: '1px solid #e9ecef',
                                     width: '100%',
-                                    maxWidth: '600px'
+                                    maxWidth: '700px',
+                                    minWidth: '300px',
+                                    flex: '1 1 auto'
                                 }}
                             >
                                 {/* Post Header */}
