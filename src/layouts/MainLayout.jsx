@@ -84,12 +84,17 @@ const MainLayout = ({ lang }) => {
             <SetUsernameModal />
             <SetAvatarModal />
 
-            {/* Content Area - Optimized */}
+            {/* Content Area - Optimized with proper padding for fixed nav */}
             <AnimatePresence mode="wait">
                 <motion.div
                     key={location.pathname}
                     {...navVariants.content}
-                    style={{ willChange: 'transform' }}
+                    style={{ 
+                        willChange: 'transform',
+                        paddingTop: showNewNav ? '0px' : '70px', // No top padding in ClubLeaderboard
+                        paddingBottom: '70px', // Always account for fixed BottomNav
+                        minHeight: '100vh'
+                    }}
                 >
                     <Outlet />
                 </motion.div>
