@@ -140,16 +140,38 @@ const MainLayout = ({ lang }) => {
             {/* ClubLeaderboard Navigation - Fixed outside wrapper with animation */}
             <AnimatePresence mode="wait">
                 {showNewNav && (
-                    <motion.div 
-                        key="club-leaderboard-nav"
-                        className="mobile-only"
-                        initial={{ opacity: 0, y: 100 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: 100 }}
-                        transition={{ duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }} // Cool spring animation
-                    >
-                        <ClubLeaderboardNav lang={lang} />
-                    </motion.div>
+                    <>
+                        {/* Mobile ClubLeaderboardNav */}
+                        <motion.div 
+                            key="club-leaderboard-nav-mobile"
+                            className="mobile-only"
+                            initial={{ opacity: 0, y: 100 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: 100 }}
+                            transition={{ duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }} // Cool spring animation
+                        >
+                            <ClubLeaderboardNav lang={lang} />
+                        </motion.div>
+                        
+                        {/* Desktop ClubLeaderboardNav */}
+                        <motion.div 
+                            key="club-leaderboard-nav-desktop"
+                            className="desktop-nav"
+                            initial={{ opacity: 0, x: 100 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: 100 }}
+                            transition={{ duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
+                            style={{
+                                position: 'fixed',
+                                top: '50%',
+                                right: '20px',
+                                transform: 'translateY(-50%)',
+                                zIndex: 1000
+                            }}
+                        >
+                            <ClubLeaderboardNav lang={lang} />
+                        </motion.div>
+                    </>
                 )}
             </AnimatePresence>
         </>
