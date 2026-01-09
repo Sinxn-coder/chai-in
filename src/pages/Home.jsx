@@ -105,12 +105,17 @@ const Home = ({ lang }) => {
         if (error) {
             console.error('Error fetching spots:', error);
         } else {
+            console.log('Total spots fetched:', data?.length || 0);
             let all = data || [];
             if (activeLocation) {
+                console.log('Active location:', activeLocation);
+                console.log('Filtering spots within 30km...');
                 all = all.filter(s => {
                     const distance = getDistanceFromLatLonInKm(activeLocation.lat, activeLocation.lng, s.latitude, s.longitude);
+                    console.log(`Spot: ${s.name} (${s.latitude}, ${s.longitude}) - Distance: ${distance.toFixed(2)}km`);
                     return distance <= 30;
                 });
+                console.log('Spots within 30km:', all.length);
             }
             setSpots(all);
         }
@@ -160,12 +165,15 @@ const Home = ({ lang }) => {
                     lng: parseFloat(data[0].lon),
                     name: data[0].display_name.split(',')[0]
                 };
+                console.log('Location found:', location);
                 setActiveLocation(location);
                 setLocationName(location.name);
                 setShowLocationSearch(false);
-                // Don't clear the search term so clear button appears
+                // Don't clear search term so clear button appears
                 // Manually trigger fetchSpots to ensure filtering happens
                 fetchSpots();
+            } else {
+                console.log('No location found for:', locationSearchTerm);
             }
         } catch (error) {
             console.error('Error searching location:', error);
