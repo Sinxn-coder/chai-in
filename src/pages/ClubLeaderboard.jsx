@@ -429,61 +429,7 @@ const ClubLeaderboard = ({ lang }) => {
                     background: 'transparent'
                 }}
             >
-                {activeTab === 'club' && (
-                    <div style={{
-                        minHeight: 'calc(100vh - 60px)',
-                        background: 'linear-gradient(135deg, #fef3c7 0%, #fbbf24 50%, #f59e0b 100%)',
-                        paddingBottom: '80px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center'
-                    }}>
-                        <div style={{
-                            textAlign: 'center',
-                            padding: '40px',
-                            background: 'rgba(255,255,255,0.1)',
-                            backdropFilter: 'blur(10px)',
-                            borderRadius: '20px',
-                            border: '1px solid rgba(255,255,255,0.2)',
-                            boxShadow: '0 8px 32px rgba(0,0,0,0.1)'
-                        }}>
-                            <h2 style={{
-                                fontSize: '1.8rem',
-                                fontWeight: '900',
-                                color: '#1f2937',
-                                marginBottom: '12px'
-                            }}>
-                                Community
-                            </h2>
-                            <p style={{
-                                color: '#6b7280',
-                                fontSize: '1rem',
-                                marginBottom: '24px'
-                            }}>
-                                Click below to go to the Community page
-                            </p>
-                            <button
-                                onClick={() => navigate('/community')}
-                                style={{
-                                    background: 'linear-gradient(135deg, #ef4444, #dc2626)',
-                                    color: 'white',
-                                    border: 'none',
-                                    padding: '16px 32px',
-                                    borderRadius: '24px',
-                                    fontWeight: '700',
-                                    cursor: 'pointer',
-                                    fontSize: '1rem',
-                                    boxShadow: '0 4px 20px rgba(239, 68, 68, 0.3)',
-                                    transition: 'transform 0.2s ease'
-                                }}
-                                onMouseOver={(e) => e.target.style.transform = 'scale(1.05)'}
-                                onMouseOut={(e) => e.target.style.transform = 'scale(1)'}
-                            >
-                                Go to Community
-                            </button>
-                        </div>
-                    </div>
-                )}
+                {activeTab === 'club' && <Community />}
 
                 {activeTab === 'leaderboard' && <StyledLeaderboard />}
             </div>
