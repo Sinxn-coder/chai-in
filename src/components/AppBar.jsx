@@ -50,19 +50,12 @@ const AppBar = () => {
 
     return (
         <motion.div 
-            initial={{ opacity: 0, y: -100, scale: 0.9 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -100, scale: 0.9 }}
+            initial={{ opacity: 0, y: -100 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -100 }}
             transition={{ 
-                duration: 0.6, 
-                ease: [0.25, 0.46, 0.45, 0.94], // Spring easing
-                type: "spring",
-                stiffness: 260,
-                damping: 20
-            }}
-            whileHover={{ 
-                scale: 1.01,
-                transition: { duration: 0.3 }
+                duration: 0.4, 
+                ease: [0.25, 0.46, 0.45, 0.94] // Cool spring animation
             }}
             style={{
                 position: 'fixed',
