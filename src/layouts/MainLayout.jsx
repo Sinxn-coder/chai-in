@@ -57,54 +57,57 @@ const MainLayout = ({ lang }) => {
     }), []);
 
     return (
-        <div style={{ 
-            minHeight: '100vh', 
-            background: 'var(--bg-cream)', 
-            position: 'relative',
-            willChange: 'transform' // Performance optimization
-        }}>
-            {/* Original Top Navigation Bar - Fixed with own animations */}
+        <>
+            {/* Original Top Navigation Bar - Fixed outside wrapper */}
             {!showNewNav && (
                 <div className="mobile-only">
                     <AppBar />
                 </div>
             )}
 
-            {/* Desktop Navigation - Fixed with own animations */}
+            {/* Desktop Navigation - Fixed outside wrapper */}
             {!showNewNav && (
                 <div>
                     <DesktopNav />
                 </div>
             )}
 
-            {/* Animated Food Particles Background - Optimized */}
-            <FoodParticles />
+            {/* Main Content Wrapper */}
+            <div style={{ 
+                minHeight: '100vh', 
+                background: 'var(--bg-cream)', 
+                position: 'relative',
+                willChange: 'transform' // Performance optimization
+            }}>
+                {/* Animated Food Particles Background - Optimized */}
+                <FoodParticles />
 
-            {/* Force Username Set */}
-            <SetUsernameModal />
-            <SetAvatarModal />
+                {/* Force Username Set */}
+                <SetUsernameModal />
+                <SetAvatarModal />
 
-            {/* Content Area - Optimized with proper padding for fixed nav */}
-            <AnimatePresence mode="wait">
-                <motion.div
-                    key={location.pathname}
-                    {...navVariants.content}
-                    style={{ 
-                        willChange: 'transform',
-                        paddingTop: showNewNav ? '0px' : '70px', // No top padding in ClubLeaderboard
-                        paddingBottom: '70px', // Always account for fixed BottomNav
-                        minHeight: '100vh'
-                    }}
-                >
-                    <Outlet />
-                </motion.div>
-            </AnimatePresence>
+                {/* Content Area - Optimized with proper padding for fixed nav */}
+                <AnimatePresence mode="wait">
+                    <motion.div
+                        key={location.pathname}
+                        {...navVariants.content}
+                        style={{ 
+                            willChange: 'transform',
+                            paddingTop: showNewNav ? '0px' : '70px', // No top padding in ClubLeaderboard
+                            paddingBottom: '70px', // Always account for fixed BottomNav
+                            minHeight: '100vh'
+                        }}
+                    >
+                        <Outlet />
+                    </motion.div>
+                </AnimatePresence>
+            </div>
 
-            {/* Bottom Navigation - Fixed with own animations */}
+            {/* Bottom Navigation - Fixed outside wrapper */}
             <div className="mobile-only">
                 <BottomNav lang={lang} />
             </div>
-        </div>
+        </>
     );
 };
 

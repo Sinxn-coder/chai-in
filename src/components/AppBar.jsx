@@ -71,7 +71,7 @@ const AppBar = () => {
                 alignItems: 'center',
                 justifyContent: 'space-between',
                 padding: '0 20px',
-                zIndex: 1000,
+                zIndex: 9999, // Highest z-index to stay on top
                 boxShadow: '0 8px 32px rgba(0,0,0,0.1)',
                 willChange: 'transform'
             }}

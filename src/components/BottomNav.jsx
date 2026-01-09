@@ -43,7 +43,7 @@ const BottomNav = ({ lang = 'en' }) => {
         left: 0,
         right: 0,
         height: 70, // Reduced height for small screens
-        zIndex: 1000,
+        zIndex: 9999, // Highest z-index to stay on top
         pointerEvents: 'none',
         willChange: 'transform'
       }}
