@@ -443,7 +443,10 @@ const ClubLeaderboard = ({ lang }) => {
                 style={{ 
                     position: 'fixed',
                     bottom: '20px',
-                    left: '50%',
+                    left: '0',
+                    right: '0',
+                    marginLeft: 'auto',
+                    marginRight: 'auto',
                     height: '60px',
                     width: '90%',
                     maxWidth: '400px',
@@ -459,7 +462,7 @@ const ClubLeaderboard = ({ lang }) => {
                     boxShadow: '0 8px 32px rgba(0,0,0,0.2)',
                     border: '1px solid rgba(255,255,255,0.2)',
                     willChange: 'transform', // Performance optimization
-                    transform: 'translateX(-50%) translateZ(0)' // Hardware acceleration
+                    transform: 'translateZ(0)' // Hardware acceleration
                 }}>
                 {tabs.map(tab => (
                     <button
