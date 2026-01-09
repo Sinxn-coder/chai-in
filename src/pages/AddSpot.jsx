@@ -329,7 +329,7 @@ const AddSpot = ({ lang }) => {
                                         </button>
                                     ))}
                                 </div>
-                                <Button onClick={handleNext} style={{ width: '100%', padding: '18px', borderRadius: '24px', justifyContent: 'center' }}>Continue</Button>
+                                <Button onClick={handleNext} style={{ width: '100%', padding: '18px', borderRadius: '24px', justifyContent: 'center', fontSize: '1.1rem', fontWeight: '800' }}>Continue</Button>
                             </motion.div>
                         )}
 
@@ -352,8 +352,8 @@ const AddSpot = ({ lang }) => {
                                     style={{ width: '100%', padding: '16px', borderRadius: '18px', border: '2px solid var(--secondary)', background: 'var(--secondary)', fontSize: '1rem', fontWeight: '700', outline: 'none', marginBottom: '20px' }}
                                 />
                                 <div style={{ display: 'flex', gap: '12px', marginTop: '12px' }}>
-                                    <button onClick={handleBack} style={{ flex: 1, padding: '18px', borderRadius: '24px', background: 'var(--secondary)', border: 'none', fontWeight: '800' }}>Back</button>
-                                    <Button onClick={handleNext} style={{ flex: 2, padding: '18px', borderRadius: '24px', justifyContent: 'center' }}>Next</Button>
+                                    <button onClick={handleBack} style={{ flex: 1, padding: '18px', borderRadius: '24px', background: 'var(--secondary)', border: 'none', fontWeight: '800', fontSize: '1.1rem' }}>Back</button>
+                                    <Button onClick={handleNext} style={{ flex: 2, padding: '18px', borderRadius: '24px', justifyContent: 'center', fontSize: '1.1rem', fontWeight: '800' }}>Next</Button>
                                 </div>
                             </motion.div>
                         )}
@@ -392,8 +392,8 @@ const AddSpot = ({ lang }) => {
                                 />
 
                                 <div style={{ display: 'flex', gap: '12px' }}>
-                                    <button onClick={handleBack} style={{ flex: 1, padding: '18px', borderRadius: '24px', background: 'var(--secondary)', border: 'none', fontWeight: '800' }}>Back</button>
-                                    <Button onClick={handleNext} style={{ flex: 2, padding: '18px', borderRadius: '24px', justifyContent: 'center' }}>Next</Button>
+                                    <button onClick={handleBack} style={{ flex: 1, padding: '18px', borderRadius: '24px', background: 'var(--secondary)', border: 'none', fontWeight: '800', fontSize: '1.1rem' }}>Back</button>
+                                    <Button onClick={handleNext} style={{ flex: 2, padding: '18px', borderRadius: '24px', justifyContent: 'center', fontSize: '1.1rem', fontWeight: '800' }}>Next</Button>
                                 </div>
                             </motion.div>
                         )}
@@ -414,7 +414,7 @@ const AddSpot = ({ lang }) => {
                                     ))}
                                 </div>
                                 <div style={{ display: 'flex', gap: '12px' }}>
-                                    <button onClick={handleBack} style={{ flex: 1, padding: '18px', borderRadius: '24px', background: 'var(--secondary)', border: 'none', fontWeight: '800' }}>Back</button>
+                                    <button onClick={handleBack} style={{ flex: 1, padding: '18px', borderRadius: '24px', background: 'var(--secondary)', border: 'none', fontWeight: '800', fontSize: '1.1rem' }}>Back</button>
                                     <button onClick={handleSubmit} disabled={loading} style={{ flex: 2, padding: '18px', borderRadius: '24px', background: 'var(--primary)', color: 'white', border: 'none', fontWeight: '900', fontSize: '1.1rem', boxShadow: 'var(--shadow-md)' }}>
                                         {loading ? 'Submitting...' : 'Post Spot ✨'}
                                     </button>
