@@ -49,7 +49,21 @@ const AppBar = () => {
     }, [user]);
 
     return (
-        <div 
+        <motion.div 
+            initial={{ opacity: 0, y: -100, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -100, scale: 0.9 }}
+            transition={{ 
+                duration: 0.6, 
+                ease: [0.25, 0.46, 0.45, 0.94], // Spring easing
+                type: "spring",
+                stiffness: 260,
+                damping: 20
+            }}
+            whileHover={{ 
+                scale: 1.01,
+                transition: { duration: 0.3 }
+            }}
             style={{
                 position: 'fixed',
                 top: 0,
@@ -149,7 +163,7 @@ const AppBar = () => {
                     />
                 </div>
             </div>
-        </div>
+        </motion.div>
     );
 };
 
