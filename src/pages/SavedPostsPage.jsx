@@ -15,80 +15,105 @@ const SavedPostsPage = ({ lang = 'en' }) => {
     const [toast, setToast] = useState(null);
 
     const fetchSavedPosts = async () => {
+        console.log('🔍 Starting fetchSavedPosts...');
+        setLoading(true);
+        
         if (!user) {
+            console.log('❌ No user found');
             setLoading(false);
             return;
         }
 
         try {
-            console.log('🔍 Fetching saved posts for user:', user.id);
+            console.log('� User authenticated:', user.id);
             
-            // First fetch saved posts references
+            // First, let's check if the saved_posts table exists and has data
             const { data: savedPostsData, error: savedError } = await supabase
                 .from('saved_posts')
-                .select('post_id, created_at')
-                .eq('user_id', user.id)
-                .order('created_at', { ascending: false });
+                .select('post_id')
+                .eq('user_id', user.id);
 
             if (savedError) {
-                console.error('❌ Error fetching saved posts references:', savedError);
-                setToast({ message: 'Failed to load saved posts', type: 'error' });
+                console.error('❌ Error fetching saved posts:', savedError);
+                console.log('This might mean the saved_posts table doesn\'t exist or RLS policies are missing');
+                setToast({ message: 'Saved posts feature not available yet', type: 'error' });
+                setSavedPosts([]);
                 setLoading(false);
                 return;
             }
 
-            console.log('📊 Saved posts references:', savedPostsData);
+            console.log('📊 Saved posts data:', savedPostsData);
 
-            if (savedPostsData && savedPostsData.length > 0) {
-                // Get the post IDs
-                const postIds = savedPostsData.map(item => item.post_id);
-                
-                // Fetch the actual posts with user details
-                const { data: postsData, error: postsError } = await supabase
-                    .from('community_posts')
-                    .select(`
-                        id,
-                        image_url,
-                        caption,
-                        created_at,
-                        user_id,
-                        user_preferences (
-                            username,
-                            display_name,
-                            avatar_url
-                        )
-                    `)
-                    .in('id', postIds)
-                    .order('created_at', { ascending: false });
-
-                if (postsError) {
-                    console.error('❌ Error fetching posts:', postsError);
-                    setToast({ message: 'Failed to load posts', type: 'error' });
-                    setLoading(false);
-                    return;
-                }
-
-                console.log('📝 Posts data:', postsData);
-
-                // Process the data
-                const processedPosts = postsData.map(post => ({
-                    ...post,
-                    author: post.user_preferences || { 
-                        display_name: 'Foodie', 
-                        username: null, 
-                        avatar_url: null 
-                    }
-                }));
-
-                console.log('✨ Processed saved posts:', processedPosts);
-                setSavedPosts(processedPosts);
-            } else {
+            if (!savedPostsData || savedPostsData.length === 0) {
                 console.log('📭 No saved posts found');
                 setSavedPosts([]);
+                setLoading(false);
+                return;
             }
+
+            // Get the post IDs
+            const postIds = savedPostsData.map(item => item.post_id);
+            console.log('🎯 Post IDs to fetch:', postIds);
+            
+            // Fetch the actual posts
+            const { data: postsData, error: postsError } = await supabase
+                .from('community_posts')
+                .select('*')
+                .in('id', postIds)
+                .order('created_at', { ascending: false });
+
+            if (postsError) {
+                console.error('❌ Error fetching posts:', postsError);
+                setToast({ message: 'Failed to load posts', type: 'error' });
+                setSavedPosts([]);
+                setLoading(false);
+                return;
+            }
+
+            console.log('📝 Posts data:', postsData);
+
+            if (!postsData || postsData.length === 0) {
+                console.log('📭 No posts found for saved IDs');
+                setSavedPosts([]);
+                setLoading(false);
+                return;
+            }
+
+            // Get user IDs for authors
+            const userIds = [...new Set(postsData.map(p => p.user_id))];
+            console.log('👥 User IDs to fetch:', userIds);
+            
+            const { data: usersData, error: usersError } = await supabase
+                .from('user_preferences')
+                .select('user_id, username, display_name, avatar_url')
+                .in('user_id', userIds);
+            
+            if (usersError) {
+                console.error('❌ Error fetching users:', usersError);
+            } else {
+                console.log('👤 Users data:', usersData);
+            }
+            
+            const userMap = {};
+            usersData?.forEach(u => userMap[u.user_id] = u);
+
+            // Process the data
+            const processedPosts = postsData.map(post => ({
+                ...post,
+                author: userMap[post.user_id] || { 
+                    display_name: 'Foodie', 
+                    username: null, 
+                    avatar_url: null 
+                }
+            }));
+
+            console.log('✨ Processed saved posts:', processedPosts);
+            setSavedPosts(processedPosts);
+            
         } catch (error) {
             console.error('💥 Error in fetchSavedPosts:', error);
             setToast({ message: 'Failed to load saved posts', type: 'error' });
+            setSavedPosts([]);
         } finally {
             setLoading(false);
         }

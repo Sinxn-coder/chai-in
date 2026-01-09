@@ -190,37 +190,6 @@ const Settings = () => {
                             </div>
                         </div>
 
-                        {/* Saved Posts Card */}
-                        <div style={{ background: 'white', borderRadius: '32px', padding: '24px', boxShadow: 'var(--shadow-md)' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
-                                <Bookmark size={20} color="var(--primary)" />
-                                <h2 style={{ fontSize: '1.1rem', fontWeight: '900', color: 'var(--text-main)', margin: 0 }}>Saved Posts</h2>
-                            </div>
-
-                            <motion.button
-                                whileTap={{ scale: 0.95 }}
-                                onClick={() => navigate('/saved-posts')}
-                                style={{ 
-                                    width: '100%', 
-                                    padding: '16px', 
-                                    borderRadius: '20px', 
-                                    background: 'var(--primary)', 
-                                    color: 'white', 
-                                    border: 'none', 
-                                    fontWeight: '700', 
-                                    fontSize: '0.95rem',
-                                    boxShadow: 'var(--shadow-md)',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    gap: '8px'
-                                }}
-                            >
-                                <Bookmark size={18} />
-                                View Saved Posts
-                            </motion.button>
-                        </div>
-
                         {/* Notifications Card */}
                         <div style={{ background: 'white', borderRadius: '32px', padding: '24px', boxShadow: 'var(--shadow-md)' }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>

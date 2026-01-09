@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { User, Settings, LogOut, Award, Star, MapPin, Zap, ChevronRight, Heart, MessageSquare, Plus, Shield, MessageCircle, Trash2, AlertTriangle, Moon, Sun } from 'lucide-react';
+import { User, Settings, LogOut, Award, Star, MapPin, Zap, ChevronRight, Heart, MessageSquare, Plus, Shield, MessageCircle, Trash2, AlertTriangle, Moon, Sun, Bookmark } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabaseClient';
 import { motion } from 'framer-motion';
@@ -356,6 +356,32 @@ const Profile = ({ lang }) => {
                             <Shield size={22} color="#10B981" />
                         </div>
                         <span style={{ fontWeight: '800', fontSize: '1.05rem', color: 'var(--text-main)' }}>Privacy Policy</span>
+                    </div>
+                    <ChevronRight size={20} color="var(--text-muted)" />
+                </motion.div>
+
+                <motion.div
+                    whileTap={{ scale: 0.98 }}
+                    onClick={() => navigate(`/${lang}/saved-posts`)}
+                    style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        padding: '16px 20px',
+                        borderRadius: '16px',
+                        background: 'white',
+                        border: '1px solid #E5E7EB',
+                        cursor: 'pointer',
+                        transition: 'all 0.2s ease'
+                    }}
+                    onMouseOver={(e) => e.target.style.background = '#F9FAFB'}
+                    onMouseOut={(e) => e.target.style.background = 'white'}
+                >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                        <div style={{ padding: '10px', borderRadius: '14px', background: '#F0FDF4' }}>
+                            <Bookmark size={22} color="#10B981" />
+                        </div>
+                        <span style={{ fontWeight: '800', fontSize: '1.05rem', color: 'var(--text-main)' }}>Saved Posts</span>
                     </div>
                     <ChevronRight size={20} color="var(--text-muted)" />
                 </motion.div>
