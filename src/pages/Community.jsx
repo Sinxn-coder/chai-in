@@ -693,7 +693,7 @@ const Community = () => {
     return (
         <div style={{ 
             minHeight: '100vh', 
-            background: '#f8f9fa',
+            background: '#f8f9fa', 
             paddingBottom: '80px'
         }}>
             {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
@@ -705,12 +705,12 @@ const Community = () => {
                 left: '0',
                 right: '0',
                 padding: '20px', 
-                background: '#ffffff',
+                background: '#ffffff', 
                 borderBottom: '1px solid #e9ecef',
                 boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
                 borderRadius: '0 0 30px 30px',
                 overflow: 'hidden',
-                zIndex: 1000
+                zIndex: 1001 // Increased z-index to appear above Comments modal
             }}>
                 <div style={{ 
                     position: 'absolute',
