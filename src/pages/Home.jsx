@@ -101,23 +101,17 @@ const Home = ({ lang }) => {
 
     const fetchSpots = async () => {
         setLoading(true);
-        console.log('Fetching spots from database...');
         const { data, error } = await supabase.from('spots').select('*').eq('is_verified', true).order('created_at', { ascending: false });
         if (error) {
             console.error('Error fetching spots:', error);
         } else {
-            console.log('Fetched spots:', data);
             let all = data || [];
             if (activeLocation) {
-                console.log('Active location:', activeLocation);
                 all = all.filter(s => {
                     const distance = getDistanceFromLatLonInKm(activeLocation.lat, activeLocation.lng, s.latitude, s.longitude);
-                    console.log(`Spot: ${s.name}, Distance: ${distance}km`);
                     return distance <= 30;
                 });
-                console.log('Filtered spots within 30km:', all);
             }
-            console.log('Setting spots state:', all);
             setSpots(all);
         }
         setLoading(false);
