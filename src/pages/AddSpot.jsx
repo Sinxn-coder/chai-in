@@ -167,20 +167,61 @@ const AddSpot = ({ lang }) => {
     };
 
     return (
-        <div style={{ minHeight: '100vh', background: 'var(--secondary)', paddingBottom: '100px' }}>
+        <div style={{ 
+            minHeight: '100vh', 
+            background: 'var(--secondary)', 
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            overflow: 'auto',
+            zIndex: 1
+        }}>
             {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
 
             <MapPicker isOpen={showMapPicker} onClose={() => setShowMapPicker(false)} onSelectLocation={handleMapClick} initialCenter={mapCenter} />
 
             {/* Red Header */}
-            <div style={{ height: '140px', background: 'var(--primary)', borderBottomLeftRadius: '40px', borderBottomRightRadius: '40px', padding: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <button onClick={() => navigate(-1)} style={{ position: 'absolute', left: '20px', background: 'rgba(255,255,255,0.2)', border: 'none', padding: '10px', borderRadius: '15px', color: 'white' }}>
+            <div style={{ 
+                height: '140px', 
+                background: 'var(--primary)', 
+                borderBottomLeftRadius: '40px', 
+                borderBottomRightRadius: '40px', 
+                padding: '20px', 
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'center',
+                position: 'relative',
+                zIndex: 10
+            }}>
+                <button 
+                    onClick={() => navigate(-1)} 
+                    style={{ 
+                        position: 'absolute', 
+                        left: '20px', 
+                        background: 'rgba(255,255,255,0.2)', 
+                        border: 'none', 
+                        padding: '10px', 
+                        borderRadius: '15px', 
+                        color: 'white',
+                        cursor: 'pointer',
+                        zIndex: 11
+                    }}
+                >
                     <ChevronLeft size={24} />
                 </button>
                 <h1 style={{ color: 'white', fontSize: '1.4rem', fontWeight: '900' }}>Add New Spot</h1>
             </div>
 
-            <div className="container" style={{ marginTop: '-40px', padding: '0 16px', maxWidth: '100%', boxSizing: 'border-box' }}>
+            <div style={{ 
+                marginTop: '-40px', 
+                padding: '0 16px', 
+                maxWidth: '100%', 
+                boxSizing: 'border-box',
+                position: 'relative',
+                zIndex: 5
+            }}>
                 {/* Step Indicator */}
                 <div style={{ display: 'flex', gap: '8px', marginBottom: '20px', justifyContent: 'center' }}>
                     {[1, 2, 3, 4].map(i => (

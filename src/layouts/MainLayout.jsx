@@ -14,6 +14,11 @@ const MainLayout = ({ lang }) => {
     const location = useLocation();
     const [showNewNav, setShowNewNav] = useState(false);
 
+    // Check if current page should hide all navigation (like AddSpot)
+    const hideAllNavigation = useMemo(() => {
+        return location.pathname.includes('/add-spot');
+    }, [location.pathname]);
+
     // Memoize the navigation state to prevent unnecessary re-renders
     const shouldHideMainNav = useMemo(() => {
         return location.pathname.includes('/club-leaderboard');
@@ -21,6 +26,11 @@ const MainLayout = ({ lang }) => {
 
     // Check if current page needs special padding (like AddSpot)
     const needsSpecialPadding = useMemo(() => {
+        return location.pathname.includes('/add-spot');
+    }, [location.pathname]);
+
+    // Check if current page should skip animations (like AddSpot)
+    const skipAnimations = useMemo(() => {
         return location.pathname.includes('/add-spot');
     }, [location.pathname]);
 
@@ -66,7 +76,7 @@ const MainLayout = ({ lang }) => {
         <>
             {/* Original Top Navigation Bar - Fixed outside wrapper with animation */}
             <AnimatePresence mode="wait">
-                {!showNewNav && (
+                {!showNewNav && !hideAllNavigation && (
                     <motion.div 
                         key="main-nav"
                         className="mobile-only"
@@ -82,7 +92,7 @@ const MainLayout = ({ lang }) => {
 
             {/* Desktop Navigation - Fixed outside wrapper with animation */}
             <AnimatePresence mode="wait">
-                {!showNewNav && (
+                {!showNewNav && !hideAllNavigation && (
                     <motion.div 
                         key="desktop-nav"
                         initial={{ opacity: 0, x: -100 }}
@@ -110,12 +120,12 @@ const MainLayout = ({ lang }) => {
                 <SetAvatarModal />
 
                 {/* Content Area - Optimized with proper padding for fixed nav */}
-                <AnimatePresence mode="wait">
+                <AnimatePresence mode={skipAnimations ? "sync" : "wait"}>
                     <motion.div
                         key={location.pathname}
-                        {...navVariants.content}
+                        {...(skipAnimations ? {} : navVariants.content)}
                         style={{ 
-                            willChange: 'transform',
+                            willChange: skipAnimations ? 'auto' : 'transform',
                             paddingTop: showNewNav ? '0px' : (needsSpecialPadding ? '0px' : '70px'), // No top padding for ClubLeaderboard and AddSpot
                             paddingBottom: '70px', // Always account for fixed BottomNav
                             minHeight: '100vh'
@@ -128,7 +138,7 @@ const MainLayout = ({ lang }) => {
 
             {/* Bottom Navigation - Fixed outside wrapper with animation */}
             <AnimatePresence mode="wait">
-                {!showNewNav && (
+                {!showNewNav && !hideAllNavigation && (
                     <motion.div 
                         key="bottom-nav"
                         className="mobile-only"
