@@ -813,7 +813,7 @@ const Community = () => {
                         </motion.button>
                     </div>
                 ) : (
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
                         {posts.map((post, index) => (
                             <motion.div
                                 key={post.id}
@@ -822,17 +822,19 @@ const Community = () => {
                                 transition={{ delay: index * 0.1 }}
                                 style={{ 
                                     background: '#ffffff', 
-                                    borderRadius: '16px', 
+                                    borderRadius: '20px', 
                                     overflow: 'hidden',
-                                    boxShadow: '0 2px 12px rgba(0,0,0,0.08)',
-                                    border: '1px solid #e9ecef'
+                                    boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
+                                    border: '1px solid #e9ecef',
+                                    width: '100%',
+                                    maxWidth: '500px'
                                 }}
                             >
                                 {/* Post Header */}
-                                <div style={{ padding: '16px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                <div style={{ padding: '20px', display: 'flex', alignItems: 'center', gap: '12px' }}>
                                     <div style={{ 
-                                        width: '44px', 
-                                        height: '44px', 
+                                        width: '48px', 
+                                        height: '48px', 
                                         borderRadius: '50%', 
                                         background: '#f8f9fa', 
                                         overflow: 'hidden',
@@ -843,22 +845,22 @@ const Community = () => {
                                             <img src={post.author.avatar_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                                         ) : (
                                             <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                                <UserIcon size={20} color="#666" />
+                                                <UserIcon size={22} color="#666" />
                                             </div>
                                         )}
                                     </div>
                                     <div style={{ flex: 1 }}>
-                                        <div style={{ fontWeight: '700', fontSize: '1rem', color: '#1a1a1a', marginBottom: '2px' }}>
+                                        <div style={{ fontWeight: '700', fontSize: '1.1rem', color: '#1a1a1a', marginBottom: '2px' }}>
                                             {post.author.username || post.author.display_name}
                                         </div>
-                                        <div style={{ fontSize: '0.85rem', color: '#666' }}>
+                                        <div style={{ fontSize: '0.9rem', color: '#666' }}>
                                             {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}
                                         </div>
                                     </div>
                                 </div>
 
                                 {/* Post Image */}
-                                <div style={{ position: 'relative', width: '100%', paddingTop: '75%' }}>
+                                <div style={{ position: 'relative', width: '100%', paddingTop: '100%' }}>
                                     <img 
                                         src={post.image_url} 
                                         style={{ 
@@ -876,8 +878,8 @@ const Community = () => {
                                 </div>
 
                                 {/* Post Actions */}
-                                <div style={{ padding: '16px' }}>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '20px', marginBottom: '12px' }}>
+                                <div style={{ padding: '20px' }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '24px', marginBottom: '16px' }}>
                                         <motion.button
                                             whileTap={{ scale: 0.9 }}
                                             onClick={() => handleLike(post.id, post.likes_count)}
@@ -887,16 +889,16 @@ const Community = () => {
                                                 cursor: 'pointer',
                                                 display: 'flex',
                                                 alignItems: 'center',
-                                                gap: '6px'
+                                                gap: '8px'
                                             }}
                                         >
                                             <Heart 
-                                                size={22} 
+                                                size={24} 
                                                 color={post.isLikedByUser ? "#e74c3c" : "#666"} 
                                                 fill={post.isLikedByUser ? "#e74c3c" : "none"} 
                                             />
                                             <span style={{ 
-                                                fontSize: '0.9rem', 
+                                                fontSize: '1rem', 
                                                 fontWeight: '600',
                                                 color: post.isLikedByUser ? "#e74c3c" : "#666"
                                             }}>
