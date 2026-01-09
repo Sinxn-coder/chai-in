@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import BottomNav from '../components/BottomNav';
 import DesktopNav from '../components/DesktopNav';
@@ -13,34 +13,64 @@ const MainLayout = ({ lang }) => {
     const location = useLocation();
     const [showNewNav, setShowNewNav] = useState(false);
 
+    // Memoize the navigation state to prevent unnecessary re-renders
+    const shouldHideMainNav = useMemo(() => {
+        return location.pathname.includes('/club-leaderboard');
+    }, [location.pathname]);
+
     // Hide main nav bar only when user navigates to club-leaderboard page
     useEffect(() => {
-        const shouldHideMainNav = location.pathname.includes('/club-leaderboard');
-        
         setShowNewNav(shouldHideMainNav);
-    }, [location.pathname]);
+    }, [shouldHideMainNav]);
 
     useEffect(() => {
-        // Scroll to top when route changes
-        window.scrollTo({
-            top: 0,
-            left: 0,
-            behavior: 'smooth'
-        });
+        // Scroll to top when route changes - optimized
+        window.scrollTo(0, 0);
     }, [location.pathname]);
 
+    // Memoize animation variants to prevent recreation
+    const navVariants = useMemo(() => ({
+        mainNav: {
+            initial: { opacity: 0, y: -100 },
+            animate: { opacity: 1, y: 0 },
+            exit: { opacity: 0, y: -100 },
+            transition: { duration: 0.2, ease: "easeInOut" }
+        },
+        desktopNav: {
+            initial: { opacity: 0, x: -100 },
+            animate: { opacity: 1, x: 0 },
+            exit: { opacity: 0, x: -100 },
+            transition: { duration: 0.2, ease: "easeInOut" }
+        },
+        bottomNav: {
+            initial: { opacity: 0, y: 100 },
+            animate: { opacity: 1, y: 0 },
+            exit: { opacity: 0, y: 100 },
+            transition: { duration: 0.2, ease: "easeInOut" }
+        },
+        content: {
+            initial: { opacity: 0, y: 20 },
+            animate: { opacity: 1, y: 0 },
+            exit: { opacity: 0, y: -20 },
+            transition: { duration: 0.15, ease: "easeInOut" }
+        }
+    }), []);
+
     return (
-        <div style={{ minHeight: '100vh', background: 'var(--bg-cream)', position: 'relative' }}>
+        <div style={{ 
+            minHeight: '100vh', 
+            background: 'var(--bg-cream)', 
+            position: 'relative',
+            willChange: 'transform' // Performance optimization
+        }}>
             {/* Original Top Navigation Bar - Animated */}
             <AnimatePresence mode="wait">
                 {!showNewNav && (
                     <motion.div 
                         key="main-nav"
                         className="mobile-only" 
-                        initial={{ opacity: 0, y: -100 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -100 }}
-                        transition={{ duration: 0.3, ease: "easeInOut" }}
+                        {...navVariants.mainNav}
+                        style={{ willChange: 'transform' }}
                     >
                         <AppBar />
                     </motion.div>
@@ -52,31 +82,27 @@ const MainLayout = ({ lang }) => {
                 {!showNewNav && (
                     <motion.div 
                         key="desktop-nav"
-                        initial={{ opacity: 0, x: -100 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: -100 }}
-                        transition={{ duration: 0.3, ease: "easeInOut" }}
+                        {...navVariants.desktopNav}
+                        style={{ willChange: 'transform' }}
                     >
                         <DesktopNav />
                     </motion.div>
                 )}
             </AnimatePresence>
 
-            {/* Animated Food Particles Background */}
+            {/* Animated Food Particles Background - Optimized */}
             <FoodParticles />
 
             {/* Force Username Set */}
             <SetUsernameModal />
             <SetAvatarModal />
 
-            {/* Content Area */}
+            {/* Content Area - Optimized */}
             <AnimatePresence mode="wait">
                 <motion.div
                     key={location.pathname}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -20 }}
-                    transition={{ duration: 0.2, ease: "easeInOut" }}
+                    {...navVariants.content}
+                    style={{ willChange: 'transform' }}
                 >
                     <Outlet />
                 </motion.div>
@@ -87,10 +113,8 @@ const MainLayout = ({ lang }) => {
                 <motion.div 
                     key="bottom-nav"
                     className="mobile-only"
-                    initial={{ opacity: 0, y: 100 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: 100 }}
-                    transition={{ duration: 0.3, ease: "easeInOut" }}
+                    {...navVariants.bottomNav}
+                    style={{ willChange: 'transform' }}
                 >
                     <BottomNav lang={lang} />
                 </motion.div>

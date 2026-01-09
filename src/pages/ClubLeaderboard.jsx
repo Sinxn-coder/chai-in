@@ -439,12 +439,11 @@ const ClubLeaderboard = ({ lang }) => {
             <motion.div 
                 initial={{ opacity: 0, y: 100 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, ease: "easeOut" }}
+                transition={{ duration: 0.3, ease: "easeOut" }}
                 style={{ 
                     position: 'fixed',
                     bottom: '20px',
                     left: '50%',
-                    transform: 'translateX(-50%)',
                     height: '60px',
                     width: '90%',
                     maxWidth: '400px',
@@ -452,12 +451,15 @@ const ClubLeaderboard = ({ lang }) => {
                     alignItems: 'center',
                     justifyContent: 'space-around',
                     padding: '0 20px',
-                    background: 'rgba(239, 68, 68, 0.8)', // Semi-transparent red
+                    background: 'rgba(239, 68, 68, 0.9)', // More opaque
                     backdropFilter: 'blur(10px)',
+                    WebkitBackdropFilter: 'blur(10px)', // Safari support
                     borderRadius: '20px',
                     zIndex: 1000,
                     boxShadow: '0 8px 32px rgba(0,0,0,0.2)',
-                    border: '1px solid rgba(255,255,255,0.2)'
+                    border: '1px solid rgba(255,255,255,0.2)',
+                    willChange: 'transform', // Performance optimization
+                    transform: 'translateX(-50%) translateZ(0)' // Hardware acceleration
                 }}>
                 {tabs.map(tab => (
                     <button
