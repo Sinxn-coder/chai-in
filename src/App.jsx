@@ -1,29 +1,32 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
+import { Suspense, lazy } from 'react';
 import Login from './pages/Login';
-import Home from './pages/Home';
-import Profile from './pages/Profile';
-import Settings from './pages/Settings';
-import AddSpot from './pages/AddSpot';
-import MapScreen from './pages/MapScreen';
-import ClubLeaderboard from './pages/ClubLeaderboard';
-import Leaderboard from './pages/Leaderboard';
-import Admin from './pages/Admin';
-import SpotDetail from './pages/SpotDetail';
-import Community from './pages/Community';
-import EditSpot from './pages/EditSpot';
-import Favorites from './pages/Favorites';
-import PrivacyPolicy from './pages/PrivacyPolicy';
-import ContactAdmin from './pages/ContactAdmin';
-import DirectionsPage from './pages/DirectionsPage';
-import ProfileFavorites from './pages/ProfileFavorites';
-import ProfileReviews from './pages/ProfileReviews';
-import ProfileAdded from './pages/ProfileAdded';
-import SavedPostsPage from './pages/SavedPostsPage';
-import LandingPage from './pages/LandingPage';
-import Explore from './pages/Explore';
-import MainLayout from './layouts/MainLayout';
 import { useAuth } from './context/AuthContext';
 import FoodLoader from './components/FoodLoader';
+
+// Lazy load components for better performance
+const Home = lazy(() => import('./pages/Home'));
+const Profile = lazy(() => import('./pages/Profile'));
+const Settings = lazy(() => import('./pages/Settings'));
+const AddSpot = lazy(() => import('./pages/AddSpot'));
+const MapScreen = lazy(() => import('./pages/MapScreen'));
+const ClubLeaderboard = lazy(() => import('./pages/ClubLeaderboard'));
+const Leaderboard = lazy(() => import('./pages/Leaderboard'));
+const Admin = lazy(() => import('./pages/Admin'));
+const SpotDetail = lazy(() => import('./pages/SpotDetail'));
+const Community = lazy(() => import('./pages/Community'));
+const EditSpot = lazy(() => import('./pages/EditSpot'));
+const Favorites = lazy(() => import('./pages/Favorites'));
+const PrivacyPolicy = lazy(() => import('./pages/PrivacyPolicy'));
+const ContactAdmin = lazy(() => import('./pages/ContactAdmin'));
+const DirectionsPage = lazy(() => import('./pages/DirectionsPage'));
+const ProfileFavorites = lazy(() => import('./pages/ProfileFavorites'));
+const ProfileReviews = lazy(() => import('./pages/ProfileReviews'));
+const ProfileAdded = lazy(() => import('./pages/ProfileAdded'));
+const SavedPostsPage = lazy(() => import('./pages/SavedPostsPage'));
+const LandingPage = lazy(() => import('./pages/LandingPage'));
+const Explore = lazy(() => import('./pages/Explore'));
+const MainLayout = lazy(() => import('./layouts/MainLayout'));
 
 // Protected Route Wrapper
 const ProtectedRoute = ({ children }) => {
@@ -74,7 +77,13 @@ function App() {
       {/* Malayalam Routes - PROTECTED */}
       <Route path="/ml/*" element={
         <ProtectedRoute>
-          <AppRoutes lang="ml" />
+          <Suspense fallback={
+            <div style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'white' }}>
+              <FoodLoader message="Loading..." />
+            </div>
+          }>
+            <AppRoutes lang="ml" />
+          </Suspense>
         </ProtectedRoute>
       } />
     </Routes>
@@ -84,30 +93,36 @@ function App() {
 // Sub-router for actual pages
 function AppRoutes({ lang }) {
   return (
-    <Routes>
-      <Route element={<MainLayout lang={lang} />}>
-        <Route path="home" element={<Home lang={lang} />} />
-        <Route path="map" element={<MapScreen lang={lang} />} />
-        <Route path="add-spot" element={<AddSpot lang={lang} />} />
-        <Route path="club-leaderboard" element={<ClubLeaderboard lang={lang} />} />
-        <Route path="leaderboard" element={<Leaderboard lang={lang} />} />
-        <Route path="explore" element={<Explore lang={lang} />} />
-        <Route path="community" element={<Community lang={lang} />} />
-        <Route path="favorites" element={<Favorites lang={lang} />} />
-        <Route path="profile" element={<Profile lang={lang} />} />
-        <Route path="profile/favorites" element={<ProfileFavorites lang={lang} />} />
-        <Route path="profile/reviews" element={<ProfileReviews lang={lang} />} />
-        <Route path="profile/added" element={<ProfileAdded lang={lang} />} />
-        <Route path="saved-posts" element={<SavedPostsPage lang={lang} />} />
-        <Route path="settings" element={<Settings lang={lang} />} />
-        <Route path="privacy-policy" element={<PrivacyPolicy lang={lang} />} />
-        <Route path="contact-admin" element={<ContactAdmin lang={lang} />} />
-        <Route path="directions/:id" element={<DirectionsPage lang={lang} />} />
-        <Route path="spot/:id" element={<SpotDetail lang={lang} />} />
-        <Route path="edit-spot/:id" element={<EditSpot lang={lang} />} />
-        <Route path="admin" element={<Admin />} />
-      </Route>
-    </Routes>
+    <Suspense fallback={
+      <div style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'white' }}>
+        <FoodLoader message="Loading..." />
+      </div>
+    }>
+      <Routes>
+        <Route element={<MainLayout lang={lang} />}>
+          <Route path="home" element={<Home lang={lang} />} />
+          <Route path="map" element={<MapScreen lang={lang} />} />
+          <Route path="add-spot" element={<AddSpot lang={lang} />} />
+          <Route path="club-leaderboard" element={<ClubLeaderboard lang={lang} />} />
+          <Route path="leaderboard" element={<Leaderboard lang={lang} />} />
+          <Route path="explore" element={<Explore lang={lang} />} />
+          <Route path="community" element={<Community lang={lang} />} />
+          <Route path="favorites" element={<Favorites lang={lang} />} />
+          <Route path="profile" element={<Profile lang={lang} />} />
+          <Route path="profile/favorites" element={<ProfileFavorites lang={lang} />} />
+          <Route path="profile/reviews" element={<ProfileReviews lang={lang} />} />
+          <Route path="profile/added" element={<ProfileAdded lang={lang} />} />
+          <Route path="saved-posts" element={<SavedPostsPage lang={lang} />} />
+          <Route path="settings" element={<Settings lang={lang} />} />
+          <Route path="privacy-policy" element={<PrivacyPolicy lang={lang} />} />
+          <Route path="contact-admin" element={<ContactAdmin lang={lang} />} />
+          <Route path="directions/:id" element={<DirectionsPage lang={lang} />} />
+          <Route path="spot/:id" element={<SpotDetail lang={lang} />} />
+          <Route path="edit-spot/:id" element={<EditSpot lang={lang} />} />
+          <Route path="admin" element={<Admin />} />
+        </Route>
+      </Routes>
+    </Suspense>
   );
 }
 

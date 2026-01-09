@@ -5,6 +5,7 @@ import { useAuth } from '../context/AuthContext';
 import { supabase } from '../lib/supabaseClient';
 import Community from './Community';
 import Leaderboard from './Leaderboard';
+import { motion, AnimatePresence } from 'framer-motion';
 
 // Completely new styled Community component with gradient background
 const StyledCommunity = () => {
@@ -435,25 +436,29 @@ const ClubLeaderboard = ({ lang }) => {
             </div>
 
             {/* Tab Navigation - Fixed at bottom with transparency */}
-            <div style={{ 
-                position: 'fixed',
-                bottom: '20px',
-                left: '50%',
-                transform: 'translateX(-50%)',
-                height: '60px',
-                width: '90%',
-                maxWidth: '400px',
-                display: 'flex', 
-                alignItems: 'center',
-                justifyContent: 'space-around',
-                padding: '0 20px',
-                background: 'rgba(239, 68, 68, 0.8)', // Semi-transparent red
-                backdropFilter: 'blur(10px)',
-                borderRadius: '20px',
-                zIndex: 1000,
-                boxShadow: '0 8px 32px rgba(0,0,0,0.2)',
-                border: '1px solid rgba(255,255,255,0.2)'
-            }}>
+            <motion.div 
+                initial={{ opacity: 0, y: 100 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, ease: "easeOut" }}
+                style={{ 
+                    position: 'fixed',
+                    bottom: '20px',
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    height: '60px',
+                    width: '90%',
+                    maxWidth: '400px',
+                    display: 'flex', 
+                    alignItems: 'center',
+                    justifyContent: 'space-around',
+                    padding: '0 20px',
+                    background: 'rgba(239, 68, 68, 0.8)', // Semi-transparent red
+                    backdropFilter: 'blur(10px)',
+                    borderRadius: '20px',
+                    zIndex: 1000,
+                    boxShadow: '0 8px 32px rgba(0,0,0,0.2)',
+                    border: '1px solid rgba(255,255,255,0.2)'
+                }}>
                 {tabs.map(tab => (
                     <button
                         key={tab.id}
@@ -482,7 +487,7 @@ const ClubLeaderboard = ({ lang }) => {
                         <tab.icon size={24} />
                     </button>
                 ))}
-            </div>
+            </motion.div>
         </div>
     );
 };

@@ -7,6 +7,7 @@ import SetUsernameModal from '../components/SetUsernameModal';
 import SetAvatarModal from '../components/SetAvatarModal';
 import AppBar from '../components/AppBar';
 import { Users, Crown, MapPin, Plus, X } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const MainLayout = ({ lang }) => {
     const location = useLocation();
@@ -30,15 +31,36 @@ const MainLayout = ({ lang }) => {
 
     return (
         <div style={{ minHeight: '100vh', background: 'var(--bg-cream)', position: 'relative' }}>
-            {/* Original Top Navigation Bar - Hidden when new nav is shown */}
-            {!showNewNav && (
-                <div className="mobile-only" style={{ transition: 'opacity 0.3s ease' }}>
-                    <AppBar />
-                </div>
-            )}
+            {/* Original Top Navigation Bar - Animated */}
+            <AnimatePresence mode="wait">
+                {!showNewNav && (
+                    <motion.div 
+                        key="main-nav"
+                        className="mobile-only" 
+                        initial={{ opacity: 0, y: -100 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -100 }}
+                        transition={{ duration: 0.3, ease: "easeInOut" }}
+                    >
+                        <AppBar />
+                    </motion.div>
+                )}
+            </AnimatePresence>
 
-            {/* Desktop Navigation - Hidden when new nav is shown */}
-            {!showNewNav && <DesktopNav />}
+            {/* Desktop Navigation - Animated */}
+            <AnimatePresence mode="wait">
+                {!showNewNav && (
+                    <motion.div 
+                        key="desktop-nav"
+                        initial={{ opacity: 0, x: -100 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: -100 }}
+                        transition={{ duration: 0.3, ease: "easeInOut" }}
+                    >
+                        <DesktopNav />
+                    </motion.div>
+                )}
+            </AnimatePresence>
 
             {/* Animated Food Particles Background */}
             <FoodParticles />
@@ -48,12 +70,31 @@ const MainLayout = ({ lang }) => {
             <SetAvatarModal />
 
             {/* Content Area */}
-            <Outlet />
+            <AnimatePresence mode="wait">
+                <motion.div
+                    key={location.pathname}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    transition={{ duration: 0.2, ease: "easeInOut" }}
+                >
+                    <Outlet />
+                </motion.div>
+            </AnimatePresence>
 
-            {/* Bottom Navigation - Mobile Only */}
-            <div className="mobile-only">
-                <BottomNav lang={lang} />
-            </div>
+            {/* Bottom Navigation - Animated */}
+            <AnimatePresence mode="wait">
+                <motion.div 
+                    key="bottom-nav"
+                    className="mobile-only"
+                    initial={{ opacity: 0, y: 100 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 100 }}
+                    transition={{ duration: 0.3, ease: "easeInOut" }}
+                >
+                    <BottomNav lang={lang} />
+                </motion.div>
+            </AnimatePresence>
         </div>
     );
 };
