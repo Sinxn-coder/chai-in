@@ -18,6 +18,7 @@ import DirectionsPage from './pages/DirectionsPage';
 import ProfileFavorites from './pages/ProfileFavorites';
 import ProfileReviews from './pages/ProfileReviews';
 import ProfileAdded from './pages/ProfileAdded';
+import SavedPostsPage from './pages/SavedPostsPage';
 import LandingPage from './pages/LandingPage';
 import Explore from './pages/Explore';
 import MainLayout from './layouts/MainLayout';
@@ -97,6 +98,7 @@ function AppRoutes({ lang }) {
         <Route path="profile/favorites" element={<ProfileFavorites lang={lang} />} />
         <Route path="profile/reviews" element={<ProfileReviews lang={lang} />} />
         <Route path="profile/added" element={<ProfileAdded lang={lang} />} />
+        <Route path="saved-posts" element={<SavedPostsPage />} />
         <Route path="settings" element={<Settings lang={lang} />} />
         <Route path="privacy-policy" element={<PrivacyPolicy lang={lang} />} />
         <Route path="contact-admin" element={<ContactAdmin lang={lang} />} />

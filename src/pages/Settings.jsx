@@ -5,8 +5,7 @@ import { supabase } from '../lib/supabaseClient';
 import { useAuth } from '../context/AuthContext';
 import Button from '../components/Button';
 import Toast from '../components/Toast';
-import SavedPosts from '../components/SavedPosts';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 
 const Settings = () => {
     const { user } = useAuth();
@@ -15,7 +14,6 @@ const Settings = () => {
     const [saving, setSaving] = useState(false);
     const [uploading, setUploading] = useState(false);
     const [toast, setToast] = useState(null);
-    const [showSavedPosts, setShowSavedPosts] = useState(false);
 
     const [formData, setFormData] = useState({
         displayName: '',
@@ -141,12 +139,6 @@ const Settings = () => {
     return (
         <div style={{ minHeight: '100vh', background: 'var(--secondary)', paddingBottom: '120px' }}>
             {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
-            
-            <AnimatePresence>
-                {showSavedPosts && (
-                    <SavedPosts onClose={() => setShowSavedPosts(false)} />
-                )}
-            </AnimatePresence>
 
             {/* Red Header */}
             <div style={{ height: '140px', background: 'var(--primary)', borderBottomLeftRadius: '40px', borderBottomRightRadius: '40px', padding: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
@@ -207,7 +199,7 @@ const Settings = () => {
 
                             <motion.button
                                 whileTap={{ scale: 0.95 }}
-                                onClick={() => setShowSavedPosts(true)}
+                                onClick={() => navigate('/saved-posts')}
                                 style={{ 
                                     width: '100%', 
                                     padding: '16px', 

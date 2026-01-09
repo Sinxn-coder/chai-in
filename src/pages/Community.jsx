@@ -703,9 +703,33 @@ const Community = () => {
                 padding: '20px', 
                 background: '#ffffff',
                 borderBottom: '1px solid #e9ecef',
-                boxShadow: '0 2px 8px rgba(0,0,0,0.08)'
+                boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+                borderRadius: '0 0 30px 30px',
+                position: 'relative',
+                overflow: 'hidden'
             }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div style={{ 
+                    position: 'absolute',
+                    top: '-50px',
+                    left: '-50px',
+                    width: '150px',
+                    height: '150px',
+                    background: 'linear-gradient(135deg, #007bff, #0056b3)',
+                    borderRadius: '50%',
+                    opacity: 0.1
+                }} />
+                <div style={{ 
+                    position: 'absolute',
+                    top: '-30px',
+                    right: '-30px',
+                    width: '100px',
+                    height: '100px',
+                    background: 'linear-gradient(135deg, #007bff, #0056b3)',
+                    borderRadius: '50%',
+                    opacity: 0.1
+                }} />
+                
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative', zIndex: 1 }}>
                     <div>
                         <h1 style={{ fontSize: '1.8rem', fontWeight: '700', color: '#1a1a1a', margin: '0 0 4px 0' }}>Community</h1>
                         <p style={{ fontSize: '0.95rem', color: '#666', margin: 0 }}>Share your food experiences</p>
