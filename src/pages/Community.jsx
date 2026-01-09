@@ -440,46 +440,102 @@ const Comments = ({ post, onClose }) => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 1100, display: 'flex', alignItems: 'flex-end' }}
+            style={{
+                position: 'fixed',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                background: 'rgba(0,0,0,0.5)',
+                zIndex: 9999,
+                display: 'flex',
+                alignItems: 'flex-end'
+            }}
             onClick={onClose}
         >
             <motion.div
                 initial={{ y: '100%' }}
                 animate={{ y: 0 }}
                 exit={{ y: '100%' }}
-                transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-                style={{ background: 'white', width: '100%', borderTopLeftRadius: '40px', borderTopRightRadius: '40px', padding: '24px', maxHeight: '80vh', overflowY: 'auto' }}
+                style={{
+                    background: 'linear-gradient(135deg, #fef3c7 0%, #fbbf24 50%, #f59e0b 100%)',
+                    width: '100%',
+                    borderTopLeftRadius: '40px',
+                    borderTopRightRadius: '40px',
+                    padding: '24px',
+                    maxHeight: '80vh',
+                    overflowY: 'auto',
+                    boxShadow: '0 -8px 32px rgba(245, 158, 11, 0.3)'
+                }}
                 onClick={(e) => e.stopPropagation()}
             >
-                <h3 style={{ fontSize: '1.4rem', fontWeight: '900', margin: '0 0 24px 0', textAlign: 'center' }}>Comments</h3>
+                <h3 style={{ fontSize: '1.4rem', fontWeight: '900', margin: '0 0 24px 0', textAlign: 'center', color: '#1f2937' }}>Comments</h3>
 
-                {loading ? <Loader className="animate-spin" /> : (
+                {loading ? <Loader className="animate-spin" color="#f59e0b" /> : (
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginBottom: '24px' }}>
                         {comments.map(c => (
                             <div key={c.id} style={{ display: 'flex', gap: '12px' }}>
-                                <img src={c.user?.avatar_url || 'https://i.pravatar.cc/40'} style={{ width: '40px', height: '40px', borderRadius: '14px' }} />
-                                <div>
-                                    <span style={{ fontWeight: '800' }}>{c.user?.display_name || 'User'}</span>
-                                    <p style={{ margin: '2px 0 0 0' }}>{c.comment}</p>
+                                <div style={{ 
+                                    width: '40px', 
+                                    height: '40px', 
+                                    borderRadius: '14px', 
+                                    background: 'linear-gradient(135deg, #f59e0b, #d97706)',
+                                    overflow: 'hidden',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center'
+                                }}>
+                                    {c.user?.avatar_url ? (
+                                        <img src={c.user.avatar_url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                    ) : (
+                                        <UserIcon size={20} color="white" />
+                                    )}
+                                </div>
+                                <div style={{ flex: 1 }}>
+                                    <div style={{ fontWeight: '800', fontSize: '0.9rem', color: '#1f2937' }}>{c.user?.display_name || 'User'}</div>
+                                    <div style={{ color: '#6b7280', fontSize: '0.85rem', marginTop: '4px' }}>{c.comment}</div>
                                 </div>
                             </div>
                         ))}
                     </div>
                 )}
 
-                <div style={{ display: 'flex', gap: '10px' }}>
+                <div style={{ display: 'flex', gap: '12px' }}>
                     <input
                         type="text"
                         value={newComment}
-                        onChange={e => setNewComment(e.target.value)}
+                        onChange={(e) => setNewComment(e.target.value)}
                         placeholder="Add a comment..."
-                        style={{ flex: 1, padding: '14px', borderRadius: '16px', border: '2px solid var(--secondary)', outline: 'none', fontWeight: '700' }}
+                        style={{ 
+                            flex: 1, 
+                            padding: '14px', 
+                            borderRadius: '16px', 
+                            border: '2px solid rgba(255,255,255,0.3)', 
+                            outline: 'none', 
+                            fontWeight: '700',
+                            background: 'rgba(255,255,255,0.1)',
+                            backdropFilter: 'blur(10px)',
+                            color: '#1f2937'
+                        }}
                     />
-                    <button onClick={handleCommentSubmit} style={{ padding: '14px 20px', borderRadius: '16px', background: 'var(--primary)', color: 'white', border: 'none', fontWeight: '800' }}>Send</button>
+                    <button 
+                        onClick={handleCommentSubmit} 
+                        style={{ 
+                            padding: '14px 20px', 
+                            borderRadius: '16px', 
+                            background: 'linear-gradient(135deg, #ef4444, #dc2626)', 
+                            color: 'white', 
+                            border: 'none', 
+                            fontWeight: '800',
+                            boxShadow: '0 4px 20px rgba(239, 68, 68, 0.3)'
+                        }}
+                    >
+                        Send
+                    </button>
                 </div>
             </motion.div>
         </motion.div>
-    )
+    );
 };
 
 export default Community;
