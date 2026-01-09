@@ -109,7 +109,13 @@ const Home = ({ lang }) => {
             console.log('Fetched spots:', data);
             let all = data || [];
             if (activeLocation) {
-                all = all.filter(s => getDistanceFromLatLonInKm(activeLocation.lat, activeLocation.lng, s.latitude, s.longitude) <= 30);
+                console.log('Active location:', activeLocation);
+                all = all.filter(s => {
+                    const distance = getDistanceFromLatLonInKm(activeLocation.lat, activeLocation.lng, s.latitude, s.longitude);
+                    console.log(`Spot: ${s.name}, Distance: ${distance}km`);
+                    return distance <= 30;
+                });
+                console.log('Filtered spots within 30km:', all);
             }
             console.log('Setting spots state:', all);
             setSpots(all);
@@ -133,11 +139,17 @@ const Home = ({ lang }) => {
     }, [spots, searchTerm]);
 
     function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
-        var R = 6371;
-        var dLat = (lat2 - lat1) * Math.PI / 180;
+        var R = 6371; // Radius of the earth in km
+        var dLat = (lat2 - lat1) * Math.PI / 180;  // deg2rad below
         var dLon = (lon2 - lon1) * Math.PI / 180;
-        var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon / 2);
-        return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)));
+        var a = 
+            Math.sin(dLat/2) * Math.sin(dLat/2) +
+            Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+            Math.sin(dLon/2) * Math.sin(dLon/2)
+        ; 
+        var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+        var d = R * c; // Distance in km
+        return d;
     }
 
     const searchLocation = async () => {
@@ -158,6 +170,8 @@ const Home = ({ lang }) => {
                 setLocationName(location.name);
                 setShowLocationSearch(false);
                 // Don't clear the search term so clear button appears
+                // Manually trigger fetchSpots to ensure filtering happens
+                fetchSpots();
             }
         } catch (error) {
             console.error('Error searching location:', error);
