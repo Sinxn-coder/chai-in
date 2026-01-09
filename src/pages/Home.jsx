@@ -101,20 +101,46 @@ const Home = ({ lang }) => {
 
     const fetchSpots = async () => {
         setLoading(true);
-        console.log('Fetching spots from database...');
-        const { data, error } = await supabase.from('spots').select('*').eq('is_verified', true).order('created_at', { ascending: false });
-        if (error) {
-            console.error('Error fetching spots:', error);
-        } else {
-            console.log('Fetched spots:', data);
-            let all = data || [];
-            if (activeLocation) {
-                all = all.filter(s => getDistanceFromLatLonInKm(activeLocation.lat, activeLocation.lng, s.latitude, s.longitude) <= 30);
+        try {
+            const { data, error } = await supabase.from('spots').select('*').eq('is_verified', true).order('created_at', { ascending: false });
+            if (error) {
+                console.error('Error fetching spots:', error);
+            } else {
+                console.log('Fetched spots:', data);
+                let all = data || [];
+                
+                if (activeLocation) {
+                    console.log('Active location:', activeLocation);
+                    console.log('Filtering spots within 30km of:', activeLocation.lat, activeLocation.lng);
+                    
+                    all = all.filter(spot => {
+                        // Check if spot has valid coordinates
+                        if (!spot.latitude || !spot.longitude) {
+                            console.log('Spot missing coordinates:', spot.name);
+                            return false;
+                        }
+                        
+                        const distance = getDistanceFromLatLonInKm(
+                            activeLocation.lat, 
+                            activeLocation.lng, 
+                            parseFloat(spot.latitude), 
+                            parseFloat(spot.longitude)
+                        );
+                        
+                        console.log(`Distance to ${spot.name}:`, distance, 'km');
+                        return distance <= 30;
+                    });
+                    
+                    console.log('Filtered spots count:', all.length);
+                }
+                
+                setSpots(all);
             }
-            console.log('Setting spots state:', all);
-            setSpots(all);
+        } catch (error) {
+            console.error('Error in fetchSpots:', error);
+        } finally {
+            setLoading(false);
         }
-        setLoading(false);
     };
 
     const filteredSpots = useMemo(() => {
@@ -133,11 +159,16 @@ const Home = ({ lang }) => {
     }, [spots, searchTerm]);
 
     function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
-        var R = 6371;
-        var dLat = (lat2 - lat1) * Math.PI / 180;
-        var dLon = (lon2 - lon1) * Math.PI / 180;
-        var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon / 2);
-        return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)));
+        // Haversine formula to calculate distance between two points
+        const R = 6371; // Earth's radius in kilometers
+        const dLat = (lat2 - lat1) * Math.PI / 180;
+        const dLon = (lon2 - lon1) * Math.PI / 180;
+        const a = 
+            Math.sin(dLat / 2) * Math.sin(dLat / 2) + 
+            Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+            Math.sin(dLon / 2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return R * c;
     }
 
     const searchLocation = async () => {
