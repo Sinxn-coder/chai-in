@@ -6,6 +6,7 @@ import FoodParticles from '../components/FoodParticles';
 import SetUsernameModal from '../components/SetUsernameModal';
 import SetAvatarModal from '../components/SetAvatarModal';
 import AppBar from '../components/AppBar';
+import ClubLeaderboardNav from '../components/ClubLeaderboardNav';
 import { Users, Crown, MapPin, Plus, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -107,6 +108,13 @@ const MainLayout = ({ lang }) => {
             <div className="mobile-only">
                 <BottomNav lang={lang} />
             </div>
+
+            {/* ClubLeaderboard Navigation - Fixed outside wrapper */}
+            {showNewNav && (
+                <div className="mobile-only">
+                    <ClubLeaderboardNav lang={lang} />
+                </div>
+            )}
         </>
     );
 };
