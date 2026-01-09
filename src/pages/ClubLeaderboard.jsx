@@ -235,7 +235,7 @@ const StyledLeaderboard = () => {
                 });
 
                 const userIds = Object.keys(stats);
-                const { data: userPrefs } = await supabase.from('user_preferences').select('user_id, username, display_name, avatar_url').in('user_id', userIds);
+                const { data: userPrefs } = await supabase.from('user_preferences').select('user_id, username, display_name, avatar_url, role').in('user_id', userIds);
                 
                 const prefsMap = {};
                 userPrefs?.forEach(p => prefsMap[p.user_id] = p);
@@ -245,8 +245,10 @@ const StyledLeaderboard = () => {
                         id: uid,
                         name: prefsMap[uid]?.display_name || prefsMap[uid]?.username || 'Foodie',
                         avatar: prefsMap[uid]?.avatar_url,
+                        role: prefsMap[uid]?.role,
                         ...stats[uid]
                     }))
+                    .filter(user => user.role !== 'admin') // Filter out admin users
                     .sort((a, b) => b.xp - a.xp)
                     .slice(0, 10);
 
@@ -263,44 +265,49 @@ const StyledLeaderboard = () => {
     return (
         <div style={{
             minHeight: 'calc(100vh - 60px)',
-            background: 'linear-gradient(135deg, #fef3c7 0%, #fbbf24 50%, #f59e0b 100%)',
+            background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%)',
             paddingBottom: '80px'
         }}>
             {/* Leaderboard Header */}
             <div style={{
                 textAlign: 'center',
                 marginBottom: '30px',
-                padding: '20px',
-                background: 'rgba(255,255,255,0.1)',
-                backdropFilter: 'blur(10px)',
-                border: '1px solid rgba(255,255,255,0.2)',
-                boxShadow: '0 8px 32px rgba(0,0,0,0.1)'
+                padding: '30px 20px',
+                background: 'rgba(255,255,255,0.05)',
+                backdropFilter: 'blur(20px)',
+                border: '1px solid rgba(255,255,255,0.1)',
+                boxShadow: '0 8px 32px rgba(0,0,0,0.3)',
+                borderRadius: '20px',
+                margin: '20px'
             }}>
                 <div style={{
-                    width: '60px',
-                    height: '60px',
-                    background: 'linear-gradient(135deg, #f59e0b, #d97706)',
+                    width: '70px',
+                    height: '70px',
+                    background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
                     borderRadius: '50%',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    margin: '0 auto 16px',
-                    boxShadow: '0 4px 20px rgba(245, 158, 11, 0.3)'
+                    margin: '0 auto 20px',
+                    boxShadow: '0 8px 32px rgba(99, 102, 241, 0.4)',
+                    border: '2px solid rgba(255,255,255,0.1)'
                 }}>
-                    <Trophy size={30} color="white" />
+                    <Trophy size={35} color="white" />
                 </div>
                 <h2 style={{
-                    fontSize: '1.8rem',
+                    fontSize: '2rem',
                     fontWeight: '800',
-                    color: '#1f2937',
-                    marginBottom: '8px'
+                    color: '#ffffff',
+                    marginBottom: '8px',
+                    letterSpacing: '-0.02em'
                 }}>
                     Leaderboard
                 </h2>
                 <p style={{
-                    color: '#6b7280',
-                    fontSize: '1rem',
-                    margin: 0
+                    color: '#94a3b8',
+                    fontSize: '1.1rem',
+                    margin: 0,
+                    fontWeight: '500'
                 }}>
                     Top contributors in our food community
                 </p>
@@ -311,10 +318,10 @@ const StyledLeaderboard = () => {
                 {loading ? (
                     <div style={{ textAlign: 'center', padding: '40px' }}>
                         <div style={{
-                            width: '40px',
-                            height: '40px',
-                            border: '4px solid rgba(245, 158, 11, 0.3)',
-                            borderTop: '4px solid #f59e0b',
+                            width: '50px',
+                            height: '50px',
+                            border: '4px solid rgba(99, 102, 241, 0.3)',
+                            borderTop: '4px solid #6366f1',
                             borderRadius: '50%',
                             animation: 'spin 1s linear infinite',
                             margin: '0 auto'
@@ -324,67 +331,83 @@ const StyledLeaderboard = () => {
                     <div style={{
                         textAlign: 'center',
                         padding: '40px',
-                        background: 'rgba(255,255,255,0.1)',
-                        borderRadius: '16px',
-                        backdropFilter: 'blur(10px)'
+                        background: 'rgba(255,255,255,0.05)',
+                        borderRadius: '20px',
+                        backdropFilter: 'blur(20px)',
+                        border: '1px solid rgba(255,255,255,0.1)'
                     }}>
-                        <p style={{ color: '#6b7280', fontSize: '1rem' }}>No contributors yet. Start contributing!</p>
+                        <p style={{ color: '#94a3b8', fontSize: '1.1rem', fontWeight: '500' }}>No contributors yet. Start contributing!</p>
                     </div>
                 ) : (
                     leaders.map((leader, index) => (
                         <div key={leader.id} style={{
-                            background: index === 0 ? 'linear-gradient(135deg, rgba(254, 243, 199, 0.8), rgba(251, 191, 36, 0.8))' : 
-                                       index === 1 ? 'linear-gradient(135deg, rgba(229, 231, 235, 0.8), rgba(209, 213, 219, 0.8))' :
-                                       'rgba(255,255,255,0.1)',
-                            borderRadius: '16px',
-                            padding: '20px',
+                            background: index === 0 ? 'linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(139, 92, 246, 0.2))' : 
+                                       index === 1 ? 'linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(37, 99, 235, 0.2))' :
+                                       index === 2 ? 'linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(5, 150, 105, 0.2))' :
+                                       'rgba(255,255,255,0.05)',
+                            borderRadius: '20px',
+                            padding: '24px',
                             marginBottom: '16px',
-                            backdropFilter: 'blur(10px)',
-                            border: index === 0 ? '2px solid #f59e0b' : '1px solid rgba(255,255,255,0.2)',
-                            boxShadow: '0 4px 20px rgba(0,0,0,0.1)'
+                            backdropFilter: 'blur(20px)',
+                            border: index === 0 ? '2px solid rgba(99, 102, 241, 0.5)' : 
+                                       index === 1 ? '2px solid rgba(59, 130, 246, 0.5)' :
+                                       index === 2 ? '2px solid rgba(16, 185, 129, 0.5)' : 
+                                       '1px solid rgba(255,255,255,0.1)',
+                            boxShadow: '0 8px 32px rgba(0,0,0,0.2)',
+                            transition: 'all 0.3s ease'
                         }}>
                             <div style={{ display: 'flex', alignItems: 'center' }}>
                                 <div style={{
-                                    width: '50px',
-                                    height: '50px',
+                                    width: '60px',
+                                    height: '60px',
                                     borderRadius: '50%',
-                                    background: index === 0 ? 'linear-gradient(135deg, #f59e0b, #d97706)' : 
-                                               index === 1 ? 'linear-gradient(135deg, #6b7280, #4b5563)' :
-                                               'linear-gradient(135deg, #9ca3af, #6b7280)',
+                                    background: index === 0 ? 'linear-gradient(135deg, #6366f1, #8b5cf6)' : 
+                                               index === 1 ? 'linear-gradient(135deg, #3b82f6, #2563eb)' :
+                                               index === 2 ? 'linear-gradient(135deg, #10b981, #059669)' :
+                                               'linear-gradient(135deg, #64748b, #475569)',
                                     color: 'white',
                                     display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'center',
-                                    fontWeight: '700',
-                                    fontSize: '1.2rem',
-                                    marginRight: '16px'
+                                    fontWeight: '800',
+                                    fontSize: '1.4rem',
+                                    marginRight: '20px',
+                                    boxShadow: '0 4px 20px rgba(0,0,0,0.3)',
+                                    border: '2px solid rgba(255,255,255,0.1)'
                                 }}>
                                     {index + 1}
                                 </div>
                                 <div style={{ flex: 1 }}>
                                     <h4 style={{ 
                                         fontWeight: '700', 
-                                        color: '#1f2937',
-                                        marginBottom: '4px'
+                                        color: '#ffffff',
+                                        marginBottom: '6px',
+                                        fontSize: '1.2rem',
+                                        letterSpacing: '-0.01em'
                                     }}>
                                         {leader.name}
                                     </h4>
                                     <p style={{ 
-                                        color: '#6b7280', 
-                                        fontSize: '0.9rem',
-                                        margin: 0
+                                        color: '#94a3b8', 
+                                        fontSize: '1rem',
+                                        margin: 0,
+                                        fontWeight: '500'
                                     }}>
                                         {leader.xp} XP • {leader.spots} spots • {leader.reviews} reviews
                                     </p>
                                 </div>
                                 <div style={{
-                                    background: index === 0 ? '#f59e0b' : 
-                                               index === 1 ? '#6b7280' : '#9ca3af',
+                                    background: index === 0 ? 'linear-gradient(135deg, #6366f1, #8b5cf6)' : 
+                                               index === 1 ? 'linear-gradient(135deg, #3b82f6, #2563eb)' :
+                                               index === 2 ? 'linear-gradient(135deg, #10b981, #059669)' :
+                                               'linear-gradient(135deg, #64748b, #475569)',
                                     color: 'white',
-                                    padding: '6px 12px',
-                                    borderRadius: '20px',
-                                    fontSize: '0.8rem',
-                                    fontWeight: '600'
+                                    padding: '8px 16px',
+                                    borderRadius: '25px',
+                                    fontSize: '0.9rem',
+                                    fontWeight: '700',
+                                    boxShadow: '0 4px 20px rgba(0,0,0,0.3)',
+                                    border: '1px solid rgba(255,255,255,0.2)'
                                 }}>
                                     {index === 0 ? '🏆 Champion' : 
                                      index === 1 ? '🥈 Rising Star' : 
