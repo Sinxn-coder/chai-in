@@ -19,6 +19,11 @@ const MainLayout = ({ lang }) => {
         return location.pathname.includes('/club-leaderboard');
     }, [location.pathname]);
 
+    // Check if current page needs special padding (like AddSpot)
+    const needsSpecialPadding = useMemo(() => {
+        return location.pathname.includes('/add-spot');
+    }, [location.pathname]);
+
     // Hide main nav bar only when user navigates to club-leaderboard page
     useEffect(() => {
         setShowNewNav(shouldHideMainNav);
@@ -111,7 +116,7 @@ const MainLayout = ({ lang }) => {
                         {...navVariants.content}
                         style={{ 
                             willChange: 'transform',
-                            paddingTop: showNewNav ? '0px' : '70px', // No top padding in ClubLeaderboard
+                            paddingTop: showNewNav ? '0px' : (needsSpecialPadding ? '0px' : '70px'), // No top padding for ClubLeaderboard and AddSpot
                             paddingBottom: '70px', // Always account for fixed BottomNav
                             minHeight: '100vh'
                         }}
