@@ -698,15 +698,19 @@ const Community = () => {
         }}>
             {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
 
-            {/* Header */}
+            {/* Fixed Header */}
             <div style={{ 
+                position: 'fixed',
+                top: '0',
+                left: '0',
+                right: '0',
                 padding: '20px', 
                 background: '#ffffff',
                 borderBottom: '1px solid #e9ecef',
                 boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
                 borderRadius: '0 0 30px 30px',
-                position: 'relative',
-                overflow: 'hidden'
+                overflow: 'hidden',
+                zIndex: 1000
             }}>
                 <div style={{ 
                     position: 'absolute',
@@ -758,9 +762,8 @@ const Community = () => {
                 </div>
             </div>
 
-            
-            {/* Posts */}
-            <div style={{ padding: '20px' }}>
+            {/* Posts with top padding to account for fixed header */}
+            <div style={{ padding: '20px', paddingTop: '120px' }}>
                 {loading ? (
                     <div style={{ textAlign: 'center', padding: '60px 20px' }}>
                         <Loader className="animate-spin" color="#666" size={32} />

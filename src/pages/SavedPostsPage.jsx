@@ -7,7 +7,7 @@ import Toast from '../components/Toast';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 
-const SavedPostsPage = () => {
+const SavedPostsPage = ({ lang = 'en' }) => {
     const { user } = useAuth();
     const navigate = useNavigate();
     const [savedPosts, setSavedPosts] = useState([]);
@@ -21,12 +21,32 @@ const SavedPostsPage = () => {
         }
 
         try {
-            // Fetch saved posts with post details
+            console.log('🔍 Fetching saved posts for user:', user.id);
+            
+            // First fetch saved posts references
             const { data: savedPostsData, error: savedError } = await supabase
                 .from('saved_posts')
-                .select(`
-                    post_id,
-                    community_posts (
+                .select('post_id, created_at')
+                .eq('user_id', user.id)
+                .order('created_at', { ascending: false });
+
+            if (savedError) {
+                console.error('❌ Error fetching saved posts references:', savedError);
+                setToast({ message: 'Failed to load saved posts', type: 'error' });
+                setLoading(false);
+                return;
+            }
+
+            console.log('📊 Saved posts references:', savedPostsData);
+
+            if (savedPostsData && savedPostsData.length > 0) {
+                // Get the post IDs
+                const postIds = savedPostsData.map(item => item.post_id);
+                
+                // Fetch the actual posts with user details
+                const { data: postsData, error: postsError } = await supabase
+                    .from('community_posts')
+                    .select(`
                         id,
                         image_url,
                         caption,
@@ -37,31 +57,37 @@ const SavedPostsPage = () => {
                             display_name,
                             avatar_url
                         )
-                    )
-                `)
-                .eq('user_id', user.id)
-                .order('created_at', { ascending: false });
+                    `)
+                    .in('id', postIds)
+                    .order('created_at', { ascending: false });
 
-            if (savedError) {
-                console.error('Error fetching saved posts:', savedError);
-                setToast({ message: 'Failed to load saved posts', type: 'error' });
-                return;
-            }
-
-            // Process the data
-            const processedPosts = savedPostsData.map(item => ({
-                ...item.community_posts,
-                author: item.community_posts.user_preferences || { 
-                    display_name: 'Foodie', 
-                    username: null, 
-                    avatar_url: null 
+                if (postsError) {
+                    console.error('❌ Error fetching posts:', postsError);
+                    setToast({ message: 'Failed to load posts', type: 'error' });
+                    setLoading(false);
+                    return;
                 }
-            }));
 
-            console.log('Saved posts:', processedPosts);
-            setSavedPosts(processedPosts);
+                console.log('📝 Posts data:', postsData);
+
+                // Process the data
+                const processedPosts = postsData.map(post => ({
+                    ...post,
+                    author: post.user_preferences || { 
+                        display_name: 'Foodie', 
+                        username: null, 
+                        avatar_url: null 
+                    }
+                }));
+
+                console.log('✨ Processed saved posts:', processedPosts);
+                setSavedPosts(processedPosts);
+            } else {
+                console.log('📭 No saved posts found');
+                setSavedPosts([]);
+            }
         } catch (error) {
-            console.error('Error:', error);
+            console.error('💥 Error in fetchSavedPosts:', error);
             setToast({ message: 'Failed to load saved posts', type: 'error' });
         } finally {
             setLoading(false);

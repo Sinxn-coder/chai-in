@@ -98,7 +98,7 @@ function AppRoutes({ lang }) {
         <Route path="profile/favorites" element={<ProfileFavorites lang={lang} />} />
         <Route path="profile/reviews" element={<ProfileReviews lang={lang} />} />
         <Route path="profile/added" element={<ProfileAdded lang={lang} />} />
-        <Route path="saved-posts" element={<SavedPostsPage />} />
+        <Route path="saved-posts" element={<SavedPostsPage lang={lang} />} />
         <Route path="settings" element={<Settings lang={lang} />} />
         <Route path="privacy-policy" element={<PrivacyPolicy lang={lang} />} />
         <Route path="contact-admin" element={<ContactAdmin lang={lang} />} />
