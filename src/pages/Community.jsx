@@ -813,7 +813,7 @@ const Community = () => {
                         </motion.button>
                     </div>
                 ) : (
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', padding: '0 12px' }}>
                         {posts.map((post, index) => (
                             <motion.div
                                 key={post.id}
@@ -822,12 +822,12 @@ const Community = () => {
                                 transition={{ delay: index * 0.1 }}
                                 style={{ 
                                     background: '#ffffff', 
-                                    borderRadius: '20px', 
+                                    borderRadius: '24px', 
                                     overflow: 'hidden',
                                     boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
                                     border: '1px solid #e9ecef',
                                     width: '100%',
-                                    maxWidth: '500px'
+                                    maxWidth: '600px'
                                 }}
                             >
                                 {/* Post Header */}
