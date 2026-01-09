@@ -14,10 +14,7 @@ const ClubLeaderboardNav = ({ lang }) => {
     ];
 
     return (
-        <motion.div 
-            initial={{ opacity: 0, y: 100 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3, ease: "easeOut" }}
+        <div 
             style={{ 
                 position: 'fixed',
                 bottom: '20px',
@@ -76,7 +73,7 @@ const ClubLeaderboardNav = ({ lang }) => {
                     </span>
                 </button>
             ))}
-        </motion.div>
+        </div>
     );
 };
 

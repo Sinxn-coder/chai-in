@@ -59,19 +59,38 @@ const MainLayout = ({ lang }) => {
 
     return (
         <>
-            {/* Original Top Navigation Bar - Fixed outside wrapper */}
-            {!showNewNav && (
-                <div className="mobile-only">
-                    <AppBar />
-                </div>
-            )}
+            {/* Original Top Navigation Bar - Fixed outside wrapper with slide animation */}
+            <AnimatePresence mode="wait">
+                {!showNewNav && (
+                    <motion.div 
+                        key="main-nav"
+                        className="mobile-only"
+                        initial={{ opacity: 0, y: -100 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -100 }}
+                        transition={{ duration: 0.3, ease: "easeInOut" }}
+                        style={{ willChange: 'transform' }}
+                    >
+                        <AppBar />
+                    </motion.div>
+                )}
+            </AnimatePresence>
 
-            {/* Desktop Navigation - Fixed outside wrapper */}
-            {!showNewNav && (
-                <div>
-                    <DesktopNav />
-                </div>
-            )}
+            {/* Desktop Navigation - Fixed outside wrapper with slide animation */}
+            <AnimatePresence mode="wait">
+                {!showNewNav && (
+                    <motion.div 
+                        key="desktop-nav"
+                        initial={{ opacity: 0, x: -100 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: -100 }}
+                        transition={{ duration: 0.3, ease: "easeInOut" }}
+                        style={{ willChange: 'transform' }}
+                    >
+                        <DesktopNav />
+                    </motion.div>
+                )}
+            </AnimatePresence>
 
             {/* Main Content Wrapper */}
             <div style={{ 
@@ -104,17 +123,37 @@ const MainLayout = ({ lang }) => {
                 </AnimatePresence>
             </div>
 
-            {/* Bottom Navigation - Fixed outside wrapper */}
-            <div className="mobile-only">
-                <BottomNav lang={lang} />
-            </div>
+            {/* Bottom Navigation - Fixed outside wrapper with slide animation */}
+            <AnimatePresence mode="wait">
+                <motion.div 
+                    key="bottom-nav"
+                    className="mobile-only"
+                    initial={{ opacity: 0, y: 100 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 100 }}
+                    transition={{ duration: 0.3, ease: "easeInOut" }}
+                    style={{ willChange: 'transform' }}
+                >
+                    <BottomNav lang={lang} />
+                </motion.div>
+            </AnimatePresence>
 
-            {/* ClubLeaderboard Navigation - Fixed outside wrapper */}
-            {showNewNav && (
-                <div className="mobile-only">
-                    <ClubLeaderboardNav lang={lang} />
-                </div>
-            )}
+            {/* ClubLeaderboard Navigation - Fixed outside wrapper with slide animation */}
+            <AnimatePresence mode="wait">
+                {showNewNav && (
+                    <motion.div 
+                        key="club-leaderboard-nav"
+                        className="mobile-only"
+                        initial={{ opacity: 0, y: 100 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 100 }}
+                        transition={{ duration: 0.3, ease: "easeInOut" }}
+                        style={{ willChange: 'transform' }}
+                    >
+                        <ClubLeaderboardNav lang={lang} />
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </>
     );
 };
