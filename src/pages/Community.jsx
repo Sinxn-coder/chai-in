@@ -78,11 +78,22 @@ const Community = () => {
                     .select('post_id, user_id')
                     .in('post_id', postIds);
 
+                // Fetch saved posts for current user
+                const { data: savedPostsData, error: savedError } = user ? await supabase
+                    .from('saved_posts')
+                    .select('post_id')
+                    .eq('user_id', user.id) : { data: [] };
+
                 if (likesError) {
                     console.error('❌ Error fetching likes:', likesError);
                 }
 
+                if (savedError) {
+                    console.error('❌ Error fetching saved posts:', savedError);
+                }
+
                 console.log('❤️ Likes data:', allLikesData);
+                console.log('🔖 Saved posts data:', savedPostsData);
 
                 // Count likes per post
                 const likesCountMap = {};
@@ -94,11 +105,18 @@ const Community = () => {
                     }
                 });
 
+                // Create saved posts map
+                const savedPostsMap = {};
+                savedPostsData?.forEach(save => {
+                    savedPostsMap[save.post_id] = true;
+                });
+
                 const processedPosts = postsData.map(p => ({
                     ...p,
                     likes_count: likesCountMap[p.id] || 0,
                     author: userMap[p.user_id] || { display_name: 'Foodie', username: null, avatar_url: null },
-                    isLikedByUser: !!userLikesMap[p.id]
+                    isLikedByUser: !!userLikesMap[p.id],
+                    isSavedByUser: !!savedPostsMap[p.id]
                 }));
 
                 console.log('✨ Processed posts:', processedPosts);
@@ -716,20 +734,7 @@ const Community = () => {
                 </div>
             </div>
 
-            {/* Debug Info */}
-            {debugInfo && (
-                <div style={{
-                    padding: '12px 20px',
-                    background: '#fff3cd',
-                    border: '1px solid #ffeaa7',
-                    color: '#856404',
-                    fontSize: '0.85rem',
-                    textAlign: 'center'
-                }}>
-                    Debug: {debugInfo}
-                </div>
-            )}
-
+            
             {/* Posts */}
             <div style={{ padding: '20px' }}>
                 {loading ? (
@@ -917,6 +922,45 @@ const Community = () => {
 
                                         <motion.button
                                             whileTap={{ scale: 0.9 }}
+                                            onClick={async () => {
+                                                if (!user) {
+                                                    setToast({ message: 'Please login to save posts', type: 'error' });
+                                                    return;
+                                                }
+                                                
+                                                try {
+                                                    // Check if already saved
+                                                    const { data: existingSave } = await supabase
+                                                        .from('saved_posts')
+                                                        .select('*')
+                                                        .eq('user_id', user.id)
+                                                        .eq('post_id', post.id)
+                                                        .maybeSingle();
+                                                    
+                                                    if (existingSave) {
+                                                        // Unsave
+                                                        await supabase.from('saved_posts').delete().eq('id', existingSave.id);
+                                                        setToast({ message: 'Post removed from saved', type: 'success' });
+                                                    } else {
+                                                        // Save
+                                                        await supabase.from('saved_posts').insert({
+                                                            user_id: user.id,
+                                                            post_id: post.id
+                                                        });
+                                                        setToast({ message: 'Post saved to profile!', type: 'success' });
+                                                    }
+                                                    
+                                                    // Update UI immediately
+                                                    setPosts(posts.map(p => 
+                                                        p.id === post.id 
+                                                            ? { ...p, isSavedByUser: !existingSave }
+                                                            : p
+                                                    ));
+                                                } catch (error) {
+                                                    console.error('Error saving post:', error);
+                                                    setToast({ message: 'Failed to save post', type: 'error' });
+                                                }
+                                            }}
                                             style={{ 
                                                 background: 'none', 
                                                 border: 'none', 
@@ -924,7 +968,11 @@ const Community = () => {
                                                 marginLeft: 'auto'
                                             }}
                                         >
-                                            <Bookmark size={22} color="#666" />
+                                            <Bookmark 
+                                                size={22} 
+                                                color={post.isSavedByUser ? "#007bff" : "#666"} 
+                                                fill={post.isSavedByUser ? "#007bff" : "none"} 
+                                            />
                                         </motion.button>
                                     </div>
                                     

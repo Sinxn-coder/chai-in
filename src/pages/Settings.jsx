@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ChevronLeft, Camera, Save, Bell, User, Mail, Shield, Info } from 'lucide-react';
+import { ChevronLeft, Camera, Save, Bell, User, Mail, Shield, Info, Bookmark } from 'lucide-react';
 import { supabase } from '../lib/supabaseClient';
 import { useAuth } from '../context/AuthContext';
 import Button from '../components/Button';
 import Toast from '../components/Toast';
-import { motion } from 'framer-motion';
+import SavedPosts from '../components/SavedPosts';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const Settings = () => {
     const { user } = useAuth();
@@ -14,6 +15,7 @@ const Settings = () => {
     const [saving, setSaving] = useState(false);
     const [uploading, setUploading] = useState(false);
     const [toast, setToast] = useState(null);
+    const [showSavedPosts, setShowSavedPosts] = useState(false);
 
     const [formData, setFormData] = useState({
         displayName: '',
@@ -139,6 +141,12 @@ const Settings = () => {
     return (
         <div style={{ minHeight: '100vh', background: 'var(--secondary)', paddingBottom: '120px' }}>
             {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
+            
+            <AnimatePresence>
+                {showSavedPosts && (
+                    <SavedPosts onClose={() => setShowSavedPosts(false)} />
+                )}
+            </AnimatePresence>
 
             {/* Red Header */}
             <div style={{ height: '140px', background: 'var(--primary)', borderBottomLeftRadius: '40px', borderBottomRightRadius: '40px', padding: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
@@ -188,6 +196,37 @@ const Settings = () => {
                                     <div style={{ width: '100%', padding: '14px', borderRadius: '16px', background: 'var(--secondary)', color: 'var(--text-muted)', fontWeight: '700', opacity: 0.8 }}>{user?.email}</div>
                                 </div>
                             </div>
+                        </div>
+
+                        {/* Saved Posts Card */}
+                        <div style={{ background: 'white', borderRadius: '32px', padding: '24px', boxShadow: 'var(--shadow-md)' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
+                                <Bookmark size={20} color="var(--primary)" />
+                                <h2 style={{ fontSize: '1.1rem', fontWeight: '900', color: 'var(--text-main)', margin: 0 }}>Saved Posts</h2>
+                            </div>
+
+                            <motion.button
+                                whileTap={{ scale: 0.95 }}
+                                onClick={() => setShowSavedPosts(true)}
+                                style={{ 
+                                    width: '100%', 
+                                    padding: '16px', 
+                                    borderRadius: '20px', 
+                                    background: 'var(--primary)', 
+                                    color: 'white', 
+                                    border: 'none', 
+                                    fontWeight: '700', 
+                                    fontSize: '0.95rem',
+                                    boxShadow: 'var(--shadow-md)',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    gap: '8px'
+                                }}
+                            >
+                                <Bookmark size={18} />
+                                View Saved Posts
+                            </motion.button>
                         </div>
 
                         {/* Notifications Card */}

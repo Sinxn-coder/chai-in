@@ -418,7 +418,7 @@ const ClubLeaderboard = ({ lang }) => {
     return (
         <div style={{ 
             minHeight: '100vh',
-            background: 'linear-gradient(135deg, #fef3c7 0%, #fbbf24 50%, #f59e0b 100%)',
+            background: activeTab === 'club' ? '#f8f9fa' : 'linear-gradient(135deg, #fef3c7 0%, #fbbf24 50%, #f59e0b 100%)',
             padding: '20px'
         }}>
             {/* Tab Content - Full Page */}
