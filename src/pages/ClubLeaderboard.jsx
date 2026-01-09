@@ -458,7 +458,7 @@ const ClubLeaderboard = ({ lang }) => {
                     backdropFilter: 'blur(10px)',
                     WebkitBackdropFilter: 'blur(10px)', // Safari support
                     borderRadius: '20px',
-                    zIndex: 1000,
+                    zIndex: 9999, // Highest z-index to stay on top
                     boxShadow: '0 8px 32px rgba(0,0,0,0.2)',
                     border: '1px solid rgba(255,255,255,0.2)',
                     willChange: 'transform', // Performance optimization
