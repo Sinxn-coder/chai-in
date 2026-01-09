@@ -1,10 +1,11 @@
 import React from 'react';
 import { Home, Map, Plus, Users, Crown, Compass } from 'lucide-react';
-import { NavLink, useLocation } from 'react-router-dom';
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 
 const BottomNav = ({ lang = 'en' }) => {
   const location = useLocation();
+  const navigate = useNavigate();
 
   // Hide BottomNav when ClubLeaderboard is open
   const isClubLeaderboardPage = location.pathname.includes('/club-leaderboard');
@@ -30,12 +31,12 @@ const BottomNav = ({ lang = 'en' }) => {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 100 }}
+      initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: 100 }}
+      exit={{ opacity: 0, y: 20 }}
       transition={{ 
-        duration: 0.5, 
-        ease: [0.25, 0.46, 0.45, 0.94] // Cool spring animation
+        duration: 0.2, 
+        ease: "easeOut" // Faster, simpler animation
       }}
       style={{
         position: 'fixed',
@@ -45,7 +46,6 @@ const BottomNav = ({ lang = 'en' }) => {
         height: 70, // Reduced height for small screens
         zIndex: 9999, // Highest z-index to stay on top
         pointerEvents: 'none',
-        willChange: 'transform'
       }}
     >
       {/* NAV BAR SHAPE */}
@@ -84,26 +84,27 @@ const BottomNav = ({ lang = 'en' }) => {
           pointerEvents: 'auto',
         }}
       >
-        <NavLink to={`/${lang}/add-spot`}>
-          <motion.div
-            whileTap={{ scale: 0.9 }}
-            whileHover={{ scale: 1.05 }}
-            style={{
-              width: 60, // Reduced size for small screens
-              height: 60,
-              borderRadius: '50%',
-              background: '#EF2A39',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              boxShadow:
+        <motion.button
+          whileTap={{ scale: 0.9 }}
+          whileHover={{ scale: 1.05 }}
+          onClick={() => navigate(`/${lang}/add-spot`)}
+          style={{
+            width: 60, // Reduced size for small screens
+            height: 60,
+            borderRadius: '50%',
+            background: '#EF2A39',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            boxShadow:
                 '0 16px 32px rgba(239,42,57,0.45), inset 0 2px 6px rgba(255,255,255,0.35)',
-              border: '3px solid rgba(255,255,255,0.4)',
-            }}
-          >
-            <Plus size={24} color="#fff" strokeWidth={3} />
-          </motion.div>
-        </NavLink>
+            border: '3px solid rgba(255,255,255,0.4)',
+            cursor: 'pointer',
+            outline: 'none',
+          }}
+        >
+          <Plus size={24} color="#fff" strokeWidth={3} />
+        </motion.button>
       </div>
 
       {/* NAV ITEMS */}

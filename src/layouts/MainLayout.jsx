@@ -37,28 +37,28 @@ const MainLayout = ({ lang }) => {
     // Memoize animation variants to prevent recreation
     const navVariants = useMemo(() => ({
         mainNav: {
-            initial: { opacity: 0, y: -100 },
-            animate: { opacity: 1, y: 0 },
-            exit: { opacity: 0, y: -100 },
-            transition: { duration: 0.2, ease: "easeInOut" }
-        },
-        desktopNav: {
-            initial: { opacity: 0, x: -100 },
-            animate: { opacity: 1, x: 0 },
-            exit: { opacity: 0, x: -100 },
-            transition: { duration: 0.2, ease: "easeInOut" }
-        },
-        bottomNav: {
-            initial: { opacity: 0, y: 100 },
-            animate: { opacity: 1, y: 0 },
-            exit: { opacity: 0, y: 100 },
-            transition: { duration: 0.2, ease: "easeInOut" }
-        },
-        content: {
-            initial: { opacity: 0, y: 20 },
+            initial: { opacity: 0, y: -20 },
             animate: { opacity: 1, y: 0 },
             exit: { opacity: 0, y: -20 },
-            transition: { duration: 0.15, ease: "easeInOut" }
+            transition: { duration: 0.15, ease: "easeOut" }
+        },
+        desktopNav: {
+            initial: { opacity: 0, x: -20 },
+            animate: { opacity: 1, x: 0 },
+            exit: { opacity: 0, x: -20 },
+            transition: { duration: 0.15, ease: "easeOut" }
+        },
+        bottomNav: {
+            initial: { opacity: 0, y: 20 },
+            animate: { opacity: 1, y: 0 },
+            exit: { opacity: 0, y: 20 },
+            transition: { duration: 0.15, ease: "easeOut" }
+        },
+        content: {
+            initial: { opacity: 0 },
+            animate: { opacity: 1 },
+            exit: { opacity: 0 },
+            transition: { duration: 0.2, ease: "easeOut" }
         }
     }), []);
 
