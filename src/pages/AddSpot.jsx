@@ -196,7 +196,7 @@ const AddSpot = ({ lang }) => {
                 zIndex: 10
             }}>
                 <button 
-                    onClick={() => navigate(-1)} 
+                    onClick={() => navigate(`/${lang}/home`)} 
                     style={{ 
                         position: 'absolute', 
                         left: '20px', 

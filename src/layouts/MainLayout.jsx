@@ -47,21 +47,21 @@ const MainLayout = ({ lang }) => {
     // Memoize animation variants to prevent recreation
     const navVariants = useMemo(() => ({
         mainNav: {
-            initial: { opacity: 0, y: -20 },
-            animate: { opacity: 1, y: 0 },
-            exit: { opacity: 0, y: -20 },
+            initial: { opacity: 0 },
+            animate: { opacity: 1 },
+            exit: { opacity: 0 },
             transition: { duration: 0.4, ease: [0.4, 0, 0.2, 1] }
         },
         desktopNav: {
-            initial: { opacity: 0, x: -20 },
-            animate: { opacity: 1, x: 0 },
-            exit: { opacity: 0, x: -20 },
+            initial: { opacity: 0 },
+            animate: { opacity: 1 },
+            exit: { opacity: 0 },
             transition: { duration: 0.4, ease: [0.4, 0, 0.2, 1] }
         },
         bottomNav: {
-            initial: { opacity: 0, y: 50 },
-            animate: { opacity: 1, y: 0 },
-            exit: { opacity: 0, y: 50 },
+            initial: { opacity: 0 },
+            animate: { opacity: 1 },
+            exit: { opacity: 0 },
             transition: { duration: 0.4, ease: [0.4, 0, 0.2, 1] }
         },
         content: {
