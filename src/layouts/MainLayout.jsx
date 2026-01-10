@@ -50,40 +50,40 @@ const MainLayout = ({ lang }) => {
             initial: { opacity: 0, y: -20 },
             animate: { opacity: 1, y: 0 },
             exit: { opacity: 0, y: -20 },
-            transition: { duration: 0.15, ease: "easeOut" }
+            transition: { duration: 0.25, ease: [0.4, 0, 0.2, 1] }
         },
         desktopNav: {
             initial: { opacity: 0, x: -20 },
             animate: { opacity: 1, x: 0 },
             exit: { opacity: 0, x: -20 },
-            transition: { duration: 0.15, ease: "easeOut" }
+            transition: { duration: 0.25, ease: [0.4, 0, 0.2, 1] }
         },
         bottomNav: {
             initial: { opacity: 0, y: 20 },
             animate: { opacity: 1, y: 0 },
             exit: { opacity: 0, y: 20 },
-            transition: { duration: 0.15, ease: "easeOut" }
+            transition: { duration: 0.25, ease: [0.4, 0, 0.2, 1] }
         },
         content: {
-            initial: { opacity: 0 },
-            animate: { opacity: 1 },
-            exit: { opacity: 0 },
-            transition: { duration: 0.2, ease: "easeOut" }
+            initial: { opacity: 0, y: 10 },
+            animate: { opacity: 1, y: 0 },
+            exit: { opacity: 0, y: -10 },
+            transition: { duration: 0.3, ease: [0.4, 0, 0.2, 1] }
         }
     }), []);
 
     return (
         <>
             {/* Original Top Navigation Bar - Fixed outside wrapper with animation */}
-            <AnimatePresence mode="wait">
+            <AnimatePresence>
                 {!showNewNav && !hideAllNavigation && (
                     <motion.div 
                         key="main-nav"
                         className="mobile-only"
-                        initial={{ opacity: 0, y: -100 }}
+                        initial={{ opacity: 0, y: -20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -100 }}
-                        transition={{ duration: 0.3, ease: "easeInOut" }}
+                        exit={{ opacity: 0, y: -20 }}
+                        transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
                     >
                         <AppBar />
                     </motion.div>
@@ -91,14 +91,14 @@ const MainLayout = ({ lang }) => {
             </AnimatePresence>
 
             {/* Desktop Navigation - Fixed outside wrapper with animation */}
-            <AnimatePresence mode="wait">
+            <AnimatePresence>
                 {!showNewNav && !hideAllNavigation && (
                     <motion.div 
                         key="desktop-nav"
-                        initial={{ opacity: 0, x: -100 }}
+                        initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: -100 }}
-                        transition={{ duration: 0.3, ease: "easeInOut" }}
+                        exit={{ opacity: 0, x: -20 }}
+                        transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
                     >
                         <DesktopNav />
                     </motion.div>
@@ -120,12 +120,18 @@ const MainLayout = ({ lang }) => {
                 <SetAvatarModal />
 
                 {/* Content Area - Optimized with proper padding for fixed nav */}
-                <AnimatePresence mode={skipAnimations ? "sync" : "wait"}>
+                <AnimatePresence>
                     <motion.div
                         key={location.pathname}
-                        {...(skipAnimations ? {} : navVariants.content)}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        transition={{ 
+                            duration: 0.3, 
+                            ease: [0.4, 0, 0.2, 1]
+                        }}
                         style={{ 
-                            willChange: skipAnimations ? 'auto' : 'transform',
+                            willChange: 'transform',
                             paddingTop: showNewNav ? '0px' : (needsSpecialPadding ? '0px' : '70px'), // No top padding for ClubLeaderboard and AddSpot
                             paddingBottom: '70px', // Always account for fixed BottomNav
                             minHeight: '100vh'
@@ -137,15 +143,15 @@ const MainLayout = ({ lang }) => {
             </div>
 
             {/* Bottom Navigation - Fixed outside wrapper with animation */}
-            <AnimatePresence mode="wait">
+            <AnimatePresence>
                 {!showNewNav && !hideAllNavigation && (
                     <motion.div 
                         key="bottom-nav"
                         className="mobile-only"
-                        initial={{ opacity: 0, y: 100 }}
+                        initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: 100 }}
-                        transition={{ duration: 0.3, ease: "easeInOut" }}
+                        exit={{ opacity: 0, y: 20 }}
+                        transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
                     >
                         <BottomNav lang={lang} />
                     </motion.div>
@@ -153,17 +159,17 @@ const MainLayout = ({ lang }) => {
             </AnimatePresence>
 
             {/* ClubLeaderboard Navigation - Fixed outside wrapper with animation */}
-            <AnimatePresence mode="wait">
+            <AnimatePresence>
                 {showNewNav && (
                     <>
                         {/* Mobile ClubLeaderboardNav */}
                         <motion.div 
                             key="club-leaderboard-nav-mobile"
                             className="mobile-only"
-                            initial={{ opacity: 0, y: 100 }}
+                            initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: 100 }}
-                            transition={{ duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }} // Cool spring animation
+                            exit={{ opacity: 0, y: 20 }}
+                            transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
                         >
                             <ClubLeaderboardNav lang={lang} />
                         </motion.div>
@@ -172,10 +178,10 @@ const MainLayout = ({ lang }) => {
                         <motion.div 
                             key="club-leaderboard-nav-desktop"
                             className="desktop-nav"
-                            initial={{ opacity: 0, x: 100 }}
+                            initial={{ opacity: 0, x: 20 }}
                             animate={{ opacity: 1, x: 0 }}
-                            exit={{ opacity: 0, x: 100 }}
-                            transition={{ duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
+                            exit={{ opacity: 0, x: 20 }}
+                            transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
                             style={{
                                 position: 'fixed',
                                 top: '50%',

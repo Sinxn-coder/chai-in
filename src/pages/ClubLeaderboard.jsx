@@ -233,9 +233,22 @@ const ClubLeaderboard = ({ lang }) => {
                     background: 'transparent'
                 }}
             >
-                {activeTab === 'club' && <Community />}
-
-                {activeTab === 'leaderboard' && <Leaderboard />}
+                <AnimatePresence mode="wait">
+                    <motion.div
+                        key={activeTab}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        transition={{ 
+                            duration: 0.3, 
+                            ease: [0.4, 0, 0.2, 1]
+                        }}
+                        style={{ width: '100%' }}
+                    >
+                        {activeTab === 'club' && <Community />}
+                        {activeTab === 'leaderboard' && <Leaderboard />}
+                    </motion.div>
+                </AnimatePresence>
             </div>
         </div>
     );
