@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import { supabase } from '../lib/supabaseClient';
 import SpotCard from '../components/SpotCard';
+import SkeletonLoader from '../components/SkeletonLoader';
 import { Search, MapPin, X, TrendingUp, Clock } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
@@ -23,9 +24,21 @@ const Home = ({ lang }) => {
     const [mostVisited, setMostVisited] = useState([]);
 
     useEffect(() => {
-        fetchSpots();
-        fetchTrendingSpots();
-        fetchMostVisited();
+        // Fetch all data in parallel for faster loading
+        const fetchAllData = async () => {
+            setLoading(true);
+            try {
+                await Promise.all([
+                    fetchSpots(),
+                    fetchTrendingSpots(),
+                    fetchMostVisited()
+                ]);
+            } finally {
+                setLoading(false);
+            }
+        };
+        
+        fetchAllData();
         
         // Set up real-time subscription for spots
         const spotsSubscription = supabase
@@ -100,8 +113,12 @@ const Home = ({ lang }) => {
     };
 
     const fetchSpots = async () => {
-        setLoading(true);
-        const { data, error } = await supabase.from('spots').select('*').eq('is_verified', true).order('created_at', { ascending: false });
+        const { data, error } = await supabase
+            .from('spots')
+            .select('*')
+            .eq('is_verified', true)
+            .order('created_at', { ascending: false });
+
         if (error) {
             console.error('Error fetching spots:', error);
         } else {
@@ -114,7 +131,6 @@ const Home = ({ lang }) => {
             }
             setSpots(all);
         }
-        setLoading(false);
     };
 
     const filteredSpots = useMemo(() => {
@@ -471,9 +487,16 @@ const Home = ({ lang }) => {
                             </div>
                         )}
                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '16px' }}>
-                            {filteredSpots.map(spot => (
-                                <SpotCard key={spot.id} spot={spot} />
-                            ))}
+                            {loading ? (
+                                // Show skeleton loaders while loading
+                                Array.from({ length: 6 }).map((_, index) => (
+                                    <SkeletonLoader key={`skeleton-${index}`} type="card" />
+                                ))
+                            ) : (
+                                filteredSpots.map(spot => (
+                                    <SpotCard key={spot.id} spot={spot} />
+                                ))
+                            )}
                         </div>
                     </motion.div>
                 ) : !loading && (

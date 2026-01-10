@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { supabase } from '../lib/supabaseClient';
 import SpotCard from '../components/SpotCard';
+import SkeletonLoader from '../components/SkeletonLoader';
 import { Search, MapPin, TrendingUp, Clock } from 'lucide-react';
 import Toast from '../components/Toast';
 
@@ -22,6 +23,8 @@ const Explore = ({ lang }) => {
     const [detectedLocation, setDetectedLocation] = useState(null);
     const [locationCache, setLocationCache] = useState({});
     const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
+    const [locationSuggestions, setLocationSuggestions] = useState([]);
+    const [showLocationSuggestions, setShowLocationSuggestions] = useState(false);
 
     // Debounce search term to reduce API calls
     useEffect(() => {
@@ -33,10 +36,38 @@ const Explore = ({ lang }) => {
     }, [searchTerm]);
 
     useEffect(() => {
-        fetchSpots();
-        fetchTrendingSpots();
-        fetchMostVisited();
+        // Fetch all data in parallel for faster loading
+        const fetchAllData = async () => {
+            setLoading(true);
+            try {
+                await Promise.all([
+                    fetchSpots(),
+                    fetchTrendingSpots(),
+                    fetchMostVisited()
+                ]);
+            } finally {
+                setLoading(false);
+            }
+        };
+        
+        fetchAllData();
     }, []);
+
+    // Effect to fetch location suggestions
+    useEffect(() => {
+        const fetchSuggestions = async () => {
+            if (searchTerm.trim() && searchTerm.trim().length >= 2) {
+                const suggestions = await getLocationSuggestions(searchTerm);
+                setLocationSuggestions(suggestions);
+                setShowLocationSuggestions(suggestions.length > 0);
+            } else {
+                setLocationSuggestions([]);
+                setShowLocationSuggestions(false);
+            }
+        };
+        
+        fetchSuggestions();
+    }, [searchTerm]);
 
     // Effect to detect location when debounced search term changes
     useEffect(() => {
@@ -125,6 +156,28 @@ const Explore = ({ lang }) => {
         return d;
     }
 
+    // Function to get location suggestions for autocomplete
+    const getLocationSuggestions = async (query) => {
+        if (!query || query.length < 2) return [];
+        
+        try {
+            const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query + ', Kerala, India')}&limit=5&addressdetails=1`);
+            const data = await response.json();
+            
+            if (data && data.length > 0) {
+                return data.map(item => ({
+                    display_name: item.display_name,
+                    lat: parseFloat(item.lat),
+                    lng: parseFloat(item.lon),
+                    name: item.display_name.split(',')[0].trim()
+                }));
+            }
+        } catch (error) {
+            console.error('Error getting location suggestions:', error);
+        }
+        return [];
+    };
+
     // Function to detect if search term is a location and get coordinates
     const getLocationCoordinates = async (locationName) => {
         try {
@@ -201,6 +254,35 @@ const Explore = ({ lang }) => {
         }
     }, [spots, debouncedSearchTerm, detectedLocation]);
 
+    // Handle location suggestion selection
+    const handleLocationSelect = (location) => {
+        setDetectedLocation(location);
+        setSearchTerm(location.name);
+        setShowLocationSuggestions(false);
+        setLocationSuggestions([]);
+        
+        // Cache the selected location
+        setLocationCache(prev => ({
+            ...prev,
+            [location.name.toLowerCase()]: location
+        }));
+    };
+
+    // Handle input focus
+    const handleInputFocus = () => {
+        if (searchTerm.trim() && searchTerm.trim().length >= 2 && locationSuggestions.length > 0) {
+            setShowLocationSuggestions(true);
+        }
+    };
+
+    // Handle input blur
+    const handleInputBlur = () => {
+        // Delay hiding suggestions to allow click events
+        setTimeout(() => {
+            setShowLocationSuggestions(false);
+        }, 200);
+    };
+
     return (
         <div style={{ minHeight: '100vh', background: 'var(--bg-cream)', padding: '20px' }}>
             {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
@@ -276,6 +358,8 @@ const Explore = ({ lang }) => {
                             placeholder="Search dishes, restaurants, tags, locations..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
+                            onFocus={handleInputFocus}
+                            onBlur={handleInputBlur}
                             style={{
                                 width: '100%',
                                 padding: '12px 12px 12px 40px',
@@ -286,6 +370,61 @@ const Explore = ({ lang }) => {
                                 outline: 'none'
                             }}
                         />
+                        
+                        {/* Location Suggestions Dropdown */}
+                        {showLocationSuggestions && locationSuggestions.length > 0 && (
+                            <div style={{
+                                position: 'absolute',
+                                top: '100%',
+                                left: '0',
+                                right: '0',
+                                background: 'white',
+                                border: '2px solid var(--secondary)',
+                                borderTop: 'none',
+                                borderRadius: '0 0 16px 16px',
+                                maxHeight: '200px',
+                                overflowY: 'auto',
+                                zIndex: 1000,
+                                boxShadow: 'var(--shadow-md)'
+                            }}>
+                                {locationSuggestions.map((suggestion, index) => (
+                                    <div
+                                        key={index}
+                                        onClick={() => handleLocationSelect(suggestion)}
+                                        onMouseDown={(e) => e.preventDefault()} // Prevent blur before click
+                                        style={{
+                                            padding: '12px 16px',
+                                            cursor: 'pointer',
+                                            borderBottom: '1px solid var(--border)',
+                                            transition: 'background-color 0.2s',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: '8px'
+                                        }}
+                                        onMouseEnter={(e) => e.target.style.backgroundColor = 'var(--bg-cream)'}
+                                        onMouseLeave={(e) => e.target.style.backgroundColor = 'white'}
+                                    >
+                                        <MapPin size={16} color="var(--primary)" />
+                                        <div>
+                                            <div style={{ 
+                                                fontWeight: '600', 
+                                                color: 'var(--text-main)',
+                                                fontSize: '0.9rem'
+                                            }}>
+                                                {suggestion.name}
+                                            </div>
+                                            <div style={{ 
+                                                fontSize: '0.8rem', 
+                                                color: 'var(--text-muted)',
+                                                marginTop: '2px'
+                                            }}>
+                                                {suggestion.display_name.split(',').slice(1).join(',').trim()}
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
                     </div>
                 </div>
                 {debouncedSearchTerm.trim() && debouncedSearchTerm.trim().length >= 2 && (
@@ -313,17 +452,18 @@ const Explore = ({ lang }) => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.8 }}
             >
-                {loading ? (
-                    <div style={{ textAlign: 'center', padding: '40px' }}>
-                        <div style={{ fontSize: '1.1rem', color: 'var(--text-muted)' }}>Loading spots...</div>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px' }}>
+                        {loading ? (
+                            // Show skeleton loaders while loading
+                            Array.from({ length: 6 }).map((_, index) => (
+                                <SkeletonLoader key={`skeleton-${index}`} type="card" />
+                            ))
+                        ) : (
+                            filteredSpots.map(spot => (
+                                <SpotCard key={spot.id} spot={spot} lang={lang} />
+                            ))
+                        )}
                     </div>
-                ) : (
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px' }}>
-                        {filteredSpots.map(spot => (
-                            <SpotCard key={spot.id} spot={spot} lang={lang} />
-                        ))}
-                    </div>
-                )}
             </motion.div>
         </div>
     );

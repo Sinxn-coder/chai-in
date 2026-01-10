@@ -28,6 +28,14 @@ const LandingPage = lazy(() => import('./pages/LandingPage'));
 const Explore = lazy(() => import('./pages/Explore'));
 const MainLayout = lazy(() => import('./layouts/MainLayout'));
 
+// Preload critical routes for faster navigation
+const preloadRoute = (componentImport) => {
+    const component = componentImport();
+    // Preload the component
+    component.catch(() => {});
+    return component;
+};
+
 // Protected Route Wrapper
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
