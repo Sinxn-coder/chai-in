@@ -133,7 +133,24 @@ const Home = ({ lang }) => {
                 s.name.toLowerCase().includes(searchLower) || 
                 s.location?.toLowerCase().includes(searchLower);
             
-            return matchesSearch;
+            // Search by tags with flexible matching
+            const matchesTags = !searchTerm || (s.tags && s.tags.some(tag => {
+                const tagLower = tag.toLowerCase();
+                const tagWithoutSpaces = tagLower.replace(/\s+/g, '');
+                const tagWithHyphens = tagLower.replace(/\s+/g, '-');
+                const tagWithoutHyphens = tagLower.replace(/-/g, '');
+                
+                return tagLower.includes(searchLower) ||
+                       tagWithoutSpaces.includes(searchWithoutSpaces) ||
+                       tagWithHyphens.includes(searchWithHyphens) ||
+                       tagWithoutHyphens.includes(searchWithoutSpaces) ||
+                       searchLower.includes(tagLower) ||
+                       searchWithoutSpaces.includes(tagWithoutSpaces) ||
+                       searchWithHyphens.includes(tagWithHyphens) ||
+                       searchWithoutSpaces.includes(tagWithoutHyphens);
+            }));
+            
+            return matchesSearch || matchesTags;
         });
     }, [spots, searchTerm]);
 
