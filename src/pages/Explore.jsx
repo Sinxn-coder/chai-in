@@ -19,12 +19,27 @@ const Explore = ({ lang }) => {
     const [showLocationSearch, setShowLocationSearch] = useState(false);
     const [locationSearchTerm, setLocationSearchTerm] = useState('');
     const [searchingLocation, setSearchingLocation] = useState(false);
+    const [detectedLocation, setDetectedLocation] = useState(null);
 
     useEffect(() => {
         fetchSpots();
         fetchTrendingSpots();
         fetchMostVisited();
-    }, [activeLocation]);
+    }, []);
+
+    // Effect to detect location when search term changes
+    useEffect(() => {
+        const detectLocation = async () => {
+            if (searchTerm.trim() && searchTerm.trim().length >= 2) {
+                const location = await getLocationCoordinates(searchTerm);
+                setDetectedLocation(location);
+            } else {
+                setDetectedLocation(null);
+            }
+        };
+        
+        detectLocation();
+    }, [searchTerm]);
 
     const fetchSpots = async () => {
         setLoading(true);
@@ -38,14 +53,7 @@ const Explore = ({ lang }) => {
             console.error('Error fetching spots:', error);
             setToast({ message: 'Failed to load spots', type: 'error' });
         } else {
-            let all = data || [];
-            if (activeLocation) {
-                all = all.filter(s => {
-                    const distance = getDistanceFromLatLonInKm(activeLocation.lat, activeLocation.lng, s.latitude, s.longitude);
-                    return distance <= 30;
-                });
-            }
-            setSpots(all);
+            setSpots(data || []);
         }
         setLoading(false);
     };
@@ -77,56 +85,6 @@ const Explore = ({ lang }) => {
         setMostVisited(data || []);
     };
 
-    // Remove the old handleSearch function - we'll use real-time filtering instead
-
-    const filteredSpots = useMemo(() => {
-        if (!searchTerm.trim() || searchTerm.trim().length < 2) {
-            return spots;
-        }
-        
-        const searchLower = searchTerm.toLowerCase().trim();
-        
-        const filtered = spots.filter(s => {
-            // Search by name
-            const nameMatch = s.name && s.name.toLowerCase().includes(searchLower);
-            
-            // Search by location
-            const locationMatch = s.location && s.location.toLowerCase().includes(searchLower);
-            
-            // Search by tags (more strict matching)
-            let tagMatch = false;
-            if (s.tags && Array.isArray(s.tags) && s.tags.length > 0) {
-                tagMatch = s.tags.some(tag => {
-                    if (!tag) return false;
-                    
-                    const tagLower = tag.toLowerCase();
-                    const tagWithoutSpaces = tagLower.replace(/\s+/g, '');
-                    const tagWithHyphens = tagLower.replace(/\s+/g, '-');
-                    const tagWithoutHyphens = tagLower.replace(/-/g, '');
-                    
-                    const searchWithoutSpaces = searchLower.replace(/\s+/g, '');
-                    const searchWithHyphens = searchLower.replace(/\s+/g, '-');
-                    
-                    // More strict matching - require at least 2 characters or exact match
-                    const matches = 
-                        (searchLower.length >= 2 && tagLower.includes(searchLower)) ||
-                        (searchWithoutSpaces.length >= 2 && tagWithoutSpaces.includes(searchWithoutSpaces)) ||
-                        (searchWithHyphens.length >= 2 && tagWithHyphens.includes(searchWithHyphens)) ||
-                        (searchLower.length >= 2 && tagWithoutHyphens.includes(searchLower)) ||
-                        (searchLower.length >= 2 && searchLower.includes(tagLower)) ||
-                        (searchWithoutSpaces.length >= 2 && searchWithoutSpaces.includes(tagWithoutSpaces)) ||
-                        (searchWithHyphens.length >= 2 && searchWithHyphens.includes(tagWithHyphens));
-                    
-                    return matches;
-                });
-            }
-            
-            return nameMatch || locationMatch || tagMatch;
-        });
-        
-        return filtered;
-    }, [spots, searchTerm]);
-
     function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
         var R = 6371; // Radius of earth in km
         var dLat = (lat2 - lat1) * Math.PI / 180;  // deg2rad below
@@ -134,47 +92,87 @@ const Explore = ({ lang }) => {
         var a = 
             Math.sin(dLat/2) * Math.sin(dLat/2) +
             Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
-            Math.sin(dLon/2) * Math.sin(dLon/2)
-        ; 
-        var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+            Math.sin(dLon/2) * Math.sin(dLon/2);
+        var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
         var d = R * c; // Distance in km
         return d;
     }
 
-    const searchLocation = async () => {
-        if (!locationSearchTerm.trim()) return;
-        
-        setSearchingLocation(true);
+    // Function to detect if search term is a location and get coordinates
+    const getLocationCoordinates = async (locationName) => {
         try {
-            const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(locationSearchTerm + ', Kerala, India')}&limit=1`);
+            const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(locationName + ', Kerala, India')}&limit=1`);
             const data = await response.json();
-            
             if (data && data.length > 0) {
-                const location = {
+                return {
                     lat: parseFloat(data[0].lat),
-                    lng: parseFloat(data[0].lon),
-                    name: data[0].display_name.split(',')[0]
+                    lng: parseFloat(data[0].lon)
                 };
-                setActiveLocation(location);
-                setLocationName(location.name);
-                setShowLocationSearch(false);
-                fetchSpots();
-            } else {
-                console.log('No location found for:', locationSearchTerm);
             }
         } catch (error) {
-            console.error('Error searching location:', error);
-        } finally {
-            setSearchingLocation(false);
+            console.error('Error getting location coordinates:', error);
         }
+        return null;
     };
 
-    const resetToAllKerala = () => {
-        setActiveLocation(null);
-        setLocationName('All Kerala');
-        setLocationSearchTerm('');
-        fetchSpots();
-    };
+    // Enhanced search logic with location detection
+    const filteredSpots = useMemo(() => {
+        if (!searchTerm.trim() || searchTerm.trim().length < 2) {
+            return spots;
+        }
+        
+        const searchLower = searchTerm.toLowerCase().trim();
+        
+        // If location is detected, filter by distance
+        if (detectedLocation) {
+            const locationFiltered = spots.filter(s => {
+                const distance = getDistanceFromLatLonInKm(s.latitude, s.longitude, detectedLocation.lat, detectedLocation.lng);
+                return distance <= 30; // Filter spots within 30km radius
+            });
+            return locationFiltered;
+        } else {
+            // Regular search by name, location, and tags
+            const normalFiltered = spots.filter(s => {
+                // Search by name
+                const nameMatch = s.name && s.name.toLowerCase().includes(searchLower);
+                
+                // Search by location
+                const locationMatch = s.location && s.location.toLowerCase().includes(searchLower);
+                
+                // Search by tags (more strict matching)
+                let tagMatch = false;
+                if (s.tags && Array.isArray(s.tags) && s.tags.length > 0) {
+                    tagMatch = s.tags.some(tag => {
+                        if (!tag) return false;
+                        
+                        const tagLower = tag.toLowerCase();
+                        const tagWithoutSpaces = tagLower.replace(/\s+/g, '');
+                        const tagWithHyphens = tagLower.replace(/\s+/g, '-');
+                        const tagWithoutHyphens = tagLower.replace(/-/g, '');
+                        
+                        const searchWithoutSpaces = searchLower.replace(/\s+/g, '');
+                        const searchWithHyphens = searchLower.replace(/\s+/g, '-');
+                        
+                        // More strict matching - require at least 2 characters or exact match
+                        const matches = 
+                            (searchLower.length >= 2 && tagLower.includes(searchLower)) ||
+                            (searchWithoutSpaces.length >= 2 && tagWithoutSpaces.includes(searchWithoutSpaces)) ||
+                            (searchWithHyphens.length >= 2 && tagWithHyphens.includes(searchWithHyphens)) ||
+                            (searchLower.length >= 2 && tagWithoutHyphens.includes(searchLower)) ||
+                            (searchLower.length >= 2 && searchLower.includes(tagLower)) ||
+                            (searchWithoutSpaces.length >= 2 && searchWithoutSpaces.includes(tagWithoutSpaces)) ||
+                            (searchWithHyphens.length >= 2 && searchWithHyphens.includes(tagWithHyphens));
+                        
+                        return matches;
+                    });
+                }
+                
+                return nameMatch || locationMatch || tagMatch;
+            });
+            
+            return normalFiltered;
+        }
+    }, [spots, searchTerm, detectedLocation]);
 
     return (
         <div style={{ minHeight: '100vh', background: 'var(--bg-cream)', padding: '20px' }}>
@@ -215,120 +213,20 @@ const Explore = ({ lang }) => {
                             color: 'var(--primary)', 
                             marginBottom: '10px' 
                         }}>
-                            {activeLocation ? `Spots near ${locationName}` : 'Search Results'}
+                            {detectedLocation ? 'Nearby Spots' : 'Search Results'}
                         </h1>
                         <p style={{ 
                             color: 'var(--text-muted)', 
                             fontSize: '1rem' 
                         }}>
-                            {activeLocation 
-                                ? `Showing ${filteredSpots.length} spots within 30km of ${locationName}`
+                            {detectedLocation 
+                                ? `Showing ${filteredSpots.length} spots within 30km of "${searchTerm}"`
                                 : `Showing ${filteredSpots.length} spots for "${searchTerm}"`
                             }
                         </p>
                     </>
                 )}
             </motion.div>
-
-            {/* Location Search Section */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '20px' }}>
-                <motion.button
-                    whileTap={{ scale: 0.95 }}
-                    onClick={() => setShowLocationSearch(!showLocationSearch)}
-                    style={{
-                        background: 'rgba(239, 42, 57, 0.1)',
-                        color: 'var(--primary)',
-                        padding: '8px 16px',
-                        borderRadius: '12px',
-                        fontSize: '0.85rem',
-                        fontWeight: '800',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '6px',
-                        border: 'none',
-                        cursor: 'pointer',
-                        transition: 'all 0.3s ease',
-                        flexShrink: 0
-                    }}
-                >
-                    <MapPin size={16} /> {locationName}
-                </motion.button>
-                
-                {showLocationSearch && (
-                    <div style={{ flex: 1, minWidth: '200px' }}>
-                        <div style={{ position: 'relative' }}>
-                            <input
-                                type="text"
-                                placeholder="Search location in Kerala..."
-                                value={locationSearchTerm}
-                                onChange={(e) => setLocationSearchTerm(e.target.value)}
-                                onKeyPress={(e) => e.key === 'Enter' && searchLocation()}
-                                style={{
-                                    width: '100%',
-                                    padding: '0 70px 0 45px',
-                                    borderRadius: '25px',
-                                    border: '2px solid var(--primary)',
-                                    background: 'var(--bg-white)',
-                                    fontSize: '0.85rem',
-                                    fontWeight: '600',
-                                    boxShadow: '0 4px 15px rgba(239, 42, 57, 0.15)',
-                                    transition: 'all 0.3s ease',
-                                    boxSizing: 'border-box',
-                                    lineHeight: '44px'
-                                }}
-                            />
-                            <Search size={20} color="var(--primary)" style={{ position: 'absolute', left: '15px', top: '12px', zIndex: 2 }} />
-                            <motion.button
-                                whileTap={{ scale: 0.95 }}
-                                onClick={searchLocation}
-                                disabled={searchingLocation}
-                                style={{
-                                    position: 'absolute',
-                                    right: '8px',
-                                    top: '7px',
-                                    background: 'var(--primary)',
-                                    color: 'white',
-                                    border: 'none',
-                                    padding: '8px 16px',
-                                    borderRadius: '20px',
-                                    fontSize: '0.75rem',
-                                    fontWeight: '700',
-                                    cursor: searchingLocation ? 'not-allowed' : 'pointer',
-                                    opacity: searchingLocation ? 0.6 : 1,
-                                    boxShadow: '0 2px 8px rgba(239, 42, 57, 0.3)',
-                                    zIndex: 2,
-                                    height: '30px'
-                                }}
-                            >
-                                {searchingLocation ? '...' : 'Go'}
-                            </motion.button>
-                            {locationSearchTerm && (
-                                <motion.button
-                                    whileTap={{ scale: 0.95 }}
-                                    onClick={resetToAllKerala}
-                                    style={{
-                                        position: 'absolute',
-                                        right: '70px',
-                                        top: '7px',
-                                        background: 'transparent',
-                                        color: '#6b7280',
-                                        border: 'none',
-                                        padding: '8px',
-                                        borderRadius: '20px',
-                                        fontSize: '0.75rem',
-                                        fontWeight: '700',
-                                        cursor: 'pointer',
-                                        zIndex: 2,
-                                        height: '30px'
-                                    }}
-                                >
-                                    <X size={16} />
-                                </motion.button>
-                            )}
-                        </div>
-                    </div>
-                )}
-            </div>
 
             {/* Search Section */}
             <motion.div
@@ -370,7 +268,10 @@ const Explore = ({ lang }) => {
                         marginTop: '8px',
                         fontStyle: 'italic'
                     }}>
-                        Found {filteredSpots.length} results for "{searchTerm}"
+                        {detectedLocation 
+                            ? `Found ${filteredSpots.length} spots within 30km of "${searchTerm}"`
+                            : `Found ${filteredSpots.length} results for "${searchTerm}"`
+                        }
                     </div>
                 )}
             </motion.div>
