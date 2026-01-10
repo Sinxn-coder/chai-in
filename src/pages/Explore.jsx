@@ -20,6 +20,17 @@ const Explore = ({ lang }) => {
     const [locationSearchTerm, setLocationSearchTerm] = useState('');
     const [searchingLocation, setSearchingLocation] = useState(false);
     const [detectedLocation, setDetectedLocation] = useState(null);
+    const [locationCache, setLocationCache] = useState({});
+    const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
+
+    // Debounce search term to reduce API calls
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setDebouncedSearchTerm(searchTerm);
+        }, 300); // 300ms delay
+
+        return () => clearTimeout(timer);
+    }, [searchTerm]);
 
     useEffect(() => {
         fetchSpots();
@@ -27,19 +38,35 @@ const Explore = ({ lang }) => {
         fetchMostVisited();
     }, []);
 
-    // Effect to detect location when search term changes
+    // Effect to detect location when debounced search term changes
     useEffect(() => {
         const detectLocation = async () => {
-            if (searchTerm.trim() && searchTerm.trim().length >= 2) {
-                const location = await getLocationCoordinates(searchTerm);
+            if (debouncedSearchTerm.trim() && debouncedSearchTerm.trim().length >= 2) {
+                // Check cache first
+                if (locationCache[debouncedSearchTerm.toLowerCase()]) {
+                    setDetectedLocation(locationCache[debouncedSearchTerm.toLowerCase()]);
+                    return;
+                }
+
+                setSearchingLocation(true);
+                const location = await getLocationCoordinates(debouncedSearchTerm);
                 setDetectedLocation(location);
+                
+                // Cache the result
+                if (location) {
+                    setLocationCache(prev => ({
+                        ...prev,
+                        [debouncedSearchTerm.toLowerCase()]: location
+                    }));
+                }
+                setSearchingLocation(false);
             } else {
                 setDetectedLocation(null);
             }
         };
         
         detectLocation();
-    }, [searchTerm]);
+    }, [debouncedSearchTerm, locationCache]);
 
     const fetchSpots = async () => {
         setLoading(true);
@@ -117,11 +144,11 @@ const Explore = ({ lang }) => {
 
     // Enhanced search logic with location detection
     const filteredSpots = useMemo(() => {
-        if (!searchTerm.trim() || searchTerm.trim().length < 2) {
+        if (!debouncedSearchTerm.trim() || debouncedSearchTerm.trim().length < 2) {
             return spots;
         }
         
-        const searchLower = searchTerm.toLowerCase().trim();
+        const searchLower = debouncedSearchTerm.toLowerCase().trim();
         
         // If location is detected, filter by distance
         if (detectedLocation) {
@@ -172,7 +199,7 @@ const Explore = ({ lang }) => {
             
             return normalFiltered;
         }
-    }, [spots, searchTerm, detectedLocation]);
+    }, [spots, debouncedSearchTerm, detectedLocation]);
 
     return (
         <div style={{ minHeight: '100vh', background: 'var(--bg-cream)', padding: '20px' }}>
@@ -188,7 +215,7 @@ const Explore = ({ lang }) => {
                     marginBottom: '30px' 
                 }}
             >
-                {!searchTerm.trim() ? (
+                {!debouncedSearchTerm.trim() ? (
                     <>
                         <h1 style={{ 
                             fontSize: '2rem', 
@@ -220,8 +247,8 @@ const Explore = ({ lang }) => {
                             fontSize: '1rem' 
                         }}>
                             {detectedLocation 
-                                ? `Showing ${filteredSpots.length} spots within 30km of "${searchTerm}"`
-                                : `Showing ${filteredSpots.length} spots for "${searchTerm}"`
+                                ? `Showing ${filteredSpots.length} spots within 30km of "${debouncedSearchTerm}"`
+                                : `Showing ${filteredSpots.length} spots for "${debouncedSearchTerm}"`
                             }
                         </p>
                     </>
@@ -261,16 +288,20 @@ const Explore = ({ lang }) => {
                         />
                     </div>
                 </div>
-                {searchTerm.trim() && searchTerm.trim().length >= 2 && (
+                {debouncedSearchTerm.trim() && debouncedSearchTerm.trim().length >= 2 && (
                     <div style={{ 
                         fontSize: '0.9rem', 
                         color: 'var(--text-muted)', 
                         marginTop: '8px',
                         fontStyle: 'italic'
                     }}>
-                        {detectedLocation 
-                            ? `Found ${filteredSpots.length} spots within 30km of "${searchTerm}"`
-                            : `Found ${filteredSpots.length} results for "${searchTerm}"`
+                        {searchingLocation ? (
+                            'Detecting location...'
+                        ) : (
+                            detectedLocation 
+                                ? `Found ${filteredSpots.length} spots within 30km of "${debouncedSearchTerm}"`
+                                : `Found ${filteredSpots.length} results for "${debouncedSearchTerm}"`
+                        )
                         }
                     </div>
                 )}
