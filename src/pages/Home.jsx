@@ -73,15 +73,15 @@ const Home = ({ lang }) => {
     }, [activeLocation]);
 
     const fetchTrendingSpots = async () => {
-        // Simple trending logic: spots with most reviews in last 7 days
+        // Simple trending logic: spots created in last 7 days
         const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
         
         const { data } = await supabase
             .from('spots')
-            .select('*, reviews(count)')
+            .select('*')
             .eq('is_verified', true)
             .gte('created_at', sevenDaysAgo.toISOString())
-            .order('reviews.count', { ascending: false })
+            .order('created_at', { ascending: false })
             .limit(5);
 
         setTrendingSpots(data || []);
@@ -105,28 +105,12 @@ const Home = ({ lang }) => {
         if (error) {
             console.error('Error fetching spots:', error);
         } else {
-            console.log('Total spots fetched:', data?.length || 0);
-            // Log sample spots with tags
-            if (data && data.length > 0) {
-                console.log('Sample spots data:');
-                data.slice(0, 3).forEach((spot, index) => {
-                    console.log(`Spot ${index + 1}:`, {
-                        name: spot.name,
-                        tags: spot.tags,
-                        location: spot.location
-                    });
-                });
-            }
             let all = data || [];
             if (activeLocation) {
-                console.log('Active location:', activeLocation);
-                console.log('Filtering spots within 30km...');
                 all = all.filter(s => {
                     const distance = getDistanceFromLatLonInKm(activeLocation.lat, activeLocation.lng, s.latitude, s.longitude);
-                    console.log(`Spot: ${s.name} (${s.latitude}, ${s.longitude}) - Distance: ${distance.toFixed(2)}km`);
                     return distance <= 30;
                 });
-                console.log('Spots within 30km:', all.length);
             }
             setSpots(all);
         }
@@ -134,16 +118,11 @@ const Home = ({ lang }) => {
     };
 
     const filteredSpots = useMemo(() => {
-        console.log('Filtering spots with search term:', searchTerm);
-        console.log('Total spots before filtering:', spots.length);
-        
-        if (!searchTerm.trim()) {
-            console.log('No search term, returning all spots');
+        if (!searchTerm.trim() || searchTerm.trim().length < 2) {
             return spots;
         }
         
         const searchLower = searchTerm.toLowerCase().trim();
-        console.log('Search term processed:', searchLower);
         
         const filtered = spots.filter(s => {
             // Search by name
@@ -152,7 +131,7 @@ const Home = ({ lang }) => {
             // Search by location
             const locationMatch = s.location && s.location.toLowerCase().includes(searchLower);
             
-            // Search by tags
+            // Search by tags (more strict matching)
             let tagMatch = false;
             if (s.tags && Array.isArray(s.tags) && s.tags.length > 0) {
                 tagMatch = s.tags.some(tag => {
@@ -166,34 +145,23 @@ const Home = ({ lang }) => {
                     const searchWithoutSpaces = searchLower.replace(/\s+/g, '');
                     const searchWithHyphens = searchLower.replace(/\s+/g, '-');
                     
-                    // Multiple matching strategies
+                    // More strict matching - require at least 2 characters or exact match
                     const matches = 
-                        tagLower.includes(searchLower) ||
-                        tagWithoutSpaces.includes(searchWithoutSpaces) ||
-                        tagWithHyphens.includes(searchWithHyphens) ||
-                        tagWithoutHyphens.includes(searchWithoutSpaces) ||
-                        searchLower.includes(tagLower) ||
-                        searchWithoutSpaces.includes(tagWithoutSpaces) ||
-                        searchWithHyphens.includes(tagWithHyphens);
-                    
-                    if (matches) {
-                        console.log(`Tag match: "${tag}" matches "${searchTerm}"`);
-                    }
+                        (searchLower.length >= 2 && tagLower.includes(searchLower)) ||
+                        (searchWithoutSpaces.length >= 2 && tagWithoutSpaces.includes(searchWithoutSpaces)) ||
+                        (searchWithHyphens.length >= 2 && tagWithHyphens.includes(searchWithHyphens)) ||
+                        (searchLower.length >= 2 && tagWithoutHyphens.includes(searchLower)) ||
+                        (searchLower.length >= 2 && searchLower.includes(tagLower)) ||
+                        (searchWithoutSpaces.length >= 2 && searchWithoutSpaces.includes(tagWithoutSpaces)) ||
+                        (searchWithHyphens.length >= 2 && searchWithHyphens.includes(tagWithHyphens));
                     
                     return matches;
                 });
             }
             
-            const matches = nameMatch || locationMatch || tagMatch;
-            if (matches) {
-                console.log(`Spot matched: "${s.name}" - Name: ${nameMatch}, Location: ${locationMatch}, Tags: ${tagMatch}`);
-                console.log('Spot details:', { name: s.name, tags: s.tags, location: s.location });
-            }
-            
-            return matches;
+            return nameMatch || locationMatch || tagMatch;
         });
         
-        console.log('Filtered spots count:', filtered.length);
         return filtered;
     }, [spots, searchTerm]);
 
