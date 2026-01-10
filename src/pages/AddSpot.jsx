@@ -17,6 +17,42 @@ const AddSpot = ({ lang }) => {
     const { user } = useAuth();
     const fileInputRef = useRef(null);
 
+    // Early return if user is not authenticated
+    if (!user) {
+        return (
+            <div style={{ 
+                minHeight: '100vh', 
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'center',
+                background: 'var(--secondary)',
+                color: 'var(--text-main)',
+                fontSize: '1.2rem',
+                fontWeight: '800'
+            }}>
+                <div style={{ textAlign: 'center' }}>
+                    <h2>Please Login to Add Spots</h2>
+                    <button 
+                        onClick={() => navigate(`/${lang}/login`)}
+                        style={{
+                            marginTop: '20px',
+                            padding: '15px 30px',
+                            background: 'var(--primary)',
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '12px',
+                            fontSize: '1rem',
+                            fontWeight: '800',
+                            cursor: 'pointer'
+                        }}
+                    >
+                        Go to Login
+                    </button>
+                </div>
+            </div>
+        );
+    }
+
     const [step, setStep] = useState(1);
     const [loading, setLoading] = useState(false);
     const [uploading, setUploading] = useState(false);
@@ -134,7 +170,10 @@ const AddSpot = ({ lang }) => {
     };
 
     const handleSubmit = async () => {
-        if (!user) return showToast("Please login first", "error");
+        if (!user) {
+            showToast("Please login first", "error");
+            return;
+        }
         setLoading(true);
         try {
             const spotData = {
