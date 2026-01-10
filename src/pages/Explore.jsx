@@ -156,12 +156,13 @@ const Explore = ({ lang }) => {
         return d;
     }
 
-    // Function to get location suggestions for autocomplete
+    // Function to get location suggestions for autocomplete (cities only)
     const getLocationSuggestions = async (query) => {
         if (!query || query.length < 2) return [];
         
         try {
-            const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query + ', Kerala, India')}&limit=5&addressdetails=1`);
+            // Search for cities/towns only, not local places
+            const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query + ', Kerala, India')}&limit=5&addressdetails=1&featuretype=city`);
             const data = await response.json();
             
             if (data && data.length > 0) {
@@ -169,8 +170,13 @@ const Explore = ({ lang }) => {
                     display_name: item.display_name,
                     lat: parseFloat(item.lat),
                     lng: parseFloat(item.lon),
-                    name: item.display_name.split(',')[0].trim()
-                }));
+                    name: item.address?.city || item.address?.town || item.address?.village || item.display_name.split(',')[0].trim()
+                })).filter(location => {
+                    // Filter to show only proper cities/towns
+                    const cityName = location.name.toLowerCase();
+                    const queryLower = query.toLowerCase();
+                    return cityName.includes(queryLower) || queryLower.includes(cityName);
+                });
             }
         } catch (error) {
             console.error('Error getting location suggestions:', error);
@@ -181,8 +187,16 @@ const Explore = ({ lang }) => {
     // Function to detect if search term is a location and get coordinates
     const getLocationCoordinates = async (locationName) => {
         try {
-            const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(locationName + ', Kerala, India')}&limit=1`);
-            const data = await response.json();
+            // Try to find city first, then fallback to general search
+            const cityResponse = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(locationName + ', Kerala, India')}&limit=1&featuretype=city`);
+            let data = await cityResponse.json();
+            
+            // If no city found, try general search
+            if (!data || data.length === 0) {
+                const generalResponse = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(locationName + ', Kerala, India')}&limit=1`);
+                data = await generalResponse.json();
+            }
+            
             if (data && data.length > 0) {
                 return {
                     lat: parseFloat(data[0].lat),
@@ -418,7 +432,7 @@ const Explore = ({ lang }) => {
                                                 color: 'var(--text-muted)',
                                                 marginTop: '2px'
                                             }}>
-                                                {suggestion.display_name.split(',').slice(1).join(',').trim()}
+                                                Kerala, India
                                             </div>
                                         </div>
                                     </div>
