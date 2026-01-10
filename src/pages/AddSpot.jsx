@@ -14,8 +14,29 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 const AddSpot = ({ lang }) => {
     const navigate = useNavigate();
-    const { user } = useAuth();
+    const { user, loading: authLoading } = useAuth();
     const fileInputRef = useRef(null);
+
+    // Show loading state while auth is initializing
+    if (authLoading) {
+        return (
+            <div style={{ 
+                minHeight: '100vh', 
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'center',
+                background: 'var(--secondary)',
+                color: 'var(--text-main)',
+                fontSize: '1.2rem',
+                fontWeight: '800'
+            }}>
+                <div style={{ textAlign: 'center' }}>
+                    <Loader size={40} color="var(--primary)" />
+                    <p style={{ marginTop: '20px' }}>Loading...</p>
+                </div>
+            </div>
+        );
+    }
 
     // Early return if user is not authenticated
     if (!user) {
@@ -209,7 +230,7 @@ const AddSpot = ({ lang }) => {
         <div style={{ 
             minHeight: '100vh', 
             background: 'var(--secondary)', 
-            position: 'fixed',
+            position: 'relative',
             top: 0,
             left: 0,
             right: 0,
