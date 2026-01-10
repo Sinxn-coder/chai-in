@@ -20,11 +20,9 @@ const Explore = ({ lang }) => {
     const [showLocationSearch, setShowLocationSearch] = useState(false);
     const [locationSearchTerm, setLocationSearchTerm] = useState('');
     const [searchingLocation, setSearchingLocation] = useState(false);
-    const [detectedLocation, setDetectedLocation] = useState(null);
+    const [detectedLocations, setDetectedLocations] = useState([]);
     const [locationCache, setLocationCache] = useState({});
     const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
-    const [locationSuggestions, setLocationSuggestions] = useState([]);
-    const [showLocationSuggestions, setShowLocationSuggestions] = useState(false);
 
     // Debounce search term to reduce API calls
     useEffect(() => {
@@ -53,50 +51,35 @@ const Explore = ({ lang }) => {
         fetchAllData();
     }, []);
 
-    // Effect to fetch location suggestions
+    // Effect to detect locations when debounced search term changes
     useEffect(() => {
-        const fetchSuggestions = async () => {
-            if (searchTerm.trim() && searchTerm.trim().length >= 2) {
-                const suggestions = await getLocationSuggestions(searchTerm);
-                setLocationSuggestions(suggestions);
-                setShowLocationSuggestions(suggestions.length > 0);
-            } else {
-                setLocationSuggestions([]);
-                setShowLocationSuggestions(false);
-            }
-        };
-        
-        fetchSuggestions();
-    }, [searchTerm]);
-
-    // Effect to detect location when debounced search term changes
-    useEffect(() => {
-        const detectLocation = async () => {
+        const detectLocations = async () => {
             if (debouncedSearchTerm.trim() && debouncedSearchTerm.trim().length >= 2) {
                 // Check cache first
-                if (locationCache[debouncedSearchTerm.toLowerCase()]) {
-                    setDetectedLocation(locationCache[debouncedSearchTerm.toLowerCase()]);
+                const cacheKey = debouncedSearchTerm.toLowerCase();
+                if (locationCache[cacheKey]) {
+                    setDetectedLocations(locationCache[cacheKey]);
                     return;
                 }
 
                 setSearchingLocation(true);
-                const location = await getLocationCoordinates(debouncedSearchTerm);
-                setDetectedLocation(location);
+                const locations = await getLocationsStartingWith(debouncedSearchTerm);
+                setDetectedLocations(locations);
                 
-                // Cache the result
-                if (location) {
+                // Cache the results
+                if (locations.length > 0) {
                     setLocationCache(prev => ({
                         ...prev,
-                        [debouncedSearchTerm.toLowerCase()]: location
+                        [cacheKey]: locations
                     }));
                 }
                 setSearchingLocation(false);
             } else {
-                setDetectedLocation(null);
+                setDetectedLocations([]);
             }
         };
         
-        detectLocation();
+        detectLocations();
     }, [debouncedSearchTerm, locationCache]);
 
     const fetchSpots = async () => {
@@ -156,13 +139,13 @@ const Explore = ({ lang }) => {
         return d;
     }
 
-    // Function to get location suggestions for autocomplete (cities only)
-    const getLocationSuggestions = async (query) => {
+    // Function to get multiple locations starting with the search term
+    const getLocationsStartingWith = async (query) => {
         if (!query || query.length < 2) return [];
         
         try {
-            // Search for cities/towns only, not local places
-            const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query + ', Kerala, India')}&limit=5&addressdetails=1&featuretype=city`);
+            // Search for cities/towns that start with the query
+            const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query + '*') + ', Kerala, India'}&limit=10&addressdetails=1&featuretype=city`);
             const data = await response.json();
             
             if (data && data.length > 0) {
@@ -172,14 +155,14 @@ const Explore = ({ lang }) => {
                     lng: parseFloat(item.lon),
                     name: item.address?.city || item.address?.town || item.address?.village || item.display_name.split(',')[0].trim()
                 })).filter(location => {
-                    // Filter to show only proper cities/towns
-                    const cityName = location.name.toLowerCase();
+                    // Filter to show only locations that start with the query
+                    const locationName = location.name.toLowerCase();
                     const queryLower = query.toLowerCase();
-                    return cityName.includes(queryLower) || queryLower.includes(cityName);
+                    return locationName.startsWith(queryLower);
                 });
             }
         } catch (error) {
-            console.error('Error getting location suggestions:', error);
+            console.error('Error getting locations:', error);
         }
         return [];
     };
@@ -209,7 +192,7 @@ const Explore = ({ lang }) => {
         return null;
     };
 
-    // Enhanced search logic with location detection
+    // Enhanced search logic with multiple location detection
     const filteredSpots = useMemo(() => {
         if (!debouncedSearchTerm.trim() || debouncedSearchTerm.trim().length < 2) {
             return spots;
@@ -217,11 +200,14 @@ const Explore = ({ lang }) => {
         
         const searchLower = debouncedSearchTerm.toLowerCase().trim();
         
-        // If location is detected, filter by distance
-        if (detectedLocation) {
+        // If locations are detected, filter by distance from all detected locations
+        if (detectedLocations.length > 0) {
             const locationFiltered = spots.filter(s => {
-                const distance = getDistanceFromLatLonInKm(s.latitude, s.longitude, detectedLocation.lat, detectedLocation.lng);
-                return distance <= 30; // Filter spots within 30km radius
+                // Check if spot is within 30km of ANY detected location
+                return detectedLocations.some(location => {
+                    const distance = getDistanceFromLatLonInKm(s.latitude, s.longitude, location.lat, location.lng);
+                    return distance <= 30;
+                });
             });
             return locationFiltered;
         } else {
@@ -266,36 +252,7 @@ const Explore = ({ lang }) => {
             
             return normalFiltered;
         }
-    }, [spots, debouncedSearchTerm, detectedLocation]);
-
-    // Handle location suggestion selection
-    const handleLocationSelect = (location) => {
-        setDetectedLocation(location);
-        setSearchTerm(location.name);
-        setShowLocationSuggestions(false);
-        setLocationSuggestions([]);
-        
-        // Cache the selected location
-        setLocationCache(prev => ({
-            ...prev,
-            [location.name.toLowerCase()]: location
-        }));
-    };
-
-    // Handle input focus
-    const handleInputFocus = () => {
-        if (searchTerm.trim() && searchTerm.trim().length >= 2 && locationSuggestions.length > 0) {
-            setShowLocationSuggestions(true);
-        }
-    };
-
-    // Handle input blur
-    const handleInputBlur = () => {
-        // Delay hiding suggestions to allow click events
-        setTimeout(() => {
-            setShowLocationSuggestions(false);
-        }, 200);
-    };
+    }, [spots, debouncedSearchTerm, detectedLocations]);
 
     return (
         <div style={{ minHeight: '100vh', background: 'var(--bg-cream)', padding: '20px' }}>
@@ -336,14 +293,14 @@ const Explore = ({ lang }) => {
                             color: 'var(--primary)', 
                             marginBottom: '10px' 
                         }}>
-                            {detectedLocation ? 'Nearby Spots' : 'Search Results'}
+                            {detectedLocations.length > 0 ? 'Nearby Spots' : 'Search Results'}
                         </h1>
                         <p style={{ 
                             color: 'var(--text-muted)', 
                             fontSize: '1rem' 
                         }}>
-                            {detectedLocation 
-                                ? `Showing ${filteredSpots.length} spots within 30km of "${debouncedSearchTerm}"`
+                            {detectedLocations.length > 0 
+                                ? `Showing ${filteredSpots.length} spots within 30km of locations starting with "${debouncedSearchTerm}"`
                                 : `Showing ${filteredSpots.length} spots for "${debouncedSearchTerm}"`
                             }
                         </p>
@@ -372,8 +329,6 @@ const Explore = ({ lang }) => {
                             placeholder="Search dishes, restaurants, tags, locations..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            onFocus={handleInputFocus}
-                            onBlur={handleInputBlur}
                             style={{
                                 width: '100%',
                                 padding: '12px 12px 12px 40px',
@@ -384,61 +339,6 @@ const Explore = ({ lang }) => {
                                 outline: 'none'
                             }}
                         />
-                        
-                        {/* Location Suggestions Dropdown */}
-                        {showLocationSuggestions && locationSuggestions.length > 0 && (
-                            <div style={{
-                                position: 'absolute',
-                                top: '100%',
-                                left: '0',
-                                right: '0',
-                                background: 'white',
-                                border: '2px solid var(--secondary)',
-                                borderTop: 'none',
-                                borderRadius: '0 0 16px 16px',
-                                maxHeight: '200px',
-                                overflowY: 'auto',
-                                zIndex: 1000,
-                                boxShadow: 'var(--shadow-md)'
-                            }}>
-                                {locationSuggestions.map((suggestion, index) => (
-                                    <div
-                                        key={index}
-                                        onClick={() => handleLocationSelect(suggestion)}
-                                        onMouseDown={(e) => e.preventDefault()} // Prevent blur before click
-                                        style={{
-                                            padding: '12px 16px',
-                                            cursor: 'pointer',
-                                            borderBottom: '1px solid var(--border)',
-                                            transition: 'background-color 0.2s',
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            gap: '8px'
-                                        }}
-                                        onMouseEnter={(e) => e.target.style.backgroundColor = 'var(--bg-cream)'}
-                                        onMouseLeave={(e) => e.target.style.backgroundColor = 'white'}
-                                    >
-                                        <MapPin size={16} color="var(--primary)" />
-                                        <div>
-                                            <div style={{ 
-                                                fontWeight: '600', 
-                                                color: 'var(--text-main)',
-                                                fontSize: '0.9rem'
-                                            }}>
-                                                {suggestion.name}
-                                            </div>
-                                            <div style={{ 
-                                                fontSize: '0.8rem', 
-                                                color: 'var(--text-muted)',
-                                                marginTop: '2px'
-                                            }}>
-                                                Kerala, India
-                                            </div>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        )}
                     </div>
                 </div>
                 {debouncedSearchTerm.trim() && debouncedSearchTerm.trim().length >= 2 && (
@@ -449,13 +349,12 @@ const Explore = ({ lang }) => {
                         fontStyle: 'italic'
                     }}>
                         {searchingLocation ? (
-                            'Detecting location...'
+                            `Finding locations starting with "${debouncedSearchTerm}"...`
                         ) : (
-                            detectedLocation 
-                                ? `Found ${filteredSpots.length} spots within 30km of "${debouncedSearchTerm}"`
+                            detectedLocations.length > 0 
+                                ? `Found ${filteredSpots.length} spots within 30km of ${detectedLocations.length} location(s) starting with "${debouncedSearchTerm}"`
                                 : `Found ${filteredSpots.length} results for "${debouncedSearchTerm}"`
-                        )
-                        }
+                        )}
                     </div>
                 )}
             </motion.div>
