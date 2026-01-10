@@ -81,6 +81,12 @@ const MainLayout = ({ lang }) => {
             animate: { opacity: 1 },
             exit: { opacity: 0 },
             transition: { duration: 0.3, ease: [0.4, 0, 0.2, 1] }
+        },
+        contentNoAnimation: {
+            initial: { opacity: 1 },
+            animate: { opacity: 1 },
+            exit: { opacity: 1 },
+            transition: { duration: 0 }
         }
     }), []);
 
@@ -137,21 +143,22 @@ const MainLayout = ({ lang }) => {
                         key={location.pathname}
                         initial={
                             location.pathname.includes('/club-leaderboard') ? navVariants.contentReverse.initial :
-                            location.pathname.includes('/add-spot') ? navVariants.contentNormal.initial :
+                            location.pathname.includes('/add-spot') ? navVariants.contentNoAnimation.initial :
                             navVariants.contentNormal.initial
                         }
                         animate={
                             location.pathname.includes('/club-leaderboard') ? navVariants.contentReverse.animate :
-                            location.pathname.includes('/add-spot') ? navVariants.contentNormal.animate :
+                            location.pathname.includes('/add-spot') ? navVariants.contentNoAnimation.animate :
                             navVariants.contentNormal.animate
                         }
                         exit={
                             location.pathname.includes('/club-leaderboard') ? navVariants.contentReverse.exit :
-                            location.pathname.includes('/add-spot') ? navVariants.contentNormal.exit :
+                            location.pathname.includes('/add-spot') ? navVariants.contentNoAnimation.exit :
                             navVariants.contentNormal.exit
                         }
                         transition={{ 
-                            duration: location.pathname.includes('/club-leaderboard') ? 0.6 : 0.3, 
+                            duration: location.pathname.includes('/club-leaderboard') ? 0.6 : 
+                                     location.pathname.includes('/add-spot') ? 0 : 0.3, 
                             ease: [0.4, 0, 0.2, 1]
                         }}
                         style={{ 
