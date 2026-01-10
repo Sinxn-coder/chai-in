@@ -123,34 +123,54 @@ const Home = ({ lang }) => {
     };
 
     const filteredSpots = useMemo(() => {
+        if (!searchTerm.trim()) return spots;
+        
+        const searchLower = searchTerm.toLowerCase().trim();
+        const searchWithoutSpaces = searchLower.replace(/\s+/g, '');
+        const searchWithHyphens = searchLower.replace(/\s+/g, '-');
+        
+        console.log('Searching for:', searchTerm, '->', { searchLower, searchWithoutSpaces, searchWithHyphens });
+        
         return spots.filter(s => {
-            const searchLower = searchTerm.toLowerCase();
-            const searchWithoutSpaces = searchLower.replace(/\s+/g, '');
-            const searchWithHyphens = searchLower.replace(/\s+/g, '-');
-            
             // Search by dish name or location
-            const matchesSearch = !searchTerm || 
-                s.name.toLowerCase().includes(searchLower) || 
-                s.location?.toLowerCase().includes(searchLower);
+            const matchesName = s.name.toLowerCase().includes(searchLower);
+            const matchesLocation = s.location?.toLowerCase().includes(searchLower);
             
             // Search by tags with flexible matching
-            const matchesTags = !searchTerm || (s.tags && s.tags.some(tag => {
-                const tagLower = tag.toLowerCase();
-                const tagWithoutSpaces = tagLower.replace(/\s+/g, '');
-                const tagWithHyphens = tagLower.replace(/\s+/g, '-');
-                const tagWithoutHyphens = tagLower.replace(/-/g, '');
-                
-                return tagLower.includes(searchLower) ||
-                       tagWithoutSpaces.includes(searchWithoutSpaces) ||
-                       tagWithHyphens.includes(searchWithHyphens) ||
-                       tagWithoutHyphens.includes(searchWithoutSpaces) ||
-                       searchLower.includes(tagLower) ||
-                       searchWithoutSpaces.includes(tagWithoutSpaces) ||
-                       searchWithHyphens.includes(tagWithHyphens) ||
-                       searchWithoutSpaces.includes(tagWithoutHyphens);
-            }));
+            let matchesTags = false;
+            if (s.tags && s.tags.length > 0) {
+                matchesTags = s.tags.some(tag => {
+                    const tagLower = tag.toLowerCase();
+                    const tagWithoutSpaces = tagLower.replace(/\s+/g, '');
+                    const tagWithHyphens = tagLower.replace(/\s+/g, '-');
+                    const tagWithoutHyphens = tagLower.replace(/-/g, '');
+                    
+                    // Check all possible combinations
+                    const matches = 
+                        tagLower.includes(searchLower) ||
+                        tagWithoutSpaces.includes(searchWithoutSpaces) ||
+                        tagWithHyphens.includes(searchWithHyphens) ||
+                        tagWithoutHyphens.includes(searchWithoutSpaces) ||
+                        searchLower.includes(tagLower) ||
+                        searchWithoutSpaces.includes(tagWithoutSpaces) ||
+                        searchWithHyphens.includes(tagWithHyphens) ||
+                        searchWithoutSpaces.includes(tagWithoutHyphens);
+                    
+                    if (matches) {
+                        console.log(`Tag match found: "${tag}" matches search "${searchTerm}"`);
+                    }
+                    
+                    return matches;
+                });
+            }
             
-            return matchesSearch || matchesTags;
+            const matches = matchesName || matchesLocation || matchesTags;
+            if (matches) {
+                console.log(`Spot matched: "${s.name}" - Name: ${matchesName}, Location: ${matchesLocation}, Tags: ${matchesTags}`);
+                if (s.tags) console.log('Spot tags:', s.tags);
+            }
+            
+            return matches;
         });
     }, [spots, searchTerm]);
 
