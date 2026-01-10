@@ -50,31 +50,31 @@ const MainLayout = ({ lang }) => {
             initial: { opacity: 0, y: -20 },
             animate: { opacity: 1, y: 0 },
             exit: { opacity: 0, y: -20 },
-            transition: { duration: 0.25, ease: [0.4, 0, 0.2, 1] }
+            transition: { duration: 0.4, ease: [0.4, 0, 0.2, 1] }
         },
         desktopNav: {
             initial: { opacity: 0, x: -20 },
             animate: { opacity: 1, x: 0 },
             exit: { opacity: 0, x: -20 },
-            transition: { duration: 0.25, ease: [0.4, 0, 0.2, 1] }
+            transition: { duration: 0.4, ease: [0.4, 0, 0.2, 1] }
         },
         bottomNav: {
-            initial: { opacity: 0, y: 20 },
+            initial: { opacity: 0, y: 50 },
             animate: { opacity: 1, y: 0 },
-            exit: { opacity: 0, y: 20 },
-            transition: { duration: 0.25, ease: [0.4, 0, 0.2, 1] }
+            exit: { opacity: 0, y: 50 },
+            transition: { duration: 0.4, ease: [0.4, 0, 0.2, 1] }
         },
         content: {
-            initial: { opacity: 0, x: 50 },
+            initial: { opacity: 0, x: '100vw' },
             animate: { opacity: 1, x: 0 },
-            exit: { opacity: 0, x: -50 },
-            transition: { duration: 0.5, ease: [0.4, 0, 0.2, 1] }
+            exit: { opacity: 0, x: '-100vw' },
+            transition: { duration: 0.6, ease: [0.4, 0, 0.2, 1] }
         },
         contentReverse: {
-            initial: { opacity: 0, x: -50 },
+            initial: { opacity: 0, x: '-100vw' },
             animate: { opacity: 1, x: 0 },
-            exit: { opacity: 0, x: 50 },
-            transition: { duration: 0.5, ease: [0.4, 0, 0.2, 1] }
+            exit: { opacity: 0, x: '100vw' },
+            transition: { duration: 0.6, ease: [0.4, 0, 0.2, 1] }
         }
     }), []);
 
@@ -86,10 +86,10 @@ const MainLayout = ({ lang }) => {
                     <motion.div 
                         key="main-nav"
                         className="mobile-only"
-                        initial={{ opacity: 0, y: -20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -20 }}
-                        transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
+                        initial={navVariants.mainNav.initial}
+                        animate={navVariants.mainNav.animate}
+                        exit={navVariants.mainNav.exit}
+                        transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
                     >
                         <AppBar />
                     </motion.div>
@@ -101,10 +101,10 @@ const MainLayout = ({ lang }) => {
                 {!showNewNav && !hideAllNavigation && (
                     <motion.div 
                         key="desktop-nav"
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: -20 }}
-                        transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
+                        initial={navVariants.desktopNav.initial}
+                        animate={navVariants.desktopNav.animate}
+                        exit={navVariants.desktopNav.exit}
+                        transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
                     >
                         <DesktopNav />
                     </motion.div>
@@ -133,7 +133,7 @@ const MainLayout = ({ lang }) => {
                         animate={location.pathname.includes('/club-leaderboard') ? navVariants.contentReverse.animate : navVariants.content.animate}
                         exit={location.pathname.includes('/club-leaderboard') ? navVariants.contentReverse.exit : navVariants.content.exit}
                         transition={{ 
-                            duration: 0.5, 
+                            duration: 0.6, 
                             ease: [0.4, 0, 0.2, 1]
                         }}
                         style={{ 
@@ -154,10 +154,10 @@ const MainLayout = ({ lang }) => {
                     <motion.div 
                         key="bottom-nav"
                         className="mobile-only"
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: 20 }}
-                        transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
+                        initial={navVariants.bottomNav.initial}
+                        animate={navVariants.bottomNav.animate}
+                        exit={navVariants.bottomNav.exit}
+                        transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
                     >
                         <BottomNav lang={lang} />
                     </motion.div>
@@ -172,10 +172,10 @@ const MainLayout = ({ lang }) => {
                         <motion.div 
                             key="club-leaderboard-nav-mobile"
                             className="mobile-only"
-                            initial={{ opacity: 0, y: 20 }}
+                            initial={{ opacity: 0, y: 50 }}
                             animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: 20 }}
-                            transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+                            exit={{ opacity: 0, y: 50 }}
+                            transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
                         >
                             <ClubLeaderboardNav lang={lang} />
                         </motion.div>
@@ -184,10 +184,10 @@ const MainLayout = ({ lang }) => {
                         <motion.div 
                             key="club-leaderboard-nav-desktop"
                             className="desktop-nav"
-                            initial={{ opacity: 0, x: 20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            exit={{ opacity: 0, x: 20 }}
-                            transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+                            initial={{ opacity: 0, y: 50 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: 50 }}
+                            transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
                             style={{
                                 position: 'fixed',
                                 top: '50%',

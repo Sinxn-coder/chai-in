@@ -11,10 +11,6 @@ const BottomNav = ({ lang = 'en' }) => {
   const isClubLeaderboardPage = location.pathname.includes('/club-leaderboard');
   const isAddSpotPage = location.pathname.includes('/add-spot');
   
-  if (isClubLeaderboardPage && !isAddSpotPage) {
-    return null;
-  }
-
   const navItems = [
     { to: '/home', icon: Home, label: 'Home' },
     { to: '/explore', icon: Compass, label: 'Explore' },
@@ -31,14 +27,15 @@ const BottomNav = ({ lang = 'en' }) => {
       (location.pathname === `/${lang}` ||
         location.pathname === `/${lang}/`));
 
+  // Always show BottomNav, but conditionally render content
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 50 }}
       animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: 20 }}
+      exit={{ opacity: 0, y: 50 }}
       transition={{ 
-        duration: 0.2, 
-        ease: "easeOut" // Faster, simpler animation
+        duration: 0.4, 
+        ease: [0.4, 0, 0.2, 1]
       }}
       style={{
         position: 'fixed',
@@ -83,7 +80,7 @@ const BottomNav = ({ lang = 'en' }) => {
             <Plus size={28} color="#fff" strokeWidth={3} />
           </motion.button>
         </div>
-      ) : (
+      ) : !isClubLeaderboardPage ? (
         <>
           {/* NAV BAR SHAPE */}
           <svg
@@ -200,7 +197,7 @@ const BottomNav = ({ lang = 'en' }) => {
             })}
           </div>
         </>
-      )}
+      ) : null}
     </motion.div>
   );
 };
