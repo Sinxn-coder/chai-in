@@ -7,8 +7,9 @@ const BottomNav = ({ lang = 'en' }) => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Hide BottomNav when ClubLeaderboard is open
+  // Hide BottomNav when ClubLeaderboard is open or on Add Spot page
   const isClubLeaderboardPage = location.pathname.includes('/club-leaderboard');
+  const isAddSpotPage = location.pathname.includes('/add-spot');
   
   const navItems = [
     { to: '/home', icon: Home, label: 'Home' },
@@ -26,8 +27,8 @@ const BottomNav = ({ lang = 'en' }) => {
       (location.pathname === `/${lang}` ||
         location.pathname === `/${lang}/`));
 
-  // Don't show BottomNav on Club Leaderboard page
-  if (isClubLeaderboardPage) {
+  // Don't show BottomNav on Club Leaderboard page or Add Spot page
+  if (isClubLeaderboardPage || isAddSpotPage) {
     return null;
   }
 

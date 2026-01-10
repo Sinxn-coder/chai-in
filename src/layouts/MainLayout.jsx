@@ -75,6 +75,12 @@ const MainLayout = ({ lang }) => {
             animate: { opacity: 1, x: 0 },
             exit: { opacity: 0, x: '100vw' },
             transition: { duration: 0.6, ease: [0.4, 0, 0.2, 1] }
+        },
+        contentNormal: {
+            initial: { opacity: 0 },
+            animate: { opacity: 1 },
+            exit: { opacity: 0 },
+            transition: { duration: 0.3, ease: [0.4, 0, 0.2, 1] }
         }
     }), []);
 
@@ -129,11 +135,23 @@ const MainLayout = ({ lang }) => {
                 <AnimatePresence mode="wait">
                     <motion.div
                         key={location.pathname}
-                        initial={location.pathname.includes('/club-leaderboard') ? navVariants.contentReverse.initial : navVariants.content.initial}
-                        animate={location.pathname.includes('/club-leaderboard') ? navVariants.contentReverse.animate : navVariants.content.animate}
-                        exit={location.pathname.includes('/club-leaderboard') ? navVariants.contentReverse.exit : navVariants.content.exit}
+                        initial={
+                            location.pathname.includes('/club-leaderboard') ? navVariants.contentReverse.initial :
+                            location.pathname.includes('/add-spot') ? navVariants.contentNormal.initial :
+                            navVariants.contentNormal.initial
+                        }
+                        animate={
+                            location.pathname.includes('/club-leaderboard') ? navVariants.contentReverse.animate :
+                            location.pathname.includes('/add-spot') ? navVariants.contentNormal.animate :
+                            navVariants.contentNormal.animate
+                        }
+                        exit={
+                            location.pathname.includes('/club-leaderboard') ? navVariants.contentReverse.exit :
+                            location.pathname.includes('/add-spot') ? navVariants.contentNormal.exit :
+                            navVariants.contentNormal.exit
+                        }
                         transition={{ 
-                            duration: 0.6, 
+                            duration: location.pathname.includes('/club-leaderboard') ? 0.6 : 0.3, 
                             ease: [0.4, 0, 0.2, 1]
                         }}
                         style={{ 
