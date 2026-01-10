@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { supabase } from '../lib/supabaseClient';
@@ -39,15 +39,15 @@ const Explore = ({ lang }) => {
     };
 
     const fetchTrendingSpots = async () => {
-        // Simple trending logic: spots with most reviews in last 7 days
+        // Simple trending logic: spots created in last7 days
         const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
         
         const { data } = await supabase
             .from('spots')
-            .select('*, reviews(count)')
+            .select('*')
             .eq('is_verified', true)
             .gte('created_at', sevenDaysAgo.toISOString())
-            .order('reviews.count', { ascending: false })
+            .order('created_at', { ascending: false })
             .limit(5);
 
         setTrendingSpots(data || []);
@@ -65,35 +65,55 @@ const Explore = ({ lang }) => {
         setMostVisited(data || []);
     };
 
-    const handleSearch = async () => {
-        if (!searchTerm.trim()) return;
+    // Remove the old handleSearch function - we'll use real-time filtering instead
 
-        setLoading(true);
-        let query = supabase
-            .from('spots')
-            .select('*')
-            .eq('is_verified', true);
-
-        // Search by dish name only
-        if (searchTerm.trim()) {
-            query = query.ilike('name', searchTerm);
+    const filteredSpots = useMemo(() => {
+        if (!searchTerm.trim() || searchTerm.trim().length < 2) {
+            return spots;
         }
-
-        const { data, error } = await query;
         
-        if (error) {
-            console.error('Search error:', error);
-            setToast({ message: 'Search failed', type: 'error' });
-        } else {
-            setSpots(data || []);
-        }
-        setLoading(false);
-    };
-
-    const filteredSpots = spots.filter(spot => {
-        const matchesSearch = !searchTerm || spot.name.toLowerCase().includes(searchTerm.toLowerCase());
-        return matchesSearch;
-    });
+        const searchLower = searchTerm.toLowerCase().trim();
+        
+        const filtered = spots.filter(s => {
+            // Search by name
+            const nameMatch = s.name && s.name.toLowerCase().includes(searchLower);
+            
+            // Search by location
+            const locationMatch = s.location && s.location.toLowerCase().includes(searchLower);
+            
+            // Search by tags (more strict matching)
+            let tagMatch = false;
+            if (s.tags && Array.isArray(s.tags) && s.tags.length > 0) {
+                tagMatch = s.tags.some(tag => {
+                    if (!tag) return false;
+                    
+                    const tagLower = tag.toLowerCase();
+                    const tagWithoutSpaces = tagLower.replace(/\s+/g, '');
+                    const tagWithHyphens = tagLower.replace(/\s+/g, '-');
+                    const tagWithoutHyphens = tagLower.replace(/-/g, '');
+                    
+                    const searchWithoutSpaces = searchLower.replace(/\s+/g, '');
+                    const searchWithHyphens = searchLower.replace(/\s+/g, '-');
+                    
+                    // More strict matching - require at least 2 characters or exact match
+                    const matches = 
+                        (searchLower.length >= 2 && tagLower.includes(searchLower)) ||
+                        (searchWithoutSpaces.length >= 2 && tagWithoutSpaces.includes(searchWithoutSpaces)) ||
+                        (searchWithHyphens.length >= 2 && tagWithHyphens.includes(searchWithHyphens)) ||
+                        (searchLower.length >= 2 && tagWithoutHyphens.includes(searchLower)) ||
+                        (searchLower.length >= 2 && searchLower.includes(tagLower)) ||
+                        (searchWithoutSpaces.length >= 2 && searchWithoutSpaces.includes(tagWithoutSpaces)) ||
+                        (searchWithHyphens.length >= 2 && searchWithHyphens.includes(tagWithHyphens));
+                    
+                    return matches;
+                });
+            }
+            
+            return nameMatch || locationMatch || tagMatch;
+        });
+        
+        return filtered;
+    }, [spots, searchTerm]);
 
     return (
         <div style={{ minHeight: '100vh', background: 'var(--bg-cream)', padding: '20px' }}>
@@ -109,20 +129,41 @@ const Explore = ({ lang }) => {
                     marginBottom: '30px' 
                 }}
             >
-                <h1 style={{ 
-                    fontSize: '2rem', 
-                    fontWeight: '900', 
-                    color: 'var(--primary)', 
-                    marginBottom: '10px' 
-                }}>
-                    Explore All Spots
-                </h1>
-                <p style={{ 
-                    color: 'var(--text-muted)', 
-                    fontSize: '1rem' 
-                }}>
-                    Discover amazing food spots across Kerala
-                </p>
+                {!searchTerm.trim() ? (
+                    <>
+                        <h1 style={{ 
+                            fontSize: '2rem', 
+                            fontWeight: '900', 
+                            color: 'var(--primary)', 
+                            marginBottom: '10px' 
+                        }}>
+                            Explore All Spots
+                        </h1>
+                        <p style={{ 
+                            color: 'var(--text-muted)', 
+                            fontSize: '1rem' 
+                        }}>
+                            Discover amazing food spots across Kerala
+                        </p>
+                    </>
+                ) : (
+                    <>
+                        <h1 style={{ 
+                            fontSize: '2rem', 
+                            fontWeight: '900', 
+                            color: 'var(--primary)', 
+                            marginBottom: '10px' 
+                        }}>
+                            Search Results
+                        </h1>
+                        <p style={{ 
+                            color: 'var(--text-muted)', 
+                            fontSize: '1rem' 
+                        }}>
+                            Showing {filteredSpots.length} spots for "{searchTerm}"
+                        </p>
+                    </>
+                )}
             </motion.div>
 
             {/* Search Section */}
@@ -143,10 +184,9 @@ const Explore = ({ lang }) => {
                         <Search size={20} color="var(--text-muted)" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
                         <input
                             type="text"
-                            placeholder="Search for dishes..."
+                            placeholder="Search dishes, restaurants, tags, locations..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
                             style={{
                                 width: '100%',
                                 padding: '12px 12px 12px 40px',
@@ -159,21 +199,16 @@ const Explore = ({ lang }) => {
                         />
                     </div>
                 </div>
-                <button
-                    onClick={handleSearch}
-                    style={{
-                        padding: '12px 24px',
-                        borderRadius: '16px',
-                        background: 'var(--primary)',
-                        color: 'white',
-                        border: 'none',
-                        fontWeight: '600',
-                        cursor: 'pointer',
-                        width: '100%'
-                    }}
-                >
-                    Search
-                </button>
+                {searchTerm.trim() && searchTerm.trim().length >= 2 && (
+                    <div style={{ 
+                        fontSize: '0.9rem', 
+                        color: 'var(--text-muted)', 
+                        marginTop: '8px',
+                        fontStyle: 'italic'
+                    }}>
+                        Found {filteredSpots.length} results for "{searchTerm}"
+                    </div>
+                )}
             </motion.div>
 
             {/* All Spots */}
