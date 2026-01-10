@@ -341,22 +341,6 @@ const Explore = ({ lang }) => {
                         />
                     </div>
                 </div>
-                {debouncedSearchTerm.trim() && debouncedSearchTerm.trim().length >= 2 && (
-                    <div style={{ 
-                        fontSize: '0.9rem', 
-                        color: 'var(--text-muted)', 
-                        marginTop: '8px',
-                        fontStyle: 'italic'
-                    }}>
-                        {searchingLocation ? (
-                            `Finding locations starting with "${debouncedSearchTerm}"...`
-                        ) : (
-                            detectedLocations.length > 0 
-                                ? `Found ${filteredSpots.length} spots within 30km of ${detectedLocations.length} location(s) starting with "${debouncedSearchTerm}"`
-                                : `Found ${filteredSpots.length} results for "${debouncedSearchTerm}"`
-                        )}
-                    </div>
-                )}
             </motion.div>
 
             {/* All Spots */}
