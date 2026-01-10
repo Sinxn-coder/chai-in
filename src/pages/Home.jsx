@@ -381,7 +381,7 @@ const Home = ({ lang }) => {
                 </div>
 
                 {/* Trending Spots Section */}
-                {trendingSpots.length > 0 && !activeLocation && (
+                {trendingSpots.length > 0 && !activeLocation && !searchTerm.trim() && (
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -412,7 +412,7 @@ const Home = ({ lang }) => {
                 )}
 
                 {/* Most Visited Section */}
-                {mostVisited.length > 0 && !activeLocation && (
+                {mostVisited.length > 0 && !activeLocation && !searchTerm.trim() && (
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -451,7 +451,7 @@ const Home = ({ lang }) => {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.5, delay: 0.8 }}
                     >
-                        {!activeLocation && (
+                        {!activeLocation && !searchTerm.trim() && (
                             <div style={{ 
                                 display: 'flex', 
                                 alignItems: 'center', 
@@ -465,6 +465,23 @@ const Home = ({ lang }) => {
                                     color: 'var(--text-main)' 
                                 }}>
                                     All Spots
+                                </h3>
+                            </div>
+                        )}
+                        {!activeLocation && searchTerm.trim() && (
+                            <div style={{ 
+                                display: 'flex', 
+                                alignItems: 'center', 
+                                gap: '12px', 
+                                marginBottom: '16px' 
+                            }}>
+                                <Search size={24} color="var(--primary)" />
+                                <h3 style={{ 
+                                    fontSize: '1.3rem', 
+                                    fontWeight: '800', 
+                                    color: 'var(--text-main)' 
+                                }}>
+                                    Search Results for "{searchTerm}"
                                 </h3>
                             </div>
                         )}
