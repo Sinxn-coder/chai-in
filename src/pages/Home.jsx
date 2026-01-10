@@ -106,6 +106,17 @@ const Home = ({ lang }) => {
             console.error('Error fetching spots:', error);
         } else {
             console.log('Total spots fetched:', data?.length || 0);
+            // Log sample spots with tags
+            if (data && data.length > 0) {
+                console.log('Sample spots data:');
+                data.slice(0, 3).forEach((spot, index) => {
+                    console.log(`Spot ${index + 1}:`, {
+                        name: spot.name,
+                        tags: spot.tags,
+                        location: spot.location
+                    });
+                });
+            }
             let all = data || [];
             if (activeLocation) {
                 console.log('Active location:', activeLocation);
@@ -123,29 +134,39 @@ const Home = ({ lang }) => {
     };
 
     const filteredSpots = useMemo(() => {
-        if (!searchTerm.trim()) return spots;
+        console.log('Filtering spots with search term:', searchTerm);
+        console.log('Total spots before filtering:', spots.length);
+        
+        if (!searchTerm.trim()) {
+            console.log('No search term, returning all spots');
+            return spots;
+        }
         
         const searchLower = searchTerm.toLowerCase().trim();
-        const searchWithoutSpaces = searchLower.replace(/\s+/g, '');
-        const searchWithHyphens = searchLower.replace(/\s+/g, '-');
+        console.log('Search term processed:', searchLower);
         
-        console.log('Searching for:', searchTerm, '->', { searchLower, searchWithoutSpaces, searchWithHyphens });
-        
-        return spots.filter(s => {
-            // Search by dish name or location
-            const matchesName = s.name.toLowerCase().includes(searchLower);
-            const matchesLocation = s.location?.toLowerCase().includes(searchLower);
+        const filtered = spots.filter(s => {
+            // Search by name
+            const nameMatch = s.name && s.name.toLowerCase().includes(searchLower);
             
-            // Search by tags with flexible matching
-            let matchesTags = false;
-            if (s.tags && s.tags.length > 0) {
-                matchesTags = s.tags.some(tag => {
+            // Search by location
+            const locationMatch = s.location && s.location.toLowerCase().includes(searchLower);
+            
+            // Search by tags
+            let tagMatch = false;
+            if (s.tags && Array.isArray(s.tags) && s.tags.length > 0) {
+                tagMatch = s.tags.some(tag => {
+                    if (!tag) return false;
+                    
                     const tagLower = tag.toLowerCase();
                     const tagWithoutSpaces = tagLower.replace(/\s+/g, '');
                     const tagWithHyphens = tagLower.replace(/\s+/g, '-');
                     const tagWithoutHyphens = tagLower.replace(/-/g, '');
                     
-                    // Check all possible combinations
+                    const searchWithoutSpaces = searchLower.replace(/\s+/g, '');
+                    const searchWithHyphens = searchLower.replace(/\s+/g, '-');
+                    
+                    // Multiple matching strategies
                     const matches = 
                         tagLower.includes(searchLower) ||
                         tagWithoutSpaces.includes(searchWithoutSpaces) ||
@@ -153,25 +174,27 @@ const Home = ({ lang }) => {
                         tagWithoutHyphens.includes(searchWithoutSpaces) ||
                         searchLower.includes(tagLower) ||
                         searchWithoutSpaces.includes(tagWithoutSpaces) ||
-                        searchWithHyphens.includes(tagWithHyphens) ||
-                        searchWithoutSpaces.includes(tagWithoutHyphens);
+                        searchWithHyphens.includes(tagWithHyphens);
                     
                     if (matches) {
-                        console.log(`Tag match found: "${tag}" matches search "${searchTerm}"`);
+                        console.log(`Tag match: "${tag}" matches "${searchTerm}"`);
                     }
                     
                     return matches;
                 });
             }
             
-            const matches = matchesName || matchesLocation || matchesTags;
+            const matches = nameMatch || locationMatch || tagMatch;
             if (matches) {
-                console.log(`Spot matched: "${s.name}" - Name: ${matchesName}, Location: ${matchesLocation}, Tags: ${matchesTags}`);
-                if (s.tags) console.log('Spot tags:', s.tags);
+                console.log(`Spot matched: "${s.name}" - Name: ${nameMatch}, Location: ${locationMatch}, Tags: ${tagMatch}`);
+                console.log('Spot details:', { name: s.name, tags: s.tags, location: s.location });
             }
             
             return matches;
         });
+        
+        console.log('Filtered spots count:', filtered.length);
+        return filtered;
     }, [spots, searchTerm]);
 
     function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
