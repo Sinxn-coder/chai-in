@@ -138,39 +138,46 @@ const MainLayout = ({ lang }) => {
                 <SetAvatarModal />
 
                 {/* Content Area - Optimized with proper padding for fixed nav */}
-                <AnimatePresence mode="wait">
-                    <motion.div
-                        key={location.pathname}
-                        initial={
-                            location.pathname.includes('/club-leaderboard') ? navVariants.contentReverse.initial :
-                            location.pathname.includes('/add-spot') ? navVariants.contentNoAnimation.initial :
-                            navVariants.contentNormal.initial
-                        }
-                        animate={
-                            location.pathname.includes('/club-leaderboard') ? navVariants.contentReverse.animate :
-                            location.pathname.includes('/add-spot') ? navVariants.contentNoAnimation.animate :
-                            navVariants.contentNormal.animate
-                        }
-                        exit={
-                            location.pathname.includes('/club-leaderboard') ? navVariants.contentReverse.exit :
-                            location.pathname.includes('/add-spot') ? navVariants.contentNoAnimation.exit :
-                            navVariants.contentNormal.exit
-                        }
-                        transition={{ 
-                            duration: location.pathname.includes('/club-leaderboard') ? 0.6 : 
-                                     location.pathname.includes('/add-spot') ? 0 : 0.3, 
-                            ease: [0.4, 0, 0.2, 1]
-                        }}
-                        style={{ 
-                            willChange: 'transform',
-                            paddingTop: showNewNav ? '0px' : (needsSpecialPadding ? '0px' : '70px'), // No top padding for ClubLeaderboard and AddSpot
-                            paddingBottom: '70px', // Always account for fixed BottomNav
-                            minHeight: '100vh'
-                        }}
-                    >
+                {!location.pathname.includes('/add-spot') ? (
+                    <AnimatePresence mode="wait">
+                        <motion.div
+                            key={location.pathname}
+                            initial={
+                                location.pathname.includes('/club-leaderboard') ? navVariants.contentReverse.initial :
+                                navVariants.contentNormal.initial
+                            }
+                            animate={
+                                location.pathname.includes('/club-leaderboard') ? navVariants.contentReverse.animate :
+                                navVariants.contentNormal.animate
+                            }
+                            exit={
+                                location.pathname.includes('/club-leaderboard') ? navVariants.contentReverse.exit :
+                                navVariants.contentNormal.exit
+                            }
+                            transition={{ 
+                                duration: location.pathname.includes('/club-leaderboard') ? 0.6 : 0.3, 
+                                ease: [0.4, 0, 0.2, 1]
+                            }}
+                            style={{ 
+                                willChange: 'transform',
+                                paddingTop: showNewNav ? '0px' : (needsSpecialPadding ? '0px' : '70px'), // No top padding for ClubLeaderboard and AddSpot
+                                paddingBottom: '70px', // Always account for fixed BottomNav
+                                minHeight: '100vh'
+                            }}
+                        >
+                            <Outlet />
+                        </motion.div>
+                    </AnimatePresence>
+                ) : (
+                    <div style={{ 
+                        paddingTop: '0px', // No top padding for AddSpot
+                        paddingBottom: '0px', // No bottom padding for AddSpot
+                        minHeight: '100vh',
+                        width: '100%'
+                    }}>
                         <Outlet />
-                    </motion.div>
-                </AnimatePresence>
+                    </div>
+                )}
             </div>
 
             {/* Bottom Navigation - Fixed outside wrapper with animation */}

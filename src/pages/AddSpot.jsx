@@ -17,11 +17,8 @@ const AddSpot = ({ lang }) => {
     const { user, loading: authLoading } = useAuth();
     const fileInputRef = useRef(null);
 
-    console.log('AddSpot render - user:', user, 'authLoading:', authLoading);
-
     // Show loading state while auth is initializing
     if (authLoading) {
-        console.log('AddSpot - showing loading state');
         return (
             <div style={{ 
                 minHeight: '100vh', 
@@ -43,7 +40,6 @@ const AddSpot = ({ lang }) => {
 
     // Early return if user is not authenticated
     if (!user) {
-        console.log('AddSpot - showing login prompt');
         return (
             <div style={{ 
                 minHeight: '100vh', 
@@ -77,8 +73,6 @@ const AddSpot = ({ lang }) => {
             </div>
         );
     }
-
-    console.log('AddSpot - rendering main component');
 
     const [step, setStep] = useState(1);
     const [loading, setLoading] = useState(false);
