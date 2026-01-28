@@ -1,24 +1,29 @@
 /* Chai-in Premium Design System v16 */
 
 :root {
-  /* Primary Colors - Vibrant Red Palette */
-  --primary: #EF2A39;
+  /* Primary Brand Red */
+  --primary: #E53935;
+  --primary-glow: #FF6B6B;
+  --primary-faint: #FFECEC;
   --primary-dark: #D32F2F;
-  --primary-light: #FF5252;
   --secondary: #F8F9FA;
   --accent: #FFC107;
 
   /* Background Colors */
-  --bg-main: #FFFFFF;
+  --bg-main: #F8F8F8;
+  --bg-card: #FFFFFF;
+  --bg-input: #FAFAFA;
   --bg-white: #FFFFFF;
   --bg-cream: #F8F9FA;
-  --bg-light-red: rgba(239, 42, 57, 0.05);
+  --bg-light-red: #FFECEC;
 
   /* Text Colors */
-  --text-main: #3C2F2F;
-  --text-secondary: #424242;
-  --text-muted: #808080;
-  --text-light: #9E9E9E;
+  --text-primary: #212121;
+  --text-secondary: #757575;
+  --text-muted: #BDBDBD;
+  --text-highlight: #E53935;
+  /* Legacy mapping for compatibility */
+  --text-main: var(--text-primary);
 
   /* Status Colors */
   --success: #10B981;
@@ -41,10 +46,17 @@
   --radius-xl: 32px;
   --radius-full: 9999px;
 
-  /* Shadows - Subtle Red Tint */
-  --shadow-sm: 0 4px 12px rgba(239, 42, 57, 0.05);
-  --shadow-md: 0 10px 30px rgba(0, 0, 0, 0.08);
-  --shadow-lg: 0 15px 45px rgba(239, 42, 57, 0.12);
+  /* Shadows & Glow - Red Tinted */
+  --shadow-normal: 0 6px 18px rgba(229, 57, 53, 0.08);
+  --shadow-hover: 0 10px 28px rgba(229, 57, 53, 0.20);
+  --shadow-button: 0 10px 26px rgba(229, 57, 53, 0.35);
+  --glow-ring: 0 0 0 4px rgba(229, 57, 53, 0.18);
+  --icon-glow: drop-shadow(0 0 6px rgba(229, 57, 53, 0.6));
+
+  /* Legacy shadow mapping */
+  --shadow-sm: 0 4px 12px rgba(229, 57, 53, 0.05);
+  --shadow-md: var(--shadow-normal);
+  --shadow-lg: var(--shadow-hover);
   --shadow-xl: 0 20px 60px rgba(0, 0, 0, 0.15);
 
   /* Transitions */

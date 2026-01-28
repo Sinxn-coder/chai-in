@@ -10,12 +10,9 @@
 
 body {
     font-family: 'Outfit', 'Inter', -apple-system, sans-serif;
-    color: var(--text-main);
+    color: var(--text-primary);
     min-height: 100vh;
-    background-color: #FFFFFF;
-    background-image:
-        radial-gradient(circle at 20% 50%, rgba(239, 42, 57, 0.02) 0%, transparent 50%),
-        radial-gradient(circle at 80% 80%, rgba(239, 42, 57, 0.02) 0%, transparent 50%);
+    background-color: var(--bg-main);
     background-attachment: fixed;
     position: relative;
     overflow-x: hidden;
@@ -36,7 +33,7 @@ body::after {
 body::before {
     width: 400px;
     height: 400px;
-    background: linear-gradient(135deg, rgba(239, 42, 57, 0.1) 0%, rgba(239, 42, 57, 0.05) 100%);
+    background: radial-gradient(circle, rgba(229, 57, 53, 0.08) 0%, rgba(229, 57, 53, 0) 70%);
     top: -100px;
     left: -100px;
 }
@@ -44,7 +41,7 @@ body::before {
 body::after {
     width: 350px;
     height: 350px;
-    background: linear-gradient(135deg, rgba(239, 42, 57, 0.05) 0%, rgba(239, 42, 57, 0.02) 100%);
+    background: radial-gradient(circle, rgba(229, 57, 53, 0.05) 0%, rgba(229, 57, 53, 0) 70%);
     bottom: -100px;
     right: -100px;
     animation-delay: -7s;
@@ -114,9 +111,9 @@ a {
 
 /* Glass Card Utility - More Elevated */
 .glass-card {
-    background: white;
-    border: 1px solid rgba(0, 0, 0, 0.04);
-    box-shadow: var(--shadow-md);
+    background: var(--bg-card);
+    border: none;
+    box-shadow: var(--shadow-normal);
     border-radius: var(--radius-lg);
     transition: transform 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.2s ease;
 }

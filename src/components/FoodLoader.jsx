@@ -48,7 +48,17 @@ const FoodLoader = ({ message = "Tasting the flavors..." }) => {
                         scale: [1, 1.2, 1],
                         opacity: [0.3, 0.7, 0.3]
                     }}
-                    transition={{ repeat: Infinity, duration: 1.5 }}
+                    transition={{ repeat: Infinity, duration: 1.5 }
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                }
                     style={{
                         position: 'absolute',
                         top: -10,

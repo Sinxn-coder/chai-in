@@ -42,3 +42,4 @@ GRANT ALL ON spot_edit_suggestions TO authenticated;
 GRANT ALL ON spot_edit_suggestions TO service_role;
 
 SELECT 'Spot edit suggestions table created successfully!' as message;
+ 

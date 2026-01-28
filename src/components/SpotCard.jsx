@@ -20,7 +20,7 @@ const SpotCard = memo(({ spot }) => {
     const getPriceRange = (level) => {
         const ranges = {
             1: '₹50-150',
-            2: '₹150-300', 
+            2: '₹150-300',
             3: '₹300-600',
             4: '₹600+'
         };
@@ -127,22 +127,23 @@ const SpotCard = memo(({ spot }) => {
         <motion.div
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
-            whileHover={{ y: -5 }}
+            whileHover={{ y: -5, boxShadow: 'var(--shadow-hover)' }}
             transition={{ duration: 0.3 }}
             onClick={handleCardClick}
             style={{
-                background: 'var(--bg-white)',
+                background: 'var(--bg-card)',
                 borderRadius: 'var(--radius-lg)',
-                padding: '8px', // Reduced padding for small screens
-                boxShadow: 'var(--shadow-md)',
+                padding: '8px',
+                boxShadow: 'var(--shadow-normal)',
                 cursor: 'pointer',
-                marginBottom: '8px', // Reduced margin
+                marginBottom: '8px',
                 display: 'flex',
                 flexDirection: 'column',
-                gap: '6px', // Reduced gap
-                width: '100%', // Ensure it fits container
-                maxWidth: '100%', // Prevent overflow
-                boxSizing: 'border-box' // Include padding in width calculation
+                gap: '6px',
+                width: '100%',
+                maxWidth: '100%',
+                boxSizing: 'border-box',
+                transition: 'all 0.3s ease'
             }}
         >
             <div style={{ position: 'relative', height: '120px', borderRadius: '20px', overflow: 'hidden' }} onClick={(e) => e.stopPropagation()}>
@@ -163,7 +164,7 @@ const SpotCard = memo(({ spot }) => {
                         </>
                     ) : (
                         <>
-                            <Star size={8} fill="#FFB800" color="#FFB800" /> 
+                            <Star size={8} fill="#FFB800" color="#FFB800" />
                             <span>New</span>
                         </>
                     )}
@@ -177,17 +178,17 @@ const SpotCard = memo(({ spot }) => {
                         <p style={{ fontSize: '0.7rem', color: 'var(--text-muted)', margin: 0, lineHeight: '1.2' }}>{distance} km</p>
                     </div>
                     <motion.button whileTap={{ scale: 0.8 }} onClick={toggleFavorite} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '2px', flexShrink: 0 }}>
-                        <Heart size={18} fill={isFavorite ? 'var(--primary)' : 'none'} color={isFavorite ? 'var(--primary)' : 'var(--text-muted)'} />
+                        <Heart size={18} fill={isFavorite ? 'var(--primary)' : 'none'} color={isFavorite ? 'var(--primary)' : 'var(--text-muted)'} style={{ filter: isFavorite ? 'var(--icon-glow)' : 'none' }} />
                     </motion.button>
                 </div>
 
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '8px' }}>
                     <div style={{ display: 'flex', gap: '4px' }}>
                         {(tags || []).slice(0, 1).map((tag, i) => (
-                            <span key={i} style={{ fontSize: '0.65rem', color: 'var(--primary)', fontWeight: '700' }}>#{tag}</span>
+                            <span key={i} style={{ fontSize: '0.65rem', color: 'var(--text-highlight)', fontWeight: '700' }}>#{tag}</span>
                         ))}
                     </div>
-                    <span style={{ fontSize: '0.8rem', fontWeight: '900', color: 'var(--primary)', background: 'rgba(239, 42, 57, 0.1)', padding: '4px 8px', borderRadius: '8px' }}>{getPriceRange(price_level)}</span>
+                    <span style={{ fontSize: '0.8rem', fontWeight: '900', color: 'var(--primary)', background: 'var(--bg-light-red)', padding: '4px 8px', borderRadius: '8px' }}>{getPriceRange(price_level)}</span>
                 </div>
                 <div style={{ marginTop: '6px', fontSize: '0.7rem', color: 'var(--text-muted)', fontWeight: '700' }}>
                     {spot.opening_hours?.open && spot.opening_hours?.close
@@ -195,7 +196,7 @@ const SpotCard = memo(({ spot }) => {
                         : 'Hours not set'}
                 </div>
             </div>
-        </motion.div>
+        </motion.div >
     );
 });
 

@@ -10,7 +10,7 @@ const BottomNav = ({ lang = 'en' }) => {
   // Hide BottomNav when ClubLeaderboard is open or on Add Spot page
   const isClubLeaderboardPage = location.pathname.includes('/club-leaderboard');
   const isAddSpotPage = location.pathname.includes('/add-spot');
-  
+
   const navItems = [
     { to: '/home', icon: Home, label: 'Home' },
     { to: '/explore', icon: Compass, label: 'Explore' },
@@ -37,8 +37,8 @@ const BottomNav = ({ lang = 'en' }) => {
       initial={{ opacity: 0, y: 50 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: 50 }}
-      transition={{ 
-        duration: 0.4, 
+      transition={{
+        duration: 0.4,
         ease: [0.4, 0, 0.2, 1]
       }}
       style={{
@@ -73,7 +73,7 @@ const BottomNav = ({ lang = 'en' }) => {
             H0
             Z
           "
-          fill="#EF2A39"
+          fill="var(--primary)"
         />
       </svg>
 
@@ -95,12 +95,12 @@ const BottomNav = ({ lang = 'en' }) => {
             width: 60,
             height: 60,
             borderRadius: '50%',
-            background: '#EF2A39',
+            background: 'var(--primary)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             boxShadow:
-              '0 16px 32px rgba(239,42,57,0.45), inset 0 2px 6px rgba(255,255,255,0.35)',
+              '0 10px 26px rgba(229, 57, 53, 0.35), inset 0 2px 6px rgba(255,255,255,0.3)',
             border: '3px solid rgba(255,255,255,0.4)',
             cursor: 'pointer',
             outline: 'none',
@@ -138,9 +138,9 @@ const BottomNav = ({ lang = 'en' }) => {
                     flexDirection: 'column',
                     alignItems: 'center',
                     gap: 4,
-                    color: 'white',
+                    color: active ? 'var(--text-highlight)' : 'var(--text-muted)',
                     textDecoration: 'none',
-                    opacity: active ? 1 : 0.7,
+                    opacity: 1,
                     fontSize: '0.7rem',
                     fontWeight: 800,
                     ...(item.to === '/home' && { marginLeft: '5px' }),
@@ -152,7 +152,8 @@ const BottomNav = ({ lang = 'en' }) => {
                   <item.icon
                     size={20}
                     strokeWidth={active ? 2.6 : 2}
-                    color="white"
+                    color={active ? "var(--primary)" : "#9E9E9E"}
+                    style={{ filter: active ? 'var(--icon-glow)' : 'none' }}
                   />
                   <span>{item.label}</span>
                 </NavLink>
