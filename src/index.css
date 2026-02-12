@@ -38,7 +38,7 @@ body {
 .appIcon {
   width: 80px;
   height: 80px;
-  background: #ff4d4d;
+  background: linear-gradient(135deg, #FF0000, #E60000, #CC0000);
   border-radius: 20px;
   display: flex;
   align-items: center;
@@ -46,7 +46,13 @@ body {
   margin: 0 auto 30px;
   font-size: 2.5rem;
   color: white;
-  box-shadow: 0 8px 20px rgba(255, 77, 77, 0.3);
+  box-shadow: 0 8px 30px rgba(255, 0, 0, 0.4);
+  animation: glow 3s ease-in-out infinite;
+}
+
+@keyframes glow {
+  0%, 100% { box-shadow: 0 8px 30px rgba(255, 0, 0, 0.4); }
+  50% { box-shadow: 0 8px 45px rgba(255, 0, 0, 0.6); }
 }
 
 h1 {
@@ -59,7 +65,7 @@ h1 {
 h2 {
   font-size: 1.2rem;
   margin-bottom: 24px;
-  color: #ff4d4d;
+  color: #CC0000;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 1px;
@@ -91,7 +97,7 @@ p {
   display: block;
   font-size: 0.85rem;
   font-weight: 700;
-  color: #ff4d4d;
+  color: #E60000;
   margin-bottom: 4px;
   text-transform: uppercase;
 }
@@ -111,8 +117,8 @@ p {
 
 .tag {
   display: inline-block;
-  background: #fff0f0;
-  color: #ff4d4d;
+  background: #FFF0F0;
+  color: #CC0000;
   padding: 6px 16px;
   border-radius: 50px;
   font-weight: 700;
