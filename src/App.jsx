@@ -113,17 +113,47 @@ export default function App() {
   const [selectedSpots, setSelectedSpots] = useState([]);
   const [spotModalOpen, setSpotModalOpen] = useState(false);
   const [selectedSpot, setSelectedSpot] = useState(null);
+  const [viewMode, setViewMode] = useState('table'); // 'table' or 'map'
+  const [sortBy, setSortBy] = useState('name'); // 'name', 'rating', 'date', 'reviews'
 
   // Filter and search spots
   const filteredSpots = useMemo(() => {
-    return spots.filter(spot => {
+    let filtered = spots.filter(spot => {
       const matchesSearch = spot.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                            spot.address.toLowerCase().includes(searchTerm.toLowerCase()) ||
                            spot.category.toLowerCase().includes(searchTerm.toLowerCase());
       const matchesStatus = statusFilter === 'all' || spot.status === statusFilter;
       return matchesSearch && matchesStatus;
     });
-  }, [spots, searchTerm, statusFilter]);
+
+    // Apply sorting
+    return filtered.sort((a, b) => {
+      switch (sortBy) {
+        case 'name':
+          return a.name.localeCompare(b.name);
+        case 'rating':
+          return (b.rating || 0) - (a.rating || 0);
+        case 'date':
+          return new Date(b.added) - new Date(a.added);
+        case 'reviews':
+          return b.reviews - a.reviews;
+        default:
+          return 0;
+      }
+    });
+  }, [spots, searchTerm, statusFilter, sortBy]);
+
+  // Calculate statistics
+  const spotStats = useMemo(() => {
+    return {
+      total: spots.length,
+      published: spots.filter(s => s.status === 'published').length,
+      verified: spots.filter(s => s.status === 'verified').length,
+      pending: spots.filter(s => s.status === 'pending').length,
+      flagged: spots.filter(s => s.status === 'flagged').length,
+      avgRating: spots.filter(s => s.rating).reduce((acc, s) => acc + s.rating, 0) / spots.filter(s => s.rating).length || 0
+    };
+  }, [spots]);
 
   const handleSelectSpot = (spotId) => {
     setSelectedSpots(prev => 
@@ -487,6 +517,11 @@ export default function App() {
     );
   };
 
+  const handleExport = (format) => {
+    console.log(`Exporting spots as ${format}`);
+    // Here you would implement actual export logic
+  };
+
   const renderSpots = () => {
     return (
       <>
@@ -517,16 +552,53 @@ export default function App() {
                   <option value="flagged">Flagged</option>
                 </select>
               </div>
+              <div className="sort-dropdown">
+                <Filter size={20} className="filter-icon" />
+                <select 
+                  value={sortBy} 
+                  onChange={(e) => setSortBy(e.target.value)}
+                  className="filter-select"
+                >
+                  <option value="name">Sort by Name</option>
+                  <option value="rating">Sort by Rating</option>
+                  <option value="date">Sort by Date</option>
+                  <option value="reviews">Sort by Reviews</option>
+                </select>
+              </div>
             </div>
             <div className="spots-actions">
+              <div className="view-toggle">
+                <button 
+                  className={`toggle-btn ${viewMode === 'table' ? 'active' : ''}`}
+                  onClick={() => setViewMode('table')}
+                >
+                  <Filter size={16} />
+                  Table View
+                </button>
+                <button 
+                  className={`toggle-btn ${viewMode === 'map' ? 'active' : ''}`}
+                  onClick={() => setViewMode('map')}
+                >
+                  <Map size={16} />
+                  Map View
+                </button>
+              </div>
               <button className="btn btn-primary">
                 <Map size={16} />
                 Add New Spot
               </button>
-              <button className="btn btn-secondary">
+              <div className="export-dropdown">
                 <Download size={16} />
-                Export
-              </button>
+                <select 
+                  onChange={(e) => handleExport(e.target.value)}
+                  className="export-select"
+                >
+                  <option value="">Export</option>
+                  <option value="csv">Export as CSV</option>
+                  <option value="excel">Export as Excel</option>
+                  <option value="pdf">Export as PDF</option>
+                </select>
+              </div>
               {selectedSpots.length > 0 && (
                 <>
                   <button className="btn btn-success">
@@ -539,6 +611,52 @@ export default function App() {
                   </button>
                 </>
               )}
+            </div>
+          </div>
+
+          {/* Statistics Section */}
+          <div className="spots-stats">
+            <div className="stat-card">
+              <div className="stat-icon">📍</div>
+              <div className="stat-info">
+                <div className="stat-number">{spotStats.total}</div>
+                <div className="stat-label">Total Spots</div>
+              </div>
+            </div>
+            <div className="stat-card">
+              <div className="stat-icon">🟢</div>
+              <div className="stat-info">
+                <div className="stat-number">{spotStats.published}</div>
+                <div className="stat-label">Published</div>
+              </div>
+            </div>
+            <div className="stat-card">
+              <div className="stat-icon">🔵</div>
+              <div className="stat-info">
+                <div className="stat-number">{spotStats.verified}</div>
+                <div className="stat-label">Verified</div>
+              </div>
+            </div>
+            <div className="stat-card">
+              <div className="stat-icon">🟡</div>
+              <div className="stat-info">
+                <div className="stat-number">{spotStats.pending}</div>
+                <div className="stat-label">Pending</div>
+              </div>
+            </div>
+            <div className="stat-card">
+              <div className="stat-icon">🔴</div>
+              <div className="stat-info">
+                <div className="stat-number">{spotStats.flagged}</div>
+                <div className="stat-label">Flagged</div>
+              </div>
+            </div>
+            <div className="stat-card">
+              <div className="stat-icon">⭐</div>
+              <div className="stat-info">
+                <div className="stat-number">{spotStats.avgRating.toFixed(1)}</div>
+                <div className="stat-label">Avg Rating</div>
+              </div>
             </div>
           </div>
 
