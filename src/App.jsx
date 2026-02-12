@@ -44,7 +44,8 @@ export default function App() {
           <div className="appIcon">🍵</div>
           <h1>BytSpot</h1>
         </div>
-        <h2>{getActiveTabName()}</h2>
+        <div className="header-center">{getActiveTabName()}</div>
+        <div className="header-right">Admin Panel</div>
       </header>
 
       <nav className="sidebar">
