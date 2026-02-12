@@ -1,8 +1,44 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { Layout, Users, Star, BarChart3, Settings, TrendingUp, AlertCircle, CheckCircle, Clock, Search, Filter, Download, Ban, Shield, UserCheck, MoreVertical, Edit, Eye, MessageSquare, Trash2, X, Camera, Phone, Mail, Globe, Clock as ClockIcon, MapPin, Star as StarIcon } from 'lucide-react';
 
+// Error Boundary Component
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(error, errorInfo) {
+    console.error('Error caught by boundary:', error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div style={{ padding: '20px', color: 'red', textAlign: 'center' }}>
+          <h2>Something went wrong!</h2>
+          <p>Error: {this.state.error?.message}</p>
+          <details style={{ marginTop: '10px', textAlign: 'left' }}>
+            <summary>Error Details</summary>
+            <pre>{this.state.error?.stack}</pre>
+          </details>
+        </div>
+      );
+    }
+
+    return this.props.children;
+  }
+}
+
 export default function App() {
+  console.log('App component mounting...');
+  
   const [activeTab, setActiveTab] = useState('dashboard');
+  console.log('Active tab:', activeTab);
 
   const navItems = [
     { id: 'dashboard', name: 'Dashboard', icon: Layout },
@@ -871,7 +907,7 @@ export default function App() {
   };
 
   return (
-    <>
+    <ErrorBoundary>
       <header>
         <div className="app-bar-brand">
           <div className="appIcon">🍵</div>
@@ -904,6 +940,6 @@ export default function App() {
       <main>
         {renderContent()}
       </main>
-    </>
+    </ErrorBoundary>
   );
 }
