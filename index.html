@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chai-in - Food Discovery App</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            padding: 40px 30px;
+            animation: fadeIn 0.8s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .app-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 30px;
+            font-size: 2.5rem;
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        h2 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            color: #f0f0f0;
+            font-weight: 600;
+        }
+        
+        h3 {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            color: #ffd700;
+            font-weight: 600;
+        }
+        
+        p {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            opacity: 0.9;
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .feature {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .feature:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-3px);
+        }
+        
+        .tech-stack {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .tech-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .tech-item {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            font-weight: 500;
+        }
+        
+        .footer {
+            margin-top: 40px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 15px;
+            font-size: 0.9rem;
+        }
+        
+        .coming-soon {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-top: 30px;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="app-icon">🍵</div>
+        <h1>Chai-in</h1>
+        <h2>Food Discovery Mobile Application</h2>
+        <p>A modern Flutter-based mobile application designed to help users discover amazing food spots in their community.</p>
+        
+        <h3>🚀 Key Features</h3>
+        <div class="features">
+            <div class="feature">
+                <h4>🗺️ Discover Spots</h4>
+                <p>Find amazing restaurants, cafes, and food spots near your location with real-time search and filtering.</p>
+            </div>
+            <div class="feature">
+                <h4>⭐ Rate & Review</h4>
+                <p>Share your experiences with the community through ratings, reviews, and photos.</p>
+            </div>
+            <div class="feature">
+                <h4>📍 Save Favorites</h4>
+                <p>Build your personal collection of favorite food spots and access them anytime.</p>
+            </div>
+            <div class="feature">
+                <h4>👥 Community Feed</h4>
+                <p>Stay updated with the latest food trends and community recommendations.</p>
+            </div>
+        </div>
+        
+        <h3>🛠️ Technology Stack</h3>
+        <div class="tech-stack">
+            <h4>Frontend & Mobile</h4>
+            <div class="tech-list">
+                <div class="tech-item">Flutter</div>
+                <div class="tech-item">Dart</div>
+                <div class="tech-item">Material Design</div>
+            </div>
+            
+            <h4>Backend & Database</h4>
+            <div class="tech-list">
+                <div class="tech-item">Supabase</div>
+                <div class="tech-item">PostgreSQL</div>
+                <div class="tech-item">Real-time Sync</div>
+            </div>
+            
+            <h4>Services & APIs</h4>
+            <div class="tech-list">
+                <div class="tech-item">Google Maps</div>
+                <div class="tech-item">Geolocation</div>
+                <div class="tech-item">Cloud Storage</div>
+            </div>
+        </div>
+        
+        <h3>📱 Platform Availability</h3>
+        <p><strong>Currently Available:</strong> Flutter mobile application for Android and iOS</p>
+        <p><strong>Development Status:</strong> Active development with regular updates and feature enhancements.</p>
+        <p><strong>Future Plans:</strong> Web application and expanded platform support.</p>
+        
+        <div class="coming-soon">
+            🚀 Mobile App Available Now
+        </div>
+        
+        <div class="footer">
+            <p><strong>Chai-in</strong> - Connecting food lovers with amazing local spots</p>
+            <p>Built with ❤️ using Flutter and modern web technologies</p>
+        </div>
+    </div>
+</body>
+</html>
