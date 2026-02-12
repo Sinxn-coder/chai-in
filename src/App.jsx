@@ -1,144 +1,56 @@
-import { Routes, Route, Navigate } from 'react-router-dom';
-import { Suspense, lazy } from 'react';
-import Login from './pages/Login';
-import { useAuth } from './context/AuthContext';
-import FoodLoader from './components/FoodLoader';
-
-// Lazy load components for better performance
-const Home = lazy(() => import('./pages/Home'));
-const Settings = lazy(() => import('./pages/Settings'));
-const AddSpot = lazy(() => import('./pages/AddSpot'));
-const MapScreen = lazy(() => import('./pages/MapScreen'));
-const ClubLeaderboard = lazy(() => import('./pages/ClubLeaderboard'));
-const Leaderboard = lazy(() => import('./pages/Leaderboard'));
-const Admin = lazy(() => import('./pages/Admin'));
-const SpotDetail = lazy(() => import('./pages/SpotDetail'));
-const Community = lazy(() => import('./pages/Community'));
-const EditSpot = lazy(() => import('./pages/EditSpot'));
-const Favorites = lazy(() => import('./pages/Favorites'));
-const PrivacyPolicy = lazy(() => import('./pages/PrivacyPolicy'));
-const ContactAdmin = lazy(() => import('./pages/ContactAdmin'));
-const DirectionsPage = lazy(() => import('./pages/DirectionsPage'));
-const SavedPostsPage = lazy(() => import('./pages/SavedPostsPage'));
-const LandingPage = lazy(() => import('./pages/LandingPage'));
-const Explore = lazy(() => import('./pages/Explore'));
-const MainLayout = lazy(() => import('./layouts/MainLayout'));
-
-// Preload critical routes for faster navigation
-const preloadRoute = (componentImport) => {
-    const component = componentImport();
-    // Preload the component
-    component.catch(() => {});
-    return component;
-};
-
-// Protected Route Wrapper
-const ProtectedRoute = ({ children }) => {
-  const { user, loading } = useAuth();
-  if (loading) return (
-    <div style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'white' }}>
-      <FoodLoader message="Welcome to Chai-in..." />
-    </div>
-  );
-  if (!user) return <Navigate to="/login" replace />;
-  return children;
-};
-
-// Root route handler that checks authentication
-const RootRoute = () => {
-  const { user, loading } = useAuth();
-  
-  if (loading) {
-    return (
-      <div style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'white' }}>
-        <FoodLoader message="Welcome to Chai-in..." />
-      </div>
-    );
-  }
-  
-  // If user is authenticated, redirect to home
-  if (user) {
-    return <Navigate to="/en/home" replace />;
-  }
-  
-  // If not authenticated, show landing page
-  return <LandingPage />;
-};
+import React from 'react';
 
 function App() {
   return (
-    <Routes>
-      <Route path="/" element={<RootRoute />} />
-      <Route path="/login" element={<Login />} />
-
-      {/* English Routes - PROTECTED */}
-      <Route path="/en/*" element={
-        <ProtectedRoute>
-          <AppRoutes lang="en" />
-        </ProtectedRoute>
-      } />
-
-      {/* Malayalam Routes - PROTECTED */}
-      <Route path="/ml/*" element={
-        <ProtectedRoute>
-          <Suspense fallback={
-            <div style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'white' }}>
-              <FoodLoader message="Loading..." />
-            </div>
-          }>
-            <AppRoutes lang="ml" />
-          </Suspense>
-        </ProtectedRoute>
-      } />
-    </Routes>
-  );
-}
-
-// Sub-router for actual pages
-function AppRoutes({ lang }) {
-  return (
-    <Suspense fallback={
-      <div style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'white' }}>
-        <FoodLoader message="Loading..." />
+    <div style={{
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      height: '100vh',
+      backgroundColor: '#f5f5f5',
+      color: '#333',
+      fontSize: '24px',
+      fontFamily: 'Arial, sans-serif',
+      padding: '40px',
+      textAlign: 'center'
+    }}>
+      <div>
+        <h1 style={{ marginBottom: '20px', fontSize: '36px', fontWeight: 'bold' }}>Chai-in</h1>
+        <h2 style={{ marginBottom: '16px', fontSize: '24px', color: '#666' }}>Food Discovery Platform</h2>
+        <p style={{ marginBottom: '12px', fontSize: '18px', lineHeight: '1.6' }}>A modern food discovery platform designed to connect users with amazing food spots in their community.</p>
+        
+        <h3 style={{ marginBottom: '20px', fontSize: '20px', fontWeight: 'bold' }}>Project Status</h3>
+        <p style={{ marginBottom: '8px', fontSize: '16px' }}>This platform is currently under development and maintenance.</p>
+        <p style={{ marginBottom: '8px', fontSize: '16px' }}>We are working hard to bring you an enhanced experience with new features and improvements.</p>
+        
+        <h3 style={{ marginBottom: '20px', fontSize: '20px', fontWeight: 'bold' }}>What's Coming Next</h3>
+        <p style={{ marginBottom: '8px', fontSize: '16px' }}>• Enhanced user profiles and authentication system</p>
+        <p style={{ marginBottom: '8px', fontSize: '16px' }}>• Advanced search and filtering capabilities</p>
+        <p style={{ marginBottom: '8px', fontSize: '16px' }}>• Community-driven content and reviews</p>
+        <p style={{ marginBottom: '8px', fontSize: '16px' }}>• Real-time notifications and updates</p>
+        <p style={{ marginBottom: '8px', fontSize: '16px' }}>• Mobile and desktop applications</p>
+        
+        <h3 style={{ marginBottom: '20px', fontSize: '20px', fontWeight: 'bold' }}>Technology Stack</h3>
+        <p style={{ marginBottom: '8px', fontSize: '16px' }}>• Frontend: React.js with modern UI/UX</p>
+        <p style={{ marginBottom: '8px', fontSize: '16px' }}>• Backend: Supabase for real-time data</p>
+        <p style={{ marginBottom: '8px', fontSize: '16px' }}>• Mobile: Flutter for cross-platform experience</p>
+        <p style={{ marginBottom: '8px', fontSize: '16px' }}>• Deployment: GitHub Pages for reliable hosting</p>
+        
+        <h3 style={{ marginBottom: '20px', fontSize: '20px', fontWeight: 'bold' }}>Contact & Support</h3>
+        <p style={{ marginBottom: '8px', fontSize: '16px' }}>For project inquiries and support, please contact the development team.</p>
+        
+        <div style={{ 
+          marginTop: '30px', 
+          padding: '20px', 
+          backgroundColor: 'rgba(255, 255, 255, 0.1)', 
+          borderRadius: '8px',
+          border: '1px solid rgba(255, 255, 255, 0.2)'
+        }}>
+          <p style={{ fontSize: '14px', color: '#666', marginBottom: '0' }}>Thank you for your patience while we improve our platform.</p>
+          <p style={{ fontSize: '14px', color: '#666', marginBottom: '0' }}>We look forward to serving you better soon.</p>
+        </div>
       </div>
-    }>
-      <Routes>
-        <Route element={<MainLayout lang={lang} />}>
-          <Route path="home" element={<Home lang={lang} />} />
-          <Route path="/home" element={<Home lang={lang} />} />
-          <Route path="map" element={<MapScreen lang={lang} />} />
-          <Route path="/map" element={<MapScreen lang={lang} />} />
-          <Route path="add-spot" element={<AddSpot lang={lang} />} />
-          <Route path="/add-spot" element={<AddSpot lang={lang} />} />
-          <Route path="club-leaderboard" element={<ClubLeaderboard lang={lang} />} />
-          <Route path="/club-leaderboard" element={<ClubLeaderboard lang={lang} />} />
-          <Route path="leaderboard" element={<Leaderboard lang={lang} />} />
-          <Route path="/leaderboard" element={<Leaderboard lang={lang} />} />
-          <Route path="explore" element={<Explore lang={lang} />} />
-          <Route path="/explore" element={<Explore lang={lang} />} />
-          <Route path="community" element={<Community lang={lang} />} />
-          <Route path="/community" element={<Community lang={lang} />} />
-          <Route path="favorites" element={<Favorites lang={lang} />} />
-          <Route path="/favorites" element={<Favorites lang={lang} />} />
-          <Route path="saved-posts" element={<SavedPostsPage lang={lang} />} />
-          <Route path="/saved-posts" element={<SavedPostsPage lang={lang} />} />
-          <Route path="settings" element={<Settings lang={lang} />} />
-          <Route path="/settings" element={<Settings lang={lang} />} />
-          <Route path="privacy-policy" element={<PrivacyPolicy lang={lang} />} />
-          <Route path="/privacy-policy" element={<PrivacyPolicy lang={lang} />} />
-          <Route path="contact-admin" element={<ContactAdmin lang={lang} />} />
-          <Route path="/contact-admin" element={<ContactAdmin lang={lang} />} />
-          <Route path="directions/:id" element={<DirectionsPage lang={lang} />} />
-          <Route path="/directions/:id" element={<DirectionsPage lang={lang} />} />
-          <Route path="spot/:id" element={<SpotDetail lang={lang} />} />
-          <Route path="/spot/:id" element={<SpotDetail lang={lang} />} />
-          <Route path="edit-spot/:id" element={<EditSpot lang={lang} />} />
-          <Route path="/edit-spot/:id" element={<EditSpot lang={lang} />} />
-          <Route path="admin" element={<Admin />} />
-          <Route path="/admin" element={<Admin />} />
-        </Route>
-      </Routes>
-    </Suspense>
+    </div>
   );
 }
 

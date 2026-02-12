@@ -1,0 +1,16 @@
+# Supabase Configuration
+
+## Database URL
+```
+https://bqgqzqzjxqzvfgqozy.supabase.co
+```
+
+## Project Key
+```
+eyJhbGciOiJIUzI1NiIsInR5cHJhTm5Q6Fv3ZyFqgp5MYwD3MjF3
+```
+
+## Notes
+- This is the Chai-in project Supabase configuration
+- Keep this information secure and private
+- Do not commit this file to public repositories
