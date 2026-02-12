@@ -1,7 +1,5 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
-import { Layout, Users, Map, Star, BarChart3, Settings, TrendingUp, AlertCircle, CheckCircle, Clock, Search, Filter, Download, Ban, Shield, UserCheck, MoreVertical, Edit, Eye, MessageSquare, Trash2, X, Camera, Phone, Mail, Globe, Clock as ClockIcon, MapPin, Star as StarIcon } from 'lucide-react';
-import L from 'leaflet';
-import 'leaflet/dist/leaflet.css';
+import { Layout, Users, Star, BarChart3, Settings, TrendingUp, AlertCircle, CheckCircle, Clock, Search, Filter, Download, Ban, Shield, UserCheck, MoreVertical, Edit, Eye, MessageSquare, Trash2, X, Camera, Phone, Mail, Globe, Clock as ClockIcon, MapPin, Star as StarIcon } from 'lucide-react';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -9,7 +7,7 @@ export default function App() {
   const navItems = [
     { id: 'dashboard', name: 'Dashboard', icon: Layout },
     { id: 'users', name: 'Users', icon: Users },
-    { id: 'spots', name: 'Spots', icon: Map },
+    { id: 'spots', name: 'Spots', icon: MapPin },
     { id: 'reviews', name: 'Reviews', icon: Star },
     { id: 'analytics', name: 'Analytics', icon: BarChart3 },
     { id: 'settings', name: 'Settings', icon: Settings }
@@ -115,7 +113,6 @@ export default function App() {
   const [selectedSpots, setSelectedSpots] = useState([]);
   const [spotModalOpen, setSpotModalOpen] = useState(false);
   const [selectedSpot, setSelectedSpot] = useState(null);
-  const [viewMode, setViewMode] = useState('table'); // 'table' or 'map'
   const [sortBy, setSortBy] = useState('name'); // 'name', 'rating', 'date', 'reviews'
 
   // Filter and search users
@@ -534,117 +531,7 @@ export default function App() {
     // Here you would implement actual export logic
   };
 
-  const renderMapView = () => {
-    const mapRef = useRef(null);
-    const mapInstanceRef = useRef(null);
-    
-    useEffect(() => {
-      if (viewMode === 'map' && mapRef.current && !mapInstanceRef.current) {
-        try {
-          // Initialize Leaflet map
-          const map = L.map(mapRef.current, {
-            center: [40.7128, -74.0060], // New York coordinates
-            zoom: 12,
-            layers: [
-              L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '© OpenStreetMap contributors',
-                maxZoom: 19
-              })
-            ]
-          });
-
-          // Add spot markers to map
-          filteredSpots.forEach(spot => {
-            const markerColor = spot.status === 'published' ? '#16a34a' : 
-                             spot.status === 'verified' ? '#1e40af' : 
-                             spot.status === 'pending' ? '#d97706' : '#dc2626';
-            
-            const marker = L.circleMarker([
-              40.7128 + (Math.random() - 0.1), // Slight position variation for demo
-              -74.0060 + (Math.random() - 0.1)
-            ], {
-              radius: 8,
-              fillColor: markerColor,
-              color: 'white',
-              weight: 2,
-              opacity: 0.8
-            }).addTo(map);
-
-            // Add popup to marker
-            const popupContent = `
-              <div style="padding: 8px; min-width: 180px; font-family: Arial, sans-serif;">
-                <h4 style="margin: 0 0 8px 0; color: #111827; font-size: 14px; font-weight: 600;">${spot.name}</h4>
-                <p style="margin: 0 0 4px 0; color: #6b7280; font-size: 12px;">${spot.address}</p>
-                <div style="display: flex; justify-content: space-between; margin-top: 8px;">
-                  <span style="color: ${markerColor}; font-weight: 600;">Status: ${spot.status}</span>
-                  ${spot.rating ? `<span style="color: #f59e0b;">⭐ ${spot.rating}</span>` : '<span style="color: #6b7280;">No rating</span>'}
-                </div>
-              </div>
-            `;
-            
-            marker.bindPopup(popupContent);
-          });
-
-          // Add map controls
-          L.control.scale({
-            position: 'bottomright'
-          }).addTo(map);
-
-          mapInstanceRef.current = map;
-        } catch (error) {
-          console.error('Map initialization error:', error);
-        }
-      }
-      
-      return () => {
-        if (mapInstanceRef.current && viewMode !== 'map') {
-          mapInstanceRef.current.remove();
-          mapInstanceRef.current = null;
-        }
-      };
-    }, [viewMode, filteredSpots]);
-
-    return (
-      <div className="map-view">
-        <div className="map-header">
-          <h3>Interactive Spot Map</h3>
-          <div className="map-controls">
-            <div className="map-legend">
-              <div className="legend-item">
-                <div className="legend-dot published"></div>
-                <span>Published</span>
-              </div>
-              <div className="legend-item">
-                <div className="legend-dot verified"></div>
-                <span>Verified</span>
-              </div>
-              <div className="legend-item">
-                <div className="legend-dot pending"></div>
-                <span>Pending</span>
-              </div>
-              <div className="legend-item">
-                <div className="legend-dot flagged"></div>
-                <span>Flagged</span>
-              </div>
-            </div>
-          </div>
-        </div>
-        
-        <div className="map-container">
-          <div 
-            ref={mapRef} 
-            style={{ height: '600px', width: '100%', backgroundColor: '#f0f0f0' }}
-            className="leaflet-map"
-          />
-        </div>
-      </div>
-    );
-  };
-
   const renderSpots = () => {
-    if (viewMode === 'map') {
-      return renderMapView();
-    }
     return (
       <>
         <div className="spots-management">
@@ -668,18 +555,17 @@ export default function App() {
                   className="filter-select"
                 >
                   <option value="all">All Status</option>
-                  <option value="pending">Pending</option>
-                  <option value="verified">Verified</option>
                   <option value="published">Published</option>
+                  <option value="verified">Verified</option>
+                  <option value="pending">Pending</option>
                   <option value="flagged">Flagged</option>
                 </select>
               </div>
               <div className="sort-dropdown">
-                <Filter size={20} className="filter-icon" />
                 <select 
                   value={sortBy} 
                   onChange={(e) => setSortBy(e.target.value)}
-                  className="filter-select"
+                  className="sort-select"
                 >
                   <option value="name">Sort by Name</option>
                   <option value="rating">Sort by Rating</option>
@@ -689,45 +575,22 @@ export default function App() {
               </div>
             </div>
             <div className="spots-actions">
-              <div className="view-toggle">
-                <button 
-                  className={`toggle-btn ${viewMode === 'table' ? 'active' : ''}`}
-                  onClick={() => setViewMode('table')}
-                >
-                  <Filter size={16} />
-                  Table View
-                </button>
-                <button 
-                  className={`toggle-btn ${viewMode === 'map' ? 'active' : ''}`}
-                  onClick={() => setViewMode('map')}
-                >
-                  <Map size={16} />
-                  Map View
-                </button>
-              </div>
-              <button className="btn btn-primary">
-                <Map size={16} />
-                Add New Spot
-              </button>
-              <div className="export-dropdown">
+              <button className="btn btn-secondary">
                 <Download size={16} />
-                <select 
-                  onChange={(e) => handleExport(e.target.value)}
-                  className="export-select"
-                >
-                  <option value="">Export</option>
-                  <option value="csv">Export as CSV</option>
-                  <option value="excel">Export as Excel</option>
-                  <option value="pdf">Export as PDF</option>
-                </select>
-              </div>
+                Export
+              </button>
               {selectedSpots.length > 0 && (
                 <>
+                  <button className="btn btn-warning">
+                    <AlertCircle size={16} />
+                    Flag Selected
+                  </button>
                   <button className="btn btn-success">
                     <CheckCircle size={16} />
                     Verify Selected
                   </button>
-                  <button className="btn btn-warning">
+                  <button className="btn btn-danger">
+                    <Trash2 size={16} />
                     <Ban size={16} />
                     Delete Selected
                   </button>
