@@ -66,10 +66,20 @@ header {
   color: #FF0000;
 }
 
+.nav-item:hover .nav-text {
+  opacity: 1;
+  visibility: visible;
+}
+
 .nav-item.active {
   background: #fff0f0;
   color: #FF0000;
   border-left-color: #FF0000;
+}
+
+.nav-item.active .nav-text {
+  opacity: 1;
+  visibility: visible;
 }
 
 .nav-icon {
@@ -77,11 +87,15 @@ header {
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  width: 24px;
 }
 
 .nav-text {
   font-size: 0.95rem;
   white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.2s ease;
 }
 
 .app-bar-brand {
