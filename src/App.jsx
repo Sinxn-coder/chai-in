@@ -1,5 +1,7 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { Layout, Users, Map, Star, BarChart3, Settings, TrendingUp, AlertCircle, CheckCircle, Clock, Search, Filter, Download, Ban, Shield, UserCheck, MoreVertical, Edit, Eye, MessageSquare, Trash2, X, Camera, Phone, Mail, Globe, Clock as ClockIcon, MapPin, Star as StarIcon } from 'lucide-react';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -523,10 +525,69 @@ export default function App() {
   };
 
   const renderMapView = () => {
+    const mapRef = useRef(null);
+    
+    useEffect(() => {
+      if (viewMode === 'map' && mapRef.current) {
+        // Initialize Leaflet map
+        const map = L.map(mapRef.current, {
+          center: [40.7128, -74.0060], // New York coordinates
+          zoom: 12,
+          layers: [
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+              attribution: '© OpenStreetMap contributors',
+              maxZoom: 19
+            })
+          ]
+        });
+
+        // Add spot markers to map
+        filteredSpots.forEach(spot => {
+          const markerColor = spot.status === 'published' ? '#16a34a' : 
+                           spot.status === 'verified' ? '#1e40af' : 
+                           spot.status === 'pending' ? '#d97706' : '#dc2626';
+          
+          const marker = L.circleMarker([
+            40.7128 + (Math.random() - 0.1), // Slight position variation for demo
+            -74.0060 + (Math.random() - 0.1)
+          ], {
+            radius: 8,
+            fillColor: markerColor,
+            color: 'white',
+            weight: 2,
+            opacity: 0.8
+          }).addTo(map);
+
+          // Add popup to marker
+          const popupContent = `
+            <div style="padding: 8px; min-width: 200px;">
+              <h4 style="margin: 0 0 8px 0; color: #111827; font-size: 14px; font-weight: 600;">${spot.name}</h4>
+              <p style="margin: 0 0 4px 0; color: #6b7280; font-size: 12px;">${spot.address}</p>
+              <div style="display: flex; justify-content: space-between; margin-top: 8px;">
+                <span style="color: ${markerColor}; font-weight: 600;">Status: ${spot.status}</span>
+                ${spot.rating ? `<span style="color: #f59e0b;">⭐ ${spot.rating}</span>` : '<span style="color: #6b7280;">No rating</span>'}
+              </div>
+            </div>
+          `;
+          
+          marker.bindPopup(popupContent);
+        });
+
+        // Add map controls
+        L.control.scale({
+          position: 'bottomright'
+        }).addTo(map);
+
+        return () => {
+          map.remove();
+        };
+      }
+    }, [viewMode, filteredSpots]);
+
     return (
       <div className="map-view">
         <div className="map-header">
-          <h3>Spot Locations Map</h3>
+          <h3>Interactive Spot Map</h3>
           <div className="map-controls">
             <div className="map-legend">
               <div className="legend-item">
@@ -554,52 +615,11 @@ export default function App() {
         </div>
         
         <div className="map-container">
-          <div className="map-placeholder">
-            <div className="map-background">
-              {/* Simulated map with spot markers */}
-              <div className="spot-marker" style={{ left: '20%', top: '30%' }} title="Sunrise Cafe">
-                <div className="marker-icon published">🍕</div>
-                <div className="marker-label">Sunrise Cafe</div>
-              </div>
-              <div className="spot-marker" style={{ left: '60%', top: '45%' }} title="Burger Palace">
-                <div className="marker-icon verified">🍔</div>
-                <div className="marker-label">Burger Palace</div>
-              </div>
-              <div className="spot-marker" style={{ left: '35%', top: '70%' }} title="Pizza Heaven">
-                <div className="marker-icon pending">🥗</div>
-                <div className="marker-label">Pizza Heaven</div>
-              </div>
-              <div className="spot-marker" style={{ left: '75%', top: '25%' }} title="Sushi Master">
-                <div className="marker-icon flagged">🍜</div>
-                <div className="marker-label">Sushi Master</div>
-              </div>
-              
-              {/* Map controls */}
-              <div className="map-controls-overlay">
-                <button className="map-control">+</button>
-                <button className="map-control">−</button>
-                <button className="map-control">⟲</button>
-                <button className="map-control">⟱</button>
-              </div>
-            </div>
-            
-            <div className="map-info">
-              <div className="info-card">
-                <h4>Map View</h4>
-                <p>Interactive map showing all spot locations with status-based color coding.</p>
-                <div className="info-stats">
-                  <div className="info-item">
-                    <span className="info-number">{filteredSpots.length}</span>
-                    <span className="info-label">Visible Spots</span>
-                  </div>
-                  <div className="info-item">
-                    <span className="info-number">{spotStats.total}</span>
-                    <span className="info-label">Total Spots</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+          <div 
+            ref={mapRef} 
+            style={{ height: '600px', width: '100%' }}
+            className="leaflet-map"
+          />
         </div>
       </div>
     );

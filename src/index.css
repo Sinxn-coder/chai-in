@@ -177,7 +177,88 @@ main {
   font-style: italic;
 }
 
-/* Map View Styles */
+/* Real Map Styles */
+.leaflet-map {
+  height: 600px;
+  width: 100%;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.leaflet-container {
+  position: relative;
+  height: 100%;
+  width: 100%;
+}
+
+/* Custom marker styles */
+.leaflet-div-icon {
+  background: white !important;
+  border: 2px solid #374151 !important;
+  border-radius: 50% !important;
+  text-align: center !important;
+  font-weight: 600 !important;
+  color: #374151 !important;
+}
+
+.leaflet-popup-content-wrapper {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+}
+
+.leaflet-popup-content {
+  margin: 0 !important;
+  line-height: 1.4 !important;
+}
+
+.leaflet-popup-content h4 {
+  margin: 0 0 8px 0 !important;
+  color: #111827 !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+}
+
+.leaflet-popup-content p {
+  margin: 0 0 4px 0 !important;
+  color: #6b7280 !important;
+  font-size: 12px !important;
+}
+
+.leaflet-popup-content div {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  margin-top: 8px !important;
+}
+
+/* Map control styles */
+.leaflet-control-zoom {
+  border: 2px solid #d1d5db !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+}
+
+.leaflet-control-zoom:hover {
+  background: #f8fafc !important;
+  border-color: #94a3b8 !important;
+}
+
+/* Marker popup animations */
+.leaflet-marker-icon {
+  transition: all 0.2s ease !important;
+}
+
+.leaflet-marker-icon:hover {
+  transform: scale(1.1) !important;
+}
+
+/* Custom cluster styles for future implementation */
+.leaflet-marker-cluster {
+  background: #FF0000 !important;
+  color: white !important;
+  border-radius: 50% !important;
+  font-weight: 600 !important;
+  font-size: 12px !important;
+  border: 2px solid white !important;
+}
 .map-view {
   background: white;
   border-radius: 12px;
