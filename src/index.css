@@ -185,7 +185,7 @@ main {
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 0;
+  gap: 8px;
   margin-bottom: 32px;
 }
 
@@ -195,19 +195,7 @@ main {
   padding: 20px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   border: 1px solid #f0f0f0;
-  border-right: none;
   transition: all 0.3s ease;
-}
-
-.stat-card:last-child {
-  border-right: 1px solid #f0f0f0;
-  border-top-right-radius: 12px;
-  border-bottom-right-radius: 12px;
-}
-
-.stat-card:first-child {
-  border-top-left-radius: 12px;
-  border-bottom-left-radius: 12px;
 }
 
 .stat-card:hover {
