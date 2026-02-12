@@ -4,12 +4,14 @@ export default function App() {
   return (
     <>
       <header>
-        <div className="appIcon">🍵</div>
-        <h1>
-          Chai-in
-          <span className="tag">LIVE</span>
-        </h1>
-        <h2>Food Discovery Platform</h2>
+        <div className="app-bar-brand">
+          <div className="appIcon">🍵</div>
+          <h1>
+            Chai-in
+            <span className="tag">LIVE</span>
+          </h1>
+        </div>
+        <h2>Food Discovery</h2>
       </header>
 
       <main>
@@ -25,8 +27,13 @@ export default function App() {
           </div>
           
           <div className="detail-block">
-            <span className="detail-label">Platform</span>
+            <span className="detail-label">Platform Status</span>
             <div className="detail-value">Android & iOS • Active Development</div>
+          </div>
+
+          <div className="detail-block">
+            <span className="detail-label">Experience</span>
+            <div className="detail-value">Real-time search, community recommendations, and seamless navigation.</div>
           </div>
         </div>
 
