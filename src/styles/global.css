@@ -69,44 +69,19 @@ a {
     color: inherit;
 }
 
+/* Container for desktop only */
 .container {
-    max-width: 600px;
+    max-width: 1200px;
     margin: 0 auto;
     padding: 0 var(--space-md);
     position: relative;
 }
 
-/* Responsive container for larger screens */
-@media (min-width: 768px) {
-    .container {
-        max-width: 900px;
-    }
-}
-
-@media (min-width: 1024px) {
-    .container {
-        max-width: 1200px;
-    }
-}
-
 /* Spot cards grid for desktop */
 .spots-grid {
     display: grid;
-    grid-template-columns: 1fr;
-    gap: var(--space-md);
-}
-
-@media (min-width: 768px) {
-    .spots-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: var(--space-lg);
-    }
-}
-
-@media (min-width: 1024px) {
-    .spots-grid {
-        grid-template-columns: repeat(3, 1fr);
-    }
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-lg);
 }
 
 /* Glass Card Utility - More Elevated */

@@ -6,7 +6,6 @@ import FoodLoader from './components/FoodLoader';
 
 // Lazy load components for better performance
 const Home = lazy(() => import('./pages/Home'));
-const Profile = lazy(() => import('./pages/Profile'));
 const Settings = lazy(() => import('./pages/Settings'));
 const AddSpot = lazy(() => import('./pages/AddSpot'));
 const MapScreen = lazy(() => import('./pages/MapScreen'));
@@ -20,9 +19,6 @@ const Favorites = lazy(() => import('./pages/Favorites'));
 const PrivacyPolicy = lazy(() => import('./pages/PrivacyPolicy'));
 const ContactAdmin = lazy(() => import('./pages/ContactAdmin'));
 const DirectionsPage = lazy(() => import('./pages/DirectionsPage'));
-const ProfileFavorites = lazy(() => import('./pages/ProfileFavorites'));
-const ProfileReviews = lazy(() => import('./pages/ProfileReviews'));
-const ProfileAdded = lazy(() => import('./pages/ProfileAdded'));
 const SavedPostsPage = lazy(() => import('./pages/SavedPostsPage'));
 const LandingPage = lazy(() => import('./pages/LandingPage'));
 const Explore = lazy(() => import('./pages/Explore'));
@@ -116,10 +112,6 @@ function AppRoutes({ lang }) {
           <Route path="explore" element={<Explore lang={lang} />} />
           <Route path="community" element={<Community lang={lang} />} />
           <Route path="favorites" element={<Favorites lang={lang} />} />
-          <Route path="profile" element={<Profile lang={lang} />} />
-          <Route path="profile/favorites" element={<ProfileFavorites lang={lang} />} />
-          <Route path="profile/reviews" element={<ProfileReviews lang={lang} />} />
-          <Route path="profile/added" element={<ProfileAdded lang={lang} />} />
           <Route path="saved-posts" element={<SavedPostsPage lang={lang} />} />
           <Route path="settings" element={<Settings lang={lang} />} />
           <Route path="privacy-policy" element={<PrivacyPolicy lang={lang} />} />

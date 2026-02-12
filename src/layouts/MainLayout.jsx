@@ -1,11 +1,9 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
-import BottomNav from '../components/BottomNav';
 import DesktopNav from '../components/DesktopNav';
 import FoodParticles from '../components/FoodParticles';
 import SetUsernameModal from '../components/SetUsernameModal';
 import SetAvatarModal from '../components/SetAvatarModal';
-import AppBar from '../components/AppBar';
 import ClubLeaderboardNav from '../components/ClubLeaderboardNav';
 import { Users, Crown, MapPin, Plus, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -46,19 +44,7 @@ const MainLayout = ({ lang }) => {
 
     // Memoize animation variants to prevent recreation
     const navVariants = useMemo(() => ({
-        mainNav: {
-            initial: { opacity: 0 },
-            animate: { opacity: 1 },
-            exit: { opacity: 0 },
-            transition: { duration: 0.4, ease: [0.4, 0, 0.2, 1] }
-        },
         desktopNav: {
-            initial: { opacity: 0 },
-            animate: { opacity: 1 },
-            exit: { opacity: 0 },
-            transition: { duration: 0.4, ease: [0.4, 0, 0.2, 1] }
-        },
-        bottomNav: {
             initial: { opacity: 0 },
             animate: { opacity: 1 },
             exit: { opacity: 0 },
@@ -70,17 +56,11 @@ const MainLayout = ({ lang }) => {
             exit: { opacity: 0, x: '-100vw' },
             transition: { duration: 0.6, ease: [0.4, 0, 0.2, 1] }
         },
-        contentReverse: {
-            initial: { opacity: 0, x: '-100vw' },
-            animate: { opacity: 1, x: 0 },
-            exit: { opacity: 0, x: '100vw' },
-            transition: { duration: 0.6, ease: [0.4, 0, 0.2, 1] }
-        },
         contentNormal: {
             initial: { opacity: 0 },
             animate: { opacity: 1 },
-            exit: { opacity: 0 },
-            transition: { duration: 0.3, ease: [0.4, 0, 0.2, 1] }
+            exit: { opacity: 1 },
+            transition: { duration: 0 }
         },
         contentNoAnimation: {
             initial: { opacity: 1 },
@@ -92,27 +72,12 @@ const MainLayout = ({ lang }) => {
 
     return (
         <>
-            {/* Original Top Navigation Bar - Fixed outside wrapper with animation */}
-            <AnimatePresence>
-                {!showNewNav && !hideAllNavigation && (
-                    <motion.div 
-                        key="main-nav"
-                        className="mobile-only"
-                        initial={navVariants.mainNav.initial}
-                        animate={navVariants.mainNav.animate}
-                        exit={navVariants.mainNav.exit}
-                        transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
-                    >
-                        <AppBar />
-                    </motion.div>
-                )}
-            </AnimatePresence>
-
             {/* Desktop Navigation - Fixed outside wrapper with animation */}
             <AnimatePresence>
                 {!showNewNav && !hideAllNavigation && (
                     <motion.div 
                         key="desktop-nav"
+                        className="desktop-nav"
                         initial={navVariants.desktopNav.initial}
                         animate={navVariants.desktopNav.animate}
                         exit={navVariants.desktopNav.exit}
@@ -180,38 +145,10 @@ const MainLayout = ({ lang }) => {
                 )}
             </div>
 
-            {/* Bottom Navigation - Fixed outside wrapper with animation */}
-            <AnimatePresence>
-                {!showNewNav && (
-                    <motion.div 
-                        key="bottom-nav"
-                        className="mobile-only"
-                        initial={navVariants.bottomNav.initial}
-                        animate={navVariants.bottomNav.animate}
-                        exit={navVariants.bottomNav.exit}
-                        transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
-                    >
-                        <BottomNav lang={lang} />
-                    </motion.div>
-                )}
-            </AnimatePresence>
-
             {/* ClubLeaderboard Navigation - Fixed outside wrapper with animation */}
             <AnimatePresence>
                 {showNewNav && (
                     <>
-                        {/* Mobile ClubLeaderboardNav */}
-                        <motion.div 
-                            key="club-leaderboard-nav-mobile"
-                            className="mobile-only"
-                            initial={{ opacity: 0, y: 50 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: 50 }}
-                            transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
-                        >
-                            <ClubLeaderboardNav lang={lang} />
-                        </motion.div>
-                        
                         {/* Desktop ClubLeaderboardNav */}
                         <motion.div 
                             key="club-leaderboard-nav-desktop"

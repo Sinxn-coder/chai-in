@@ -12,26 +12,30 @@ const addDesktopNavCSS = () => {
         const style = document.createElement('style');
         style.id = styleId;
         style.textContent = `
-            @media (min-width: 768px) {
-                .desktop-nav {
-                    display: block !important;
-                }
-                .mobile-only {
-                    display: none !important;
-                }
+            .desktop-nav {
+                display: block !important;
             }
-            @media (max-width: 767px) {
-                .desktop-nav {
-                    display: none !important;
-                }
-                .mobile-only {
-                    display: block !important;
-                }
+            .mobile-only {
+                display: none !important;
             }
         `;
         document.head.appendChild(style);
     }
 };
+
+useEffect(() => {
+    // Add desktop-only styles
+    const style = document.createElement('style');
+    style.textContent = `
+        .desktop-nav {
+            display: block !important;
+        }
+        .mobile-only {
+            display: none !important;
+        }
+    `;
+    document.head.appendChild(style);
+}, []);
 
 const DesktopNav = () => {
     const { user } = useAuth();

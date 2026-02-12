@@ -99,20 +99,7 @@
     }
 }
 
-/* Responsive: Fewer particles on mobile */
-@media (max-width: 768px) {
-    .food-particle {
-        font-size: 1.5rem;
-    }
-
-    .food-particle:nth-child(n+6) {
-        display: none;
-    }
-}
-
 /* Desktop: More particles and larger size */
-@media (min-width: 1024px) {
-    .food-particle {
-        font-size: 2.5rem;
-    }
+.food-particle {
+    font-size: 2.5rem;
 }
