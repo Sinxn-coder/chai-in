@@ -7,11 +7,11 @@ export default function App() {
         <div className="app-bar-brand">
           <div className="appIcon">🍵</div>
           <h1>
-            Chai-in
+            BytSpot
             <span className="tag">LIVE</span>
           </h1>
         </div>
-        <h2>Food Discovery</h2>
+        <h2>Admin Panel</h2>
       </header>
 
       <nav className="sidebar">
@@ -45,7 +45,7 @@ export default function App() {
 
       <main>
         <div className="content-placeholder">
-          Welcome to the Chai-in Dashboard. Content will appear here as the platform expands.
+          Welcome to the BytSpot Dashboard. Content will appear here as the platform expands.
         </div>
       </main>
     </>
