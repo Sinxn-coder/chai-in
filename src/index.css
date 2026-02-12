@@ -507,8 +507,16 @@ main {
   vertical-align: middle;
 }
 
-.user-row:hover {
+.user-row:nth-child(odd) {
+  background: #ffffff;
+}
+
+.user-row:nth-child(even) {
   background: #f9fafb;
+}
+
+.user-row:hover {
+  background: #f3f4f6;
 }
 
 .user-info {
