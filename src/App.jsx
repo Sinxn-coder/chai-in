@@ -7,10 +7,7 @@ export default function App() {
       <header>
         <div className="app-bar-brand">
           <div className="appIcon">🍵</div>
-          <h1>
-            BytSpot
-            <span className="tag">LIVE</span>
-          </h1>
+          <h1>BytSpot</h1>
         </div>
         <h2>Admin Panel</h2>
       </header>
