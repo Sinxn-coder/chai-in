@@ -168,7 +168,8 @@ h2 {
 
 main {
   padding: 40px;
-  max-width: 1000px;
+  max-width: none;
+  width: calc(100vw - 80px);
 }
 
 .content-placeholder {
