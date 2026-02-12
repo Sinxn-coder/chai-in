@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Home, Search, Star, Trophy, User, Settings } from 'lucide-react';
+import { Home, Search, User, Settings } from 'lucide-react';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('home');
@@ -7,8 +7,6 @@ export default function App() {
   const navItems = [
     { id: 'home', name: 'Home', icon: Home },
     { id: 'explore', name: 'Explore', icon: Search },
-    { id: 'favorites', name: 'Favorites', icon: Star },
-    { id: 'leaderboard', name: 'Leaderboard', icon: Trophy },
     { id: 'profile', name: 'Profile', icon: User },
     { id: 'settings', name: 'Settings', icon: Settings }
   ];
@@ -24,10 +22,6 @@ export default function App() {
         return <div className="content-placeholder">Welcome to the BytSpot Dashboard. Content will appear here as the platform expands.</div>;
       case 'explore':
         return <div className="content-placeholder">Explore new food spots and discover amazing places in your area.</div>;
-      case 'favorites':
-        return <div className="content-placeholder">Your favorite saved spots will appear here.</div>;
-      case 'leaderboard':
-        return <div className="content-placeholder">Top contributors and popular spots leaderboard.</div>;
       case 'profile':
         return <div className="content-placeholder">Manage your profile and personal settings.</div>;
       case 'settings':
