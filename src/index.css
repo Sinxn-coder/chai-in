@@ -8,9 +8,7 @@ body {
   font-family: 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans',
     'Droid Sans', 'Helvetica Neue', sans-serif;
   background: #ffffff;
-  color: #333;
   min-height: 100vh;
-  padding-top: 64px; /* Space for fixed App Bar */
 }
 
 #root {
@@ -23,14 +21,13 @@ header {
   left: 0;
   right: 0;
   height: 64px;
-  background: #ffffff;
-  border-bottom: 2px solid #FF0000;
+  background: linear-gradient(135deg, #FF0000, #E60000, #CC0000);
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 24px;
   z-index: 1000;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 15px rgba(255, 0, 0, 0.3);
 }
 
 .app-bar-brand {
@@ -42,91 +39,37 @@ header {
 .appIcon {
   width: 36px;
   height: 36px;
-  background: linear-gradient(135deg, #FF0000, #E60000, #CC0000);
+  background: white;
   border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 1.2rem;
-  color: white;
-  box-shadow: 0 2px 8px rgba(255, 0, 0, 0.3);
+  color: #FF0000;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 h1 {
   font-size: 1.5rem;
   font-weight: 800;
-  color: #1a1a1a;
+  color: white;
   letter-spacing: -0.5px;
 }
 
 h2 {
   font-size: 0.9rem;
-  color: #E60000;
+  color: rgba(255, 255, 255, 0.9);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 1px;
 }
 
-main {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 80px 24px;
-  text-align: center;
-}
-
-.description {
-  font-size: 1.25rem;
-  line-height: 1.6;
-  color: #555;
-  margin-bottom: 48px;
-}
-
-.details-section {
-  display: flex;
-  flex-direction: column;
-  gap: 32px;
-  margin-top: 48px;
-  text-align: left;
-}
-
-.detail-block {
-  padding: 24px;
-  border-left: 4px solid #FF0000;
-  background: #fcfcfc;
-}
-
-.detail-label {
-  display: block;
-  font-size: 0.85rem;
-  font-weight: 800;
-  color: #FF0000;
-  margin-bottom: 8px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-.detail-value {
-  font-size: 1.1rem;
-  color: #333;
-  font-weight: 500;
-  line-height: 1.4;
-}
-
 .tag {
-  background: #FF0000;
-  color: #ffffff;
+  background: white;
+  color: #FF0000;
   padding: 2px 8px;
   border-radius: 4px;
   font-weight: 800;
   font-size: 0.7rem;
   margin-left: 8px;
-}
-
-footer {
-  margin-top: 80px;
-  padding: 40px 24px;
-  font-size: 0.85rem;
-  color: #999;
-  border-top: 1px solid #eee;
-  text-align: center;
 }
