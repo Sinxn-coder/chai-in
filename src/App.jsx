@@ -105,21 +105,37 @@ function AppRoutes({ lang }) {
       <Routes>
         <Route element={<MainLayout lang={lang} />}>
           <Route path="home" element={<Home lang={lang} />} />
+          <Route path="/home" element={<Home lang={lang} />} />
           <Route path="map" element={<MapScreen lang={lang} />} />
+          <Route path="/map" element={<MapScreen lang={lang} />} />
           <Route path="add-spot" element={<AddSpot lang={lang} />} />
+          <Route path="/add-spot" element={<AddSpot lang={lang} />} />
           <Route path="club-leaderboard" element={<ClubLeaderboard lang={lang} />} />
+          <Route path="/club-leaderboard" element={<ClubLeaderboard lang={lang} />} />
           <Route path="leaderboard" element={<Leaderboard lang={lang} />} />
+          <Route path="/leaderboard" element={<Leaderboard lang={lang} />} />
           <Route path="explore" element={<Explore lang={lang} />} />
+          <Route path="/explore" element={<Explore lang={lang} />} />
           <Route path="community" element={<Community lang={lang} />} />
+          <Route path="/community" element={<Community lang={lang} />} />
           <Route path="favorites" element={<Favorites lang={lang} />} />
+          <Route path="/favorites" element={<Favorites lang={lang} />} />
           <Route path="saved-posts" element={<SavedPostsPage lang={lang} />} />
+          <Route path="/saved-posts" element={<SavedPostsPage lang={lang} />} />
           <Route path="settings" element={<Settings lang={lang} />} />
+          <Route path="/settings" element={<Settings lang={lang} />} />
           <Route path="privacy-policy" element={<PrivacyPolicy lang={lang} />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicy lang={lang} />} />
           <Route path="contact-admin" element={<ContactAdmin lang={lang} />} />
+          <Route path="/contact-admin" element={<ContactAdmin lang={lang} />} />
           <Route path="directions/:id" element={<DirectionsPage lang={lang} />} />
+          <Route path="/directions/:id" element={<DirectionsPage lang={lang} />} />
           <Route path="spot/:id" element={<SpotDetail lang={lang} />} />
+          <Route path="/spot/:id" element={<SpotDetail lang={lang} />} />
           <Route path="edit-spot/:id" element={<EditSpot lang={lang} />} />
+          <Route path="/edit-spot/:id" element={<EditSpot lang={lang} />} />
           <Route path="admin" element={<Admin />} />
+          <Route path="/admin" element={<Admin />} />
         </Route>
       </Routes>
     </Suspense>

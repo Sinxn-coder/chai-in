@@ -16,6 +16,21 @@ body {
     background-attachment: fixed;
     position: relative;
     overflow-x: hidden;
+    margin: 0;
+    padding: 0;
+}
+
+/* Ensure landing page displays properly */
+#root {
+    min-height: 100vh;
+}
+
+/* Basic container styling */
+.landing-container {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
 
 /* Animated Floating Blobs */
