@@ -2,38 +2,38 @@ import React from 'react';
 
 export default function App() {
   return (
-    <div className="page">
-      <div className="container">
+    <>
+      <header>
         <div className="appIcon">🍵</div>
-        <h1>Chai-in</h1>
-        <h2>Food Discovery</h2>
-        <div className="tag">Mobile Application</div>
-        
-        <p style={{ marginTop: '20px' }}>
+        <h1>
+          Chai-in
+          <span className="tag">LIVE</span>
+        </h1>
+        <h2>Food Discovery Platform</h2>
+      </header>
+
+      <main>
+        <p className="description">
           A modern food discovery platform designed to help users find amazing local spots.
+          Experience the best flavors in your community through our mobile application.
         </p>
 
-        <div className="details-grid">
-          <div className="detail-item">
+        <div className="details-section">
+          <div className="detail-block">
             <span className="detail-label">Features</span>
-            <div className="detail-value">Discover Spots, Rate & Review, Save Favorites, Community Feed</div>
+            <div className="detail-value">Discover Spots • Rate & Review • Save Favorites</div>
           </div>
           
-          <div className="detail-item">
-            <span className="detail-label">Technology Stack</span>
-            <div className="detail-value">Flutter, Supabase, Google Maps API, PostgreSQL</div>
-          </div>
-          
-          <div className="detail-item">
-            <span className="detail-label">Status</span>
-            <div className="detail-value">Active Development - Mobile App Available Now</div>
+          <div className="detail-block">
+            <span className="detail-label">Platform</span>
+            <div className="detail-value">Android & iOS • Active Development</div>
           </div>
         </div>
 
-        <div className="footer">
-          <p>Built with ❤️ for food lovers</p>
-        </div>
-      </div>
-    </div>
+        <footer>
+          <p>Built with ❤️ for food lovers everywhere</p>
+        </footer>
+      </main>
+    </>
   );
 }
