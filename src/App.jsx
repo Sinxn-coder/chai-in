@@ -526,103 +526,110 @@ export default function App() {
 
   const renderMapView = () => {
     const mapRef = useRef(null);
+    const [mapInitialized, setMapInitialized] = useState(false);
     
     useEffect(() => {
-      if (viewMode === 'map' && mapRef.current) {
-        // Initialize Leaflet map
-        const map = L.map(mapRef.current, {
-          center: [40.7128, -74.0060], // New York coordinates
-          zoom: 12,
-          layers: [
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-              attribution: '© OpenStreetMap contributors',
-              maxZoom: 19
-            })
-          ]
-        });
+      if (viewMode === 'map' && mapRef.current && !mapInitialized) {
+        // Initialize Leaflet map with proper timing
+        setTimeout(() => {
+          try {
+            const map = L.map(mapRef.current, {
+              center: [40.7128, -74.0060], // New York coordinates
+              zoom: 12,
+              layers: [
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                  attribution: '© OpenStreetMap contributors',
+                  maxZoom: 19
+                })
+              ]
+            });
 
-        // Add spot markers to map
-        filteredSpots.forEach(spot => {
-          const markerColor = spot.status === 'published' ? '#16a34a' : 
-                           spot.status === 'verified' ? '#1e40af' : 
-                           spot.status === 'pending' ? '#d97706' : '#dc2626';
-          
-          const marker = L.circleMarker([
-            40.7128 + (Math.random() - 0.1), // Slight position variation for demo
-            -74.0060 + (Math.random() - 0.1)
-          ], {
-            radius: 8,
-            fillColor: markerColor,
-            color: 'white',
-            weight: 2,
-            opacity: 0.8
-          }).addTo(map);
+            // Add spot markers to map
+            filteredSpots.forEach(spot => {
+              const markerColor = spot.status === 'published' ? '#16a34a' : 
+                               spot.status === 'verified' ? '#1e40af' : 
+                               spot.status === 'pending' ? '#d97706' : '#dc2626';
+              
+              const marker = L.circleMarker([
+                40.7128 + (Math.random() - 0.1), // Slight position variation for demo
+                -74.0060 + (Math.random() - 0.1)
+              ], {
+                radius: 8,
+                fillColor: markerColor,
+                color: 'white',
+                weight: 2,
+                opacity: 0.8
+              }).addTo(map);
 
-          // Add popup to marker
-          const popupContent = `
-            <div style="padding: 8px; min-width: 200px;">
-              <h4 style="margin: 0 0 8px 0; color: #111827; font-size: 14px; font-weight: 600;">${spot.name}</h4>
-              <p style="margin: 0 0 4px 0; color: #6b7280; font-size: 12px;">${spot.address}</p>
-              <div style="display: flex; justify-content: space-between; margin-top: 8px;">
-                <span style="color: ${markerColor}; font-weight: 600;">Status: ${spot.status}</span>
-                ${spot.rating ? `<span style="color: #f59e0b;">⭐ ${spot.rating}</span>` : '<span style="color: #6b7280;">No rating</span>'}
-              </div>
-            </div>
-          `;
-          
-          marker.bindPopup(popupContent);
-        });
+              // Add popup to marker
+              const popupContent = `
+                <div style="padding: 8px; min-width: 180px; font-family: Arial, sans-serif;">
+                  <h4 style="margin: 0 0 8px 0; color: #111827; font-size: 14px; font-weight: 600;">${spot.name}</h4>
+                  <p style="margin: 0 0 4px 0; color: #6b7280; font-size: 12px;">${spot.address}</p>
+                  <div style="display: flex; justify-content: space-between; margin-top: 8px;">
+                    <span style="color: ${markerColor}; font-weight: 600;">Status: ${spot.status}</span>
+                    ${spot.rating ? `<span style="color: #f59e0b;">⭐ ${spot.rating}</span>` : '<span style="color: #6b7280;">No rating</span>'}
+                  </div>
+                </div>
+              `;
+              
+              marker.bindPopup(popupContent);
+            });
 
-        // Add map controls
-        L.control.scale({
-          position: 'bottomright'
-        }).addTo(map);
+            // Add map controls
+            L.control.scale({
+              position: 'bottomright'
+            }).addTo(map);
 
-        return () => {
-          map.remove();
-        };
+            setMapInitialized(true);
+          } catch (error) {
+            console.error('Map initialization error:', error);
+          }
+        }, 100); // Small delay to ensure DOM is ready
       }
-    }, [viewMode, filteredSpots]);
+    }, [viewMode, filteredSpots, mapInitialized]);
 
-    return (
-      <div className="map-view">
-        <div className="map-header">
-          <h3>Interactive Spot Map</h3>
-          <div className="map-controls">
-            <div className="map-legend">
-              <div className="legend-item">
-                <div className="legend-dot published"></div>
-                <span>Published</span>
-              </div>
-              <div className="legend-item">
-                <div className="legend-dot verified"></div>
-                <span>Verified</span>
-              </div>
-              <div className="legend-item">
-                <div className="legend-dot pending"></div>
-                <span>Pending</span>
-              </div>
-              <div className="legend-item">
-                <div className="legend-dot flagged"></div>
-                <span>Flagged</span>
+    return () => {
+      if (viewMode !== 'map') {
+        return null;
+      }
+
+      return (
+        <div className="map-view">
+          <div className="map-header">
+            <h3>Interactive Spot Map</h3>
+            <div className="map-controls">
+              <div className="map-legend">
+                <div className="legend-item">
+                  <div className="legend-dot published"></div>
+                  <span>Published</span>
+                </div>
+                <div className="legend-item">
+                  <div className="legend-dot verified"></div>
+                  <span>Verified</span>
+                </div>
+                <div className="legend-item">
+                  <div className="legend-dot pending"></div>
+                  <span>Pending</span>
+                </div>
+                <div className="legend-item">
+                  <div className="legend-dot flagged"></div>
+                  <span>Flagged</span>
+                </div>
               </div>
             </div>
-            <button className="btn btn-secondary">
-              <Download size={16} />
-              Export Map
-            </button>
+          </div>
+        
+          <div className="map-container">
+            <div 
+              ref={mapRef} 
+              style={{ height: '600px', width: '100%' }}
+              className="leaflet-map"
+            />
           </div>
         </div>
-        
-        <div className="map-container">
-          <div 
-            ref={mapRef} 
-            style={{ height: '600px', width: '100%' }}
-            className="leaflet-map"
-          />
-        </div>
-      </div>
-    );
+      );
+    };
   };
 
   const renderSpots = () => {
