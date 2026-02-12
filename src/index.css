@@ -9,7 +9,7 @@ body {
     'Droid Sans', 'Helvetica Neue', sans-serif;
   background: #ffffff;
   min-height: 100vh;
-  padding-left: 240px; /* Space for the expanded sidebar */
+  padding-left: 80px; /* Space for the collapsed sidebar */
 }
 
 #root {
@@ -36,12 +36,17 @@ header {
   top: 64px;
   left: 0;
   bottom: 0;
-  width: 240px;
+  width: 80px;
   background: #ffffff;
   border-right: 1px solid #f0f0f0;
   padding: 20px 0;
   z-index: 1000;
   box-shadow: 2px 0 10px rgba(0, 0, 0, 0.02);
+  transition: width 0.3s ease;
+}
+
+.sidebar:hover {
+  width: 240px;
 }
 
 .nav-list {
@@ -49,7 +54,7 @@ header {
 }
 
 .nav-item {
-  padding: 16px 24px;
+  padding: 16px;
   display: flex;
   align-items: center;
   gap: 16px;
@@ -59,6 +64,7 @@ header {
   transition: all 0.2s ease;
   border-left: 4px solid transparent;
   height: 60px;
+  position: relative;
 }
 
 .nav-item:hover {
@@ -66,7 +72,7 @@ header {
   color: #FF0000;
 }
 
-.nav-item:hover .nav-text {
+.sidebar:hover .nav-text {
   opacity: 1;
   visibility: visible;
 }
@@ -77,17 +83,13 @@ header {
   border-left-color: #FF0000;
 }
 
-.nav-item.active .nav-text {
-  opacity: 1;
-  visibility: visible;
-}
-
 .nav-icon {
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
   width: 24px;
+  min-width: 24px;
 }
 
 .nav-text {
@@ -95,7 +97,9 @@ header {
   white-space: nowrap;
   opacity: 0;
   visibility: hidden;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
+  position: absolute;
+  left: 52px;
 }
 
 .app-bar-brand {
