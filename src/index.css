@@ -9,6 +9,7 @@ body {
     'Droid Sans', 'Helvetica Neue', sans-serif;
   background: #ffffff;
   min-height: 100vh;
+  padding-left: 240px; /* Space for the vertical sidebar */
 }
 
 #root {
@@ -26,8 +27,52 @@ header {
   align-items: center;
   justify-content: space-between;
   padding: 0 24px;
-  z-index: 1000;
+  z-index: 1001;
   box-shadow: 0 4px 15px rgba(255, 0, 0, 0.3);
+}
+
+.sidebar {
+  position: fixed;
+  top: 64px;
+  left: 0;
+  bottom: 0;
+  width: 240px;
+  background: #ffffff;
+  border-right: 1px solid #f0f0f0;
+  padding: 20px 0;
+  z-index: 1000;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.02);
+}
+
+.nav-list {
+  list-style: none;
+}
+
+.nav-item {
+  padding: 12px 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #555;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-left: 4px solid transparent;
+}
+
+.nav-item:hover {
+  background: #fff5f5;
+  color: #FF0000;
+}
+
+.nav-item.active {
+  background: #fff0f0;
+  color: #FF0000;
+  border-left-color: #FF0000;
+}
+
+.nav-icon {
+  font-size: 1.2rem;
 }
 
 .app-bar-brand {
@@ -72,4 +117,14 @@ h2 {
   font-weight: 800;
   font-size: 0.7rem;
   margin-left: 8px;
+}
+
+main {
+  padding: 40px;
+  max-width: 1000px;
+}
+
+.content-placeholder {
+  color: #999;
+  font-style: italic;
 }
