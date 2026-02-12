@@ -118,6 +118,16 @@ export default function App() {
   const [viewMode, setViewMode] = useState('table'); // 'table' or 'map'
   const [sortBy, setSortBy] = useState('name'); // 'name', 'rating', 'date', 'reviews'
 
+  // Filter and search users
+  const filteredUsers = useMemo(() => {
+    return users.filter(user => {
+      const matchesSearch = user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                           user.email.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesStatus = statusFilter === 'all' || user.status === statusFilter;
+      return matchesSearch && matchesStatus;
+    });
+  }, [users, searchTerm, statusFilter]);
+
   // Filter and search spots
   const filteredSpots = useMemo(() => {
     let filtered = spots.filter(spot => {
