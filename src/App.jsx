@@ -376,6 +376,186 @@ export default function App() {
     );
   };
 
+  const renderSpots = () => {
+    return (
+      <div className="spots-management">
+        <div className="spots-header">
+          <div className="spots-controls">
+            <div className="search-box">
+              <Search size={20} className="search-icon" />
+              <input
+                type="text"
+                placeholder="Search spots by name, location, or cuisine..."
+                className="search-input"
+              />
+            </div>
+            <div className="filter-dropdown">
+              <Filter size={20} className="filter-icon" />
+              <select className="filter-select">
+                <option value="all">All Status</option>
+                <option value="pending">Pending</option>
+                <option value="verified">Verified</option>
+                <option value="published">Published</option>
+                <option value="flagged">Flagged</option>
+              </select>
+            </div>
+          </div>
+          <div className="spots-actions">
+            <button className="btn btn-primary">
+              <Map size={16} />
+              Add New Spot
+            </button>
+            <button className="btn btn-secondary">
+              <Download size={16} />
+              Export
+            </button>
+          </div>
+        </div>
+
+        <div className="spots-table-container">
+          <table className="spots-table">
+            <thead>
+              <tr>
+                <th>
+                  <input type="checkbox" className="checkbox" />
+                </th>
+                <th>Spot Info</th>
+                <th>Location</th>
+                <th>Category</th>
+                <th>Status</th>
+                <th>Rating</th>
+                <th>Reviews</th>
+                <th>Added</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr className="spot-row">
+                <td>
+                  <input type="checkbox" className="checkbox" />
+                </td>
+                <td>
+                  <div className="spot-info">
+                    <div className="spot-image">🍕</div>
+                    <div>
+                      <div className="spot-name">Sunrise Cafe</div>
+                      <div className="spot-address">123 Main St, Downtown</div>
+                    </div>
+                  </div>
+                </td>
+                <td>New York, NY</td>
+                <td>Cafe</td>
+                <td><span className="status-badge status-published">Published</span></td>
+                <td>⭐ 4.5</td>
+                <td>127</td>
+                <td>2024-01-15</td>
+                <td>
+                  <div className="dropdown-container">
+                    <button className="btn-icon">
+                      <MoreVertical size={16} />
+                    </button>
+                  </div>
+                </td>
+              </tr>
+              <tr className="spot-row">
+                <td>
+                  <input type="checkbox" className="checkbox" />
+                </td>
+                <td>
+                  <div className="spot-info">
+                    <div className="spot-image">🍔</div>
+                    <div>
+                      <div className="spot-name">Burger Palace</div>
+                      <div className="spot-address">456 Oak Ave, Midtown</div>
+                    </div>
+                  </div>
+                </td>
+                <td>New York, NY</td>
+                <td>Fast Food</td>
+                <td><span className="status-badge status-verified">Verified</span></td>
+                <td>⭐ 4.2</td>
+                <td>89</td>
+                <td>2024-01-20</td>
+                <td>
+                  <div className="dropdown-container">
+                    <button className="btn-icon">
+                      <MoreVertical size={16} />
+                    </button>
+                  </div>
+                </td>
+              </tr>
+              <tr className="spot-row">
+                <td>
+                  <input type="checkbox" className="checkbox" />
+                </td>
+                <td>
+                  <div className="spot-info">
+                    <div className="spot-image">🥗</div>
+                    <div>
+                      <div className="spot-name">Pizza Heaven</div>
+                      <div className="spot-address">789 Pine St, Brooklyn</div>
+                    </div>
+                  </div>
+                </td>
+                <td>New York, NY</td>
+                <td>Italian</td>
+                <td><span className="status-badge status-pending">Pending</span></td>
+                <td>⭐ -</td>
+                <td>0</td>
+                <td>2024-02-10</td>
+                <td>
+                  <div className="dropdown-container">
+                    <button className="btn-icon">
+                      <MoreVertical size={16} />
+                    </button>
+                  </div>
+                </td>
+              </tr>
+              <tr className="spot-row">
+                <td>
+                  <input type="checkbox" className="checkbox" />
+                </td>
+                <td>
+                  <div className="spot-info">
+                    <div className="spot-image">🍜</div>
+                    <div>
+                      <div className="spot-name">Sushi Master</div>
+                      <div className="spot-address">321 Elm St, East Village</div>
+                    </div>
+                  </div>
+                </td>
+                <td>New York, NY</td>
+                <td>Japanese</td>
+                <td><span className="status-badge status-flagged">Flagged</span></td>
+                <td>⭐ 4.8</td>
+                <td>156</td>
+                <td>2024-01-08</td>
+                <td>
+                  <div className="dropdown-container">
+                    <button className="btn-icon">
+                      <MoreVertical size={16} />
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div className="spots-footer">
+          <div className="spots-count">
+            Showing 4 of 3,847 spots
+          </div>
+          <div className="pagination">
+            <button className="btn btn-secondary" disabled>Previous</button>
+            <span className="page-info">Page 1 of 962</span>
+            <button className="btn btn-secondary">Next</button>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   const renderContent = () => {
     switch (activeTab) {
       case 'dashboard':
@@ -383,7 +563,7 @@ export default function App() {
       case 'users':
         return renderUsers();
       case 'spots':
-        return <div className="content-placeholder">Spot Management - Add, edit, and moderate food spots, locations, and business information.</div>;
+        return renderSpots();
       case 'reviews':
         return <div className="content-placeholder">Review Moderation - Manage user reviews, ratings, photos, and reported content.</div>;
       case 'analytics':

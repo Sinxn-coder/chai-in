@@ -623,7 +623,157 @@ main {
 .bg-yellow-100 { background-color: #fef3c7; }
 .text-yellow-800 { color: #92400e; }
 
-/* Dropdown Menu Styles */
+/* Spots Management Styles */
+.spots-management {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  border: 1px solid #f0f0f0;
+  overflow: hidden;
+}
+
+.spots-header {
+  padding: 24px;
+  border-bottom: 1px solid #f0f0f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.spots-controls {
+  display: flex;
+  gap: 12px;
+  flex: 1;
+  min-width: 300px;
+}
+
+.spots-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.btn-primary {
+  background: #FF0000;
+  border-color: #FF0000;
+  color: white;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: #E60000;
+  border-color: #E60000;
+}
+
+.spots-table-container {
+  overflow-x: auto;
+}
+
+.spots-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.spots-table th {
+  padding: 12px 16px;
+  text-align: left;
+  font-weight: 600;
+  color: #374151;
+  background: #f9fafb;
+  border-bottom: 1px solid #e5e7eb;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.spots-table td {
+  padding: 16px;
+  border-bottom: 1px solid #f3f4f6;
+  vertical-align: middle;
+}
+
+.spot-row:nth-child(odd) {
+  background: #ffffff;
+}
+
+.spot-row:nth-child(even) {
+  background: #f9fafb;
+}
+
+.spot-row:hover {
+  background: #f3f4f6;
+}
+
+.spot-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 300px;
+}
+
+.spot-image {
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.spot-name {
+  font-weight: 600;
+  color: #111827;
+  font-size: 0.95rem;
+  margin-bottom: 2px;
+}
+
+.spot-address {
+  color: #6b7280;
+  font-size: 0.85rem;
+}
+
+.spots-footer {
+  padding: 16px 24px;
+  border-top: 1px solid #f0f0f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f9fafb;
+}
+
+.spots-count {
+  color: #6b7280;
+  font-size: 0.9rem;
+}
+
+/* Spot Status Badges */
+.status-published {
+  background-color: #dcfce7;
+  color: #166534;
+  border: 1px solid #bbf7d0;
+}
+
+.status-verified {
+  background-color: #dbeafe;
+  color: #1e40af;
+  border: 1px solid #93c5fd;
+}
+
+.status-pending {
+  background-color: #fef3c7;
+  color: #92400e;
+  border: 1px solid #f59e0b;
+}
+
+.status-flagged {
+  background-color: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #ef4444;
+}
 .dropdown-container {
   position: relative;
   display: inline-block;
