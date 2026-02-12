@@ -1,4 +1,5 @@
 import React from 'react';
+import { Home, Search, Star, Trophy, User, Settings } from 'lucide-react';
 
 export default function App() {
   return (
@@ -17,28 +18,40 @@ export default function App() {
       <nav className="sidebar">
         <ul className="nav-list">
           <li className="nav-item active">
-            <span className="nav-icon">🏠</span>
-            <span>Home</span>
+            <div className="nav-icon">
+              <Home size={24} />
+            </div>
+            <span className="nav-text">Home</span>
           </li>
           <li className="nav-item">
-            <span className="nav-icon">🔍</span>
-            <span>Explore</span>
+            <div className="nav-icon">
+              <Search size={24} />
+            </div>
+            <span className="nav-text">Explore</span>
           </li>
           <li className="nav-item">
-            <span className="nav-icon">⭐</span>
-            <span>Favorites</span>
+            <div className="nav-icon">
+              <Star size={24} />
+            </div>
+            <span className="nav-text">Favorites</span>
           </li>
           <li className="nav-item">
-            <span className="nav-icon">📊</span>
-            <span>Leaderboard</span>
+            <div className="nav-icon">
+              <Trophy size={24} />
+            </div>
+            <span className="nav-text">Leaderboard</span>
           </li>
           <li className="nav-item">
-            <span className="nav-icon">👤</span>
-            <span>Profile</span>
+            <div className="nav-icon">
+              <User size={24} />
+            </div>
+            <span className="nav-text">Profile</span>
           </li>
           <li className="nav-item">
-            <span className="nav-icon">⚙️</span>
-            <span>Settings</span>
+            <div className="nav-icon">
+              <Settings size={24} />
+            </div>
+            <span className="nav-text">Settings</span>
           </li>
         </ul>
       </nav>
