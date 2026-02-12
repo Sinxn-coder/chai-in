@@ -522,7 +522,93 @@ export default function App() {
     // Here you would implement actual export logic
   };
 
+  const renderMapView = () => {
+    return (
+      <div className="map-view">
+        <div className="map-header">
+          <h3>Spot Locations Map</h3>
+          <div className="map-controls">
+            <div className="map-legend">
+              <div className="legend-item">
+                <div className="legend-dot published"></div>
+                <span>Published</span>
+              </div>
+              <div className="legend-item">
+                <div className="legend-dot verified"></div>
+                <span>Verified</span>
+              </div>
+              <div className="legend-item">
+                <div className="legend-dot pending"></div>
+                <span>Pending</span>
+              </div>
+              <div className="legend-item">
+                <div className="legend-dot flagged"></div>
+                <span>Flagged</span>
+              </div>
+            </div>
+            <button className="btn btn-secondary">
+              <Download size={16} />
+              Export Map
+            </button>
+          </div>
+        </div>
+        
+        <div className="map-container">
+          <div className="map-placeholder">
+            <div className="map-background">
+              {/* Simulated map with spot markers */}
+              <div className="spot-marker" style={{ left: '20%', top: '30%' }} title="Sunrise Cafe">
+                <div className="marker-icon published">🍕</div>
+                <div className="marker-label">Sunrise Cafe</div>
+              </div>
+              <div className="spot-marker" style={{ left: '60%', top: '45%' }} title="Burger Palace">
+                <div className="marker-icon verified">🍔</div>
+                <div className="marker-label">Burger Palace</div>
+              </div>
+              <div className="spot-marker" style={{ left: '35%', top: '70%' }} title="Pizza Heaven">
+                <div className="marker-icon pending">🥗</div>
+                <div className="marker-label">Pizza Heaven</div>
+              </div>
+              <div className="spot-marker" style={{ left: '75%', top: '25%' }} title="Sushi Master">
+                <div className="marker-icon flagged">🍜</div>
+                <div className="marker-label">Sushi Master</div>
+              </div>
+              
+              {/* Map controls */}
+              <div className="map-controls-overlay">
+                <button className="map-control">+</button>
+                <button className="map-control">−</button>
+                <button className="map-control">⟲</button>
+                <button className="map-control">⟱</button>
+              </div>
+            </div>
+            
+            <div className="map-info">
+              <div className="info-card">
+                <h4>Map View</h4>
+                <p>Interactive map showing all spot locations with status-based color coding.</p>
+                <div className="info-stats">
+                  <div className="info-item">
+                    <span className="info-number">{filteredSpots.length}</span>
+                    <span className="info-label">Visible Spots</span>
+                  </div>
+                  <div className="info-item">
+                    <span className="info-number">{spotStats.total}</span>
+                    <span className="info-label">Total Spots</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   const renderSpots = () => {
+    if (viewMode === 'map') {
+      return renderMapView();
+    }
     return (
       <>
         <div className="spots-management">
