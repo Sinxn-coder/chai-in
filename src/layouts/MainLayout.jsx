@@ -125,8 +125,7 @@ const MainLayout = ({ lang }) => {
                             }}
                             style={{ 
                                 willChange: 'transform',
-                                paddingTop: showNewNav ? '0px' : (needsSpecialPadding ? '0px' : '70px'), // No top padding for ClubLeaderboard and AddSpot
-                                paddingBottom: '70px', // Always account for fixed BottomNav
+                                paddingTop: needsSpecialPadding ? '0px' : '70px', // No top padding for AddSpot
                                 minHeight: '100vh'
                             }}
                         >
