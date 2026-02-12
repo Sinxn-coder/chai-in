@@ -68,7 +68,7 @@ export default function App() {
     };
     return (
       <span className={styles[status]}>
-        {status === 'active' ? '✓ Active' : '✗ Banned'}
+        {status === 'active' ? 'Active' : 'Banned'}
       </span>
     );
   };
