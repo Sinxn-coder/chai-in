@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
-import { Layout, Users, Map, Star, BarChart3, Settings, TrendingUp, AlertCircle, CheckCircle, Clock, Search, Filter, Download, Ban, Shield, UserCheck, MoreVertical, Edit, Eye, MessageSquare, Trash2 } from 'lucide-react';
+import { Layout, Users, Map, Star, BarChart3, Settings, TrendingUp, AlertCircle, CheckCircle, Clock, Search, Filter, Download, Ban, Shield, UserCheck, MoreVertical, Edit, Eye, MessageSquare, Trash2, X, Camera, Phone, Mail, Globe, Clock as ClockIcon, MapPin, Star as StarIcon } from 'lucide-react';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -30,20 +30,131 @@ export default function App() {
     { id: 8, name: 'David Wilson', email: 'david@example.com', status: 'active', joined: '2024-01-18', lastActive: '2024-02-12', spots: 9, reviews: 31 }
   ]);
 
+  // Mock spot data
+  const [spots] = useState([
+    { 
+      id: 1, 
+      name: 'Sunrise Cafe', 
+      address: '123 Main St, Downtown', 
+      city: 'New York', 
+      state: 'NY',
+      category: 'Cafe',
+      status: 'published',
+      rating: 4.5,
+      reviews: 127,
+      added: '2024-01-15',
+      phone: '+1 (555) 123-4567',
+      email: 'sunrise@bytspot.com',
+      website: 'sunrisecafe.com',
+      hours: '6:00 AM - 10:00 PM',
+      description: 'Cozy neighborhood cafe serving artisanal coffee and fresh pastries.',
+      photos: ['coffee1.jpg', 'coffee2.jpg', 'coffee3.jpg']
+    },
+    { 
+      id: 2, 
+      name: 'Burger Palace', 
+      address: '456 Oak Ave, Midtown', 
+      city: 'New York', 
+      state: 'NY',
+      category: 'Fast Food',
+      status: 'verified',
+      rating: 4.2,
+      reviews: 89,
+      added: '2024-01-20',
+      phone: '+1 (555) 234-5678',
+      email: 'info@burgerpalace.com',
+      website: 'burgerpalace.com',
+      hours: '11:00 AM - 11:00 PM',
+      description: 'Classic American burgers with modern twists and fresh ingredients.',
+      photos: ['burger1.jpg', 'burger2.jpg']
+    },
+    { 
+      id: 3, 
+      name: 'Pizza Heaven', 
+      address: '789 Pine St, Brooklyn', 
+      city: 'New York', 
+      state: 'NY',
+      category: 'Italian',
+      status: 'pending',
+      rating: null,
+      reviews: 0,
+      added: '2024-02-10',
+      phone: '+1 (555) 345-6789',
+      email: 'hello@pizzaheaven.com',
+      website: 'pizzaheaven.com',
+      hours: '12:00 PM - 12:00 AM',
+      description: 'Authentic wood-fired pizza with traditional Italian recipes.',
+      photos: ['pizza1.jpg']
+    },
+    { 
+      id: 4, 
+      name: 'Sushi Master', 
+      address: '321 Elm St, East Village', 
+      city: 'New York', 
+      state: 'NY',
+      category: 'Japanese',
+      status: 'flagged',
+      rating: 4.8,
+      reviews: 156,
+      added: '2024-01-08',
+      phone: '+1 (555) 456-7890',
+      email: 'contact@sushimaster.com',
+      website: 'sushimaster.com',
+      hours: '5:00 PM - 12:00 AM',
+      description: 'Premium sushi and Japanese cuisine in an intimate setting.',
+      photos: ['sushi1.jpg', 'sushi2.jpg', 'sushi3.jpg', 'sushi4.jpg']
+    }
+  ]);
+
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [activeDropdown, setActiveDropdown] = useState(null);
+  const [selectedSpots, setSelectedSpots] = useState([]);
+  const [spotModalOpen, setSpotModalOpen] = useState(false);
+  const [selectedSpot, setSelectedSpot] = useState(null);
 
-  // Filter and search users
-  const filteredUsers = useMemo(() => {
-    return users.filter(user => {
-      const matchesSearch = user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           user.email.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchesStatus = statusFilter === 'all' || user.status === statusFilter;
+  // Filter and search spots
+  const filteredSpots = useMemo(() => {
+    return spots.filter(spot => {
+      const matchesSearch = spot.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                           spot.address.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                           spot.category.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesStatus = statusFilter === 'all' || spot.status === statusFilter;
       return matchesSearch && matchesStatus;
     });
-  }, [users, searchTerm, statusFilter]);
+  }, [spots, searchTerm, statusFilter]);
+
+  const handleSelectSpot = (spotId) => {
+    setSelectedSpots(prev => 
+      prev.includes(spotId) 
+        ? prev.filter(id => id !== spotId)
+        : [...prev, spotId]
+    );
+  };
+
+  const handleSelectAllSpots = () => {
+    if (selectedSpots.length === filteredSpots.length) {
+      setSelectedSpots([]);
+    } else {
+      setSelectedSpots(filteredSpots.map(spot => spot.id));
+    }
+  };
+
+  const openSpotModal = (spot) => {
+    setSelectedSpot(spot);
+    setSpotModalOpen(true);
+  };
+
+  const closeSpotModal = () => {
+    setSpotModalOpen(false);
+    setSelectedSpot(null);
+  };
+
+  const handleSpotAction = (action, spot) => {
+    console.log(`${action} spot:`, spot.name);
+    // Here you would implement actual action logic
+  };
 
   const handleSelectUser = (userId) => {
     setSelectedUsers(prev => 
@@ -378,181 +489,262 @@ export default function App() {
 
   const renderSpots = () => {
     return (
-      <div className="spots-management">
-        <div className="spots-header">
-          <div className="spots-controls">
-            <div className="search-box">
-              <Search size={20} className="search-icon" />
-              <input
-                type="text"
-                placeholder="Search spots by name, location, or cuisine..."
-                className="search-input"
-              />
+      <>
+        <div className="spots-management">
+          <div className="spots-header">
+            <div className="spots-controls">
+              <div className="search-box">
+                <Search size={20} className="search-icon" />
+                <input
+                  type="text"
+                  placeholder="Search spots by name, location, or cuisine..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="search-input"
+                />
+              </div>
+              <div className="filter-dropdown">
+                <Filter size={20} className="filter-icon" />
+                <select 
+                  value={statusFilter} 
+                  onChange={(e) => setStatusFilter(e.target.value)}
+                  className="filter-select"
+                >
+                  <option value="all">All Status</option>
+                  <option value="pending">Pending</option>
+                  <option value="verified">Verified</option>
+                  <option value="published">Published</option>
+                  <option value="flagged">Flagged</option>
+                </select>
+              </div>
             </div>
-            <div className="filter-dropdown">
-              <Filter size={20} className="filter-icon" />
-              <select className="filter-select">
-                <option value="all">All Status</option>
-                <option value="pending">Pending</option>
-                <option value="verified">Verified</option>
-                <option value="published">Published</option>
-                <option value="flagged">Flagged</option>
-              </select>
+            <div className="spots-actions">
+              <button className="btn btn-primary">
+                <Map size={16} />
+                Add New Spot
+              </button>
+              <button className="btn btn-secondary">
+                <Download size={16} />
+                Export
+              </button>
+              {selectedSpots.length > 0 && (
+                <>
+                  <button className="btn btn-success">
+                    <CheckCircle size={16} />
+                    Verify Selected
+                  </button>
+                  <button className="btn btn-warning">
+                    <Ban size={16} />
+                    Delete Selected
+                  </button>
+                </>
+              )}
             </div>
           </div>
-          <div className="spots-actions">
-            <button className="btn btn-primary">
-              <Map size={16} />
-              Add New Spot
-            </button>
-            <button className="btn btn-secondary">
-              <Download size={16} />
-              Export
-            </button>
+
+          <div className="spots-table-container">
+            <table className="spots-table">
+              <thead>
+                <tr>
+                  <th>
+                    <input 
+                      type="checkbox" 
+                      className="checkbox"
+                      checked={selectedSpots.length === filteredSpots.length && filteredSpots.length > 0}
+                      onChange={handleSelectAllSpots}
+                    />
+                  </th>
+                  <th>Spot Info</th>
+                  <th>Location</th>
+                  <th>Category</th>
+                  <th>Status</th>
+                  <th>Rating</th>
+                  <th>Reviews</th>
+                  <th>Added</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredSpots.map(spot => (
+                  <tr key={spot.id} className="spot-row">
+                    <td>
+                      <input
+                        type="checkbox"
+                        className="checkbox"
+                        checked={selectedSpots.includes(spot.id)}
+                        onChange={() => handleSelectSpot(spot.id)}
+                      />
+                    </td>
+                    <td>
+                      <div className="spot-info" onClick={() => openSpotModal(spot)} style={{ cursor: 'pointer' }}>
+                        <div className="spot-image">{spot.category === 'Cafe' ? '🍕' : spot.category === 'Fast Food' ? '🍔' : spot.category === 'Italian' ? '🥗' : '🍜'}</div>
+                        <div>
+                          <div className="spot-name">{spot.name}</div>
+                          <div className="spot-address">{spot.address}</div>
+                        </div>
+                      </div>
+                    </td>
+                    <td>{spot.city}, {spot.state}</td>
+                    <td>{spot.category}</td>
+                    <td><span className={`status-badge status-${spot.status}`}>{spot.status.charAt(0).toUpperCase() + spot.status.slice(1)}</span></td>
+                    <td>{spot.rating ? `⭐ ${spot.rating}` : '⭐ -'}</td>
+                    <td>{spot.reviews}</td>
+                    <td>{spot.added}</td>
+                    <td>
+                      <div className="dropdown-container">
+                        <button className="btn-icon" onClick={() => toggleDropdown(spot.id)}>
+                          <MoreVertical size={16} />
+                        </button>
+                        
+                        {activeDropdown === spot.id && (
+                          <div className="dropdown-menu">
+                            <button 
+                              className="dropdown-item"
+                              onClick={() => handleSpotAction('edit', spot)}
+                            >
+                              <Edit size={14} />
+                              Edit Spot
+                            </button>
+                            <button 
+                              className="dropdown-item"
+                              onClick={() => openSpotModal(spot)}
+                            >
+                              <Eye size={14} />
+                              View Details
+                            </button>
+                            <div className="dropdown-divider"></div>
+                            <button 
+                              className="dropdown-item"
+                              onClick={() => handleSpotAction(spot.status === 'published' ? 'unpublish' : 'publish', spot)}
+                            >
+                              {spot.status === 'published' ? '📤 Unpublish' : '📥 Publish'}
+                            </button>
+                            <button 
+                              className="dropdown-item danger"
+                              onClick={() => handleSpotAction('delete', spot)}
+                            >
+                              <Trash2 size={14} />
+                              Delete Spot
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <div className="spots-footer">
+            <div className="spots-count">
+              Showing {filteredSpots.length} of {spots.length} spots
+            </div>
+            <div className="pagination">
+              <button className="btn btn-secondary" disabled>Previous</button>
+              <span className="page-info">Page 1 of 1</span>
+              <button className="btn btn-secondary" disabled>Next</button>
+            </div>
           </div>
         </div>
 
-        <div className="spots-table-container">
-          <table className="spots-table">
-            <thead>
-              <tr>
-                <th>
-                  <input type="checkbox" className="checkbox" />
-                </th>
-                <th>Spot Info</th>
-                <th>Location</th>
-                <th>Category</th>
-                <th>Status</th>
-                <th>Rating</th>
-                <th>Reviews</th>
-                <th>Added</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr className="spot-row">
-                <td>
-                  <input type="checkbox" className="checkbox" />
-                </td>
-                <td>
-                  <div className="spot-info">
-                    <div className="spot-image">🍕</div>
-                    <div>
-                      <div className="spot-name">Sunrise Cafe</div>
-                      <div className="spot-address">123 Main St, Downtown</div>
+        {/* Spot Details Modal */}
+        {spotModalOpen && selectedSpot && (
+          <div className="modal-overlay" onClick={closeSpotModal}>
+            <div className="spot-modal" onClick={(e) => e.stopPropagation()}>
+              <div className="modal-header">
+                <h2>{selectedSpot.name}</h2>
+                <button className="modal-close" onClick={closeSpotModal}>
+                  <X size={20} />
+                </button>
+              </div>
+              
+              <div className="modal-content">
+                <div className="modal-left">
+                  <div className="spot-photos">
+                    <div className="photo-grid">
+                      {selectedSpot.photos.map((photo, index) => (
+                        <div key={index} className="photo-item">
+                          <Camera size={24} />
+                          <span>Photo {index + 1}</span>
+                        </div>
+                      ))}
                     </div>
                   </div>
-                </td>
-                <td>New York, NY</td>
-                <td>Cafe</td>
-                <td><span className="status-badge status-published">Published</span></td>
-                <td>⭐ 4.5</td>
-                <td>127</td>
-                <td>2024-01-15</td>
-                <td>
-                  <div className="dropdown-container">
-                    <button className="btn-icon">
-                      <MoreVertical size={16} />
-                    </button>
-                  </div>
-                </td>
-              </tr>
-              <tr className="spot-row">
-                <td>
-                  <input type="checkbox" className="checkbox" />
-                </td>
-                <td>
-                  <div className="spot-info">
-                    <div className="spot-image">🍔</div>
-                    <div>
-                      <div className="spot-name">Burger Palace</div>
-                      <div className="spot-address">456 Oak Ave, Midtown</div>
+                </div>
+                
+                <div className="modal-right">
+                  <div className="spot-details">
+                    <div className="detail-item">
+                      <MapPin size={16} className="detail-icon" />
+                      <div>
+                        <div className="detail-label">Address</div>
+                        <div className="detail-value">{selectedSpot.address}</div>
+                        <div className="detail-subvalue">{selectedSpot.city}, {selectedSpot.state}</div>
+                      </div>
+                    </div>
+                    
+                    <div className="detail-item">
+                      <Phone size={16} className="detail-icon" />
+                      <div>
+                        <div className="detail-label">Phone</div>
+                        <div className="detail-value">{selectedSpot.phone}</div>
+                      </div>
+                    </div>
+                    
+                    <div className="detail-item">
+                      <Mail size={16} className="detail-icon" />
+                      <div>
+                        <div className="detail-label">Email</div>
+                        <div className="detail-value">{selectedSpot.email}</div>
+                      </div>
+                    </div>
+                    
+                    <div className="detail-item">
+                      <Globe size={16} className="detail-icon" />
+                      <div>
+                        <div className="detail-label">Website</div>
+                        <div className="detail-value">{selectedSpot.website}</div>
+                      </div>
+                    </div>
+                    
+                    <div className="detail-item">
+                      <ClockIcon size={16} className="detail-icon" />
+                      <div>
+                        <div className="detail-label">Hours</div>
+                        <div className="detail-value">{selectedSpot.hours}</div>
+                      </div>
+                    </div>
+                    
+                    <div className="detail-item">
+                      <StarIcon size={16} className="detail-icon" />
+                      <div>
+                        <div className="detail-label">Rating</div>
+                        <div className="detail-value">{selectedSpot.rating ? `⭐ ${selectedSpot.rating} (${selectedSpot.reviews} reviews)` : 'No ratings yet'}</div>
+                      </div>
                     </div>
                   </div>
-                </td>
-                <td>New York, NY</td>
-                <td>Fast Food</td>
-                <td><span className="status-badge status-verified">Verified</span></td>
-                <td>⭐ 4.2</td>
-                <td>89</td>
-                <td>2024-01-20</td>
-                <td>
-                  <div className="dropdown-container">
-                    <button className="btn-icon">
-                      <MoreVertical size={16} />
-                    </button>
+                  
+                  <div className="spot-description">
+                    <h3>Description</h3>
+                    <p>{selectedSpot.description}</p>
                   </div>
-                </td>
-              </tr>
-              <tr className="spot-row">
-                <td>
-                  <input type="checkbox" className="checkbox" />
-                </td>
-                <td>
-                  <div className="spot-info">
-                    <div className="spot-image">🥗</div>
-                    <div>
-                      <div className="spot-name">Pizza Heaven</div>
-                      <div className="spot-address">789 Pine St, Brooklyn</div>
-                    </div>
-                  </div>
-                </td>
-                <td>New York, NY</td>
-                <td>Italian</td>
-                <td><span className="status-badge status-pending">Pending</span></td>
-                <td>⭐ -</td>
-                <td>0</td>
-                <td>2024-02-10</td>
-                <td>
-                  <div className="dropdown-container">
-                    <button className="btn-icon">
-                      <MoreVertical size={16} />
-                    </button>
-                  </div>
-                </td>
-              </tr>
-              <tr className="spot-row">
-                <td>
-                  <input type="checkbox" className="checkbox" />
-                </td>
-                <td>
-                  <div className="spot-info">
-                    <div className="spot-image">🍜</div>
-                    <div>
-                      <div className="spot-name">Sushi Master</div>
-                      <div className="spot-address">321 Elm St, East Village</div>
-                    </div>
-                  </div>
-                </td>
-                <td>New York, NY</td>
-                <td>Japanese</td>
-                <td><span className="status-badge status-flagged">Flagged</span></td>
-                <td>⭐ 4.8</td>
-                <td>156</td>
-                <td>2024-01-08</td>
-                <td>
-                  <div className="dropdown-container">
-                    <button className="btn-icon">
-                      <MoreVertical size={16} />
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <div className="spots-footer">
-          <div className="spots-count">
-            Showing 4 of 3,847 spots
+                </div>
+              </div>
+              
+              <div className="modal-footer">
+                <button className="btn btn-secondary" onClick={closeSpotModal}>
+                  Close
+                </button>
+                <button className="btn btn-primary">
+                  <Edit size={16} />
+                  Edit Spot
+                </button>
+              </div>
+            </div>
           </div>
-          <div className="pagination">
-            <button className="btn btn-secondary" disabled>Previous</button>
-            <span className="page-info">Page 1 of 962</span>
-            <button className="btn btn-secondary">Next</button>
-          </div>
-        </div>
-      </div>
+        )}
+      </>
     );
   };
 
