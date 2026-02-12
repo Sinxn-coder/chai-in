@@ -9,7 +9,7 @@ body {
     'Droid Sans', 'Helvetica Neue', sans-serif;
   background: #ffffff;
   min-height: 100vh;
-  padding-left: 80px; /* Space for the icon-only sidebar */
+  padding-left: 240px; /* Space for the expanded sidebar */
 }
 
 #root {
@@ -36,7 +36,7 @@ header {
   top: 64px;
   left: 0;
   bottom: 0;
-  width: 80px;
+  width: 240px;
   background: #ffffff;
   border-right: 1px solid #f0f0f0;
   padding: 20px 0;
@@ -49,28 +49,21 @@ header {
 }
 
 .nav-item {
-  padding: 16px;
+  padding: 16px 24px;
   display: flex;
-  flex-direction: column;
   align-items: center;
-  justify-content: center;
+  gap: 16px;
   color: #555;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
   border-left: 4px solid transparent;
-  position: relative;
   height: 60px;
 }
 
 .nav-item:hover {
   background: #fff5f5;
   color: #FF0000;
-}
-
-.nav-item:hover .nav-text {
-  opacity: 1;
-  visibility: visible;
 }
 
 .nav-item.active {
@@ -80,38 +73,15 @@ header {
 }
 
 .nav-icon {
-  font-size: 1.4rem;
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
 }
 
 .nav-text {
-  position: absolute;
-  left: 100%;
-  top: 50%;
-  transform: translateY(-50%);
-  background: #333;
-  color: white;
-  padding: 6px 12px;
-  border-radius: 4px;
+  font-size: 0.95rem;
   white-space: nowrap;
-  font-size: 0.85rem;
-  margin-left: 8px;
-  opacity: 0;
-  visibility: hidden;
-  transition: all 0.2s ease;
-  z-index: 1002;
-}
-
-.nav-text::before {
-  content: '';
-  position: absolute;
-  right: 100%;
-  top: 50%;
-  transform: translateY(-50%);
-  border: 4px solid transparent;
-  border-right-color: #333;
 }
 
 .app-bar-brand {
