@@ -1,5 +1,5 @@
-import React, { useState, useMemo } from 'react';
-import { Layout, Users, Map, Star, BarChart3, Settings, TrendingUp, AlertCircle, CheckCircle, Clock, Search, Filter, Download, Ban, Shield, UserCheck, MoreVertical } from 'lucide-react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
+import { Layout, Users, Map, Star, BarChart3, Settings, TrendingUp, AlertCircle, CheckCircle, Clock, Search, Filter, Download, Ban, Shield, UserCheck, MoreVertical, Edit, Eye, MessageSquare, Trash2 } from 'lucide-react';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -33,6 +33,7 @@ export default function App() {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [selectedUsers, setSelectedUsers] = useState([]);
+  const [activeDropdown, setActiveDropdown] = useState(null);
 
   // Filter and search users
   const filteredUsers = useMemo(() => {
@@ -72,6 +73,28 @@ export default function App() {
       </span>
     );
   };
+
+  const toggleDropdown = (userId) => {
+    setActiveDropdown(activeDropdown === userId ? null : userId);
+  };
+
+  const handleAction = (action, user) => {
+    console.log(`${action} user:`, user.name);
+    setActiveDropdown(null);
+    // Here you would implement the actual action logic
+  };
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (!event.target.closest('.dropdown-container')) {
+        setActiveDropdown(null);
+      }
+    };
+
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, []);
 
   const renderUsers = () => {
     return (
@@ -169,9 +192,55 @@ export default function App() {
                   <td>{user.spots}</td>
                   <td>{user.reviews}</td>
                   <td>
-                    <button className="btn-icon">
-                      <MoreVertical size={16} />
-                    </button>
+                    <div className="dropdown-container">
+                      <button 
+                        className="btn-icon"
+                        onClick={() => toggleDropdown(user.id)}
+                      >
+                        <MoreVertical size={16} />
+                      </button>
+                      
+                      {activeDropdown === user.id && (
+                        <div className="dropdown-menu">
+                          <button 
+                            className="dropdown-item"
+                            onClick={() => handleAction('edit', user)}
+                          >
+                            <Edit size={14} />
+                            Edit User
+                          </button>
+                          <button 
+                            className="dropdown-item"
+                            onClick={() => handleAction('view', user)}
+                          >
+                            <Eye size={14} />
+                            View Details
+                          </button>
+                          <button 
+                            className="dropdown-item"
+                            onClick={() => handleAction('message', user)}
+                          >
+                            <MessageSquare size={14} />
+                            Send Message
+                          </button>
+                          <div className="dropdown-divider"></div>
+                          <button 
+                            className="dropdown-item danger"
+                            onClick={() => handleAction(user.status === 'banned' ? 'unban' : 'ban', user)}
+                          >
+                            <Ban size={14} />
+                            {user.status === 'banned' ? 'Unban User' : 'Ban User'}
+                          </button>
+                          <button 
+                            className="dropdown-item danger"
+                            onClick={() => handleAction('delete', user)}
+                          >
+                            <Trash2 size={14} />
+                            Delete User
+                          </button>
+                        </div>
+                      )}
+                    </div>
                   </td>
                 </tr>
               ))}
