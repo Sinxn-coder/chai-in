@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Layout, Users, Map, Star, BarChart3, Settings } from 'lucide-react';
+import { Layout, Users, Map, Star, BarChart3, Settings, TrendingUp, AlertCircle, CheckCircle, Clock } from 'lucide-react';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -18,10 +18,126 @@ export default function App() {
     return activeItem ? activeItem.name : 'Dashboard';
   };
 
+  const renderDashboard = () => {
+    return (
+      <div className="dashboard">
+        <div className="stats-grid">
+          {/* Total Users Card */}
+          <div className="stat-card">
+            <div className="stat-header">
+              <div className="stat-icon users">
+                <Users size={24} />
+              </div>
+              <h3>Total Users</h3>
+            </div>
+            <div className="stat-content">
+              <div className="stat-main">12,458</div>
+              <div className="stat-details">
+                <div className="stat-item">
+                  <CheckCircle size={16} className="stat-icon-small success" />
+                  <span>Registered: 12,458</span>
+                </div>
+                <div className="stat-item">
+                  <TrendingUp size={16} className="stat-icon-small active" />
+                  <span>Active: 8,234</span>
+                </div>
+                <div className="stat-item">
+                  <Clock size={16} className="stat-icon-small new" />
+                  <span>New Today: 47</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Total Food Spots Card */}
+          <div className="stat-card">
+            <div className="stat-header">
+              <div className="stat-icon spots">
+                <Map size={24} />
+              </div>
+              <h3>Total Food Spots</h3>
+            </div>
+            <div className="stat-content">
+              <div className="stat-main">3,847</div>
+              <div className="stat-details">
+                <div className="stat-item">
+                  <CheckCircle size={16} className="stat-icon-small success" />
+                  <span>Verified: 3,621</span>
+                </div>
+                <div className="stat-item">
+                  <AlertCircle size={16} className="stat-icon-small warning" />
+                  <span>Pending: 156</span>
+                </div>
+                <div className="stat-item">
+                  <AlertCircle size={16} className="stat-icon-small danger" />
+                  <span>Flagged: 70</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Total Reviews & Ratings Card */}
+          <div className="stat-card">
+            <div className="stat-header">
+              <div className="stat-icon reviews">
+                <Star size={24} />
+              </div>
+              <h3>Reviews & Ratings</h3>
+            </div>
+            <div className="stat-content">
+              <div className="stat-main">45,892</div>
+              <div className="stat-details">
+                <div className="stat-item">
+                  <Star size={16} className="stat-icon-small rating" />
+                  <span>Average Rating: 4.2/5.0</span>
+                </div>
+                <div className="stat-item">
+                  <AlertCircle size={16} className="stat-icon-small warning" />
+                  <span>Pending Moderation: 23</span>
+                </div>
+                <div className="stat-item">
+                  <TrendingUp size={16} className="stat-icon-small active" />
+                  <span>This Week: 1,247</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Active Users Card */}
+          <div className="stat-card">
+            <div className="stat-header">
+              <div className="stat-icon analytics">
+                <BarChart3 size={24} />
+              </div>
+              <h3>Active Users</h3>
+            </div>
+            <div className="stat-content">
+              <div className="stat-main">8,234</div>
+              <div className="stat-details">
+                <div className="stat-item">
+                  <Clock size={16} className="stat-icon-small daily" />
+                  <span>Daily: 8,234</span>
+                </div>
+                <div className="stat-item">
+                  <TrendingUp size={16} className="stat-icon-small weekly" />
+                  <span>Weekly: 28,456</span>
+                </div>
+                <div className="stat-item">
+                  <BarChart3 size={16} className="stat-icon-small monthly" />
+                  <span>Monthly: 67,891</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   const renderContent = () => {
     switch (activeTab) {
       case 'dashboard':
-        return <div className="content-placeholder">Admin Dashboard - Overview of platform statistics, recent activities, and key metrics.</div>;
+        return renderDashboard();
       case 'users':
         return <div className="content-placeholder">User Management - View, edit, and manage user accounts, permissions, and activity.</div>;
       case 'spots':

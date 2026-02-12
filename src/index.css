@@ -175,3 +175,136 @@ main {
   color: #999;
   font-style: italic;
 }
+
+/* Dashboard Styles */
+.dashboard {
+  padding: 20px 0;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+.stat-card {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  border: 1px solid #f0f0f0;
+  transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  transform: translateY(-2px);
+}
+
+.stat-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.stat-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.stat-icon.users {
+  background: linear-gradient(135deg, #3B82F6, #2563EB);
+}
+
+.stat-icon.spots {
+  background: linear-gradient(135deg, #10B981, #059669);
+}
+
+.stat-icon.reviews {
+  background: linear-gradient(135deg, #F59E0B, #D97706);
+}
+
+.stat-icon.analytics {
+  background: linear-gradient(135deg, #8B5CF6, #7C3AED);
+}
+
+.stat-header h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0;
+}
+
+.stat-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.stat-main {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #1f2937;
+  line-height: 1;
+}
+
+.stat-details {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+  color: #6b7280;
+}
+
+.stat-icon-small {
+  flex-shrink: 0;
+}
+
+.stat-icon-small.success {
+  color: #10B981;
+}
+
+.stat-icon-small.warning {
+  color: #F59E0B;
+}
+
+.stat-icon-small.danger {
+  color: #EF4444;
+}
+
+.stat-icon-small.active {
+  color: #3B82F6;
+}
+
+.stat-icon-small.new {
+  color: #8B5CF6;
+}
+
+.stat-icon-small.rating {
+  color: #F59E0B;
+}
+
+.stat-icon-small.daily {
+  color: #06B6D4;
+}
+
+.stat-icon-small.weekly {
+  color: #10B981;
+}
+
+.stat-icon-small.monthly {
+  color: #6366F1;
+}
