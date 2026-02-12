@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Layout, Users, Map, Star, BarChart3, Settings, TrendingUp, AlertCircle, CheckCircle, Clock } from 'lucide-react';
+import React, { useState, useMemo } from 'react';
+import { Layout, Users, Map, Star, BarChart3, Settings, TrendingUp, AlertCircle, CheckCircle, Clock, Search, Filter, Download, Ban, Shield, UserCheck, MoreVertical } from 'lucide-react';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -16,6 +16,181 @@ export default function App() {
   const getActiveTabName = () => {
     const activeItem = navItems.find(item => item.id === activeTab);
     return activeItem ? activeItem.name : 'Dashboard';
+  };
+
+  // Mock user data
+  const [users] = useState([
+    { id: 1, name: 'John Doe', email: 'john@example.com', status: 'active', joined: '2024-01-15', lastActive: '2024-02-13', spots: 12, reviews: 45 },
+    { id: 2, name: 'Jane Smith', email: 'jane@example.com', status: 'active', joined: '2024-01-20', lastActive: '2024-02-12', spots: 8, reviews: 23 },
+    { id: 3, name: 'Mike Johnson', email: 'mike@example.com', status: 'banned', joined: '2023-12-10', lastActive: '2024-02-01', spots: 3, reviews: 15 },
+    { id: 4, name: 'Sarah Wilson', email: 'sarah@example.com', status: 'pending', joined: '2024-02-10', lastActive: '2024-02-10', spots: 0, reviews: 0 },
+    { id: 5, name: 'Tom Brown', email: 'tom@example.com', status: 'active', joined: '2023-11-25', lastActive: '2024-02-13', spots: 15, reviews: 67 },
+    { id: 6, name: 'Emily Davis', email: 'emily@example.com', status: 'active', joined: '2024-01-05', lastActive: '2024-02-11', spots: 6, reviews: 19 },
+    { id: 7, name: 'Chris Lee', email: 'chris@example.com', status: 'banned', joined: '2023-10-15', lastActive: '2024-01-20', spots: 2, reviews: 8 },
+    { id: 8, name: 'Lisa Anderson', email: 'lisa@example.com', status: 'active', joined: '2024-02-01', lastActive: '2024-02-13', spots: 4, reviews: 12 }
+  ]);
+
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [selectedUsers, setSelectedUsers] = useState([]);
+
+  // Filter and search users
+  const filteredUsers = useMemo(() => {
+    return users.filter(user => {
+      const matchesSearch = user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                           user.email.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesStatus = statusFilter === 'all' || user.status === statusFilter;
+      return matchesSearch && matchesStatus;
+    });
+  }, [users, searchTerm, statusFilter]);
+
+  const handleSelectUser = (userId) => {
+    setSelectedUsers(prev => 
+      prev.includes(userId) 
+        ? prev.filter(id => id !== userId)
+        : [...prev, userId]
+    );
+  };
+
+  const handleSelectAll = () => {
+    if (selectedUsers.length === filteredUsers.length) {
+      setSelectedUsers([]);
+    } else {
+      setSelectedUsers(filteredUsers.map(user => user.id));
+    }
+  };
+
+  const getStatusBadge = (status) => {
+    const styles = {
+      active: 'bg-green-100 text-green-800',
+      banned: 'bg-red-100 text-red-800',
+      pending: 'bg-yellow-100 text-yellow-800'
+    };
+    return (
+      <span className={`px-2 py-1 rounded-full text-xs font-medium ${styles[status]}`}>
+        {status.charAt(0).toUpperCase() + status.slice(1)}
+      </span>
+    );
+  };
+
+  const renderUsers = () => {
+    return (
+      <div className="users-management">
+        <div className="users-header">
+          <div className="users-controls">
+            <div className="search-box">
+              <Search size={20} className="search-icon" />
+              <input
+                type="text"
+                placeholder="Search users by name or email..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="search-input"
+              />
+            </div>
+            <div className="filter-dropdown">
+              <Filter size={20} className="filter-icon" />
+              <select 
+                value={statusFilter} 
+                onChange={(e) => setStatusFilter(e.target.value)}
+                className="filter-select"
+              >
+                <option value="all">All Status</option>
+                <option value="active">Active</option>
+                <option value="banned">Banned</option>
+                <option value="pending">Pending</option>
+              </select>
+            </div>
+          </div>
+          <div className="users-actions">
+            <button className="btn btn-secondary">
+              <Download size={16} />
+              Export
+            </button>
+            {selectedUsers.length > 0 && (
+              <>
+                <button className="btn btn-warning">
+                  <Ban size={16} />
+                  Ban Selected
+                </button>
+                <button className="btn btn-success">
+                  <Shield size={16} />
+                  Activate Selected
+                </button>
+              </>
+            )}
+          </div>
+        </div>
+
+        <div className="users-table-container">
+          <table className="users-table">
+            <thead>
+              <tr>
+                <th>
+                  <input
+                    type="checkbox"
+                    checked={selectedUsers.length === filteredUsers.length && filteredUsers.length > 0}
+                    onChange={handleSelectAll}
+                    className="checkbox"
+                  />
+                </th>
+                <th>User</th>
+                <th>Status</th>
+                <th>Joined</th>
+                <th>Last Active</th>
+                <th>Spots</th>
+                <th>Reviews</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredUsers.map(user => (
+                <tr key={user.id} className="user-row">
+                  <td>
+                    <input
+                      type="checkbox"
+                      checked={selectedUsers.includes(user.id)}
+                      onChange={() => handleSelectUser(user.id)}
+                      className="checkbox"
+                    />
+                  </td>
+                  <td>
+                    <div className="user-info">
+                      <div className="user-avatar">{user.name.charAt(0)}</div>
+                      <div>
+                        <div className="user-name">{user.name}</div>
+                        <div className="user-email">{user.email}</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td>{getStatusBadge(user.status)}</td>
+                  <td>{user.joined}</td>
+                  <td>{user.lastActive}</td>
+                  <td>{user.spots}</td>
+                  <td>{user.reviews}</td>
+                  <td>
+                    <button className="btn-icon">
+                      <MoreVertical size={16} />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <div className="users-footer">
+          <div className="users-count">
+            Showing {filteredUsers.length} of {users.length} users
+          </div>
+          <div className="pagination">
+            <button className="btn btn-secondary" disabled>Previous</button>
+            <span className="page-info">Page 1 of 1</span>
+            <button className="btn btn-secondary" disabled>Next</button>
+          </div>
+        </div>
+      </div>
+    );
   };
 
   const renderDashboard = () => {
@@ -139,7 +314,7 @@ export default function App() {
       case 'dashboard':
         return renderDashboard();
       case 'users':
-        return <div className="content-placeholder">User Management - View, edit, and manage user accounts, permissions, and activity.</div>;
+        return renderUsers();
       case 'spots':
         return <div className="content-placeholder">Spot Management - Add, edit, and moderate food spots, locations, and business information.</div>;
       case 'reviews':
