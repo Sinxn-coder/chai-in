@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
+import ReviewsPage from './ReviewsPage';
 import { 
   Layout, 
   Users, 
@@ -46,7 +47,6 @@ export default function App() {
     { id: 'users', name: 'Users', icon: Users },
     { id: 'spots', name: 'Spots', icon: MapPin },
     { id: 'reviews', name: 'Reviews', icon: Star },
-    { id: 'analytics', name: 'Analytics', icon: BarChart3 },
     { id: 'settings', name: 'Settings', icon: Settings }
   ];
 
@@ -2103,7 +2103,7 @@ export default function App() {
       case 'spots':
         return renderSpots();
       case 'reviews':
-        return <div className="content-placeholder">Review Moderation - Manage user reviews, ratings, photos, and reported content.</div>;
+        return <ReviewsPage />;
       case 'analytics':
         return <div className="content-placeholder">Analytics Dashboard - Track user engagement, popular spots, revenue metrics, and growth trends.</div>;
       case 'settings':
