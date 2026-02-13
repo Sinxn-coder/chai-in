@@ -190,6 +190,8 @@ export default function App() {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10); // Default 10 items per page
   const [activeSpotDropdown, setActiveSpotDropdown] = useState(null);
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [editingSpotData, setEditingSpotData] = useState(null);
 
   // Filter and search users
   const filteredUsers = useMemo(() => {
@@ -257,6 +259,11 @@ export default function App() {
   const handleSpotAction = (action, spot) => {
     console.log(`${action} spot:`, spot.name);
     setActiveSpotDropdown(null);
+    
+    if (action === 'edit') {
+      setEditingSpotData(spot);
+      setEditModalOpen(true);
+    }
   };
 
   const toggleSpotDropdown = (spotId) => {
@@ -635,6 +642,212 @@ export default function App() {
     );
   };
 
+  const renderModernEditModal = () => {
+    if (!editModalOpen || !editingSpotData) return null;
+
+    return (
+      <div className="modern-modal-overlay" onClick={() => setEditModalOpen(false)}>
+        <div className="modern-modal-container" onClick={(e) => e.stopPropagation()}>
+          {/* Modal Header */}
+          <div className="modern-modal-header">
+            <div className="header-content">
+              <div className="spot-info">
+                <div className="spot-avatar">
+                  <MapPin size={24} />
+                </div>
+                <div className="spot-details">
+                  <h2 className="spot-name">{editingSpotData.name}</h2>
+                  <p className="spot-category">{editingSpotData.category}</p>
+                </div>
+              </div>
+              <button className="modern-close-btn" onClick={() => setEditModalOpen(false)}>
+                <X size={20} />
+              </button>
+            </div>
+          </div>
+
+          {/* Modal Body */}
+          <div className="modern-modal-body">
+            <div className="edit-form-container">
+              {/* Left Column - Spot Info */}
+              <div className="form-column">
+                <div className="form-section modern-section">
+                  <h3 className="section-title">
+                    <div className="title-icon">
+                      <MapPin size={16} />
+                    </div>
+                    Spot Information
+                  </h3>
+                  <div className="form-group">
+                    <label className="modern-label">Spot Name</label>
+                    <input 
+                      type="text" 
+                      defaultValue={editingSpotData.name}
+                      className="modern-input"
+                      placeholder="Enter spot name"
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label className="modern-label">Category</label>
+                    <div className="modern-select-wrapper">
+                      <select 
+                        defaultValue={editingSpotData.category}
+                        className="modern-select"
+                      >
+                        <option value="Cafe">Cafe</option>
+                        <option value="Restaurant">Restaurant</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div className="form-group">
+                    <label className="modern-label">Status</label>
+                    <div className="status-pills">
+                      <button 
+                        className={`status-pill ${editingSpotData.status === 'verified' ? 'active' : ''}`}
+                        onClick={() => {/* Could add status change logic */}}
+                      >
+                        <CheckCircle size={14} />
+                        Verified
+                      </button>
+                      <button 
+                        className={`status-pill ${editingSpotData.status === 'pending' ? 'active' : ''}`}
+                        onClick={() => {/* Could add status change logic */}}
+                      >
+                        <Clock size={14} />
+                        Pending
+                      </button>
+                      <button 
+                        className={`status-pill ${editingSpotData.status === 'flagged' ? 'active' : ''}`}
+                        onClick={() => {/* Could add status change logic */}}
+                      >
+                        <AlertCircle size={14} />
+                        Flagged
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="form-section modern-section">
+                  <h3 className="section-title">
+                    <div className="title-icon">
+                      <Globe size={16} />
+                    </div>
+                    Location Details
+                  </h3>
+                  <div className="form-group">
+                    <label className="modern-label">Street Address</label>
+                    <input 
+                      type="text" 
+                      defaultValue={editingSpotData.address}
+                      className="modern-input"
+                      placeholder="Enter street address"
+                    />
+                  </div>
+                  <div className="form-row">
+                    <div className="form-group half-width">
+                      <label className="modern-label">City</label>
+                      <input 
+                        type="text" 
+                        defaultValue={editingSpotData.city}
+                        className="modern-input"
+                        placeholder="Enter city"
+                      />
+                    </div>
+                    <div className="form-group half-width">
+                      <label className="modern-label">State</label>
+                      <input 
+                        type="text" 
+                        defaultValue={editingSpotData.state}
+                        className="modern-input"
+                        placeholder="Enter state"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Right Column - Stats & Actions */}
+              <div className="form-column">
+                <div className="form-section modern-section">
+                  <h3 className="section-title">
+                    <div className="title-icon">
+                      <Star size={16} />
+                    </div>
+                    Performance Metrics
+                  </h3>
+                  <div className="metrics-grid">
+                    <div className="metric-card">
+                      <div className="metric-value">{editingSpotData.rating}</div>
+                      <div className="metric-label">Average Rating</div>
+                      <div className="metric-stars">
+                        {[1, 2, 3, 4, 5].map(star => (
+                          <Star 
+                            key={star} 
+                            size={12} 
+                            className={star <= (editingSpotData.rating || 0) ? 'metric-star-filled' : 'metric-star-empty'}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                    <div className="metric-card">
+                      <div className="metric-value">{editingSpotData.reviews}</div>
+                      <div className="metric-label">Total Reviews</div>
+                    </div>
+                    <div className="metric-card">
+                      <div className="metric-value">{editingSpotData.added}</div>
+                      <div className="metric-label">Date Added</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="form-section modern-section">
+                  <h3 className="section-title">
+                    <div className="title-icon">
+                      <Settings size={16} />
+                    </div>
+                    Quick Actions
+                  </h3>
+                  <div className="quick-actions">
+                    <button className="action-btn primary">
+                      <Save size={16} />
+                      Save Changes
+                    </button>
+                    <button className="action-btn secondary">
+                      <Camera size={16} />
+                      Add Photos
+                    </button>
+                    <button className="action-btn secondary">
+                      <MessageSquare size={16} />
+                      Contact Owner
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Modal Footer */}
+          <div className="modern-modal-footer">
+            <div className="footer-content">
+              <div className="footer-info">
+                <p className="last-modified">Last modified: {editingSpotData.added}</p>
+              </div>
+              <div className="footer-actions">
+                <button className="modern-btn cancel" onClick={() => setEditModalOpen(false)}>
+                  Cancel
+                </button>
+                <button className="modern-btn save">
+                  <Save size={16} />
+                  Save All Changes
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   const renderSpots = () => {
     return (
       <>
@@ -906,6 +1119,7 @@ export default function App() {
         </div>
         
         {renderSpotModal()}
+        {renderModernEditModal()}
       </>
     );
   };
