@@ -93,6 +93,7 @@ export default function ReviewsPage() {
   const [showExportModal, setShowExportModal] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState(null);
   const [showAnalytics, setShowAnalytics] = useState(false);
+  const [searchFocused, setSearchFocused] = useState(false);
 
   // Analytics calculations
   const analytics = useMemo(() => {
@@ -419,14 +420,31 @@ export default function ReviewsPage() {
       {/* Filters and Search */}
       <div className="reviews-controls">
         <div className="search-filter-group">
-          <div className="search-box">
-            <Search size={20} className="search-icon" />
-            <input
-              type="text"
-              placeholder="Search reviews by user, comment, or spot..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
+          <div className="search-box enhanced">
+            <div className={`search-input-wrapper ${searchFocused ? 'focused' : ''}`}>
+              <Search size={20} className="search-icon" />
+              <input
+                type="text"
+                placeholder="🔍 Search reviews by user name, comment, or spot location..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="search-input"
+                onFocus={() => setSearchFocused(true)}
+                onBlur={() => setSearchFocused(false)}
+              />
+              {searchTerm && (
+                <button 
+                  className="search-clear"
+                  onClick={() => setSearchTerm('')}
+                  title="Clear search"
+                >
+                  ✕
+                </button>
+              )}
+            </div>
+            <div className="search-suggestions">
+              <span className="suggestion-text">Try: "coffee", "5 stars", "approved"</span>
+            </div>
           </div>
           
           <div className="filter-group">
