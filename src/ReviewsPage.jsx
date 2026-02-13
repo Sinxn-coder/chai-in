@@ -474,30 +474,6 @@ export default function ReviewsPage() {
           </div>
         </div>
 
-        {/* Batch Actions */}
-        {showBatchActions && (
-          <div className="batch-actions">
-            <div className="batch-info">
-              <span>{selectedReviews.length} reviews selected</span>
-            </div>
-            <div className="batch-buttons">
-              <button className="batch-btn approve" onClick={handleBatchApprove}>
-                <CheckCircle size={14} />
-                Approve Selected
-              </button>
-              <button className="batch-btn reject" onClick={handleBatchReject}>
-                <AlertCircle size={14} />
-                Reject Selected
-              </button>
-              <button className="batch-btn delete" onClick={handleBatchDelete}>
-                <Trash2 size={14} />
-                Delete Selected
-              </button>
-            </div>
-          </div>
-        )}
-      </div>
-
       {/* Reviews List */}
       <div className="reviews-list">
         {filteredReviews.length === 0 ? (
@@ -529,6 +505,10 @@ export default function ReviewsPage() {
                   <button className="batch-btn reject" onClick={handleBatchReject}>
                     <Trash2 size={14} />
                     Reject Selected
+                  </button>
+                  <button className="batch-btn delete" onClick={handleBatchDelete}>
+                    <Trash2 size={14} />
+                    Delete Selected
                   </button>
                 </div>
               )}
@@ -640,6 +620,7 @@ export default function ReviewsPage() {
             </div>
           </>
         )}
+      </div>
       </div>
 
       {/* Export Modal */}
