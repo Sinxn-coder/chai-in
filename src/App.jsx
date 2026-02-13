@@ -194,6 +194,8 @@ export default function App() {
   const [editingSpotData, setEditingSpotData] = useState(null);
   const [viewDetailsModalOpen, setViewDetailsModalOpen] = useState(false);
   const [viewingSpotData, setViewingSpotData] = useState(null);
+  const [uploadedPhotos, setUploadedPhotos] = useState([]);
+  const [photoUploadExpanded, setPhotoUploadExpanded] = useState(false);
 
   // Filter and search users
   const filteredUsers = useMemo(() => {
@@ -814,7 +816,7 @@ export default function App() {
                       <Save size={16} />
                       Save Changes
                     </button>
-                    <button className="action-btn secondary">
+                    <button className="action-btn secondary" onClick={() => setPhotoUploadExpanded(!photoUploadExpanded)}>
                       <Camera size={16} />
                       Add Photos
                     </button>
@@ -825,6 +827,67 @@ export default function App() {
                   </div>
                 </div>
               </div>
+
+              {/* Photo Upload Section */}
+              {photoUploadExpanded && (
+                <div className="modern-section">
+                  <h3 className="section-title">
+                    <div className="title-icon">
+                      <Camera size={18} />
+                    </div>
+                    Photo Upload ({uploadedPhotos.length}/5)
+                  </h3>
+                  
+                  <div className="photo-upload-area">
+                    <div className="upload-zone">
+                      <div className="upload-icon">
+                        <Upload size={32} />
+                      </div>
+                      <h4>Drop photos here or click to browse</h4>
+                      <p>Support for JPG, PNG, GIF up to 10MB each</p>
+                      <button className="modern-btn secondary" onClick={() => {
+                        // Simulate photo upload
+                        if (uploadedPhotos.length < 5) {
+                          const newPhoto = {
+                            id: Date.now(),
+                            name: `photo-${uploadedPhotos.length + 1}.jpg`,
+                            size: `${(Math.random() * 3 + 1).toFixed(1)} MB`,
+                            url: `https://picsum.photos/seed/spot${Date.now()}/200/200.jpg`
+                          };
+                          setUploadedPhotos([...uploadedPhotos, newPhoto]);
+                        }
+                      }}>
+                        <Upload size={16} />
+                        Choose Files
+                      </button>
+                    </div>
+
+                    {uploadedPhotos.length > 0 && (
+                      <div className="uploaded-photos">
+                        <h4>Uploaded Photos</h4>
+                        <div className="photo-grid">
+                          {uploadedPhotos.map((photo, index) => (
+                            <div key={photo.id} className="photo-item">
+                              <div className="photo-preview">
+                                <img src={photo.url} alt={photo.name} />
+                              </div>
+                              <div className="photo-info">
+                                <span className="photo-name">{photo.name}</span>
+                                <span className="photo-size">{photo.size}</span>
+                              </div>
+                              <button className="photo-remove" onClick={() => {
+                                setUploadedPhotos(uploadedPhotos.filter(p => p.id !== photo.id));
+                              }}>
+                                <X size={16} />
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
