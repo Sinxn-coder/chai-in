@@ -115,6 +115,8 @@ export default function App() {
   const [spotModalOpen, setSpotModalOpen] = useState(false);
   const [selectedSpot, setSelectedSpot] = useState(null);
   const [sortBy, setSortBy] = useState('name');
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 2; // Show 2 spots per page for demonstration
 
   // Filter and search users
   const filteredUsers = useMemo(() => {
@@ -152,6 +154,27 @@ export default function App() {
       }
     });
   }, [spots, searchTerm, statusFilter, sortBy]);
+
+  // Pagination logic
+  const paginatedSpots = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return filteredSpots.slice(startIndex, endIndex);
+  }, [filteredSpots, currentPage, itemsPerPage]);
+
+  const totalPages = Math.ceil(filteredSpots.length / itemsPerPage);
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const handlePreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
 
   // Calculate statistics
   const spotStats = useMemo(() => {
@@ -664,7 +687,7 @@ export default function App() {
                 </tr>
               </thead>
               <tbody>
-                {filteredSpots.map(spot => (
+                {paginatedSpots.map(spot => (
                   <tr key={spot.id} className="spot-row">
                     <td>
                       <input
@@ -713,12 +736,24 @@ export default function App() {
 
           <div className="spots-footer">
             <div className="spots-count">
-              Showing {filteredSpots.length} of {spots.length} spots
+              Showing {paginatedSpots.length} of {spots.length} spots
             </div>
             <div className="pagination">
-              <button className="btn btn-secondary" disabled>Previous</button>
-              <span className="page-info">Page 1 of 1</span>
-              <button className="btn btn-secondary" disabled>Next</button>
+              <button 
+                className="btn btn-secondary" 
+                onClick={handlePreviousPage}
+                disabled={currentPage === 1}
+              >
+                Previous
+              </button>
+              <span className="page-info">Page {currentPage} of {totalPages}</span>
+              <button 
+                className="btn btn-secondary" 
+                onClick={handleNextPage}
+                disabled={currentPage === totalPages}
+              >
+                Next
+              </button>
             </div>
           </div>
         </div>
