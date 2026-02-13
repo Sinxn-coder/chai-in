@@ -192,6 +192,8 @@ export default function App() {
   const [activeSpotDropdown, setActiveSpotDropdown] = useState(null);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [editingSpotData, setEditingSpotData] = useState(null);
+  const [viewDetailsModalOpen, setViewDetailsModalOpen] = useState(false);
+  const [viewingSpotData, setViewingSpotData] = useState(null);
 
   // Filter and search users
   const filteredUsers = useMemo(() => {
@@ -263,6 +265,9 @@ export default function App() {
     if (action === 'edit') {
       setEditingSpotData(spot);
       setEditModalOpen(true);
+    } else if (action === 'view') {
+      setViewingSpotData(spot);
+      setViewDetailsModalOpen(true);
     }
   };
 
@@ -848,6 +853,152 @@ export default function App() {
     );
   };
 
+  const renderViewDetailsModal = () => {
+    if (!viewingSpotData) return null;
+
+    return (
+      <div className="modern-modal-overlay" onClick={() => setViewDetailsModalOpen(false)}>
+        <div className="modern-modal-container view-details-modal">
+          {/* Modal Header */}
+          <div className="modern-modal-header">
+            <div className="header-content">
+              <div className="spot-info">
+                <div className="spot-avatar">
+                  <MapPin size={24} />
+                </div>
+                <div className="spot-details">
+                  <h2 className="spot-name">{viewingSpotData.name}</h2>
+                  <p className="spot-category">{viewingSpotData.category}</p>
+                </div>
+              </div>
+              <button className="modern-close-btn" onClick={() => setViewDetailsModalOpen(false)}>
+                <X size={20} />
+              </button>
+            </div>
+          </div>
+
+          {/* Modal Body */}
+          <div className="modern-modal-body">
+            <div className="view-details-container">
+              {/* Spot Overview Section */}
+              <div className="details-section">
+                <h3 className="section-title">
+                  <div className="title-icon">
+                    <MapPin size={18} />
+                  </div>
+                  Spot Overview
+                </h3>
+                <div className="details-grid">
+                  <div className="detail-item">
+                    <label className="detail-label">Name</label>
+                    <div className="detail-value">{viewingSpotData.name}</div>
+                  </div>
+                  <div className="detail-item">
+                    <label className="detail-label">Category</label>
+                    <div className="detail-value">{viewingSpotData.category}</div>
+                  </div>
+                  <div className="detail-item">
+                    <label className="detail-label">Status</label>
+                    <div className="detail-value">
+                      <span className={`status-badge status-${viewingSpotData.status}`}>
+                        {viewingSpotData.status}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="detail-item">
+                    <label className="detail-label">Rating</label>
+                    <div className="detail-value">
+                      <div className="rating-display">
+                        <StarIcon size={16} />
+                        <span>{viewingSpotData.rating}</span>
+                        <span className="rating-text">({viewingSpotData.reviews} reviews)</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Location Section */}
+              <div className="details-section">
+                <h3 className="section-title">
+                  <div className="title-icon">
+                    <Globe size={18} />
+                  </div>
+                  Location Details
+                </h3>
+                <div className="details-grid">
+                  <div className="detail-item full-width">
+                    <label className="detail-label">Address</label>
+                    <div className="detail-value">{viewingSpotData.address}</div>
+                  </div>
+                  <div className="detail-item">
+                    <label className="detail-label">City</label>
+                    <div className="detail-value">{viewingSpotData.city}</div>
+                  </div>
+                  <div className="detail-item">
+                    <label className="detail-label">State</label>
+                    <div className="detail-value">{viewingSpotData.state}</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Performance Metrics Section */}
+              <div className="details-section">
+                <h3 className="section-title">
+                  <div className="title-icon">
+                    <Star size={18} />
+                  </div>
+                  Performance Metrics
+                </h3>
+                <div className="metrics-grid">
+                  <div className="metric-card">
+                    <div className="metric-value">{viewingSpotData.rating}</div>
+                    <div className="metric-label">Average Rating</div>
+                    <div className="metric-stars">
+                      {[1, 2, 3, 4, 5].map(star => (
+                        <Star 
+                          key={star} 
+                          size={12} 
+                          className={star <= (viewingSpotData.rating || 0) ? 'metric-star-filled' : 'metric-star-empty'}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                  <div className="metric-card">
+                    <div className="metric-value">{viewingSpotData.reviews}</div>
+                    <div className="metric-label">Total Reviews</div>
+                  </div>
+                  <div className="metric-card">
+                    <div className="metric-value">{viewingSpotData.added}</div>
+                    <div className="metric-label">Date Added</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Modal Footer */}
+          <div className="modern-modal-footer">
+            <div className="footer-content">
+              <div className="footer-info">
+                <p className="last-modified">Last modified: {viewingSpotData.added}</p>
+              </div>
+              <div className="footer-actions">
+                <button className="modern-btn secondary" onClick={() => setViewDetailsModalOpen(false)}>
+                  Close
+                </button>
+                <button className="modern-btn primary">
+                  <Edit size={16} />
+                  Edit Spot
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   const renderSpots = () => {
     return (
       <>
@@ -1120,6 +1271,7 @@ export default function App() {
         
         {renderSpotModal()}
         {renderModernEditModal()}
+        {renderViewDetailsModal()}
       </>
     );
   };
