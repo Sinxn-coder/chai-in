@@ -855,7 +855,7 @@ export default function App() {
 
     return (
       <div className="modern-modal-overlay" onClick={() => setViewDetailsModalOpen(false)}>
-        <div className="modern-modal-container">
+        <div className="modern-modal-container" onClick={(e) => e.stopPropagation()}>
           {/* Modal Header */}
           <div className="modern-modal-header">
             <div className="header-content">
