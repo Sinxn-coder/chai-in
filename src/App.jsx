@@ -190,6 +190,8 @@ export default function App() {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10); // Default 10 items per page
   const [activeSpotDropdown, setActiveSpotDropdown] = useState(null);
+  const [editSpotModalOpen, setEditSpotModalOpen] = useState(false);
+  const [editingSpot, setEditingSpot] = useState(null);
 
   // Filter and search users
   const filteredUsers = useMemo(() => {
@@ -257,6 +259,11 @@ export default function App() {
   const handleSpotAction = (action, spot) => {
     console.log(`${action} spot:`, spot.name);
     setActiveSpotDropdown(null);
+    
+    if (action === 'edit') {
+      setEditingSpot(spot);
+      setEditSpotModalOpen(true);
+    }
   };
 
   const toggleSpotDropdown = (spotId) => {
@@ -635,6 +642,102 @@ export default function App() {
     );
   };
 
+  const renderEditSpotModal = () => {
+    if (!editingSpot) return null;
+
+    return (
+      <div className="modal-overlay" onClick={() => setEditSpotModalOpen(false)}>
+        <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+          <div className="modal-header">
+            <h3>Edit Spot: {editingSpot.name}</h3>
+            <button className="btn-icon" onClick={() => setEditSpotModalOpen(false)}>
+              <X size={20} />
+            </button>
+          </div>
+          
+          <div className="modal-body">
+            <div className="edit-form">
+              <div className="form-section">
+                <h4>Basic Information</h4>
+                <div className="form-grid">
+                  <div className="form-item">
+                    <label>Spot Name</label>
+                    <input 
+                      type="text" 
+                      defaultValue={editingSpot.name}
+                      className="form-input"
+                    />
+                  </div>
+                  <div className="form-item">
+                    <label>Category</label>
+                    <select 
+                      defaultValue={editingSpot.category}
+                      className="form-select"
+                    >
+                      <option value="Cafe">Cafe</option>
+                      <option value="Restaurant">Restaurant</option>
+                    </select>
+                  </div>
+                  <div className="form-item">
+                    <label>Status</label>
+                    <select 
+                      defaultValue={editingSpot.status}
+                      className="form-select"
+                    >
+                      <option value="verified">Verified</option>
+                      <option value="pending">Pending</option>
+                      <option value="flagged">Flagged</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div className="form-section">
+                <h4>Location</h4>
+                <div className="form-grid">
+                  <div className="form-item">
+                    <label>Address</label>
+                    <input 
+                      type="text" 
+                      defaultValue={editingSpot.address}
+                      className="form-input"
+                    />
+                  </div>
+                  <div className="form-item">
+                    <label>City</label>
+                    <input 
+                      type="text" 
+                      defaultValue={editingSpot.city}
+                      className="form-input"
+                    />
+                  </div>
+                  <div className="form-item">
+                    <label>State</label>
+                    <input 
+                      type="text" 
+                      defaultValue={editingSpot.state}
+                      className="form-input"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="modal-footer">
+            <button className="btn btn-secondary" onClick={() => setEditSpotModalOpen(false)}>
+              Cancel
+            </button>
+            <button className="btn btn-primary">
+              <Save size={16} />
+              Save Changes
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   const renderSpots = () => {
     return (
       <>
@@ -906,6 +1009,7 @@ export default function App() {
         </div>
         
         {renderSpotModal()}
+        {renderEditSpotModal()}
       </>
     );
   };
