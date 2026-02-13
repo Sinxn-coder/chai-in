@@ -1,42 +1,874 @@
-import React from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
+import { Layout, Users, Star, BarChart3, Settings, TrendingUp, AlertCircle, CheckCircle, Clock, Search, Filter, Download, Ban, Shield, UserCheck, MoreVertical, Edit, Eye, MessageSquare, Trash2, X, Camera, Phone, Mail, Globe, MapPin, Star as StarIcon } from 'lucide-react';
+import './index.css';
 
 export default function App() {
-  return (
-    <div style={{ 
-      padding: '20px', 
-      fontFamily: 'Arial, sans-serif',
-      backgroundColor: '#f5f5f5',
-      minHeight: '100vh'
-    }}>
-      <h1 style={{ color: '#333', textAlign: 'center', marginBottom: '20px' }}>
-        BytSpot Admin Panel
-      </h1>
-      <div style={{ 
-        backgroundColor: 'white', 
-        padding: '20px', 
-        borderRadius: '8px',
-        boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-        maxWidth: '800px',
-        margin: '0 auto'
-      }}>
-        <h2 style={{ color: '#666', marginBottom: '10px' }}>Application Status</h2>
-        <p style={{ color: '#888', lineHeight: '1.6' }}>
-          The BytSpot Admin Panel is loading successfully. This is a basic test version 
-          to verify that the React application is working properly.
-        </p>
-        <div style={{ 
-          backgroundColor: '#e8f5e8', 
-          padding: '15px', 
-          borderRadius: '4px',
-          border: '1px solid #4caf50',
-          marginTop: '20px'
-        }}>
-          <strong style={{ color: '#2e7d32' }}>✅ Application Working</strong>
-          <p style={{ margin: '5px 0 0 0', color: '#2e7d32' }}>
-            React is rendering correctly and the page is displaying properly.
-          </p>
+  const [activeTab, setActiveTab] = useState('dashboard');
+
+  const navItems = [
+    { id: 'dashboard', name: 'Dashboard', icon: Layout },
+    { id: 'users', name: 'Users', icon: Users },
+    { id: 'spots', name: 'Spots', icon: MapPin },
+    { id: 'reviews', name: 'Reviews', icon: Star },
+    { id: 'analytics', name: 'Analytics', icon: BarChart3 },
+    { id: 'settings', name: 'Settings', icon: Settings }
+  ];
+
+  const getActiveTabName = () => {
+    const activeItem = navItems.find(item => item.id === activeTab);
+    return activeItem ? activeItem.name : 'Dashboard';
+  };
+
+  // Mock user data
+  const [users] = useState([
+    { id: 1, name: 'John Doe', email: 'john@example.com', status: 'active', joined: '2024-01-15', lastActive: '2024-02-13', spots: 12, reviews: 45 },
+    { id: 2, name: 'Jane Smith', email: 'jane@example.com', status: 'active', joined: '2024-01-20', lastActive: '2024-02-12', spots: 8, reviews: 23 },
+    { id: 3, name: 'Mike Johnson', email: 'mike@example.com', status: 'banned', joined: '2023-12-10', lastActive: '2024-02-01', spots: 3, reviews: 15 },
+    { id: 4, name: 'Tom Brown', email: 'tom@example.com', status: 'active', joined: '2023-11-25', lastActive: '2024-02-13', spots: 15, reviews: 67 },
+    { id: 5, name: 'Emily Davis', email: 'emily@example.com', status: 'active', joined: '2024-01-05', lastActive: '2024-02-11', spots: 6, reviews: 19 },
+    { id: 6, name: 'Chris Lee', email: 'chris@example.com', status: 'banned', joined: '2023-10-15', lastActive: '2024-01-20', spots: 2, reviews: 8 },
+    { id: 7, name: 'Lisa Anderson', email: 'lisa@example.com', status: 'active', joined: '2024-02-01', lastActive: '2024-02-13', spots: 4, reviews: 12 },
+    { id: 8, name: 'David Wilson', email: 'david@example.com', status: 'active', joined: '2024-01-18', lastActive: '2024-02-12', spots: 9, reviews: 31 }
+  ]);
+
+  // Mock spot data
+  const [spots] = useState([
+    { 
+      id: 1, 
+      name: 'Sunrise Cafe', 
+      address: '123 Main St, Downtown', 
+      city: 'New York', 
+      state: 'NY',
+      category: 'Cafe',
+      status: 'published',
+      rating: 4.5,
+      reviews: 127,
+      added: '2024-01-15',
+      phone: '+1 (555) 123-4567',
+      email: 'sunrise@bytspot.com',
+      website: 'sunrisecafe.com',
+      hours: '6:00 AM - 10:00 PM',
+      description: 'Cozy neighborhood cafe serving artisanal coffee and fresh pastries.',
+      photos: ['coffee1.jpg', 'coffee2.jpg', 'coffee3.jpg']
+    },
+    { 
+      id: 2, 
+      name: 'Burger Palace', 
+      address: '456 Oak Ave, Midtown', 
+      city: 'New York', 
+      state: 'NY',
+      category: 'Fast Food',
+      status: 'verified',
+      rating: 4.2,
+      reviews: 89,
+      added: '2024-01-20',
+      phone: '+1 (555) 234-5678',
+      email: 'info@burgerpalace.com',
+      website: 'burgerpalace.com',
+      hours: '11:00 AM - 11:00 PM',
+      description: 'Classic American burgers and fries with modern twists.',
+      photos: ['burger1.jpg', 'burger2.jpg', 'burger3.jpg']
+    },
+    { 
+      id: 3, 
+      name: 'Pizza Heaven', 
+      address: '789 Elm St, West Side', 
+      city: 'New York', 
+      state: 'NY',
+      category: 'Italian',
+      status: 'pending',
+      rating: 4.7,
+      reviews: 156,
+      added: '2024-01-08',
+      phone: '+1 (555) 456-7890',
+      email: 'contact@sushimaster.com',
+      website: 'sushimaster.com',
+      hours: '5:00 PM - 12:00 AM',
+      description: 'Premium sushi and Japanese cuisine in an intimate setting.',
+      photos: ['sushi1.jpg', 'sushi2.jpg', 'sushi3.jpg', 'sushi4.jpg']
+    },
+    { 
+      id: 4, 
+      name: 'Sushi Master', 
+      address: '321 Pine St, Brooklyn', 
+      city: 'New York', 
+      state: 'NY',
+      category: 'Japanese',
+      status: 'flagged',
+      rating: 4.8,
+      reviews: 203,
+      added: '2024-01-08',
+      phone: '+1 (555) 789-0123',
+      email: 'info@sushimaster.com',
+      website: 'sushimaster.com',
+      hours: '5:00 PM - 1:00 AM',
+      description: 'Premium sushi and Japanese cuisine in an intimate setting.',
+      photos: ['sushi1.jpg', 'sushi2.jpg', 'sushi3.jpg', 'sushi4.jpg']
+    }
+  ]);
+
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [selectedUsers, setSelectedUsers] = useState([]);
+  const [activeDropdown, setActiveDropdown] = useState(null);
+  const [selectedSpots, setSelectedSpots] = useState([]);
+  const [spotModalOpen, setSpotModalOpen] = useState(false);
+  const [selectedSpot, setSelectedSpot] = useState(null);
+  const [sortBy, setSortBy] = useState('name');
+
+  // Filter and search users
+  const filteredUsers = useMemo(() => {
+    return users.filter(user => {
+      const matchesSearch = user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                           user.email.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesStatus = statusFilter === 'all' || user.status === statusFilter;
+      return matchesSearch && matchesStatus;
+    });
+  }, [users, searchTerm, statusFilter]);
+
+  // Filter and search spots
+  const filteredSpots = useMemo(() => {
+    let filtered = spots.filter(spot => {
+      const matchesSearch = spot.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                           spot.address.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                           spot.category.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesStatus = statusFilter === 'all' || spot.status === statusFilter;
+      return matchesSearch && matchesStatus;
+    });
+
+    // Apply sorting
+    return filtered.sort((a, b) => {
+      switch (sortBy) {
+        case 'name':
+          return a.name.localeCompare(b.name);
+        case 'rating':
+          return (b.rating || 0) - (a.rating || 0);
+        case 'date':
+          return new Date(b.added) - new Date(a.added);
+        case 'reviews':
+          return b.reviews - a.reviews;
+        default:
+          return 0;
+      }
+    });
+  }, [spots, searchTerm, statusFilter, sortBy]);
+
+  // Calculate statistics
+  const spotStats = useMemo(() => {
+    return {
+      total: spots.length,
+      published: spots.filter(s => s.status === 'published').length,
+      verified: spots.filter(s => s.status === 'verified').length,
+      pending: spots.filter(s => s.status === 'pending').length,
+      flagged: spots.filter(s => s.status === 'flagged').length,
+      avgRating: spots.filter(s => s.rating).reduce((acc, s) => acc + s.rating, 0) / spots.filter(s => s.rating).length || 0
+    };
+  }, [spots]);
+
+  const handleSelectSpot = (spotId) => {
+    setSelectedSpots(prev => 
+      prev.includes(spotId) 
+        ? prev.filter(id => id !== spotId)
+        : [...prev, spotId]
+    );
+  };
+
+  const handleSelectAllSpots = () => {
+    if (selectedSpots.length === filteredSpots.length) {
+      setSelectedSpots([]);
+    } else {
+      setSelectedSpots(filteredSpots.map(spot => spot.id));
+    }
+  };
+
+  const openSpotModal = (spot) => {
+    setSelectedSpot(spot);
+    setSpotModalOpen(true);
+  };
+
+  const closeSpotModal = () => {
+    setSpotModalOpen(false);
+    setSelectedSpot(null);
+  };
+
+  const handleSpotAction = (action, spot) => {
+    console.log(`${action} spot:`, spot.name);
+  };
+
+  const handleSelectUser = (userId) => {
+    setSelectedUsers(prev => 
+      prev.includes(userId) 
+        ? prev.filter(id => id !== userId)
+        : [...prev, userId]
+    );
+  };
+
+  const handleSelectAll = () => {
+    if (selectedUsers.length === filteredUsers.length) {
+      setSelectedUsers([]);
+    } else {
+      setSelectedUsers(filteredUsers.map(user => user.id));
+    }
+  };
+
+  const getStatusBadge = (status) => {
+    const styles = {
+      active: 'status-badge status-active',
+      banned: 'status-badge status-banned',
+      published: 'status-badge status-published',
+      verified: 'status-badge status-verified',
+      pending: 'status-badge status-pending',
+      flagged: 'status-badge status-flagged'
+    };
+    return (
+      <span className={styles[status] || 'status-badge'}>
+        {status.charAt(0).toUpperCase() + status.slice(1)}
+      </span>
+    );
+  };
+
+  const toggleDropdown = (userId) => {
+    setActiveDropdown(activeDropdown === userId ? null : userId);
+  };
+
+  const handleAction = (action, user) => {
+    console.log(`${action} user:`, user.name);
+    setActiveDropdown(null);
+  };
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (!event.target.closest('.dropdown-container')) {
+        setActiveDropdown(null);
+      }
+    };
+
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, []);
+
+  const renderUsers = () => {
+    return (
+      <div className="users-management">
+        <div className="users-header">
+          <div className="users-controls">
+            <div className="search-box">
+              <Search size={20} className="search-icon" />
+              <input
+                type="text"
+                placeholder="Search users by name or email..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="search-input"
+              />
+            </div>
+            <div className="filter-dropdown">
+              <Filter size={20} className="filter-icon" />
+              <select 
+                value={statusFilter} 
+                onChange={(e) => setStatusFilter(e.target.value)}
+                className="filter-select"
+              >
+                <option value="all">All Status</option>
+                <option value="active">Active</option>
+                <option value="banned">Banned</option>
+              </select>
+            </div>
+          </div>
+          <div className="users-actions">
+            <button className="btn btn-secondary">
+              <Download size={16} />
+              Export
+            </button>
+            {selectedUsers.length > 0 && (
+              <>
+                <button className="btn btn-warning">
+                  <Ban size={16} />
+                  Ban Selected
+                </button>
+                <button className="btn btn-success">
+                  <Shield size={16} />
+                  Activate Selected
+                </button>
+              </>
+            )}
+          </div>
+        </div>
+
+        <div className="users-table-container">
+          <table className="users-table">
+            <thead>
+              <tr>
+                <th>
+                  <input
+                    type="checkbox"
+                    checked={selectedUsers.length === filteredUsers.length && filteredUsers.length > 0}
+                    onChange={handleSelectAll}
+                    className="checkbox"
+                  />
+                </th>
+                <th>User</th>
+                <th>Status</th>
+                <th>Joined</th>
+                <th>Last Active</th>
+                <th>Spots</th>
+                <th>Reviews</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredUsers.map(user => (
+                <tr key={user.id} className="user-row">
+                  <td>
+                    <input
+                      type="checkbox"
+                      checked={selectedUsers.includes(user.id)}
+                      onChange={() => handleSelectUser(user.id)}
+                      className="checkbox"
+                    />
+                  </td>
+                  <td>
+                    <div className="user-info">
+                      <div className="user-avatar">{user.name.charAt(0)}</div>
+                      <div>
+                        <div className="user-name">{user.name}</div>
+                        <div className="user-email">{user.email}</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td>{getStatusBadge(user.status)}</td>
+                  <td>{user.joined}</td>
+                  <td>{user.lastActive}</td>
+                  <td>{user.spots}</td>
+                  <td>{user.reviews}</td>
+                  <td>
+                    <div className="dropdown-container">
+                      <button 
+                        className="btn-icon"
+                        onClick={() => toggleDropdown(user.id)}
+                      >
+                        <MoreVertical size={16} />
+                      </button>
+                      
+                      {activeDropdown === user.id && (
+                        <div className="dropdown-menu">
+                          <button 
+                            className="dropdown-item"
+                            onClick={() => handleAction('edit', user)}
+                          >
+                            <Edit size={14} />
+                            Edit User
+                          </button>
+                          <button 
+                            className="dropdown-item"
+                            onClick={() => handleAction('view', user)}
+                          >
+                            <Eye size={14} />
+                            View Details
+                          </button>
+                          <button 
+                            className="dropdown-item"
+                            onClick={() => handleAction('message', user)}
+                          >
+                            <MessageSquare size={14} />
+                            Send Message
+                          </button>
+                          <div className="dropdown-divider"></div>
+                          <button 
+                            className="dropdown-item danger"
+                            onClick={() => handleAction(user.status === 'banned' ? 'unban' : 'ban', user)}
+                          >
+                            <Ban size={14} />
+                            {user.status === 'banned' ? 'Unban User' : 'Ban User'}
+                          </button>
+                          <button 
+                            className="dropdown-item danger"
+                            onClick={() => handleAction('delete', user)}
+                          >
+                            <Trash2 size={14} />
+                            Delete User
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <div className="users-footer">
+          <div className="users-count">
+            Showing {filteredUsers.length} of {users.length} users
+          </div>
+          <div className="pagination">
+            <button className="btn btn-secondary" disabled>Previous</button>
+            <span className="page-info">Page 1 of 1</span>
+            <button className="btn btn-secondary" disabled>Next</button>
+          </div>
         </div>
       </div>
-    </div>
+    );
+  };
+
+  const renderSpotModal = () => {
+    if (!selectedSpot) return null;
+
+    return (
+      <div className="modal-overlay" onClick={closeSpotModal}>
+        <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+          <div className="modal-header">
+            <h3>{selectedSpot.name}</h3>
+            <button className="btn-icon" onClick={closeSpotModal}>
+              <X size={20} />
+            </button>
+          </div>
+          
+          <div className="modal-body">
+            <div className="spot-details">
+              <div className="detail-section">
+                <h4>Basic Information</h4>
+                <div className="detail-grid">
+                  <div className="detail-item">
+                    <label>Status</label>
+                    <span className={`status-badge status-${selectedSpot.status}`}>
+                      {selectedSpot.status}
+                    </span>
+                  </div>
+                  <div className="detail-item">
+                    <label>Category</label>
+                    <span>{selectedSpot.category}</span>
+                  </div>
+                  <div className="detail-item">
+                    <label>Rating</label>
+                    <span className="rating">
+                      <StarIcon size={16} />
+                      {selectedSpot.rating} ({selectedSpot.reviews} reviews)
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="detail-section">
+                <h4>Location</h4>
+                <div className="detail-grid">
+                  <div className="detail-item">
+                    <label>Address</label>
+                    <span>{selectedSpot.address}</span>
+                  </div>
+                  <div className="detail-item">
+                    <label>City</label>
+                    <span>{selectedSpot.city}</span>
+                  </div>
+                  <div className="detail-item">
+                    <label>State</label>
+                    <span>{selectedSpot.state}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="detail-section">
+                <h4>Contact Information</h4>
+                <div className="detail-grid">
+                  <div className="detail-item">
+                    <label>Phone</label>
+                    <span>{selectedSpot.phone}</span>
+                  </div>
+                  <div className="detail-item">
+                    <label>Email</label>
+                    <span>{selectedSpot.email}</span>
+                  </div>
+                  <div className="detail-item">
+                    <label>Website</label>
+                    <span>{selectedSpot.website}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="detail-section">
+                <h4>Business Hours</h4>
+                <div className="detail-item">
+                  <label>Hours</label>
+                  <span>{selectedSpot.hours}</span>
+                </div>
+              </div>
+
+              <div className="detail-section">
+                <h4>Description</h4>
+                <p>{selectedSpot.description}</p>
+              </div>
+
+              <div className="detail-section">
+                <h4>Photos</h4>
+                <div className="photo-grid">
+                  {selectedSpot.photos.map((photo, index) => (
+                    <div key={index} className="photo-item">
+                      <Camera size={24} />
+                      <span>{photo}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div className="modal-footer">
+            <button className="btn btn-secondary" onClick={closeSpotModal}>
+              Close
+            </button>
+            <button className="btn btn-primary">
+              <Edit size={16} />
+              Edit Spot
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const renderSpots = () => {
+    return (
+      <>
+        <div className="spots-management">
+          <div className="spots-header">
+            <div className="spots-controls">
+              <div className="search-box">
+                <Search size={20} className="search-icon" />
+                <input
+                  type="text"
+                  placeholder="Search spots by name, location, or cuisine..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="search-input"
+                />
+              </div>
+              <div className="filter-dropdown">
+                <Filter size={20} className="filter-icon" />
+                <select 
+                  value={statusFilter} 
+                  onChange={(e) => setStatusFilter(e.target.value)}
+                  className="filter-select"
+                >
+                  <option value="all">All Status</option>
+                  <option value="published">Published</option>
+                  <option value="verified">Verified</option>
+                  <option value="pending">Pending</option>
+                  <option value="flagged">Flagged</option>
+                </select>
+              </div>
+              <div className="sort-dropdown">
+                <select 
+                  value={sortBy} 
+                  onChange={(e) => setSortBy(e.target.value)}
+                  className="sort-select"
+                >
+                  <option value="name">Sort by Name</option>
+                  <option value="rating">Sort by Rating</option>
+                  <option value="date">Sort by Date</option>
+                  <option value="reviews">Sort by Reviews</option>
+                </select>
+              </div>
+            </div>
+            <div className="spots-actions">
+              <button className="btn btn-secondary">
+                <Download size={16} />
+                Export
+              </button>
+              {selectedSpots.length > 0 && (
+                <>
+                  <button className="btn btn-warning">
+                    <AlertCircle size={16} />
+                    Flag Selected
+                  </button>
+                  <button className="btn btn-success">
+                    <CheckCircle size={16} />
+                    Verify Selected
+                  </button>
+                  <button className="btn btn-danger">
+                    <Trash2 size={16} />
+                    Delete Selected
+                  </button>
+                </>
+              )}
+            </div>
+          </div>
+
+          {/* Statistics Section */}
+          <div className="spots-stats">
+            <div className="stat-card">
+              <div className="stat-icon">📍</div>
+              <div className="stat-info">
+                <div className="stat-number">{spotStats.total}</div>
+                <div className="stat-label">Total Spots</div>
+              </div>
+            </div>
+            <div className="stat-card">
+              <div className="stat-icon">🟢</div>
+              <div className="stat-info">
+                <div className="stat-number">{spotStats.published}</div>
+                <div className="stat-label">Published</div>
+              </div>
+            </div>
+            <div className="stat-card">
+              <div className="stat-icon">🔵</div>
+              <div className="stat-info">
+                <div className="stat-number">{spotStats.verified}</div>
+                <div className="stat-label">Verified</div>
+              </div>
+            </div>
+            <div className="stat-card">
+              <div className="stat-icon">🟡</div>
+              <div className="stat-info">
+                <div className="stat-number">{spotStats.pending}</div>
+                <div className="stat-label">Pending</div>
+              </div>
+            </div>
+            <div className="stat-card">
+              <div className="stat-icon">🔴</div>
+              <div className="stat-info">
+                <div className="stat-number">{spotStats.flagged}</div>
+                <div className="stat-label">Flagged</div>
+              </div>
+            </div>
+            <div className="stat-card">
+              <div className="stat-icon">⭐</div>
+              <div className="stat-info">
+                <div className="stat-number">{spotStats.avgRating.toFixed(1)}</div>
+                <div className="stat-label">Avg Rating</div>
+              </div>
+            </div>
+          </div>
+
+          <div className="spots-table-container">
+            <table className="spots-table">
+              <thead>
+                <tr>
+                  <th>
+                    <input
+                      type="checkbox"
+                      checked={selectedSpots.length === filteredSpots.length && filteredSpots.length > 0}
+                      onChange={handleSelectAllSpots}
+                      className="checkbox"
+                    />
+                  </th>
+                  <th>Spot Info</th>
+                  <th>Location</th>
+                  <th>Category</th>
+                  <th>Status</th>
+                  <th>Rating</th>
+                  <th>Reviews</th>
+                  <th>Added</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredSpots.map(spot => (
+                  <tr key={spot.id} className="spot-row">
+                    <td>
+                      <input
+                        type="checkbox"
+                        checked={selectedSpots.includes(spot.id)}
+                        onChange={() => handleSelectSpot(spot.id)}
+                        className="checkbox"
+                      />
+                    </td>
+                    <td>
+                      <div className="spot-info">
+                        <div className="spot-name">{spot.name}</div>
+                        <div className="spot-address">{spot.address}</div>
+                      </div>
+                    </td>
+                    <td>{spot.city}, {spot.state}</td>
+                    <td>{spot.category}</td>
+                    <td>
+                      <span className={`status-badge status-${spot.status}`}>
+                        {spot.status}
+                      </span>
+                    </td>
+                    <td>
+                      <div className="rating">
+                        <StarIcon size={14} />
+                        {spot.rating}
+                      </div>
+                    </td>
+                    <td>{spot.reviews}</td>
+                    <td>{spot.added}</td>
+                    <td>
+                      <div className="dropdown-container">
+                        <button 
+                          className="btn-icon"
+                          onClick={() => openSpotModal(spot)}
+                        >
+                          <MoreVertical size={16} />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <div className="spots-footer">
+            <div className="spots-count">
+              Showing {filteredSpots.length} of {spots.length} spots
+            </div>
+            <div className="pagination">
+              <button className="btn btn-secondary" disabled>Previous</button>
+              <span className="page-info">Page 1 of 1</span>
+              <button className="btn btn-secondary" disabled>Next</button>
+            </div>
+          </div>
+        </div>
+        
+        {renderSpotModal()}
+      </>
+    );
+  };
+
+  const renderDashboard = () => {
+    return (
+      <div className="dashboard">
+        <div className="stats-grid">
+          <div className="stat-card">
+            <div className="stat-icon">👥</div>
+            <div className="stat-info">
+              <div className="stat-number">1,234</div>
+              <div className="stat-label">Total Users</div>
+            </div>
+          </div>
+          <div className="stat-card">
+            <div className="stat-icon">📍</div>
+            <div className="stat-info">
+              <div className="stat-number">456</div>
+              <div className="stat-label">Food Spots</div>
+            </div>
+          </div>
+          <div className="stat-card">
+            <div className="stat-icon">⭐</div>
+            <div className="stat-info">
+              <div className="stat-number">2,789</div>
+              <div className="stat-label">Reviews & Ratings</div>
+            </div>
+          </div>
+          <div className="stat-card">
+            <div className="stat-icon">📈</div>
+            <div className="stat-info">
+              <div className="stat-number">892</div>
+              <div className="stat-label">Active Users</div>
+            </div>
+          </div>
+        </div>
+        
+        <div className="dashboard-content">
+          <div className="content-card">
+            <h3>Recent Activity</h3>
+            <div className="activity-list">
+              <div className="activity-item">
+                <div className="activity-icon">🍕</div>
+                <div className="activity-details">
+                  <div className="activity-title">New spot added: Pizza Heaven</div>
+                  <div className="activity-time">2 hours ago</div>
+                </div>
+              </div>
+              <div className="activity-item">
+                <div className="activity-icon">👤</div>
+                <div className="activity-details">
+                  <div className="activity-title">New user registered: Emily Davis</div>
+                  <div className="activity-time">5 hours ago</div>
+                </div>
+              </div>
+              <div className="activity-item">
+                <div className="activity-icon">⭐</div>
+                <div className="activity-details">
+                  <div className="activity-title">New review: Sunrise Cafe</div>
+                  <div className="activity-time">1 day ago</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div className="content-card">
+            <h3>Quick Actions</h3>
+            <div className="quick-actions">
+              <button className="quick-action-btn">
+                <Users size={20} />
+                <span>Manage Users</span>
+              </button>
+              <button className="quick-action-btn">
+                <MapPin size={20} />
+                <span>Add Spot</span>
+              </button>
+              <button className="quick-action-btn">
+                <Star size={20} />
+                <span>Review Queue</span>
+              </button>
+              <button className="quick-action-btn">
+                <BarChart3 size={20} />
+                <span>View Analytics</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const renderContent = () => {
+    switch (activeTab) {
+      case 'dashboard':
+        return renderDashboard();
+      case 'users':
+        return renderUsers();
+      case 'spots':
+        return renderSpots();
+      case 'reviews':
+        return <div className="content-placeholder">Review Moderation - Manage user reviews, ratings, photos, and reported content.</div>;
+      case 'analytics':
+        return <div className="content-placeholder">Analytics Dashboard - Track user engagement, popular spots, revenue metrics, and growth trends.</div>;
+      case 'settings':
+        return <div className="content-placeholder">Admin Settings - Configure platform preferences, API keys, and system parameters.</div>;
+      default:
+        return <div className="content-placeholder">Welcome to the BytSpot Admin Dashboard.</div>;
+    }
+  };
+
+  return (
+    <>
+      <header>
+        <div className="app-bar-brand">
+          <div className="appIcon">🍵</div>
+          <h1>BytSpot</h1>
+        </div>
+        <div className="header-center">{getActiveTabName()}</div>
+        <div className="header-right">Admin Panel</div>
+      </header>
+
+      <nav className="sidebar">
+        <ul className="nav-list">
+          {navItems.map((item) => {
+            const Icon = item.icon;
+            return (
+              <li
+                key={item.id}
+                className={`nav-item ${activeTab === item.id ? 'active' : ''}`}
+                onClick={() => setActiveTab(item.id)}
+              >
+                <div className="nav-icon">
+                  <Icon size={24} />
+                </div>
+                <span className="nav-text">{item.name}</span>
+              </li>
+            );
+          })}
+        </ul>
+      </nav>
+
+      <main>
+        {renderContent()}
+      </main>
+    </>
   );
 }
