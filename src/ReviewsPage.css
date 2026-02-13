@@ -1082,6 +1082,7 @@
   display: flex;
   align-items: center;
   gap: 6px;
+  background: #f3f4f6;
   border: none;
   border-radius: 6px;
   padding: 8px 12px;
@@ -1089,26 +1090,41 @@
   font-weight: 500;
   cursor: pointer;
   transition: all 0.3s ease;
+  color: #374151;
 }
 
 .moderation-btn.approve {
-  background: #ecfdf5;
-  color: #059669;
+  background: #10b981;
+  color: white;
 }
 
 .moderation-btn.approve:hover {
   background: #059669;
-  color: white;
+  transform: translateY(-1px);
 }
 
 .moderation-btn.reject {
-  background: #fef2f2;
-  color: #dc2626;
+  background: #ef4444;
+  color: white;
 }
 
 .moderation-btn.reject:hover {
   background: #dc2626;
+  transform: translateY(-1px);
+}
+
+.moderation-btn.selected {
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
   color: white;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+  transform: translateY(-2px);
+}
+
+.moderation-btn.selected:hover {
+  background: linear-gradient(135deg, #2563eb, #1e40af);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
 }
 
 /* Responsive Design */

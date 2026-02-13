@@ -611,16 +611,31 @@ export default function ReviewsPage() {
                       {getStatusBadge(review.status)}
                     </div>
                     <div className="review-moderation">
-                      {review.status === 'pending' && (
-                        <button className="moderation-btn approve">
-                          <CheckCircle size={14} />
-                          Approve
-                        </button>
+                      {selectedReviews.includes(review.id) ? (
+                        <>
+                          <button className="moderation-btn approve selected">
+                            <CheckCircle size={14} />
+                            Approve Selected
+                          </button>
+                          <button className="moderation-btn reject selected">
+                            <Trash2 size={14} />
+                            Reject Selected
+                          </button>
+                        </>
+                      ) : (
+                        <>
+                          {review.status === 'pending' && (
+                            <button className="moderation-btn approve">
+                              <CheckCircle size={14} />
+                              Approve
+                            </button>
+                          )}
+                          <button className="moderation-btn reject">
+                            <Trash2 size={14} />
+                            Reject
+                          </button>
+                        </>
                       )}
-                      <button className="moderation-btn reject">
-                        <Trash2 size={14} />
-                        Reject
-                      </button>
                     </div>
                   </div>
                 </div>
