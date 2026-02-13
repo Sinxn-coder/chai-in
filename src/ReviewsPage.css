@@ -759,15 +759,17 @@
   color: #6b7280;
 }
 
-.batch-actions {
+.select-all-control {
   background: #f8fafc;
-  border: 1px solid #e5e7eb;
+  border: 1px solid #e2e8f0;
   border-radius: 8px;
   padding: 16px;
   margin-bottom: 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
 }
 
 .batch-info {
@@ -775,9 +777,11 @@
   color: #374151;
 }
 
-.batch-buttons {
+.select-all-actions {
   display: flex;
-  gap: 12px;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
 }
 
 .batch-btn {
