@@ -190,8 +190,6 @@ export default function App() {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10); // Default 10 items per page
   const [activeSpotDropdown, setActiveSpotDropdown] = useState(null);
-  const [editSpotModalOpen, setEditSpotModalOpen] = useState(false);
-  const [editingSpot, setEditingSpot] = useState(null);
 
   // Filter and search users
   const filteredUsers = useMemo(() => {
@@ -259,11 +257,6 @@ export default function App() {
   const handleSpotAction = (action, spot) => {
     console.log(`${action} spot:`, spot.name);
     setActiveSpotDropdown(null);
-    
-    if (action === 'edit') {
-      setEditingSpot(spot);
-      setEditSpotModalOpen(true);
-    }
   };
 
   const toggleSpotDropdown = (spotId) => {
@@ -642,223 +635,6 @@ export default function App() {
     );
   };
 
-  const renderEditSpotModal = () => {
-    if (!editingSpot) return null;
-
-    return (
-      <div className="modal-overlay" onClick={() => setEditSpotModalOpen(false)}>
-        <div className="modal-content edit-modal-content" onClick={(e) => e.stopPropagation()}>
-          <div className="modal-header">
-            <div className="modal-title-section">
-              <div className="modal-icon">
-                <Edit size={20} />
-              </div>
-              <div>
-                <h3>Edit Spot</h3>
-                <p className="modal-subtitle">{editingSpot.name}</p>
-              </div>
-            </div>
-            <button className="btn-icon btn-close" onClick={() => setEditSpotModalOpen(false)}>
-              <X size={20} />
-            </button>
-          </div>
-          
-          <div className="modal-body">
-            <div className="edit-spot-form">
-              {/* Basic Information Section */}
-              <div className="form-section-card">
-                <div className="section-header">
-                  <div className="section-icon">
-                    <MapPin size={18} />
-                  </div>
-                  <h4>Basic Information</h4>
-                </div>
-                <div className="form-row">
-                  <div className="form-group">
-                    <label className="form-label">
-                      <MapPin size={14} />
-                      Spot Name
-                    </label>
-                    <input 
-                      type="text" 
-                      defaultValue={editingSpot.name}
-                      className="form-input"
-                      placeholder="Enter spot name"
-                    />
-                  </div>
-                  <div className="form-group">
-                    <label className="form-label">
-                      <Star size={14} />
-                      Category
-                    </label>
-                    <select 
-                      defaultValue={editingSpot.category}
-                      className="form-select"
-                    >
-                      <option value="Cafe">Cafe</option>
-                      <option value="Restaurant">Restaurant</option>
-                    </select>
-                  </div>
-                </div>
-                <div className="form-row">
-                  <div className="form-group full-width">
-                    <label className="form-label">
-                      <CheckCircle size={14} />
-                      Status
-                    </label>
-                    <div className="status-options">
-                      <label className="status-option">
-                        <input 
-                          type="radio" 
-                          name="edit-status" 
-                          value="verified"
-                          defaultChecked={editingSpot.status === 'verified'}
-                        />
-                        <span className="status-radio verified">Verified</span>
-                      </label>
-                      <label className="status-option">
-                        <input 
-                          type="radio" 
-                          name="edit-status" 
-                          value="pending"
-                          defaultChecked={editingSpot.status === 'pending'}
-                        />
-                        <span className="status-radio pending">Pending</span>
-                      </label>
-                      <label className="status-option">
-                        <input 
-                          type="radio" 
-                          name="edit-status" 
-                          value="flagged"
-                          defaultChecked={editingSpot.status === 'flagged'}
-                        />
-                        <span className="status-radio flagged">Flagged</span>
-                      </label>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Location Information Section */}
-              <div className="form-section-card">
-                <div className="section-header">
-                  <div className="section-icon">
-                    <Globe size={18} />
-                  </div>
-                  <h4>Location Information</h4>
-                </div>
-                <div className="form-row">
-                  <div className="form-group full-width">
-                    <label className="form-label">
-                      <MapPin size={14} />
-                      Street Address
-                    </label>
-                    <input 
-                      type="text" 
-                      defaultValue={editingSpot.address}
-                      className="form-input"
-                      placeholder="Enter street address"
-                    />
-                  </div>
-                </div>
-                <div className="form-row">
-                  <div className="form-group">
-                    <label className="form-label">
-                      <MapPin size={14} />
-                      City
-                    </label>
-                    <input 
-                      type="text" 
-                      defaultValue={editingSpot.city}
-                      className="form-input"
-                      placeholder="Enter city"
-                    />
-                  </div>
-                  <div className="form-group">
-                    <label className="form-label">
-                      <MapPin size={14} />
-                      State
-                    </label>
-                    <input 
-                      type="text" 
-                      defaultValue={editingSpot.state}
-                      className="form-input"
-                      placeholder="Enter state"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Additional Information Section */}
-              <div className="form-section-card">
-                <div className="section-header">
-                  <div className="section-icon">
-                    <Star size={18} />
-                  </div>
-                  <h4>Additional Information</h4>
-                </div>
-                <div className="form-row">
-                  <div className="form-group">
-                    <label className="form-label">
-                      <Star size={14} />
-                      Rating
-                    </label>
-                    <div className="rating-input">
-                      <input 
-                        type="number" 
-                        defaultValue={editingSpot.rating}
-                        className="form-input"
-                        min="1"
-                        max="5"
-                        step="0.1"
-                        placeholder="4.5"
-                      />
-                      <div className="rating-stars">
-                        {[1, 2, 3, 4, 5].map(star => (
-                          <Star 
-                            key={star} 
-                            size={16} 
-                            className={star <= (editingSpot.rating || 0) ? 'star-filled' : 'star-empty'}
-                          />
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                  <div className="form-group">
-                    <label className="form-label">
-                      <MessageSquare size={14} />
-                      Reviews
-                    </label>
-                    <input 
-                      type="number" 
-                      defaultValue={editingSpot.reviews}
-                      className="form-input"
-                      min="0"
-                      placeholder="127"
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="modal-footer">
-            <div className="footer-actions">
-              <button className="btn btn-secondary" onClick={() => setEditSpotModalOpen(false)}>
-                <X size={16} />
-                Cancel
-              </button>
-              <button className="btn btn-primary">
-                <Save size={16} />
-                Save Changes
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  };
-
   const renderSpots = () => {
     return (
       <>
@@ -1130,7 +906,6 @@ export default function App() {
         </div>
         
         {renderSpotModal()}
-        {renderEditSpotModal()}
       </>
     );
   };
