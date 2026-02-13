@@ -12,9 +12,7 @@ import {
   AlertCircle,
   CheckCircle,
   Clock,
-  Reply,
-  Download,
-  Flag
+  Download
 } from 'lucide-react';
 import './ReviewsPage.css';
 
@@ -30,10 +28,7 @@ export default function ReviewsPage() {
       spotName: 'Beachside Coffee',
       spotCategory: 'Coffee Shop',
       helpful: 24,
-      status: 'approved',
-      adminResponse: 'Thank you for your wonderful feedback! We\'re thrilled you enjoyed your visit.',
-      responseDate: '2024-01-16',
-      flagged: false
+      status: 'approved'
     },
     {
       id: 2,
@@ -45,10 +40,7 @@ export default function ReviewsPage() {
       spotName: 'Mountain Viewpoint',
       spotCategory: 'Scenic View',
       helpful: 18,
-      status: 'approved',
-      adminResponse: null,
-      responseDate: null,
-      flagged: false
+      status: 'approved'
     },
     {
       id: 3,
@@ -60,10 +52,7 @@ export default function ReviewsPage() {
       spotName: 'Downtown Restaurant',
       spotCategory: 'Restaurant',
       helpful: 12,
-      status: 'pending',
-      adminResponse: null,
-      responseDate: null,
-      flagged: true
+      status: 'pending'
     },
     {
       id: 4,
@@ -75,10 +64,7 @@ export default function ReviewsPage() {
       spotName: 'Sunset Point',
       spotCategory: 'Scenic View',
       helpful: 31,
-      status: 'approved',
-      adminResponse: 'We\'re so glad you enjoyed the sunset! It\'s truly special at that time.',
-      responseDate: '2024-01-13',
-      flagged: false
+      status: 'approved'
     },
     {
       id: 5,
@@ -90,10 +76,7 @@ export default function ReviewsPage() {
       spotName: 'City Park',
       spotCategory: 'Park',
       helpful: 15,
-      status: 'approved',
-      adminResponse: null,
-      responseDate: null,
-      flagged: false
+      status: 'approved'
     }
   ]);
 
@@ -102,8 +85,6 @@ export default function ReviewsPage() {
   const [sortBy, setSortBy] = useState('newest');
   const [selectedReviews, setSelectedReviews] = useState([]);
   const [showBatchActions, setShowBatchActions] = useState(false);
-  const [respondingTo, setRespondingTo] = useState(null);
-  const [responseText, setResponseText] = useState('');
   const [showExportModal, setShowExportModal] = useState(false);
 
   const filteredReviews = useMemo(() => {
@@ -202,26 +183,7 @@ export default function ReviewsPage() {
     setShowBatchActions(selectedReviews.length > 0);
   }, [selectedReviews]);
 
-  // Response and Export Functions
-  const handleResponse = (reviewId) => {
-    setRespondingTo(reviewId);
-    setResponseText('');
-  };
-
-  const handleSubmitResponse = () => {
-    if (respondingTo && responseText.trim()) {
-      console.log('Submitting response to review', respondingTo, ':', responseText);
-      // Here you would save the response to backend
-      setRespondingTo(null);
-      setResponseText('');
-    }
-  };
-
-  const handleCancelResponse = () => {
-    setRespondingTo(null);
-    setResponseText('');
-  };
-
+  // Export Functions
   const handleExportReviews = () => {
     setShowExportModal(true);
   };
@@ -434,13 +396,6 @@ export default function ReviewsPage() {
                       <button className="action-btn" title="View Details">
                         <Eye size={16} />
                       </button>
-                      <button 
-                        className="action-btn" 
-                        title="Respond to Review"
-                        onClick={() => handleResponse(review.id)}
-                      >
-                        <Reply size={16} />
-                      </button>
                       <button className="action-btn" title="More Options">
                         <MoreVertical size={16} />
                       </button>
@@ -452,29 +407,9 @@ export default function ReviewsPage() {
                     <div className="review-spot">
                       <span className="spot-name">{review.spotName}</span>
                       <span className="spot-category">{review.spotCategory}</span>
-                      {review.flagged && (
-                        <span className="flagged-badge">
-                          <Flag size={12} />
-                          Flagged
-                        </span>
-                      )}
                     </div>
                     <p className="review-comment">{review.comment}</p>
                   </div>
-
-                  {/* Admin Response */}
-                  {review.adminResponse && (
-                    <div className="admin-response">
-                      <div className="response-header">
-                        <div className="response-avatar">A</div>
-                        <div className="response-info">
-                          <span className="response-author">Admin Response</span>
-                          <span className="response-date">{review.responseDate}</span>
-                        </div>
-                      </div>
-                      <p className="response-text">{review.adminResponse}</p>
-                    </div>
-                  )}
 
                   {/* Review Footer */}
                   <div className="review-footer">
@@ -504,56 +439,6 @@ export default function ReviewsPage() {
           </>
         )}
       </div>
-
-      {/* Response Modal */}
-      {respondingTo && (
-        <div className="modal-overlay">
-          <div className="response-modal">
-            <div className="modal-header">
-              <h3>Respond to Review</h3>
-              <button className="modal-close" onClick={handleCancelResponse}>
-                <X size={20} />
-              </button>
-            </div>
-            <div className="modal-content">
-              <div className="review-summary">
-                <div className="summary-avatar">
-                  {reviews.find(r => r.id === respondingTo)?.userAvatar}
-                </div>
-                <div className="summary-content">
-                  <h4>{reviews.find(r => r.id === respondingTo)?.userName}</h4>
-                  <div className="summary-rating">
-                    {renderStars(reviews.find(r => r.id === respondingTo)?.rating || 0)}
-                  </div>
-                  <p>{reviews.find(r => r.id === respondingTo)?.comment}</p>
-                </div>
-              </div>
-              <div className="response-form">
-                <label>Your Response</label>
-                <textarea
-                  value={responseText}
-                  onChange={(e) => setResponseText(e.target.value)}
-                  placeholder="Write your response to this review..."
-                  rows={4}
-                />
-              </div>
-            </div>
-            <div className="modal-footer">
-              <button className="btn-secondary" onClick={handleCancelResponse}>
-                Cancel
-              </button>
-              <button 
-                className="btn-primary" 
-                onClick={handleSubmitResponse}
-                disabled={!responseText.trim()}
-              >
-                <Reply size={16} />
-                Post Response
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Export Modal */}
       {showExportModal && (
