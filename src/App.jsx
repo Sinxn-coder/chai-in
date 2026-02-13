@@ -891,17 +891,17 @@ export default function App() {
                 <div className="form-row">
                   <div className="form-group">
                     <label className="modern-label">Name</label>
-                    <div className="modern-input">{viewingSpotData.name}</div>
+                    <div className="detail-display">{viewingSpotData.name}</div>
                   </div>
                   <div className="form-group">
                     <label className="modern-label">Category</label>
-                    <div className="modern-input">{viewingSpotData.category}</div>
+                    <div className="detail-display">{viewingSpotData.category}</div>
                   </div>
                 </div>
                 <div className="form-row">
                   <div className="form-group">
                     <label className="modern-label">Status</label>
-                    <div className="modern-input">
+                    <div className="detail-display">
                       <span className={`status-badge status-${viewingSpotData.status}`}>
                         {viewingSpotData.status}
                       </span>
@@ -909,7 +909,7 @@ export default function App() {
                   </div>
                   <div className="form-group">
                     <label className="modern-label">Rating</label>
-                    <div className="modern-input">
+                    <div className="detail-display">
                       <StarIcon size={16} />
                       <span> {viewingSpotData.rating}</span>
                       <span className="rating-text">({viewingSpotData.reviews} reviews)</span>
@@ -929,17 +929,17 @@ export default function App() {
                 <div className="form-row">
                   <div className="form-group full-width">
                     <label className="modern-label">Address</label>
-                    <div className="modern-input">{viewingSpotData.address}</div>
+                    <div className="detail-display">{viewingSpotData.address}</div>
                   </div>
                 </div>
                 <div className="form-row">
                   <div className="form-group">
                     <label className="modern-label">City</label>
-                    <div className="modern-input">{viewingSpotData.city}</div>
+                    <div className="detail-display">{viewingSpotData.city}</div>
                   </div>
                   <div className="form-group">
                     <label className="modern-label">State</label>
-                    <div className="modern-input">{viewingSpotData.state}</div>
+                    <div className="detail-display">{viewingSpotData.state}</div>
                   </div>
                 </div>
               </div>
