@@ -1047,6 +1047,13 @@ export default function App() {
                             </button>
                             <button 
                               className="dropdown-item"
+                              onClick={() => {}}
+                            >
+                              <Eye size={14} />
+                              View Details
+                            </button>
+                            <button 
+                              className="dropdown-item"
                               onClick={() => handleSpotAction('message', spot)}
                             >
                               <MessageSquare size={14} />
