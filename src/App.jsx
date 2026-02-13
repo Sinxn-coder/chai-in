@@ -888,25 +888,27 @@ export default function App() {
                   </div>
                   Spot Overview
                 </h3>
-                <div className="details-grid">
-                  <div className="detail-item">
-                    <label className="detail-label">Name</label>
+                <div className="form-row">
+                  <div className="form-group">
+                    <label className="modern-label">Name</label>
                     <div className="detail-value">{viewingSpotData.name}</div>
                   </div>
-                  <div className="detail-item">
-                    <label className="detail-label">Category</label>
+                  <div className="form-group">
+                    <label className="modern-label">Category</label>
                     <div className="detail-value">{viewingSpotData.category}</div>
                   </div>
-                  <div className="detail-item">
-                    <label className="detail-label">Status</label>
+                </div>
+                <div className="form-row">
+                  <div className="form-group">
+                    <label className="modern-label">Status</label>
                     <div className="detail-value">
                       <span className={`status-badge status-${viewingSpotData.status}`}>
                         {viewingSpotData.status}
                       </span>
                     </div>
                   </div>
-                  <div className="detail-item">
-                    <label className="detail-label">Rating</label>
+                  <div className="form-group">
+                    <label className="modern-label">Rating</label>
                     <div className="detail-value">
                       <div className="rating-display">
                         <StarIcon size={16} />
@@ -926,17 +928,19 @@ export default function App() {
                   </div>
                   Location Details
                 </h3>
-                <div className="details-grid">
-                  <div className="detail-item full-width">
-                    <label className="detail-label">Address</label>
+                <div className="form-row">
+                  <div className="form-group full-width">
+                    <label className="modern-label">Address</label>
                     <div className="detail-value">{viewingSpotData.address}</div>
                   </div>
-                  <div className="detail-item">
-                    <label className="detail-label">City</label>
+                </div>
+                <div className="form-row">
+                  <div className="form-group">
+                    <label className="modern-label">City</label>
                     <div className="detail-value">{viewingSpotData.city}</div>
                   </div>
-                  <div className="detail-item">
-                    <label className="detail-label">State</label>
+                  <div className="form-group">
+                    <label className="modern-label">State</label>
                     <div className="detail-value">{viewingSpotData.state}</div>
                   </div>
                 </div>
