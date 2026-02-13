@@ -11,7 +11,10 @@ import {
   TrendingUp,
   AlertCircle,
   CheckCircle,
-  Clock
+  Clock,
+  Reply,
+  Download,
+  Flag
 } from 'lucide-react';
 import './ReviewsPage.css';
 
@@ -23,11 +26,14 @@ export default function ReviewsPage() {
       userAvatar: 'SJ',
       rating: 5,
       date: '2024-01-15',
-      comment: 'Amazing experience! The coffee was perfect and the atmosphere was so relaxing. Will definitely come back.',
+      comment: 'Amazing experience! The coffee was perfect and atmosphere was so relaxing. Will definitely come back.',
       spotName: 'Beachside Coffee',
       spotCategory: 'Coffee Shop',
       helpful: 24,
-      status: 'approved'
+      status: 'approved',
+      adminResponse: 'Thank you for your wonderful feedback! We\'re thrilled you enjoyed your visit.',
+      responseDate: '2024-01-16',
+      flagged: false
     },
     {
       id: 2,
@@ -35,11 +41,14 @@ export default function ReviewsPage() {
       userAvatar: 'MC',
       rating: 4,
       date: '2024-01-14',
-      comment: 'Great location with beautiful views. The service was excellent and the staff was very friendly.',
+      comment: 'Great location with beautiful views. The service was excellent and staff was very friendly.',
       spotName: 'Mountain Viewpoint',
       spotCategory: 'Scenic View',
       helpful: 18,
-      status: 'approved'
+      status: 'approved',
+      adminResponse: null,
+      responseDate: null,
+      flagged: false
     },
     {
       id: 3,
@@ -47,11 +56,14 @@ export default function ReviewsPage() {
       userAvatar: 'ED',
       rating: 3,
       date: '2024-01-13',
-      comment: 'Good place but could be better. The food was average and the prices were a bit high.',
+      comment: 'Good place but could be better. The food was average and prices were a bit high.',
       spotName: 'Downtown Restaurant',
       spotCategory: 'Restaurant',
       helpful: 12,
-      status: 'pending'
+      status: 'pending',
+      adminResponse: null,
+      responseDate: null,
+      flagged: true
     },
     {
       id: 4,
@@ -59,11 +71,14 @@ export default function ReviewsPage() {
       userAvatar: 'AT',
       rating: 5,
       date: '2024-01-12',
-      comment: 'Absolutely loved it! The sunset view was breathtaking and the ambiance was perfect.',
+      comment: 'Absolutely loved it! The sunset view was breathtaking and ambiance was perfect.',
       spotName: 'Sunset Point',
       spotCategory: 'Scenic View',
       helpful: 31,
-      status: 'approved'
+      status: 'approved',
+      adminResponse: 'We\'re so glad you enjoyed the sunset! It\'s truly special at that time.',
+      responseDate: '2024-01-13',
+      flagged: false
     },
     {
       id: 5,
@@ -75,7 +90,10 @@ export default function ReviewsPage() {
       spotName: 'City Park',
       spotCategory: 'Park',
       helpful: 15,
-      status: 'approved'
+      status: 'approved',
+      adminResponse: null,
+      responseDate: null,
+      flagged: false
     }
   ]);
 
@@ -84,6 +102,9 @@ export default function ReviewsPage() {
   const [sortBy, setSortBy] = useState('newest');
   const [selectedReviews, setSelectedReviews] = useState([]);
   const [showBatchActions, setShowBatchActions] = useState(false);
+  const [respondingTo, setRespondingTo] = useState(null);
+  const [responseText, setResponseText] = useState('');
+  const [showExportModal, setShowExportModal] = useState(false);
 
   const filteredReviews = useMemo(() => {
     let filtered = reviews.filter(review => {
@@ -181,6 +202,67 @@ export default function ReviewsPage() {
     setShowBatchActions(selectedReviews.length > 0);
   }, [selectedReviews]);
 
+  // Response and Export Functions
+  const handleResponse = (reviewId) => {
+    setRespondingTo(reviewId);
+    setResponseText('');
+  };
+
+  const handleSubmitResponse = () => {
+    if (respondingTo && responseText.trim()) {
+      console.log('Submitting response to review', respondingTo, ':', responseText);
+      // Here you would save the response to backend
+      setRespondingTo(null);
+      setResponseText('');
+    }
+  };
+
+  const handleCancelResponse = () => {
+    setRespondingTo(null);
+    setResponseText('');
+  };
+
+  const handleExportReviews = () => {
+    setShowExportModal(true);
+  };
+
+  const handleExportCSV = () => {
+    const headers = ['ID', 'User', 'Rating', 'Date', 'Spot', 'Category', 'Comment', 'Status', 'Helpful'];
+    const csvData = filteredReviews.map(review => [
+      review.id,
+      review.userName,
+      review.rating,
+      review.date,
+      review.spotName,
+      review.spotCategory,
+      `"${review.comment.replace(/"/g, '""')}"`,
+      review.status,
+      review.helpful
+    ]);
+    
+    const csv = [headers, ...csvData].map(row => row.join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `reviews_${new Date().toISOString().split('T')[0]}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+    setShowExportModal(false);
+  };
+
+  const handleExportJSON = () => {
+    const jsonData = JSON.stringify(filteredReviews, null, 2);
+    const blob = new Blob([jsonData], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `reviews_${new Date().toISOString().split('T')[0]}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    setShowExportModal(false);
+  };
+
   return (
     <div className="reviews-page">
       {/* Header */}
@@ -189,6 +271,12 @@ export default function ReviewsPage() {
           <div className="header-title">
             <h1>Reviews Management</h1>
             <p>Manage and moderate user reviews for all spots</p>
+          </div>
+          <div className="header-actions">
+            <button className="export-btn" onClick={handleExportReviews}>
+              <Download size={16} />
+              Export Reviews
+            </button>
           </div>
           <div className="header-stats">
             <div className="stat-card">
@@ -346,6 +434,13 @@ export default function ReviewsPage() {
                       <button className="action-btn" title="View Details">
                         <Eye size={16} />
                       </button>
+                      <button 
+                        className="action-btn" 
+                        title="Respond to Review"
+                        onClick={() => handleResponse(review.id)}
+                      >
+                        <Reply size={16} />
+                      </button>
                       <button className="action-btn" title="More Options">
                         <MoreVertical size={16} />
                       </button>
@@ -357,9 +452,29 @@ export default function ReviewsPage() {
                     <div className="review-spot">
                       <span className="spot-name">{review.spotName}</span>
                       <span className="spot-category">{review.spotCategory}</span>
+                      {review.flagged && (
+                        <span className="flagged-badge">
+                          <Flag size={12} />
+                          Flagged
+                        </span>
+                      )}
                     </div>
                     <p className="review-comment">{review.comment}</p>
                   </div>
+
+                  {/* Admin Response */}
+                  {review.adminResponse && (
+                    <div className="admin-response">
+                      <div className="response-header">
+                        <div className="response-avatar">A</div>
+                        <div className="response-info">
+                          <span className="response-author">Admin Response</span>
+                          <span className="response-date">{review.responseDate}</span>
+                        </div>
+                      </div>
+                      <p className="response-text">{review.adminResponse}</p>
+                    </div>
+                  )}
 
                   {/* Review Footer */}
                   <div className="review-footer">
@@ -389,6 +504,94 @@ export default function ReviewsPage() {
           </>
         )}
       </div>
+
+      {/* Response Modal */}
+      {respondingTo && (
+        <div className="modal-overlay">
+          <div className="response-modal">
+            <div className="modal-header">
+              <h3>Respond to Review</h3>
+              <button className="modal-close" onClick={handleCancelResponse}>
+                <X size={20} />
+              </button>
+            </div>
+            <div className="modal-content">
+              <div className="review-summary">
+                <div className="summary-avatar">
+                  {reviews.find(r => r.id === respondingTo)?.userAvatar}
+                </div>
+                <div className="summary-content">
+                  <h4>{reviews.find(r => r.id === respondingTo)?.userName}</h4>
+                  <div className="summary-rating">
+                    {renderStars(reviews.find(r => r.id === respondingTo)?.rating || 0)}
+                  </div>
+                  <p>{reviews.find(r => r.id === respondingTo)?.comment}</p>
+                </div>
+              </div>
+              <div className="response-form">
+                <label>Your Response</label>
+                <textarea
+                  value={responseText}
+                  onChange={(e) => setResponseText(e.target.value)}
+                  placeholder="Write your response to this review..."
+                  rows={4}
+                />
+              </div>
+            </div>
+            <div className="modal-footer">
+              <button className="btn-secondary" onClick={handleCancelResponse}>
+                Cancel
+              </button>
+              <button 
+                className="btn-primary" 
+                onClick={handleSubmitResponse}
+                disabled={!responseText.trim()}
+              >
+                <Reply size={16} />
+                Post Response
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Export Modal */}
+      {showExportModal && (
+        <div className="modal-overlay">
+          <div className="export-modal">
+            <div className="modal-header">
+              <h3>Export Reviews</h3>
+              <button className="modal-close" onClick={() => setShowExportModal(false)}>
+                <X size={20} />
+              </button>
+            </div>
+            <div className="modal-content">
+              <p>Choose export format for {filteredReviews.length} reviews</p>
+              <div className="export-options">
+                <button className="export-option" onClick={handleExportCSV}>
+                  <Download size={20} />
+                  <div>
+                    <h4>CSV Format</h4>
+                    <p>Export as spreadsheet file</p>
+                  </div>
+                </button>
+                <button className="export-option" onClick={handleExportJSON}>
+                  <Download size={20} />
+                  <div>
+                    <h4>JSON Format</h4>
+                    <p>Export as structured data</p>
+                  </div>
+                </button>
+              </div>
+            </div>
+            <div className="modal-footer">
+              <button className="btn-secondary" onClick={() => setShowExportModal(false)}>
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
