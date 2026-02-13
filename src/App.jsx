@@ -116,7 +116,7 @@ export default function App() {
   const [selectedSpot, setSelectedSpot] = useState(null);
   const [sortBy, setSortBy] = useState('name');
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(2); // Default 2 items per page
+  const [itemsPerPage, setItemsPerPage] = useState(10); // Default 10 items per page
   const [activeSpotDropdown, setActiveSpotDropdown] = useState(null);
 
   // Filter and search users
