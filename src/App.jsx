@@ -851,7 +851,7 @@ export default function App() {
   };
 
   const renderViewDetailsModal = () => {
-    if (!viewingSpotData) return null;
+    if (!viewDetailsModalOpen || !viewingSpotData) return null;
 
     return (
       <div className="modern-modal-overlay" onClick={() => setViewDetailsModalOpen(false)}>
@@ -1009,7 +1009,7 @@ export default function App() {
                 <p className="last-modified">Last modified: {viewingSpotData.added}</p>
               </div>
               <div className="footer-actions">
-                <button className="modern-btn secondary" onClick={() => setViewDetailsModalOpen(false)}>
+                <button className="modern-btn cancel" onClick={() => setViewDetailsModalOpen(false)}>
                   Close
                 </button>
                 <button className="modern-btn primary" onClick={() => {
