@@ -145,6 +145,137 @@
   gap: 20px;
 }
 
+.select-all-control {
+  margin-bottom: 16px;
+  padding: 16px;
+  background: white;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+}
+
+.select-all-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 500;
+}
+
+.select-all-info input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+
+.select-all-info label {
+  cursor: pointer;
+  color: #374151;
+  font-size: 14px;
+}
+
+.reviews-grid {
+  display: grid;
+  gap: 20px;
+}
+
+.review-card {
+  background: white;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  padding: 20px;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.review-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.review-card.selected {
+  border-color: #3b82f6;
+  background: #eff6ff;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.review-selection {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  z-index: 10;
+}
+
+.review-selection input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  accent-color: #3b82f6;
+}
+
+/* Batch Actions */
+.batch-actions {
+  background: #f8fafc;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.batch-info {
+  font-weight: 500;
+  color: #374151;
+}
+
+.batch-buttons {
+  display: flex;
+  gap: 12px;
+}
+
+.batch-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.batch-btn.approve {
+  background: #ecfdf5;
+  color: #059669;
+}
+
+.batch-btn.approve:hover {
+  background: #059669;
+  color: white;
+}
+
+.batch-btn.reject {
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+.batch-btn.reject:hover {
+  background: #dc2626;
+  color: white;
+}
+
+.batch-btn.delete {
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+.batch-btn.delete:hover {
+  background: #b91c1c;
+  color: white;
+}
+
 .no-reviews {
   text-align: center;
   padding: 60px 20px;

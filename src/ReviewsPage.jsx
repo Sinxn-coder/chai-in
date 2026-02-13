@@ -82,6 +82,8 @@ export default function ReviewsPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [sortBy, setSortBy] = useState('newest');
+  const [selectedReviews, setSelectedReviews] = useState([]);
+  const [showBatchActions, setShowBatchActions] = useState(false);
 
   const filteredReviews = useMemo(() => {
     let filtered = reviews.filter(review => {
@@ -134,6 +136,50 @@ export default function ReviewsPage() {
         return <span className="status-badge">Unknown</span>;
     }
   };
+
+  // Batch Operations
+  const handleSelectReview = (reviewId) => {
+    setSelectedReviews(prev => {
+      if (prev.includes(reviewId)) {
+        return prev.filter(id => id !== reviewId);
+      } else {
+        return [...prev, reviewId];
+      }
+    });
+  };
+
+  const handleSelectAll = () => {
+    if (selectedReviews.length === filteredReviews.length) {
+      setSelectedReviews([]);
+    } else {
+      setSelectedReviews(filteredReviews.map(review => review.id));
+    }
+  };
+
+  const handleBatchApprove = () => {
+    console.log('Batch approving reviews:', selectedReviews);
+    // Here you would update the reviews status to 'approved'
+    setSelectedReviews([]);
+    setShowBatchActions(false);
+  };
+
+  const handleBatchReject = () => {
+    console.log('Batch rejecting reviews:', selectedReviews);
+    // Here you would update the reviews status to 'rejected'
+    setSelectedReviews([]);
+    setShowBatchActions(false);
+  };
+
+  const handleBatchDelete = () => {
+    console.log('Batch deleting reviews:', selectedReviews);
+    // Here you would delete the selected reviews
+    setSelectedReviews([]);
+    setShowBatchActions(false);
+  };
+
+  useEffect(() => {
+    setShowBatchActions(selectedReviews.length > 0);
+  }, [selectedReviews]);
 
   return (
     <div className="reviews-page">
@@ -218,6 +264,29 @@ export default function ReviewsPage() {
             </div>
           </div>
         </div>
+
+        {/* Batch Actions */}
+        {showBatchActions && (
+          <div className="batch-actions">
+            <div className="batch-info">
+              <span>{selectedReviews.length} reviews selected</span>
+            </div>
+            <div className="batch-buttons">
+              <button className="batch-btn approve" onClick={handleBatchApprove}>
+                <CheckCircle size={14} />
+                Approve Selected
+              </button>
+              <button className="batch-btn reject" onClick={handleBatchReject}>
+                <AlertCircle size={14} />
+                Reject Selected
+              </button>
+              <button className="batch-btn delete" onClick={handleBatchDelete}>
+                <Trash2 size={14} />
+                Delete Selected
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Reviews List */}
@@ -231,67 +300,93 @@ export default function ReviewsPage() {
             <p>Try adjusting your search or filters</p>
           </div>
         ) : (
-          filteredReviews.map(review => (
-            <div key={review.id} className="review-card">
-              {/* Review Header */}
-              <div className="review-header">
-                <div className="reviewer-info">
-                  <div className="reviewer-avatar">
-                    {review.userAvatar}
+          <>
+            {/* Select All Control */}
+            <div className="select-all-control">
+              <div className="select-all-info">
+                <input
+                  type="checkbox"
+                  checked={selectedReviews.length === filteredReviews.length && filteredReviews.length > 0}
+                  onChange={handleSelectAll}
+                />
+                <label>Select All ({selectedReviews.length}/{filteredReviews.length})</label>
+              </div>
+            </div>
+
+            {/* Reviews Grid */}
+            <div className="reviews-grid">
+              {filteredReviews.map(review => (
+                <div key={review.id} className={`review-card ${selectedReviews.includes(review.id) ? 'selected' : ''}`}>
+                  {/* Selection Checkbox */}
+                  <div className="review-selection">
+                    <input
+                      type="checkbox"
+                      checked={selectedReviews.includes(review.id)}
+                      onChange={() => handleSelectReview(review.id)}
+                    />
                   </div>
-                  <div className="reviewer-details">
-                    <h4>{review.userName}</h4>
-                    <div className="review-meta">
-                      <div className="rating">
-                        {renderStars(review.rating)}
+
+                  {/* Review Header */}
+                  <div className="review-header">
+                    <div className="reviewer-info">
+                      <div className="reviewer-avatar">
+                        {review.userAvatar}
                       </div>
-                      <span className="date">{review.date}</span>
+                      <div className="reviewer-details">
+                        <h4>{review.userName}</h4>
+                        <div className="review-meta">
+                          <div className="rating">
+                            {renderStars(review.rating)}
+                          </div>
+                          <span className="date">{review.date}</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="review-actions">
+                      <button className="action-btn" title="View Details">
+                        <Eye size={16} />
+                      </button>
+                      <button className="action-btn" title="More Options">
+                        <MoreVertical size={16} />
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Review Content */}
+                  <div className="review-content">
+                    <div className="review-spot">
+                      <span className="spot-name">{review.spotName}</span>
+                      <span className="spot-category">{review.spotCategory}</span>
+                    </div>
+                    <p className="review-comment">{review.comment}</p>
+                  </div>
+
+                  {/* Review Footer */}
+                  <div className="review-footer">
+                    <div className="review-stats">
+                      <span className="helpful-count">
+                        <MessageSquare size={14} />
+                        {review.helpful} helpful
+                      </span>
+                      {getStatusBadge(review.status)}
+                    </div>
+                    <div className="review-moderation">
+                      {review.status === 'pending' && (
+                        <button className="moderation-btn approve">
+                          <CheckCircle size={14} />
+                          Approve
+                        </button>
+                      )}
+                      <button className="moderation-btn reject">
+                        <Trash2 size={14} />
+                        Reject
+                      </button>
                     </div>
                   </div>
                 </div>
-                <div className="review-actions">
-                  <button className="action-btn" title="View Details">
-                    <Eye size={16} />
-                  </button>
-                  <button className="action-btn" title="More Options">
-                    <MoreVertical size={16} />
-                  </button>
-                </div>
-              </div>
-
-              {/* Review Content */}
-              <div className="review-content">
-                <div className="review-spot">
-                  <span className="spot-name">{review.spotName}</span>
-                  <span className="spot-category">{review.spotCategory}</span>
-                </div>
-                <p className="review-comment">{review.comment}</p>
-              </div>
-
-              {/* Review Footer */}
-              <div className="review-footer">
-                <div className="review-stats">
-                  <span className="helpful-count">
-                    <MessageSquare size={14} />
-                    {review.helpful} helpful
-                  </span>
-                  {getStatusBadge(review.status)}
-                </div>
-                <div className="review-moderation">
-                  {review.status === 'pending' && (
-                    <button className="moderation-btn approve">
-                      <CheckCircle size={14} />
-                      Approve
-                    </button>
-                  )}
-                  <button className="moderation-btn reject">
-                    <Trash2 size={14} />
-                    Reject
-                  </button>
-                </div>
-              </div>
+              ))}
             </div>
-          ))
+          </>
         )}
       </div>
     </div>
