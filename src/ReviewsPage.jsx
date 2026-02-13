@@ -229,6 +229,7 @@ export default function ReviewsPage() {
   // Dropdown Functions
   const handleDropdownToggle = (reviewId, event) => {
     event.stopPropagation();
+    console.log('Dropdown toggled for review:', reviewId);
     setActiveDropdown(activeDropdown === reviewId ? null : reviewId);
   };
 
