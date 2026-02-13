@@ -197,16 +197,16 @@ export default function App() {
   const [uploadedPhotos, setUploadedPhotos] = useState([]);
   const [photoUploadExpanded, setPhotoUploadExpanded] = useState(false);
   const fileInputRef = useRef(null);
-  const [editingPhoto, setEditingPhoto] = useState(null);
-  const [imageEditModalOpen, setImageEditModalOpen] = useState(false);
-  const [rotation, setRotation] = useState(0);
-  const [brightness, setBrightness] = useState(100);
-  const [contrast, setContrast] = useState(100);
-  const [saturation, setSaturation] = useState(100);
-  const [cropMode, setCropMode] = useState('none');
-  const [cropStart, setCropStart] = useState(null);
-  const [cropEnd, setCropEnd] = useState(null);
-  const canvasRef = useRef(null);
+  
+  // New Image Editor State
+  const [imageEditorOpen, setImageEditorOpen] = useState(false);
+  const [editingImage, setEditingImage] = useState(null);
+  const [imageRotation, setImageRotation] = useState(0);
+  const [imageBrightness, setImageBrightness] = useState(100);
+  const [imageContrast, setImageContrast] = useState(100);
+  const [imageSaturation, setImageSaturation] = useState(100);
+  const [cropRatio, setCropRatio] = useState('original');
+  const editorCanvasRef = useRef(null);
 
   // Handle file selection
   const handleFileSelect = (event) => {
@@ -246,148 +246,116 @@ export default function App() {
     }
   };
 
-  // Image editing functions
+  // NEW IMAGE EDITOR FUNCTIONS
   const openImageEditor = (photo) => {
-    setEditingPhoto(photo);
-    setRotation(0);
-    setBrightness(100);
-    setContrast(100);
-    setSaturation(100);
-    setCropMode('none');
-    setCropStart(null);
-    setCropEnd(null);
-    setImageEditModalOpen(true);
+    setEditingImage(photo);
+    setImageRotation(0);
+    setImageBrightness(100);
+    setImageContrast(100);
+    setImageSaturation(100);
+    setCropRatio('original');
+    setImageEditorOpen(true);
   };
 
   const closeImageEditor = () => {
-    setImageEditModalOpen(false);
-    setEditingPhoto(null);
+    setImageEditorOpen(false);
+    setEditingImage(null);
   };
 
-  const updateCanvas = () => {
-    if (!editingPhoto || !canvasRef.current) return;
+  const drawImageOnCanvas = () => {
+    if (!editingImage || !editorCanvasRef.current) return;
     
-    const canvas = canvasRef.current;
+    const canvas = editorCanvasRef.current;
     const ctx = canvas.getContext('2d');
     const img = new Image();
     
     img.onload = () => {
+      // Calculate crop dimensions
+      let cropWidth = img.width;
+      let cropHeight = img.height;
+      let cropX = 0;
+      let cropY = 0;
+      
+      if (cropRatio === '1:1') {
+        cropWidth = cropHeight = Math.min(img.width, img.height);
+        cropX = (img.width - cropWidth) / 2;
+        cropY = (img.height - cropHeight) / 2;
+      } else if (cropRatio === '16:9') {
+        cropHeight = (img.width * 9) / 16;
+        cropX = 0;
+        cropY = (img.height - cropHeight) / 2;
+      }
+      
       // Set canvas dimensions
-      canvas.width = img.width;
-      canvas.height = img.height;
+      canvas.width = cropWidth;
+      canvas.height = cropHeight;
       
-      // Clear canvas
+      // Clear and apply filters
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      
-      // Apply filters
-      ctx.filter = `brightness(${brightness}%) contrast(${contrast}%) saturate(${saturation}%)`;
+      ctx.filter = `brightness(${imageBrightness}%) contrast(${imageContrast}%) saturate(${imageSaturation}%)`;
       
       // Apply rotation
       ctx.save();
       ctx.translate(canvas.width / 2, canvas.height / 2);
-      ctx.rotate((rotation * Math.PI) / 180);
-      ctx.drawImage(img, -img.width / 2, -img.height / 2);
+      ctx.rotate((imageRotation * Math.PI) / 180);
+      
+      // Draw the image
+      ctx.drawImage(img, cropX - img.width / 2, cropY - img.height / 2, cropWidth, cropHeight);
       ctx.restore();
     };
     
-    img.src = editingPhoto.url;
+    img.src = editingImage.url;
   };
 
   const rotateImage = (direction) => {
-    const newRotation = direction === 'left' ? rotation - 90 : rotation + 90;
-    setRotation(newRotation % 360);
-    setTimeout(updateCanvas, 10);
+    const newRotation = direction === 'left' ? imageRotation - 90 : imageRotation + 90;
+    setImageRotation(newRotation % 360);
   };
 
   const applyCrop = (ratio) => {
-    if (!editingPhoto || !canvasRef.current) return;
-    
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext('2d');
-    const img = new Image();
-    
-    img.onload = () => {
-      let newWidth, newHeight, cropX, cropY;
-      
-      if (ratio === '1:1') {
-        newWidth = newHeight = Math.min(img.width, img.height);
-        cropX = (img.width - newWidth) / 2;
-        cropY = (img.height - newHeight) / 2;
-      } else if (ratio === '16:9') {
-        newWidth = img.width;
-        newHeight = (img.width * 9) / 16;
-        cropX = 0;
-        cropY = (img.height - newHeight) / 2;
-      } else {
-        // Free crop - use original
-        newWidth = img.width;
-        newHeight = img.height;
-        cropX = 0;
-        cropY = 0;
-      }
-      
-      canvas.width = newWidth;
-      canvas.height = newHeight;
-      
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.filter = `brightness(${brightness}%) contrast(${contrast}%) saturate(${saturation}%)`;
-      
-      if (rotation !== 0) {
-        ctx.save();
-        ctx.translate(canvas.width / 2, canvas.height / 2);
-        ctx.rotate((rotation * Math.PI) / 180);
-        ctx.drawImage(img, cropX - img.width / 2, cropY - img.height / 2, newWidth, newHeight);
-        ctx.restore();
-      } else {
-        ctx.drawImage(img, cropX, cropY, newWidth, newHeight);
-      }
-    };
-    
-    img.src = editingPhoto.url;
-    setCropMode(ratio);
+    setCropRatio(ratio);
   };
 
   const resetImageEdits = () => {
-    setRotation(0);
-    setBrightness(100);
-    setContrast(100);
-    setSaturation(100);
-    setCropMode('none');
-    setCropStart(null);
-    setCropEnd(null);
-    setTimeout(updateCanvas, 10);
+    setImageRotation(0);
+    setImageBrightness(100);
+    setImageContrast(100);
+    setImageSaturation(100);
+    setCropRatio('original');
   };
 
-  const applyImageEdits = () => {
-    if (!editingPhoto || !canvasRef.current) return;
+  const saveImageEdits = () => {
+    if (!editingImage || !editorCanvasRef.current) return;
     
-    const canvas = canvasRef.current;
+    const canvas = editorCanvasRef.current;
     const editedUrl = canvas.toDataURL('image/jpeg', 0.9);
+    
     const updatedPhotos = uploadedPhotos.map(photo => 
-      photo.id === editingPhoto.id 
+      photo.id === editingImage.id 
         ? { ...photo, url: editedUrl }
         : photo
     );
+    
     setUploadedPhotos(updatedPhotos);
     closeImageEditor();
   };
 
-  // Add useEffect for image loading
+  // Use effect to update canvas when image editor opens or settings change
   useEffect(() => {
-    if (imageEditModalOpen && editingPhoto) {
-      setTimeout(updateCanvas, 100);
+    if (imageEditorOpen && editingImage) {
+      setTimeout(drawImageOnCanvas, 100);
     }
-  }, [imageEditModalOpen, editingPhoto]);
+  }, [imageEditorOpen, editingImage]);
 
-  // Add useEffect for filter updates
   useEffect(() => {
-    if (imageEditModalOpen && editingPhoto) {
-      updateCanvas();
+    if (imageEditorOpen && editingImage) {
+      drawImageOnCanvas();
     }
-  }, [brightness, contrast, saturation, rotation]);
+  }, [imageRotation, imageBrightness, imageContrast, imageSaturation, cropRatio]);
 
-  const renderImageEditModal = () => {
-    if (!imageEditModalOpen || !editingPhoto) return null;
+  // NEW IMAGE EDITOR MODAL
+  const renderImageEditorModal = () => {
+    if (!imageEditorOpen || !editingImage) return null;
 
     return (
       <div className="modern-modal-overlay" onClick={closeImageEditor}>
@@ -413,19 +381,22 @@ export default function App() {
           {/* Modal Body */}
           <div className="modern-modal-body">
             <div className="image-editor-container">
-              {/* Canvas for image manipulation */}
+              {/* Canvas Display */}
               <div className="canvas-container">
                 <canvas 
-                  ref={canvasRef}
+                  ref={editorCanvasRef}
                   style={{
                     maxWidth: '100%',
-                    maxHeight: '400px'
+                    maxHeight: '400px',
+                    border: '1px solid #e5e7eb',
+                    borderRadius: '8px'
                   }}
                 />
               </div>
 
-              {/* Editing Controls */}
+              {/* Controls */}
               <div className="edit-controls">
+                {/* Rotate Controls */}
                 <div className="control-group">
                   <h4>
                     <RotateCw size={16} />
@@ -443,6 +414,7 @@ export default function App() {
                   </div>
                 </div>
 
+                {/* Enhancement Controls */}
                 <div className="control-group">
                   <h4>
                     <Sun size={16} />
@@ -455,10 +427,10 @@ export default function App() {
                         type="range" 
                         min="0" 
                         max="200" 
-                        value={brightness}
-                        onChange={(e) => setBrightness(Number(e.target.value))}
+                        value={imageBrightness}
+                        onChange={(e) => setImageBrightness(Number(e.target.value))}
                       />
-                      <span>{brightness}%</span>
+                      <span>{imageBrightness}%</span>
                     </div>
                     <div className="slider-control">
                       <label>Contrast</label>
@@ -466,10 +438,10 @@ export default function App() {
                         type="range" 
                         min="0" 
                         max="200" 
-                        value={contrast}
-                        onChange={(e) => setContrast(Number(e.target.value))}
+                        value={imageContrast}
+                        onChange={(e) => setImageContrast(Number(e.target.value))}
                       />
-                      <span>{contrast}%</span>
+                      <span>{imageContrast}%</span>
                     </div>
                     <div className="slider-control">
                       <label>Saturation</label>
@@ -477,14 +449,15 @@ export default function App() {
                         type="range" 
                         min="0" 
                         max="200" 
-                        value={saturation}
-                        onChange={(e) => setSaturation(Number(e.target.value))}
+                        value={imageSaturation}
+                        onChange={(e) => setImageSaturation(Number(e.target.value))}
                       />
-                      <span>{saturation}%</span>
+                      <span>{imageSaturation}%</span>
                     </div>
                   </div>
                 </div>
 
+                {/* Crop Controls */}
                 <div className="control-group">
                   <h4>
                     <Crop size={16} />
@@ -492,21 +465,21 @@ export default function App() {
                   </h4>
                   <div className="button-group">
                     <button 
-                      className={`control-btn ${cropMode === 'none' ? 'primary' : ''}`}
-                      onClick={() => applyCrop('none')}
+                      className={`control-btn ${cropRatio === 'original' ? 'primary' : ''}`}
+                      onClick={() => applyCrop('original')}
                     >
                       <Crop size={14} />
                       Original
                     </button>
                     <button 
-                      className={`control-btn ${cropMode === '1:1' ? 'primary' : ''}`}
+                      className={`control-btn ${cropRatio === '1:1' ? 'primary' : ''}`}
                       onClick={() => applyCrop('1:1')}
                     >
                       <Crop size={14} />
                       1:1
                     </button>
                     <button 
-                      className={`control-btn ${cropMode === '16:9' ? 'primary' : ''}`}
+                      className={`control-btn ${cropRatio === '16:9' ? 'primary' : ''}`}
                       onClick={() => applyCrop('16:9')}
                     >
                       <Crop size={14} />
@@ -515,6 +488,7 @@ export default function App() {
                   </div>
                 </div>
 
+                {/* Action Controls */}
                 <div className="control-group">
                   <h4>Actions</h4>
                   <div className="button-group">
@@ -522,9 +496,9 @@ export default function App() {
                       <X size={14} />
                       Reset
                     </button>
-                    <button className="control-btn primary" onClick={applyImageEdits}>
+                    <button className="control-btn primary" onClick={saveImageEdits}>
                       <Save size={14} />
-                      Apply
+                      Save
                     </button>
                   </div>
                 </div>
@@ -536,13 +510,13 @@ export default function App() {
           <div className="modern-modal-footer">
             <div className="footer-content">
               <div className="footer-info">
-                <p className="last-modified">Editing: {editingPhoto.name}</p>
+                <p className="last-modified">Editing: {editingImage.name}</p>
               </div>
               <div className="footer-actions">
                 <button className="modern-btn cancel" onClick={closeImageEditor}>
                   Cancel
                 </button>
-                <button className="modern-btn primary" onClick={applyImageEdits}>
+                <button className="modern-btn primary" onClick={saveImageEdits}>
                   <Save size={16} />
                   Save Changes
                 </button>
@@ -1721,7 +1695,7 @@ export default function App() {
         {renderSpotModal()}
         {renderModernEditModal()}
         {renderViewDetailsModal()}
-        {renderImageEditModal()}
+        {renderImageEditorModal()}
       </>
     );
   };
