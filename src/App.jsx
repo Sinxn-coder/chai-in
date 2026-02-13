@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { Layout, Users, Star, BarChart3, Settings, TrendingUp, AlertCircle, CheckCircle, Clock, Search, Filter, Download, Ban, Shield, UserCheck, MoreVertical, Edit, Eye, MessageSquare, Trash2, X, Camera, Phone, Mail, Globe, MapPin, Star as StarIcon, Save, Upload, Image } from 'lucide-react';
 import './index.css';
 
@@ -196,6 +196,40 @@ export default function App() {
   const [viewingSpotData, setViewingSpotData] = useState(null);
   const [uploadedPhotos, setUploadedPhotos] = useState([]);
   const [photoUploadExpanded, setPhotoUploadExpanded] = useState(false);
+  const fileInputRef = useRef(null);
+
+  // Handle file selection
+  const handleFileSelect = (event) => {
+    const files = event.target.files;
+    if (files.length > 0 && uploadedPhotos.length < 5) {
+      const newPhotos = [];
+      const maxPhotos = Math.min(files.length, 5 - uploadedPhotos.length);
+      
+      for (let i = 0; i < maxPhotos; i++) {
+        const file = files[i];
+        const reader = new FileReader();
+        
+        reader.onload = (e) => {
+          const newPhoto = {
+            id: Date.now() + i,
+            name: file.name,
+            size: `${(file.size / (1024 * 1024)).toFixed(1)} MB`,
+            url: e.target.result,
+            file: file
+          };
+          
+          setUploadedPhotos(prev => [...prev, newPhoto]);
+        };
+        
+        reader.readAsDataURL(file);
+      }
+    }
+    
+    // Reset file input
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
 
   // Filter and search users
   const filteredUsers = useMemo(() => {
@@ -845,21 +879,18 @@ export default function App() {
                       </div>
                       <h4>Drop photos here or click to browse</h4>
                       <p>Support for JPG, PNG, GIF up to 10MB each</p>
-                      <button className="modern-btn secondary" onClick={() => {
-                        // Simulate photo upload
-                        if (uploadedPhotos.length < 5) {
-                          const newPhoto = {
-                            id: Date.now(),
-                            name: `photo-${uploadedPhotos.length + 1}.jpg`,
-                            size: `${(Math.random() * 3 + 1).toFixed(1)} MB`,
-                            url: `https://picsum.photos/seed/spot${Date.now()}/200/200.jpg`
-                          };
-                          setUploadedPhotos([...uploadedPhotos, newPhoto]);
-                        }
-                      }}>
+                      <button className="modern-btn secondary" onClick={() => fileInputRef.current?.click()}>
                         <Upload size={16} />
                         Choose Files
                       </button>
+                      <input
+                        ref={fileInputRef}
+                        type="file"
+                        multiple
+                        accept="image/*"
+                        onChange={handleFileSelect}
+                        style={{ display: 'none' }}
+                      />
                     </div>
 
                     {uploadedPhotos.length > 0 && (
