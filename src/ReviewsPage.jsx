@@ -9,10 +9,15 @@ import {
   MessageSquare, 
   Calendar,
   TrendingUp,
+  TrendingDown,
   AlertCircle,
   CheckCircle,
   Clock,
-  Download
+  Download,
+  BarChart3,
+  Users,
+  ThumbsUp,
+  ThumbsDown
 } from 'lucide-react';
 import './ReviewsPage.css';
 
@@ -87,6 +92,42 @@ export default function ReviewsPage() {
   const [showBatchActions, setShowBatchActions] = useState(false);
   const [showExportModal, setShowExportModal] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState(null);
+  const [showAnalytics, setShowAnalytics] = useState(false);
+
+  // Analytics calculations
+  const analytics = useMemo(() => {
+    const totalReviews = reviews.length;
+    const approvedReviews = reviews.filter(r => r.status === 'approved').length;
+    const pendingReviews = reviews.filter(r => r.status === 'pending').length;
+    const rejectedReviews = reviews.filter(r => r.status === 'rejected').length;
+    
+    const avgRating = reviews.reduce((sum, r) => sum + r.rating, 0) / totalReviews;
+    const totalHelpful = reviews.reduce((sum, r) => sum + r.helpful, 0);
+    
+    const ratingDistribution = [1, 2, 3, 4, 5].map(rating => ({
+      rating,
+      count: reviews.filter(r => r.rating === rating).length
+    }));
+    
+    const recentReviews = reviews.filter(r => {
+      const reviewDate = new Date(r.date);
+      const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+      return reviewDate >= thirtyDaysAgo;
+    }).length;
+
+    return {
+      totalReviews,
+      approvedReviews,
+      pendingReviews,
+      rejectedReviews,
+      avgRating: avgRating.toFixed(1),
+      totalHelpful,
+      ratingDistribution,
+      recentReviews,
+      approvalRate: ((approvedReviews / totalReviews) * 100).toFixed(1)
+    };
+  }, [reviews]);
 
   const filteredReviews = useMemo(() => {
     let filtered = reviews.filter(review => {
@@ -262,41 +303,117 @@ export default function ReviewsPage() {
             <p>Manage and moderate user reviews for all spots</p>
           </div>
           <div className="header-actions">
+            <button 
+              className="analytics-btn" 
+              onClick={() => setShowAnalytics(!showAnalytics)}
+            >
+              <BarChart3 size={16} />
+              {showAnalytics ? 'Hide Analytics' : 'Show Analytics'}
+            </button>
             <button className="export-btn" onClick={handleExportReviews}>
               <Download size={16} />
               Export Reviews
             </button>
           </div>
-          <div className="header-stats">
-            <div className="stat-card">
-              <div className="stat-icon">
-                <Star size={24} />
+        </div>
+        
+        {/* Analytics Dashboard */}
+        {showAnalytics && (
+          <div className="analytics-dashboard">
+            <div className="analytics-grid">
+              <div className="analytics-card">
+                <div className="analytics-icon">
+                  <MessageSquare size={24} />
+                </div>
+                <div className="analytics-info">
+                  <h3>{analytics.totalReviews}</h3>
+                  <p>Total Reviews</p>
+                </div>
               </div>
-              <div className="stat-info">
-                <h3>4.2</h3>
-                <p>Avg Rating</p>
+              
+              <div className="analytics-card">
+                <div className="analytics-icon">
+                  <Star size={24} />
+                </div>
+                <div className="analytics-info">
+                  <h3>{analytics.avgRating}</h3>
+                  <p>Average Rating</p>
+                </div>
+              </div>
+              
+              <div className="analytics-card">
+                <div className="analytics-icon">
+                  <CheckCircle size={24} />
+                </div>
+                <div className="analytics-info">
+                  <h3>{analytics.approvalRate}%</h3>
+                  <p>Approval Rate</p>
+                </div>
+              </div>
+              
+              <div className="analytics-card">
+                <div className="analytics-icon">
+                  <ThumbsUp size={24} />
+                </div>
+                <div className="analytics-info">
+                  <h3>{analytics.totalHelpful}</h3>
+                  <p>Total Helpful</p>
+                </div>
               </div>
             </div>
-            <div className="stat-card">
-              <div className="stat-icon">
-                <MessageSquare size={24} />
+            
+            <div className="analytics-details">
+              <div className="analytics-section">
+                <h4>Review Status</h4>
+                <div className="status-stats">
+                  <div className="status-stat approved">
+                    <CheckCircle size={16} />
+                    <span>{analytics.approvedReviews} Approved</span>
+                  </div>
+                  <div className="status-stat pending">
+                    <Clock size={16} />
+                    <span>{analytics.pendingReviews} Pending</span>
+                  </div>
+                  <div className="status-stat rejected">
+                    <AlertCircle size={16} />
+                    <span>{analytics.rejectedReviews} Rejected</span>
+                  </div>
+                </div>
               </div>
-              <div className="stat-info">
-                <h3>{reviews.length}</h3>
-                <p>Total Reviews</p>
+              
+              <div className="analytics-section">
+                <h4>Rating Distribution</h4>
+                <div className="rating-distribution">
+                  {analytics.ratingDistribution.map(({ rating, count }) => (
+                    <div key={rating} className="rating-bar">
+                      <div className="rating-label">
+                        <Star size={14} />
+                        <span>{rating}</span>
+                      </div>
+                      <div className="rating-progress">
+                        <div 
+                          className="rating-fill" 
+                          style={{ width: `${(count / analytics.totalReviews) * 100}%` }}
+                        />
+                      </div>
+                      <span className="rating-count">{count}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
-            <div className="stat-card">
-              <div className="stat-icon">
-                <TrendingUp size={24} />
-              </div>
-              <div className="stat-info">
-                <h3>+12%</h3>
-                <p>This Month</p>
+              
+              <div className="analytics-section">
+                <h4>Recent Activity</h4>
+                <div className="activity-stats">
+                  <div className="activity-stat">
+                    <TrendingUp size={16} />
+                    <span>{analytics.recentReviews} reviews in last 30 days</span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
 
       {/* Filters and Search */}
