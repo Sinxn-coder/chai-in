@@ -86,6 +86,7 @@ export default function ReviewsPage() {
   const [selectedReviews, setSelectedReviews] = useState([]);
   const [showBatchActions, setShowBatchActions] = useState(false);
   const [showExportModal, setShowExportModal] = useState(false);
+  const [activeDropdown, setActiveDropdown] = useState(null);
 
   const filteredReviews = useMemo(() => {
     let filtered = reviews.filter(review => {
@@ -224,6 +225,29 @@ export default function ReviewsPage() {
     URL.revokeObjectURL(url);
     setShowExportModal(false);
   };
+
+  // Dropdown Functions
+  const handleDropdownToggle = (reviewId) => {
+    setActiveDropdown(activeDropdown === reviewId ? null : reviewId);
+  };
+
+  const handleDropdownAction = (action, reviewId) => {
+    console.log(`${action} review:`, reviewId);
+    setActiveDropdown(null);
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (activeDropdown && !event.target.closest('.dropdown-menu')) {
+        setActiveDropdown(null);
+      }
+    };
+
+    document.addEventListener('click', handleClickOutside);
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, [activeDropdown]);
 
   return (
     <div className="reviews-page">
@@ -396,9 +420,40 @@ export default function ReviewsPage() {
                       <button className="action-btn" title="View Details">
                         <Eye size={16} />
                       </button>
-                      <button className="action-btn" title="More Options">
-                        <MoreVertical size={16} />
-                      </button>
+                      <div className="dropdown-container">
+                        <button 
+                          className="action-btn dropdown-toggle" 
+                          title="More Options"
+                          onClick={() => handleDropdownToggle(review.id)}
+                        >
+                          <MoreVertical size={16} />
+                        </button>
+                        {activeDropdown === review.id && (
+                          <div className="dropdown-menu">
+                            <button 
+                              className="dropdown-item"
+                              onClick={() => handleDropdownAction('edit', review.id)}
+                            >
+                              <Eye size={14} />
+                              Edit Review
+                            </button>
+                            <button 
+                              className="dropdown-item"
+                              onClick={() => handleDropdownAction('flag', review.id)}
+                            >
+                              <AlertCircle size={14} />
+                              Flag Review
+                            </button>
+                            <button 
+                              className="dropdown-item"
+                              onClick={() => handleDropdownAction('delete', review.id)}
+                            >
+                              <Trash2 size={14} />
+                              Delete Review
+                            </button>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
 
