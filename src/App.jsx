@@ -984,7 +984,11 @@ export default function App() {
                     Quick Actions
                   </h3>
                   <div className="quick-actions">
-                    <button className="action-btn primary">
+                    <button className="action-btn primary" onClick={() => {
+                      setViewDetailsModalOpen(false);
+                      setEditingSpotData(viewingSpotData);
+                      setEditModalOpen(true);
+                    }}>
                       <Edit size={16} />
                       Edit Spot
                     </button>
