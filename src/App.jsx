@@ -902,10 +902,6 @@ export default function App() {
                               <div className="photo-preview">
                                 <img src={photo.url} alt={photo.name} />
                               </div>
-                              <div className="photo-info">
-                                <span className="photo-name">{photo.name}</span>
-                                <span className="photo-size">{photo.size}</span>
-                              </div>
                               <button className="photo-remove" onClick={() => {
                                 setUploadedPhotos(uploadedPhotos.filter(p => p.id !== photo.id));
                               }}>
