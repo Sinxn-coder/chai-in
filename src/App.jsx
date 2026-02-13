@@ -207,6 +207,10 @@ export default function App() {
   const [imageSaturation, setImageSaturation] = useState(100);
   const [cropRatio, setCropRatio] = useState('original');
   const editorCanvasRef = useRef(null);
+  
+  // Drag & Drop State
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragCounter, setDragCounter] = useState(0);
 
   // Handle file selection
   const handleFileSelect = (event) => {
@@ -243,6 +247,111 @@ export default function App() {
     // Reset file input
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
+    }
+  };
+
+  // Drag & Drop Handlers
+  const handleDragEnter = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragCounter(prev => prev + 1);
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragCounter(prev => prev - 1);
+    if (dragCounter <= 1) {
+      setIsDragging(false);
+    }
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+    setDragCounter(0);
+
+    try {
+      const files = e.dataTransfer.files;
+      if (files && files.length > 0) {
+        console.log('Files dropped:', files.length);
+        processFiles(files);
+      }
+    } catch (error) {
+      console.error('Error handling drop:', error);
+    }
+  };
+
+  const processFiles = (files) => {
+    try {
+      const currentPhotoCount = uploadedPhotos.length;
+      const remainingSlots = 5 - currentPhotoCount;
+      const maxPhotos = Math.min(files.length, remainingSlots);
+      
+      if (maxPhotos === 0) {
+        console.log('Maximum photos reached');
+        return;
+      }
+
+      const newPhotos = [];
+      let processedCount = 0;
+
+      for (let i = 0; i < maxPhotos; i++) {
+        const file = files[i];
+        
+        // Validate file type
+        if (!file.type.startsWith('image/')) {
+          console.log('Skipping non-image file:', file.name);
+          continue;
+        }
+
+        // Validate file size (max 10MB)
+        if (file.size > 10 * 1024 * 1024) {
+          console.log('File too large:', file.name);
+          continue;
+        }
+
+        const reader = new FileReader();
+        
+        reader.onload = (event) => {
+          const photo = {
+            id: Date.now() + i,
+            name: file.name,
+            url: event.target.result,
+            size: file.size,
+            type: file.type
+          };
+          
+          newPhotos.push(photo);
+          processedCount++;
+          
+          // Add photos when all are processed
+          if (processedCount === maxPhotos) {
+            setUploadedPhotos(prev => [...prev, ...newPhotos]);
+            console.log(`Successfully added ${processedCount} photos`);
+          }
+        };
+
+        reader.onerror = () => {
+          console.error('Error reading file:', file.name);
+          processedCount++;
+          
+          if (processedCount === maxPhotos) {
+            setUploadedPhotos(prev => [...prev, ...newPhotos]);
+          }
+        };
+
+        reader.readAsDataURL(file);
+      }
+    } catch (error) {
+      console.error('Error processing files:', error);
     }
   };
 
@@ -1214,26 +1323,48 @@ export default function App() {
                   
                   <div className="photo-upload-area">
                     {uploadedPhotos.length < 5 && (
-                      <div className="upload-zone">
-                        <div className="upload-icon">
-                          <Upload size={32} />
+                      <div 
+                        className={`upload-zone ${isDragging ? 'dragging' : ''}`}
+                        onClick={() => fileInputRef.current?.click()}
+                        onDragEnter={handleDragEnter}
+                        onDragLeave={handleDragLeave}
+                        onDragOver={handleDragOver}
+                        onDrop={handleDrop}
+                      >
+                        <div className="upload-content">
+                          <Upload size={48} className="upload-icon" />
+                          <h3>Upload Photos</h3>
+                          <p>
+                            {isDragging 
+                              ? 'Drop files here...' 
+                              : 'Drag & drop photos here or click to browse'
+                            }
+                          </p>
+                          <p className="upload-limit">
+                            Select up to {5 - uploadedPhotos.length} more photos
+                          </p>
+                          <button 
+                            type="button" 
+                            className="modern-btn primary"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              fileInputRef.current?.click();
+                            }}
+                          >
+                            <Upload size={16} />
+                            Choose Files
+                          </button>
                         </div>
-                        <h4>Drop photos here or click to browse</h4>
-                        <p>Select up to {5 - uploadedPhotos.length} more images (JPG, PNG, GIF up to 10MB each)</p>
-                        <button className="modern-btn secondary" onClick={() => fileInputRef.current?.click()}>
-                          <Upload size={16} />
-                          Choose Files
-                        </button>
-                        <input
-                          ref={fileInputRef}
-                          type="file"
-                          multiple
-                          accept="image/*"
-                          onChange={handleFileSelect}
-                          style={{ display: 'none' }}
-                        />
                       </div>
                     )}
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      multiple
+                      accept="image/*"
+                      onChange={handleFileSelect}
+                      style={{ display: 'none' }}
+                    />
 
                     {uploadedPhotos.length > 0 && (
                       <div className="uploaded-photos">

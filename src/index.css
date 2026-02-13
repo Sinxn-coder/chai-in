@@ -1558,17 +1558,19 @@ main {
 
 /* Photo Upload Section Styles */
 .photo-upload-area {
-  margin-top: 16px;
+  margin-bottom: 20px;
 }
 
 .upload-zone {
   border: 2px dashed #d1d5db;
   border-radius: 12px;
-  padding: 32px 16px;
+  padding: 40px 20px;
   text-align: center;
-  background: #f9fafb;
+  cursor: pointer;
   transition: all 0.3s ease;
-  margin-bottom: 20px;
+  background: #f9fafb;
+  position: relative;
+  overflow: hidden;
 }
 
 .upload-zone:hover {
@@ -1576,29 +1578,94 @@ main {
   background: #eff6ff;
 }
 
-.upload-icon {
-  color: #9ca3af;
-  margin-bottom: 12px;
+.upload-zone.dragging {
+  border-color: #10b981;
+  background: #ecfdf5;
+  transform: scale(1.02);
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.2);
 }
 
-.upload-zone h4 {
+.upload-zone.dragging::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, rgba(16, 185, 129, 0.1), rgba(59, 130, 246, 0.1));
+  pointer-events: none;
+  z-index: 1;
+}
+
+.upload-content {
+  position: relative;
+  z-index: 2;
+}
+
+.upload-icon {
+  color: #6b7280;
+  margin-bottom: 16px;
+  transition: color 0.3s ease;
+}
+
+.upload-zone:hover .upload-icon {
+  color: #3b82f6;
+}
+
+.upload-zone.dragging .upload-icon {
+  color: #10b981;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+.upload-zone h3 {
+  margin: 0 0 12px 0;
   color: #374151;
-  font-size: 1rem;
+  font-size: 18px;
   font-weight: 600;
-  margin-bottom: 6px;
 }
 
 .upload-zone p {
+  margin: 0 0 8px 0;
   color: #6b7280;
-  font-size: 0.875rem;
-  margin-bottom: 16px;
+  font-size: 14px;
 }
 
-.uploaded-photos h4 {
-  color: #374151;
-  font-size: 0.875rem;
-  font-weight: 600;
-  margin-bottom: 12px;
+.upload-zone.dragging p {
+  color: #059669;
+  font-weight: 500;
+}
+
+.upload-limit {
+  font-size: 12px !important;
+  color: #9ca3af !important;
+  margin-top: 8px !important;
+}
+
+.upload-zone .modern-btn {
+  margin-top: 16px;
+  padding: 10px 20px;
+  font-size: 14px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.upload-zone.dragging .modern-btn {
+  background: #10b981;
+  border-color: #10b981;
+}
+
+.upload-zone.dragging .modern-btn:hover {
+  background: #059669;
+  border-color: #059669;
 }
 
 .photo-grid {
