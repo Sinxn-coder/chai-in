@@ -1661,6 +1661,34 @@ main {
   background: rgba(220, 38, 38, 0.95);
 }
 
+/* Upload Complete State */
+.upload-complete {
+  text-align: center;
+  padding: 48px 24px;
+  background: #f0fdf4;
+  border: 2px solid #86efac;
+  border-radius: 12px;
+  margin-top: 20px;
+}
+
+.complete-icon {
+  color: #22c55e;
+  margin-bottom: 16px;
+}
+
+.upload-complete h4 {
+  color: #16a34a;
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.upload-complete p {
+  color: #15803d;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .edit-modal-content {

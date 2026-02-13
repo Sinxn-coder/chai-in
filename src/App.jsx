@@ -201,27 +201,32 @@ export default function App() {
   // Handle file selection
   const handleFileSelect = (event) => {
     const files = event.target.files;
-    if (files.length > 0 && uploadedPhotos.length < 5) {
-      const newPhotos = [];
-      const maxPhotos = Math.min(files.length, 5 - uploadedPhotos.length);
+    if (files.length > 0) {
+      const currentPhotoCount = uploadedPhotos.length;
+      const remainingSlots = 5 - currentPhotoCount;
+      const maxPhotos = Math.min(files.length, remainingSlots);
       
-      for (let i = 0; i < maxPhotos; i++) {
-        const file = files[i];
-        const reader = new FileReader();
+      if (maxPhotos > 0) {
+        const newPhotos = [];
         
-        reader.onload = (e) => {
-          const newPhoto = {
-            id: Date.now() + i,
-            name: file.name,
-            size: `${(file.size / (1024 * 1024)).toFixed(1)} MB`,
-            url: e.target.result,
-            file: file
+        for (let i = 0; i < maxPhotos; i++) {
+          const file = files[i];
+          const reader = new FileReader();
+          
+          reader.onload = (e) => {
+            const newPhoto = {
+              id: Date.now() + i,
+              name: file.name,
+              size: `${(file.size / (1024 * 1024)).toFixed(1)} MB`,
+              url: e.target.result,
+              file: file
+            };
+            
+            setUploadedPhotos(prev => [...prev, newPhoto]);
           };
           
-          setUploadedPhotos(prev => [...prev, newPhoto]);
-        };
-        
-        reader.readAsDataURL(file);
+          reader.readAsDataURL(file);
+        }
       }
     }
     
@@ -873,29 +878,31 @@ export default function App() {
                   </h3>
                   
                   <div className="photo-upload-area">
-                    <div className="upload-zone">
-                      <div className="upload-icon">
-                        <Upload size={32} />
+                    {uploadedPhotos.length < 5 && (
+                      <div className="upload-zone">
+                        <div className="upload-icon">
+                          <Upload size={32} />
+                        </div>
+                        <h4>Drop photos here or click to browse</h4>
+                        <p>Select up to {5 - uploadedPhotos.length} more images (JPG, PNG, GIF up to 10MB each)</p>
+                        <button className="modern-btn secondary" onClick={() => fileInputRef.current?.click()}>
+                          <Upload size={16} />
+                          Choose Files
+                        </button>
+                        <input
+                          ref={fileInputRef}
+                          type="file"
+                          multiple
+                          accept="image/*"
+                          onChange={handleFileSelect}
+                          style={{ display: 'none' }}
+                        />
                       </div>
-                      <h4>Drop photos here or click to browse</h4>
-                      <p>Support for JPG, PNG, GIF up to 10MB each</p>
-                      <button className="modern-btn secondary" onClick={() => fileInputRef.current?.click()}>
-                        <Upload size={16} />
-                        Choose Files
-                      </button>
-                      <input
-                        ref={fileInputRef}
-                        type="file"
-                        multiple
-                        accept="image/*"
-                        onChange={handleFileSelect}
-                        style={{ display: 'none' }}
-                      />
-                    </div>
+                    )}
 
                     {uploadedPhotos.length > 0 && (
                       <div className="uploaded-photos">
-                        <h4>Uploaded Photos</h4>
+                        <h4>Uploaded Photos ({uploadedPhotos.length}/5)</h4>
                         <div className="photo-grid">
                           {uploadedPhotos.map((photo, index) => (
                             <div key={photo.id} className="photo-item">
@@ -910,6 +917,16 @@ export default function App() {
                             </div>
                           ))}
                         </div>
+                      </div>
+                    )}
+
+                    {uploadedPhotos.length === 5 && (
+                      <div className="upload-complete">
+                        <div className="complete-icon">
+                          <CheckCircle size={32} />
+                        </div>
+                        <h4>Maximum Photos Reached</h4>
+                        <p>You've uploaded the maximum of 5 photos. Remove some photos to add more.</p>
                       </div>
                     )}
                   </div>
