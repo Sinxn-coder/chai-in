@@ -94,6 +94,15 @@ export default function ReviewsPage() {
   const [activeDropdown, setActiveDropdown] = useState(null);
   const [showAnalytics, setShowAnalytics] = useState(false);
   const [searchFocused, setSearchFocused] = useState(false);
+  const [dateRange, setDateRange] = useState({
+    start: '',
+    end: ''
+  });
+  const [advancedSearch, setAdvancedSearch] = useState({
+    rating: '',
+    helpful: '',
+    flagged: false
+  });
 
   // Analytics calculations
   const analytics = useMemo(() => {
@@ -132,13 +141,39 @@ export default function ReviewsPage() {
 
   const filteredReviews = useMemo(() => {
     let filtered = reviews.filter(review => {
+      // Basic search filter
       const matchesSearch = review.userName.toLowerCase().includes(searchTerm.toLowerCase()) ||
                            review.comment.toLowerCase().includes(searchTerm.toLowerCase()) ||
                            review.spotName.toLowerCase().includes(searchTerm.toLowerCase());
+      
+      // Status filter
       const matchesStatus = statusFilter === 'all' || review.status === statusFilter;
-      return matchesSearch && matchesStatus;
+      
+      // Date range filter
+      let matchesDateRange = true;
+      if (dateRange.start || dateRange.end) {
+        const reviewDate = new Date(review.date);
+        const startDate = dateRange.start ? new Date(dateRange.start) : null;
+        const endDate = dateRange.end ? new Date(dateRange.end) : null;
+        
+        if (startDate && endDate) {
+          matchesDateRange = reviewDate >= startDate && reviewDate <= endDate;
+        } else if (startDate) {
+          matchesDateRange = reviewDate >= startDate;
+        } else if (endDate) {
+          matchesDateRange = reviewDate <= endDate;
+        }
+      }
+      
+      // Advanced search filters
+      let matchesRating = !advancedSearch.rating || review.rating === parseInt(advancedSearch.rating);
+      let matchesHelpful = !advancedSearch.helpful || review.helpful >= parseInt(advancedSearch.helpful);
+      let matchesFlagged = !advancedSearch.flagged || review.flagged === advancedSearch.flagged;
+      
+      return matchesSearch && matchesStatus && matchesDateRange && matchesRating && matchesHelpful && matchesFlagged;
     });
 
+    // Sorting
     return filtered.sort((a, b) => {
       switch (sortBy) {
         case 'newest':
@@ -155,7 +190,7 @@ export default function ReviewsPage() {
           return 0;
       }
     });
-  }, [reviews, searchTerm, statusFilter, sortBy]);
+  }, [reviews, searchTerm, statusFilter, sortBy, dateRange, advancedSearch]);
 
   const renderStars = (rating) => {
     return Array.from({ length: 5 }, (_, i) => (
@@ -457,8 +492,7 @@ export default function ReviewsPage() {
                 <option value="rejected">Rejected</option>
               </select>
             </div>
-            
-            <div className="sort-dropdown">
+            <div className="filter-dropdown">
               <Calendar size={16} />
               <select 
                 value={sortBy} 
@@ -471,18 +505,6 @@ export default function ReviewsPage() {
                 <option value="helpful">Most Helpful</option>
               </select>
             </div>
-          </div>
-        </div>
-
-      {/* Reviews List */}
-      <div className="reviews-list">
-        {filteredReviews.length === 0 ? (
-          <div className="no-reviews">
-            <div className="no-reviews-icon">
-              <MessageSquare size={48} />
-            </div>
-            <h3>No reviews found</h3>
-            <p>Try adjusting your search or filters</p>
           </div>
         ) : (
           <>

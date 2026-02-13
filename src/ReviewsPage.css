@@ -1133,7 +1133,132 @@
   transform: translateY(-1px);
 }
 
-/* Responsive Design */
+/* Advanced Filters */
+.advanced-filters {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.filter-section h4 {
+  margin: 0 0 16px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.date-range {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.date-input {
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 14px;
+  background: white;
+  color: #374151;
+  transition: all 0.3s ease;
+}
+
+.date-input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.date-separator {
+  color: #6b7280;
+  font-weight: 500;
+  margin: 0 8px;
+}
+
+.date-clear {
+  background: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.date-clear:hover {
+  background: #dc2626;
+  transform: translateY(-1px);
+}
+
+.advanced-search {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.advanced-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.advanced-field label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 4px;
+}
+
+.advanced-select,
+.advanced-input {
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 14px;
+  background: white;
+  color: #374151;
+  transition: all 0.3s ease;
+}
+
+.advanced-select:focus,
+.advanced-input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.advanced-checkbox {
+  width: 18px;
+  height: 18px;
+  accent-color: #3b82f6;
+  cursor: pointer;
+}
+
+.advanced-clear {
+  background: #6b7280;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  align-self: flex-start;
+}
+
+.advanced-clear:hover {
+  background: #4b5563;
+  transform: translateY(-1px);
+}
 @media (max-width: 768px) {
   .reviews-page {
     padding: 16px;
