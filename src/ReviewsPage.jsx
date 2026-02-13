@@ -442,9 +442,6 @@ export default function ReviewsPage() {
                 </button>
               )}
             </div>
-            <div className="search-suggestions">
-              <span className="suggestion-text">Try: "coffee", "5 stars", "approved"</span>
-            </div>
           </div>
           
           <div className="filter-group">
