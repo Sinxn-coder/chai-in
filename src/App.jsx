@@ -116,7 +116,7 @@ export default function App() {
   const [selectedSpot, setSelectedSpot] = useState(null);
   const [sortBy, setSortBy] = useState('name');
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 2; // Show 2 spots per page for demonstration
+  const [itemsPerPage, setItemsPerPage] = useState(2); // Default 2 items per page
 
   // Filter and search users
   const filteredUsers = useMemo(() => {
@@ -174,6 +174,11 @@ export default function App() {
     if (currentPage > 1) {
       setCurrentPage(currentPage - 1);
     }
+  };
+
+  const handleItemsPerPageChange = (newItemsPerPage) => {
+    setItemsPerPage(Number(newItemsPerPage));
+    setCurrentPage(1); // Reset to first page when changing items per page
   };
 
   // Calculate statistics
@@ -591,6 +596,19 @@ export default function App() {
                   <option value="rating">Sort by Rating</option>
                   <option value="date">Sort by Date</option>
                   <option value="reviews">Sort by Reviews</option>
+                </select>
+              </div>
+              <div className="items-per-page-dropdown">
+                <select 
+                  value={itemsPerPage} 
+                  onChange={(e) => handleItemsPerPageChange(e.target.value)}
+                  className="items-per-page-select"
+                >
+                  <option value="2">2 per page</option>
+                  <option value="5">5 per page</option>
+                  <option value="10">10 per page</option>
+                  <option value="20">20 per page</option>
+                  <option value="50">50 per page</option>
                 </select>
               </div>
             </div>
