@@ -1,5 +1,41 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
-import { Layout, Users, Star, BarChart3, Settings, TrendingUp, AlertCircle, CheckCircle, Clock, Search, Filter, Download, Ban, Shield, UserCheck, MoreVertical, Edit, Eye, MessageSquare, Trash2, X, Camera, Phone, Mail, Globe, MapPin, Star as StarIcon, Save, Upload, Image, RotateCw, Crop, Sun, Sliders } from 'lucide-react';
+import { 
+  Layout, 
+  Users, 
+  Star, 
+  BarChart3, 
+  Settings, 
+  TrendingUp, 
+  AlertCircle, 
+  CheckCircle, 
+  Clock, 
+  Search, 
+  Filter, 
+  Download, 
+  Ban, 
+  Shield, 
+  UserCheck, 
+  MoreVertical, 
+  Edit, 
+  Eye, 
+  MessageSquare, 
+  Trash2, 
+  X, 
+  Camera, 
+  Phone, 
+  Mail, 
+  Globe, 
+  MapPin, 
+  Star as StarIcon, 
+  Save, 
+  Upload, 
+  Image, 
+  RotateCw, 
+  Crop, 
+  Sun, 
+  Sliders, 
+  ChevronDown 
+} from 'lucide-react';
 import './index.css';
 
 export default function App() {
@@ -211,6 +247,11 @@ export default function App() {
   // Drag & Drop State
   const [isDragging, setIsDragging] = useState(false);
   const [dragCounter, setDragCounter] = useState(0);
+  
+  // Photo Reordering State
+  const [draggedPhoto, setDraggedPhoto] = useState(null);
+  const [dragOverPhoto, setDragOverPhoto] = useState(null);
+  const [draggedIndex, setDraggedIndex] = useState(null);
 
   // Handle file selection
   const handleFileSelect = (event) => {
@@ -248,6 +289,66 @@ export default function App() {
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
+  };
+
+  // Photo Reordering Functions
+  const handlePhotoDragStart = (e, photo, index) => {
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/html', e.target.innerHTML);
+    setDraggedPhoto(photo);
+    setDraggedIndex(index);
+    console.log('Started dragging photo:', photo.name);
+  };
+
+  const handlePhotoDragOver = (e, photo) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    setDragOverPhoto(photo);
+  };
+
+  const handlePhotoDragLeave = () => {
+    setDragOverPhoto(null);
+  };
+
+  const handlePhotoDrop = (e, dropPhoto, dropIndex) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    if (!draggedPhoto || draggedPhoto.id === dropPhoto.id) {
+      setDragOverPhoto(null);
+      return;
+    }
+
+    try {
+      const newPhotos = [...uploadedPhotos];
+      const draggedPhotoIndex = newPhotos.findIndex(p => p.id === draggedPhoto.id);
+      
+      if (draggedPhotoIndex !== -1) {
+        // Remove from original position
+        newPhotos.splice(draggedPhotoIndex, 1);
+        
+        // Find new drop index (it may have changed after splice)
+        const newDropIndex = newPhotos.findIndex(p => p.id === dropPhoto.id);
+        
+        // Insert at new position
+        newPhotos.splice(newDropIndex + 1, 0, draggedPhoto);
+        
+        setUploadedPhotos(newPhotos);
+        console.log('Reordered photos:', newPhotos.map(p => p.name));
+      }
+    } catch (error) {
+      console.error('Error reordering photos:', error);
+    }
+    
+    setDraggedPhoto(null);
+    setDraggedIndex(null);
+    setDragOverPhoto(null);
+  };
+
+  const handlePhotoDragEnd = () => {
+    setDraggedPhoto(null);
+    setDraggedIndex(null);
+    setDragOverPhoto(null);
   };
 
   // Drag & Drop Handlers
@@ -1371,18 +1472,51 @@ export default function App() {
                         <h4>Uploaded Photos ({uploadedPhotos.length}/5)</h4>
                         <div className="photo-grid">
                           {uploadedPhotos.map((photo, index) => (
-                            <div key={photo.id} className="photo-item">
+                            <div 
+                              key={photo.id} 
+                              className={`photo-item ${draggedPhoto?.id === photo.id ? 'dragging' : ''} ${dragOverPhoto?.id === photo.id ? 'drag-over' : ''}`}
+                              draggable
+                              onDragStart={(e) => handlePhotoDragStart(e, photo, index)}
+                              onDragOver={(e) => handlePhotoDragOver(e, photo)}
+                              onDragLeave={handlePhotoDragLeave}
+                              onDrop={(e) => handlePhotoDrop(e, photo, index)}
+                              onDragEnd={handlePhotoDragEnd}
+                              style={{
+                                cursor: draggedPhoto?.id === photo.id ? 'grabbing' : 'grab',
+                                opacity: draggedPhoto?.id === photo.id ? 0.5 : 1
+                              }}
+                            >
                               <div className="photo-preview">
                                 <img src={photo.url} alt={photo.name} />
+                                {dragOverPhoto?.id === photo.id && (
+                                  <div className="drop-indicator">
+                                    <ChevronDown size={20} />
+                                  </div>
+                                )}
                               </div>
-                              <button className="photo-edit" onClick={() => openImageEditor(photo)}>
-                                <Edit size={14} />
-                              </button>
-                              <button className="photo-remove" onClick={() => {
-                                setUploadedPhotos(uploadedPhotos.filter(p => p.id !== photo.id));
-                              }}>
-                                <X size={16} />
-                              </button>
+                              <div className="photo-actions">
+                                <button 
+                                  className="photo-edit" 
+                                  onClick={() => openImageEditor(photo)}
+                                  title="Edit Photo"
+                                >
+                                  <Edit size={14} />
+                                </button>
+                                <button 
+                                  className="photo-remove" 
+                                  onClick={() => {
+                                    setUploadedPhotos(uploadedPhotos.filter(p => p.id !== photo.id));
+                                  }}
+                                  title="Remove Photo"
+                                >
+                                  <X size={16} />
+                                </button>
+                              </div>
+                              {draggedPhoto?.id !== photo.id && (
+                                <div className="photo-number">
+                                  {index + 1}
+                                </div>
+                              )}
                             </div>
                           ))}
                         </div>
