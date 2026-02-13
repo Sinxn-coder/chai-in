@@ -17,7 +17,8 @@ import {
   BarChart3,
   Users,
   ThumbsUp,
-  ThumbsDown
+  ThumbsDown,
+  X
 } from 'lucide-react';
 import './ReviewsPage.css';
 
@@ -95,13 +96,8 @@ export default function ReviewsPage() {
   const [showAnalytics, setShowAnalytics] = useState(false);
   const [searchFocused, setSearchFocused] = useState(false);
   const [dateRange, setDateRange] = useState({
-    start: '',
-    end: ''
-  });
-  const [advancedSearch, setAdvancedSearch] = useState({
-    rating: '',
-    helpful: '',
-    flagged: false
+    startDate: '',
+    endDate: ''
   });
 
   // Analytics calculations
@@ -141,39 +137,23 @@ export default function ReviewsPage() {
 
   const filteredReviews = useMemo(() => {
     let filtered = reviews.filter(review => {
-      // Basic search filter
       const matchesSearch = review.userName.toLowerCase().includes(searchTerm.toLowerCase()) ||
                            review.comment.toLowerCase().includes(searchTerm.toLowerCase()) ||
                            review.spotName.toLowerCase().includes(searchTerm.toLowerCase());
-      
-      // Status filter
       const matchesStatus = statusFilter === 'all' || review.status === statusFilter;
       
-      // Date range filter
-      let matchesDateRange = true;
-      if (dateRange.start || dateRange.end) {
-        const reviewDate = new Date(review.date);
-        const startDate = dateRange.start ? new Date(dateRange.start) : null;
-        const endDate = dateRange.end ? new Date(dateRange.end) : null;
-        
-        if (startDate && endDate) {
-          matchesDateRange = reviewDate >= startDate && reviewDate <= endDate;
-        } else if (startDate) {
-          matchesDateRange = reviewDate >= startDate;
-        } else if (endDate) {
-          matchesDateRange = reviewDate <= endDate;
-        }
-      }
+      // Date filtering
+      const reviewDate = new Date(review.date);
+      const startDate = dateRange.startDate ? new Date(dateRange.startDate) : null;
+      const endDate = dateRange.endDate ? new Date(dateRange.endDate) : null;
       
-      // Advanced search filters
-      let matchesRating = !advancedSearch.rating || review.rating === parseInt(advancedSearch.rating);
-      let matchesHelpful = !advancedSearch.helpful || review.helpful >= parseInt(advancedSearch.helpful);
-      let matchesFlagged = !advancedSearch.flagged || review.flagged === advancedSearch.flagged;
+      const matchesDateRange = (!startDate || !endDate) || (
+        reviewDate >= startDate && reviewDate <= endDate
+      );
       
-      return matchesSearch && matchesStatus && matchesDateRange && matchesRating && matchesHelpful && matchesFlagged;
+      return matchesSearch && matchesStatus && matchesDateRange;
     });
 
-    // Sorting
     return filtered.sort((a, b) => {
       switch (sortBy) {
         case 'newest':
@@ -190,7 +170,7 @@ export default function ReviewsPage() {
           return 0;
       }
     });
-  }, [reviews, searchTerm, statusFilter, sortBy, dateRange, advancedSearch]);
+  }, [reviews, searchTerm, statusFilter, sortBy]);
 
   const renderStars = (rating) => {
     return Array.from({ length: 5 }, (_, i) => (
@@ -480,6 +460,36 @@ export default function ReviewsPage() {
           </div>
           
           <div className="filter-group">
+            <div className="date-range-filter">
+              <Calendar size={16} />
+              <input
+                type="date"
+                value={dateRange.startDate}
+                onChange={(e) => setDateRange(prev => ({ ...prev, startDate: e.target.value }))}
+                className="date-input"
+                placeholder="Start Date"
+              />
+              <span className="date-separator">to</span>
+              <input
+                type="date"
+                value={dateRange.endDate}
+                onChange={(e) => setDateRange(prev => ({ ...prev, endDate: e.target.value }))}
+                className="date-input"
+                placeholder="End Date"
+              />
+              {(dateRange.startDate || dateRange.endDate) && (
+                <button 
+                  className="clear-date-btn"
+                  onClick={() => setDateRange({ startDate: '', endDate: '' })}
+                  title="Clear date filter"
+                >
+                  <X size={14} />
+                </button>
+              )}
+            </div>
+          </div>
+          
+          <div className="filter-group">
             <div className="filter-dropdown">
               <Filter size={16} />
               <select 
@@ -492,7 +502,8 @@ export default function ReviewsPage() {
                 <option value="rejected">Rejected</option>
               </select>
             </div>
-            <div className="filter-dropdown">
+            
+            <div className="sort-dropdown">
               <Calendar size={16} />
               <select 
                 value={sortBy} 
@@ -505,6 +516,18 @@ export default function ReviewsPage() {
                 <option value="helpful">Most Helpful</option>
               </select>
             </div>
+          </div>
+        </div>
+
+      {/* Reviews List */}
+      <div className="reviews-list">
+        {filteredReviews.length === 0 ? (
+          <div className="no-reviews">
+            <div className="no-reviews-icon">
+              <MessageSquare size={48} />
+            </div>
+            <h3>No reviews found</h3>
+            <p>Try adjusting your search or filters</p>
           </div>
         ) : (
           <>
