@@ -761,57 +761,7 @@ export default function App() {
             </div>
           </div>
         </div>
-        
-        <div className="dashboard-content">
-          <div className="content-card">
-            <h3>Recent Activity</h3>
-            <div className="activity-list">
-              <div className="activity-item">
-                <div className="activity-icon">🍕</div>
-                <div className="activity-details">
-                  <div className="activity-title">New spot added: Pizza Heaven</div>
-                  <div className="activity-time">2 hours ago</div>
-                </div>
-              </div>
-              <div className="activity-item">
-                <div className="activity-icon">👤</div>
-                <div className="activity-details">
-                  <div className="activity-title">New user registered: Emily Davis</div>
-                  <div className="activity-time">5 hours ago</div>
-                </div>
-              </div>
-              <div className="activity-item">
-                <div className="activity-icon">⭐</div>
-                <div className="activity-details">
-                  <div className="activity-title">New review: Sunrise Cafe</div>
-                  <div className="activity-time">1 day ago</div>
-                </div>
-              </div>
-            </div>
-          </div>
-          
-          <div className="content-card">
-            <h3>Quick Actions</h3>
-            <div className="quick-actions">
-              <button className="quick-action-btn">
-                <Users size={20} />
-                <span>Manage Users</span>
-              </button>
-              <button className="quick-action-btn">
-                <MapPin size={20} />
-                <span>Add Spot</span>
-              </button>
-              <button className="quick-action-btn">
-                <Star size={20} />
-                <span>Review Queue</span>
-              </button>
-              <button className="quick-action-btn">
-                <BarChart3 size={20} />
-                <span>View Analytics</span>
-              </button>
-            </div>
-          </div>
-        </div>
+        <div className="content-placeholder">Dashboard Overview - Key metrics and performance indicators for BytSpot platform.</div>
       </div>
     );
   };
