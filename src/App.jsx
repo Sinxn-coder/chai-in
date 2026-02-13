@@ -853,21 +853,9 @@ export default function App() {
   const renderViewDetailsModal = () => {
     if (!viewingSpotData) return null;
 
-    const handleClose = () => {
-      setViewDetailsModalOpen(false);
-    };
-
-    const handleOverlayClick = () => {
-      setViewDetailsModalOpen(false);
-    };
-
-    const handleContainerClick = (e) => {
-      e.stopPropagation();
-    };
-
     return (
-      <div className="modern-modal-overlay" onClick={handleOverlayClick}>
-        <div className="modern-modal-container" onClick={handleContainerClick}>
+      <div className="modern-modal-overlay" onClick={() => setViewDetailsModalOpen(false)}>
+        <div className="modern-modal-container" onClick={(e) => e.stopPropagation()}>
           {/* Modal Header */}
           <div className="modern-modal-header">
             <div className="header-content">
@@ -880,7 +868,7 @@ export default function App() {
                   <p className="spot-category">{viewingSpotData.category}</p>
                 </div>
               </div>
-              <button className="modern-close-btn" onClick={handleClose}>
+              <button className="modern-close-btn" onClick={() => setViewDetailsModalOpen(false)}>
                 <X size={20} />
               </button>
             </div>
@@ -1021,11 +1009,11 @@ export default function App() {
                 <p className="last-modified">Last modified: {viewingSpotData.added}</p>
               </div>
               <div className="footer-actions">
-                <button className="modern-btn secondary" onClick={handleClose}>
+                <button className="modern-btn secondary" onClick={() => setViewDetailsModalOpen(false)}>
                   Close
                 </button>
                 <button className="modern-btn primary" onClick={() => {
-                  handleClose();
+                  setViewDetailsModalOpen(false);
                   setEditingSpotData(viewingSpotData);
                   setEditModalOpen(true);
                 }}>
