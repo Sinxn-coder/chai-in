@@ -18,7 +18,8 @@ import {
   Users,
   ThumbsUp,
   ThumbsDown,
-  X
+  X,
+  MapPin
 } from 'lucide-react';
 import './ReviewsPage.css';
 
@@ -257,6 +258,10 @@ export default function ReviewsPage() {
   });
   const [currentPage, setCurrentPage] = useState(1);
   const [reviewsPerPage] = useState(10);
+  const [selectedReview, setSelectedReview] = useState(null);
+  const [showDetailsModal, setShowDetailsModal] = useState(false);
+  const [showUserProfile, setShowUserProfile] = useState(false);
+  const [showSpotDetails, setShowSpotDetails] = useState(false);
 
   // Analytics calculations
   const analytics = useMemo(() => {
@@ -350,6 +355,31 @@ export default function ReviewsPage() {
 
   const handleNextPage = () => {
     setCurrentPage(prev => Math.min(totalPages, prev + 1));
+  };
+
+  // View details handlers
+  const handleViewDetails = (review) => {
+    setSelectedReview(review);
+    setShowDetailsModal(true);
+  };
+
+  const handleViewUserProfile = (review) => {
+    setSelectedReview(review);
+    setShowDetailsModal(false);
+    setShowUserProfile(true);
+  };
+
+  const handleViewSpotDetails = (review) => {
+    setSelectedReview(review);
+    setShowDetailsModal(false);
+    setShowSpotDetails(true);
+  };
+
+  const closeAllModals = () => {
+    setShowDetailsModal(false);
+    setShowUserProfile(false);
+    setShowSpotDetails(false);
+    setSelectedReview(null);
   };
 
   const renderStars = (rating) => {
@@ -769,7 +799,11 @@ export default function ReviewsPage() {
                       </div>
                     </div>
                     <div className="review-actions">
-                      <button className="action-btn" title="View Details">
+                      <button 
+                        className="action-btn" 
+                        title="View Details"
+                        onClick={() => handleViewDetails(review)}
+                      >
                         <Eye size={16} />
                       </button>
                       <div className="dropdown-container">
@@ -921,6 +955,213 @@ export default function ReviewsPage() {
               <button className="btn-secondary" onClick={() => setShowExportModal(false)}>
                 Cancel
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Review Details Modal */}
+      {showDetailsModal && selectedReview && (
+        <div className="modal-overlay">
+          <div className="details-modal">
+            <div className="modal-header">
+              <h3>Review Details</h3>
+              <button className="modal-close" onClick={closeAllModals}>
+                <X size={20} />
+              </button>
+            </div>
+            <div className="modal-content">
+              <div className="details-section">
+                <div className="detail-item">
+                  <label>Reviewer:</label>
+                  <div className="detail-value">
+                    <div className="user-avatar">{selectedReview.userAvatar}</div>
+                    <span>{selectedReview.userName}</span>
+                  </div>
+                </div>
+                <div className="detail-item">
+                  <label>Rating:</label>
+                  <div className="detail-value">
+                    {renderStars(selectedReview.rating)}
+                    <span className="rating-text">{selectedReview.rating}/5</span>
+                  </div>
+                </div>
+                <div className="detail-item">
+                  <label>Date:</label>
+                  <div className="detail-value">{selectedReview.date}</div>
+                </div>
+                <div className="detail-item">
+                  <label>Status:</label>
+                  <div className="detail-value">
+                    <span className={`status-badge ${selectedReview.status}`}>
+                      {selectedReview.status}
+                    </span>
+                  </div>
+                </div>
+                <div className="detail-item">
+                  <label>Helpful:</label>
+                  <div className="detail-value">{selectedReview.helpful} people found this helpful</div>
+                </div>
+              </div>
+              
+              <div className="details-section">
+                <h4>Review Comment</h4>
+                <p className="review-comment">{selectedReview.comment}</p>
+              </div>
+              
+              <div className="details-actions">
+                <button 
+                  className="details-btn user-profile-btn"
+                  onClick={() => handleViewUserProfile(selectedReview)}
+                >
+                  <Users size={16} />
+                  View User Profile
+                </button>
+                <button 
+                  className="details-btn spot-details-btn"
+                  onClick={() => handleViewSpotDetails(selectedReview)}
+                >
+                  <MapPin size={16} />
+                  View Spot Details
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* User Profile Modal */}
+      {showUserProfile && selectedReview && (
+        <div className="modal-overlay">
+          <div className="profile-modal">
+            <div className="modal-header">
+              <h3>User Profile</h3>
+              <button className="modal-close" onClick={closeAllModals}>
+                <X size={20} />
+              </button>
+            </div>
+            <div className="modal-content">
+              <div className="profile-header">
+                <div className="profile-avatar">{selectedReview.userAvatar}</div>
+                <h2>{selectedReview.userName}</h2>
+              </div>
+              
+              <div className="profile-stats">
+                <div className="stat-card">
+                  <div className="stat-number">
+                    {reviews.filter(r => r.userName === selectedReview.userName).length}
+                  </div>
+                  <div className="stat-label">Total Reviews</div>
+                </div>
+                <div className="stat-card">
+                  <div className="stat-number">
+                    {reviews
+                      .filter(r => r.userName === selectedReview.userName)
+                      .reduce((sum, r) => sum + r.rating, 0) / 
+                      reviews.filter(r => r.userName === selectedReview.userName).length || 0
+                    }
+                  </div>
+                  <div className="stat-label">Average Rating</div>
+                </div>
+                <div className="stat-card">
+                  <div className="stat-number">
+                    {reviews
+                      .filter(r => r.userName === selectedReview.userName)
+                      .reduce((sum, r) => sum + r.helpful, 0)
+                    }
+                  </div>
+                  <div className="stat-label">Total Helpful</div>
+                </div>
+              </div>
+              
+              <div className="user-reviews">
+                <h4>Recent Reviews by {selectedReview.userName}</h4>
+                <div className="mini-reviews">
+                  {reviews
+                    .filter(r => r.userName === selectedReview.userName)
+                    .slice(0, 3)
+                    .map(review => (
+                      <div key={review.id} className="mini-review">
+                        <div className="mini-review-header">
+                          <span className="mini-spot">{review.spotName}</span>
+                          <span className="mini-date">{review.date}</span>
+                        </div>
+                        <div className="mini-rating">{renderStars(review.rating)}</div>
+                        <p className="mini-comment">{review.comment}</p>
+                      </div>
+                    ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Spot Details Modal */}
+      {showSpotDetails && selectedReview && (
+        <div className="modal-overlay">
+          <div className="spot-modal">
+            <div className="modal-header">
+              <h3>Spot Details</h3>
+              <button className="modal-close" onClick={closeAllModals}>
+                <X size={20} />
+              </button>
+            </div>
+            <div className="modal-content">
+              <div className="spot-header">
+                <div className="spot-icon">
+                  <MapPin size={24} />
+                </div>
+                <h2>{selectedReview.spotName}</h2>
+                <span className="spot-category">{selectedReview.spotCategory}</span>
+              </div>
+              
+              <div className="spot-stats">
+                <div className="stat-card">
+                  <div className="stat-number">
+                    {reviews.filter(r => r.spotName === selectedReview.spotName).length}
+                  </div>
+                  <div className="stat-label">Total Reviews</div>
+                </div>
+                <div className="stat-card">
+                  <div className="stat-number">
+                    {reviews
+                      .filter(r => r.spotName === selectedReview.spotName)
+                      .reduce((sum, r) => sum + r.rating, 0) / 
+                      reviews.filter(r => r.spotName === selectedReview.spotName).length || 0
+                    }
+                  </div>
+                  <div className="stat-label">Average Rating</div>
+                </div>
+                <div className="stat-card">
+                  <div className="stat-number">
+                    {reviews
+                      .filter(r => r.spotName === selectedReview.spotName)
+                      .reduce((sum, r) => sum + r.helpful, 0)
+                    }
+                  </div>
+                  <div className="stat-label">Total Helpful</div>
+                </div>
+              </div>
+              
+              <div className="spot-reviews">
+                <h4>Recent Reviews for {selectedReview.spotName}</h4>
+                <div className="mini-reviews">
+                  {reviews
+                    .filter(r => r.spotName === selectedReview.spotName)
+                    .slice(0, 3)
+                    .map(review => (
+                      <div key={review.id} className="mini-review">
+                        <div className="mini-review-header">
+                          <span className="mini-user">{review.userName}</span>
+                          <span className="mini-date">{review.date}</span>
+                        </div>
+                        <div className="mini-rating">{renderStars(review.rating)}</div>
+                        <p className="mini-comment">{review.comment}</p>
+                      </div>
+                    ))}
+                </div>
+              </div>
             </div>
           </div>
         </div>
