@@ -1102,7 +1102,7 @@ main {
 }
 
 .modern-modal-header {
-  padding: 24px 32px;
+  padding: 32px 40px;
   border-bottom: 1px solid #f1f5f9;
   background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
   border-radius: 20px 20px 0 0;
@@ -1113,12 +1113,13 @@ main {
   justify-content: space-between;
   align-items: center;
   width: 100%;
+  gap: 24px;
 }
 
 .spot-info {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 24px;
 }
 
 .spot-avatar {
@@ -1170,7 +1171,7 @@ main {
 }
 
 .modern-modal-body {
-  padding: 32px;
+  padding: 40px;
   overflow-y: auto;
   flex: 1;
 }
@@ -1178,34 +1179,29 @@ main {
 .edit-form-container {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 32px;
+  gap: 40px;
   min-height: 400px;
 }
 
 .form-column {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 32px;
 }
 
 .modern-section {
   background: #ffffff;
   border: 1px solid #e5e7eb;
   border-radius: 16px;
-  padding: 24px;
+  padding: 32px;
   transition: all 0.3s ease;
-}
-
-.modern-section:hover {
-  border-color: #d1d5db;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
 }
 
 .section-title {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin: 0 0 20px 0;
+  gap: 16px;
+  margin: 0 0 28px 0;
   font-size: 1.125rem;
   font-weight: 600;
   color: #1f2937;
