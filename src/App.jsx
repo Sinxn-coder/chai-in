@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
-import { Layout, Users, Star, BarChart3, Settings, TrendingUp, AlertCircle, CheckCircle, Clock, Search, Filter, Download, Ban, Shield, UserCheck, MoreVertical, Edit, Eye, MessageSquare, Trash2, X, Camera, Phone, Mail, Globe, MapPin, Star as StarIcon, Save, Upload, Image } from 'lucide-react';
+import { Layout, Users, Star, BarChart3, Settings, TrendingUp, AlertCircle, CheckCircle, Clock, Search, Filter, Download, Ban, Shield, UserCheck, MoreVertical, Edit, Eye, MessageSquare, Trash2, X, Camera, Phone, Mail, Globe, MapPin, Star as StarIcon, Save, Upload, Image, RotateCw, Crop, Sun, Sliders } from 'lucide-react';
 import './index.css';
 
 export default function App() {
@@ -197,6 +197,13 @@ export default function App() {
   const [uploadedPhotos, setUploadedPhotos] = useState([]);
   const [photoUploadExpanded, setPhotoUploadExpanded] = useState(false);
   const fileInputRef = useRef(null);
+  const [editingPhoto, setEditingPhoto] = useState(null);
+  const [imageEditModalOpen, setImageEditModalOpen] = useState(false);
+  const [rotation, setRotation] = useState(0);
+  const [brightness, setBrightness] = useState(100);
+  const [contrast, setContrast] = useState(100);
+  const [saturation, setSaturation] = useState(100);
+  const canvasRef = useRef(null);
 
   // Handle file selection
   const handleFileSelect = (event) => {
@@ -234,6 +241,227 @@ export default function App() {
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
+  };
+
+  // Image editing functions
+  const openImageEditor = (photo) => {
+    setEditingPhoto(photo);
+    setRotation(0);
+    setBrightness(100);
+    setContrast(100);
+    setSaturation(100);
+    setImageEditModalOpen(true);
+  };
+
+  const closeImageEditor = () => {
+    setImageEditModalOpen(false);
+    setEditingPhoto(null);
+  };
+
+  const rotateImage = (direction) => {
+    const newRotation = direction === 'left' ? rotation - 90 : rotation + 90;
+    setRotation(newRotation % 360);
+  };
+
+  const resetImageEdits = () => {
+    setRotation(0);
+    setBrightness(100);
+    setContrast(100);
+    setSaturation(100);
+  };
+
+  const applyImageEdits = () => {
+    if (!editingPhoto || !canvasRef.current) return;
+    
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+    const img = new Image();
+    
+    img.onload = () => {
+      canvas.width = img.width;
+      canvas.height = img.height;
+      
+      // Apply transformations
+      ctx.save();
+      ctx.translate(canvas.width / 2, canvas.height / 2);
+      ctx.rotate((rotation * Math.PI) / 180);
+      ctx.filter = `brightness(${brightness}%) contrast(${contrast}%) saturate(${saturation}%)`;
+      ctx.drawImage(img, -img.width / 2, -img.height / 2);
+      ctx.restore();
+      
+      // Convert to data URL and update photo
+      const editedUrl = canvas.toDataURL('image/jpeg', 0.9);
+      const updatedPhotos = uploadedPhotos.map(photo => 
+        photo.id === editingPhoto.id 
+          ? { ...photo, url: editedUrl }
+          : photo
+      );
+      setUploadedPhotos(updatedPhotos);
+      closeImageEditor();
+    };
+    
+    img.src = editingPhoto.url;
+  };
+
+  const renderImageEditModal = () => {
+    if (!imageEditModalOpen || !editingPhoto) return null;
+
+    return (
+      <div className="modern-modal-overlay" onClick={closeImageEditor}>
+        <div className="modern-modal-container image-edit-modal" onClick={(e) => e.stopPropagation()}>
+          {/* Modal Header */}
+          <div className="modern-modal-header">
+            <div className="header-content">
+              <div className="spot-info">
+                <div className="spot-avatar">
+                  <Sliders size={24} />
+                </div>
+                <div className="spot-details">
+                  <h2 className="spot-name">Edit Photo</h2>
+                  <p className="spot-category">Image Editor</p>
+                </div>
+              </div>
+              <button className="modern-close-btn" onClick={closeImageEditor}>
+                <X size={20} />
+              </button>
+            </div>
+          </div>
+
+          {/* Modal Body */}
+          <div className="modern-modal-body">
+            <div className="image-editor-container">
+              {/* Canvas for image manipulation */}
+              <div className="canvas-container">
+                <canvas 
+                  ref={canvasRef}
+                  style={{
+                    maxWidth: '100%',
+                    maxHeight: '400px',
+                    filter: `brightness(${brightness}%) contrast(${contrast}%) saturate(${saturation}%)`,
+                    transform: `rotate(${rotation}deg)`
+                  }}
+                />
+              </div>
+
+              {/* Editing Controls */}
+              <div className="edit-controls">
+                <div className="control-group">
+                  <h4>
+                    <RotateCw size={16} />
+                    Rotate
+                  </h4>
+                  <div className="button-group">
+                    <button className="control-btn" onClick={() => rotateImage('left')}>
+                      <RotateCw size={14} />
+                      Left
+                    </button>
+                    <button className="control-btn" onClick={() => rotateImage('right')}>
+                      <RotateCw size={14} />
+                      Right
+                    </button>
+                  </div>
+                </div>
+
+                <div className="control-group">
+                  <h4>
+                    <Sun size={16} />
+                    Enhance
+                  </h4>
+                  <div className="slider-group">
+                    <div className="slider-control">
+                      <label>Brightness</label>
+                      <input 
+                        type="range" 
+                        min="0" 
+                        max="200" 
+                        value={brightness}
+                        onChange={(e) => setBrightness(Number(e.target.value))}
+                      />
+                      <span>{brightness}%</span>
+                    </div>
+                    <div className="slider-control">
+                      <label>Contrast</label>
+                      <input 
+                        type="range" 
+                        min="0" 
+                        max="200" 
+                        value={contrast}
+                        onChange={(e) => setContrast(Number(e.target.value))}
+                      />
+                      <span>{contrast}%</span>
+                    </div>
+                    <div className="slider-control">
+                      <label>Saturation</label>
+                      <input 
+                        type="range" 
+                        min="0" 
+                        max="200" 
+                        value={saturation}
+                        onChange={(e) => setSaturation(Number(e.target.value))}
+                      />
+                      <span>{saturation}%</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="control-group">
+                  <h4>
+                    <Crop size={16} />
+                    Crop
+                  </h4>
+                  <div className="button-group">
+                    <button className="control-btn">
+                      <Crop size={14} />
+                      Free Crop
+                    </button>
+                    <button className="control-btn">
+                      <Crop size={14} />
+                      1:1
+                    </button>
+                    <button className="control-btn">
+                      <Crop size={14} />
+                      16:9
+                    </button>
+                  </div>
+                </div>
+
+                <div className="control-group">
+                  <h4>Actions</h4>
+                  <div className="button-group">
+                    <button className="control-btn secondary" onClick={resetImageEdits}>
+                      <X size={14} />
+                      Reset
+                    </button>
+                    <button className="control-btn primary" onClick={applyImageEdits}>
+                      <Save size={14} />
+                      Apply
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Modal Footer */}
+          <div className="modern-modal-footer">
+            <div className="footer-content">
+              <div className="footer-info">
+                <p className="last-modified">Editing: {editingPhoto.name}</p>
+              </div>
+              <div className="footer-actions">
+                <button className="modern-btn cancel" onClick={closeImageEditor}>
+                  Cancel
+                </button>
+                <button className="modern-btn primary" onClick={applyImageEdits}>
+                  <Save size={16} />
+                  Save Changes
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
   };
 
   // Filter and search users
@@ -909,6 +1137,9 @@ export default function App() {
                               <div className="photo-preview">
                                 <img src={photo.url} alt={photo.name} />
                               </div>
+                              <button className="photo-edit" onClick={() => openImageEditor(photo)}>
+                                <Edit size={14} />
+                              </button>
                               <button className="photo-remove" onClick={() => {
                                 setUploadedPhotos(uploadedPhotos.filter(p => p.id !== photo.id));
                               }}>
@@ -1400,6 +1631,7 @@ export default function App() {
         {renderSpotModal()}
         {renderModernEditModal()}
         {renderViewDetailsModal()}
+        {renderImageEditModal()}
       </>
     );
   };
