@@ -1012,14 +1012,6 @@ export default function App() {
                 <button className="modern-btn cancel" onClick={() => setViewDetailsModalOpen(false)}>
                   Close
                 </button>
-                <button className="modern-btn primary" onClick={() => {
-                  setViewDetailsModalOpen(false);
-                  setEditingSpotData(viewingSpotData);
-                  setEditModalOpen(true);
-                }}>
-                  <Edit size={16} />
-                  Edit Spot
-                </button>
               </div>
             </div>
           </div>
