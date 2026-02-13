@@ -117,6 +117,7 @@ export default function App() {
   const [sortBy, setSortBy] = useState('name');
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(2); // Default 2 items per page
+  const [activeSpotDropdown, setActiveSpotDropdown] = useState(null);
 
   // Filter and search users
   const filteredUsers = useMemo(() => {
@@ -181,6 +182,15 @@ export default function App() {
     setCurrentPage(1); // Reset to first page when changing items per page
   };
 
+  const handleSpotAction = (action, spot) => {
+    console.log(`${action} spot:`, spot.name);
+    setActiveSpotDropdown(null);
+  };
+
+  const toggleSpotDropdown = (spotId) => {
+    setActiveSpotDropdown(activeSpotDropdown === spotId ? null : spotId);
+  };
+
   // Calculate statistics
   const spotStats = useMemo(() => {
     return {
@@ -217,10 +227,6 @@ export default function App() {
   const closeSpotModal = () => {
     setSpotModalOpen(false);
     setSelectedSpot(null);
-  };
-
-  const handleSpotAction = (action, spot) => {
-    console.log(`${action} spot:`, spot.name);
   };
 
   const handleSelectUser = (userId) => {
@@ -269,6 +275,7 @@ export default function App() {
     const handleClickOutside = (event) => {
       if (!event.target.closest('.dropdown-container')) {
         setActiveDropdown(null);
+        setActiveSpotDropdown(null);
       }
     };
 
@@ -740,10 +747,61 @@ export default function App() {
                       <div className="dropdown-container">
                         <button 
                           className="btn-icon"
-                          onClick={() => openSpotModal(spot)}
+                          onClick={() => toggleSpotDropdown(spot.id)}
                         >
                           <MoreVertical size={16} />
                         </button>
+                        
+                        {activeSpotDropdown === spot.id && (
+                          <div className="dropdown-menu">
+                            <button 
+                              className="dropdown-item"
+                              onClick={() => handleSpotAction('edit', spot)}
+                            >
+                              <Edit size={14} />
+                              Edit Spot
+                            </button>
+                            <button 
+                              className="dropdown-item"
+                              onClick={() => {
+                                handleSpotAction('view', spot);
+                                openSpotModal(spot);
+                              }}
+                            >
+                              <Eye size={14} />
+                              View Details
+                            </button>
+                            <button 
+                              className="dropdown-item"
+                              onClick={() => handleSpotAction('message', spot)}
+                            >
+                              <MessageSquare size={14} />
+                              Contact Owner
+                            </button>
+                            <div className="dropdown-divider"></div>
+                            <button 
+                              className="dropdown-item warning"
+                              onClick={() => handleSpotAction(spot.status === 'flagged' ? 'unflag' : 'flag', spot)}
+                            >
+                              <AlertCircle size={14} />
+                              {spot.status === 'flagged' ? 'Unflag Spot' : 'Flag Spot'}
+                            </button>
+                            <button 
+                              className="dropdown-item success"
+                              onClick={() => handleSpotAction(spot.status === 'verified' ? 'unverify' : 'verify', spot)}
+                            >
+                              <CheckCircle size={14} />
+                              {spot.status === 'verified' ? 'Unverify Spot' : 'Verify Spot'}
+                            </button>
+                            <button 
+                              className="dropdown-item danger"
+                              onClick={() => handleSpotAction('delete', spot)}
+                            >
+                              <Trash2 size={14} />
+                              Delete Spot
+                            </button>
+                          </div>
+                        )}
                       </div>
                     </td>
                   </tr>
