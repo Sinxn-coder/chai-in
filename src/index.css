@@ -2244,12 +2244,6 @@ main {
   margin-bottom: 2px;
 }
 
-.detail-value {
-  font-size: 0.95rem;
-  color: #111827;
-  font-weight: 500;
-}
-
 .detail-subvalue {
   font-size: 0.85rem;
   color: #6b7280;

@@ -880,28 +880,28 @@ export default function App() {
           {/* Modal Body */}
           <div className="modern-modal-body">
             <div className="view-details-container">
-              {/* Spot Overview Section */}
-              <div className="details-section">
+              {/* Basic Info */}
+              <div className="modern-section">
                 <h3 className="section-title">
                   <div className="title-icon">
                     <MapPin size={18} />
                   </div>
-                  Spot Overview
+                  Basic Information
                 </h3>
                 <div className="form-row">
                   <div className="form-group">
                     <label className="modern-label">Name</label>
-                    <div className="detail-value">{viewingSpotData.name}</div>
+                    <div className="modern-input">{viewingSpotData.name}</div>
                   </div>
                   <div className="form-group">
                     <label className="modern-label">Category</label>
-                    <div className="detail-value">{viewingSpotData.category}</div>
+                    <div className="modern-input">{viewingSpotData.category}</div>
                   </div>
                 </div>
                 <div className="form-row">
                   <div className="form-group">
                     <label className="modern-label">Status</label>
-                    <div className="detail-value">
+                    <div className="modern-input">
                       <span className={`status-badge status-${viewingSpotData.status}`}>
                         {viewingSpotData.status}
                       </span>
@@ -909,45 +909,43 @@ export default function App() {
                   </div>
                   <div className="form-group">
                     <label className="modern-label">Rating</label>
-                    <div className="detail-value">
-                      <div className="rating-display">
-                        <StarIcon size={16} />
-                        <span>{viewingSpotData.rating}</span>
-                        <span className="rating-text">({viewingSpotData.reviews} reviews)</span>
-                      </div>
+                    <div className="modern-input">
+                      <StarIcon size={16} />
+                      <span> {viewingSpotData.rating}</span>
+                      <span className="rating-text">({viewingSpotData.reviews} reviews)</span>
                     </div>
                   </div>
                 </div>
               </div>
 
-              {/* Location Section */}
-              <div className="details-section">
+              {/* Location Info */}
+              <div className="modern-section">
                 <h3 className="section-title">
                   <div className="title-icon">
                     <Globe size={18} />
                   </div>
-                  Location Details
+                  Location Information
                 </h3>
                 <div className="form-row">
                   <div className="form-group full-width">
                     <label className="modern-label">Address</label>
-                    <div className="detail-value">{viewingSpotData.address}</div>
+                    <div className="modern-input">{viewingSpotData.address}</div>
                   </div>
                 </div>
                 <div className="form-row">
                   <div className="form-group">
                     <label className="modern-label">City</label>
-                    <div className="detail-value">{viewingSpotData.city}</div>
+                    <div className="modern-input">{viewingSpotData.city}</div>
                   </div>
                   <div className="form-group">
                     <label className="modern-label">State</label>
-                    <div className="detail-value">{viewingSpotData.state}</div>
+                    <div className="modern-input">{viewingSpotData.state}</div>
                   </div>
                 </div>
               </div>
 
-              {/* Performance Metrics Section */}
-              <div className="details-section">
+              {/* Performance */}
+              <div className="modern-section">
                 <h3 className="section-title">
                   <div className="title-icon">
                     <Star size={18} />
@@ -958,15 +956,6 @@ export default function App() {
                   <div className="metric-card">
                     <div className="metric-value">{viewingSpotData.rating}</div>
                     <div className="metric-label">Average Rating</div>
-                    <div className="metric-stars">
-                      {[1, 2, 3, 4, 5].map(star => (
-                        <Star 
-                          key={star} 
-                          size={12} 
-                          className={star <= (viewingSpotData.rating || 0) ? 'metric-star-filled' : 'metric-star-empty'}
-                        />
-                      ))}
-                    </div>
                   </div>
                   <div className="metric-card">
                     <div className="metric-value">{viewingSpotData.reviews}</div>
