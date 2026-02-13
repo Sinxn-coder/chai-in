@@ -518,17 +518,17 @@ export default function ReviewsPage() {
             <div className="reviews-grid">
               {filteredReviews.map(review => (
                 <div key={review.id} className={`review-card ${selectedReviews.includes(review.id) ? 'selected' : ''}`}>
-                  {/* Selection Checkbox */}
-                  <div className="review-selection">
-                    <input
-                      type="checkbox"
-                      checked={selectedReviews.includes(review.id)}
-                      onChange={() => handleSelectReview(review.id)}
-                    />
-                  </div>
-
                   {/* Review Header */}
                   <div className="review-header">
+                    {/* Selection Checkbox */}
+                    <div className="review-selection">
+                      <input
+                        type="checkbox"
+                        checked={selectedReviews.includes(review.id)}
+                        onChange={() => handleSelectReview(review.id)}
+                      />
+                    </div>
+                    
                     <div className="reviewer-info">
                       <div className="reviewer-avatar">
                         {review.userAvatar}

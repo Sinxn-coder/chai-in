@@ -219,24 +219,39 @@
   transform: translateY(-2px);
 }
 
+.review-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+
+.review-selection {
+  display: flex;
+  align-items: center;
+  padding: 8px 0;
+  margin-right: 12px;
+}
+
+.review-selection input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  accent-color: #3b82f6;
+  border-radius: 4px;
+}
+
 .review-card.selected {
   border-color: #3b82f6;
   background: #eff6ff;
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
-.review-selection {
-  position: absolute;
-  top: 16px;
-  left: 16px;
-  z-index: 10;
-}
-
-.review-selection input[type="checkbox"] {
-  width: 20px;
-  height: 20px;
-  cursor: pointer;
-  accent-color: #3b82f6;
+.reviewer-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
 }
 
 /* Header Actions */
