@@ -248,6 +248,7 @@ export default function App() {
 
   // NEW IMAGE EDITOR FUNCTIONS
   const openImageEditor = (photo) => {
+    console.log('Opening image editor for photo:', photo);
     setEditingImage(photo);
     setImageRotation(0);
     setImageBrightness(100);
@@ -258,6 +259,7 @@ export default function App() {
   };
 
   const closeImageEditor = () => {
+    console.log('Closing image editor');
     setImageEditorOpen(false);
     setEditingImage(null);
   };
@@ -270,6 +272,9 @@ export default function App() {
     const img = new Image();
     
     img.onload = () => {
+      console.log('Image loaded, dimensions:', img.width, 'x', img.height);
+      console.log('Editing image URL:', editingImage.url);
+      
       // Calculate crop dimensions
       let cropWidth = img.width;
       let cropHeight = img.height;
@@ -290,8 +295,12 @@ export default function App() {
       canvas.width = cropWidth;
       canvas.height = cropHeight;
       
-      // Clear and apply filters
+      console.log('Canvas dimensions:', canvas.width, 'x', canvas.height);
+      
+      // Clear canvas
       ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      // Apply filters
       ctx.filter = `brightness(${imageBrightness}%) contrast(${imageContrast}%) saturate(${imageSaturation}%)`;
       
       // Apply rotation
@@ -302,6 +311,12 @@ export default function App() {
       // Draw the image
       ctx.drawImage(img, cropX - img.width / 2, cropY - img.height / 2, cropWidth, cropHeight);
       ctx.restore();
+      
+      console.log('Image drawn on canvas');
+    };
+    
+    img.onerror = () => {
+      console.error('Failed to load image:', editingImage.url);
     };
     
     img.src = editingImage.url;
@@ -342,13 +357,17 @@ export default function App() {
 
   // Use effect to update canvas when image editor opens or settings change
   useEffect(() => {
-    if (imageEditorOpen && editingImage) {
-      setTimeout(drawImageOnCanvas, 100);
+    if (imageEditorOpen && editingImage && editorCanvasRef.current) {
+      console.log('Image editor opened, drawing image...');
+      setTimeout(() => {
+        drawImageOnCanvas();
+      }, 200); // Increased delay to ensure DOM is ready
     }
   }, [imageEditorOpen, editingImage]);
 
   useEffect(() => {
-    if (imageEditorOpen && editingImage) {
+    if (imageEditorOpen && editingImage && editorCanvasRef.current) {
+      console.log('Image settings changed, redrawing...');
       drawImageOnCanvas();
     }
   }, [imageRotation, imageBrightness, imageContrast, imageSaturation, cropRatio]);
@@ -385,13 +404,21 @@ export default function App() {
               <div className="canvas-container">
                 <canvas 
                   ref={editorCanvasRef}
+                  width={400}
+                  height={300}
                   style={{
                     maxWidth: '100%',
                     maxHeight: '400px',
                     border: '1px solid #e5e7eb',
-                    borderRadius: '8px'
+                    borderRadius: '8px',
+                    backgroundColor: '#f9fafb'
                   }}
                 />
+                {!editingImage && (
+                  <div style={{ textAlign: 'center', padding: '20px', color: '#6b7280' }}>
+                    Loading image...
+                  </div>
+                )}
               </div>
 
               {/* Controls */}
