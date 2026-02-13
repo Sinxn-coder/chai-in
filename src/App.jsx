@@ -587,7 +587,6 @@ export default function App() {
                   className="filter-select"
                 >
                   <option value="all">All Status</option>
-                  <option value="published">Published</option>
                   <option value="verified">Verified</option>
                   <option value="pending">Pending</option>
                   <option value="flagged">Flagged</option>
