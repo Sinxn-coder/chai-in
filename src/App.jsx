@@ -207,7 +207,6 @@ export default function App() {
   const [cropStart, setCropStart] = useState(null);
   const [cropEnd, setCropEnd] = useState(null);
   const canvasRef = useRef(null);
-  const imageRef = useRef(null);
 
   // Handle file selection
   const handleFileSelect = (event) => {
@@ -258,26 +257,6 @@ export default function App() {
     setCropStart(null);
     setCropEnd(null);
     setImageEditModalOpen(true);
-    
-    // Load image after modal opens
-    setTimeout(() => {
-      if (imageRef.current) {
-        const img = new Image();
-        img.onload = () => {
-          if (canvasRef.current) {
-            const canvas = canvasRef.current;
-            const ctx = canvas.getContext('2d');
-            canvas.width = img.width;
-            canvas.height = img.height;
-            
-            // Draw original image
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.drawImage(img, 0, 0);
-          }
-        };
-        img.src = photo.url;
-      }
-    }, 100);
   };
 
   const closeImageEditor = () => {
@@ -285,44 +264,87 @@ export default function App() {
     setEditingPhoto(null);
   };
 
+  const updateCanvas = () => {
+    if (!editingPhoto || !canvasRef.current) return;
+    
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+    const img = new Image();
+    
+    img.onload = () => {
+      // Set canvas dimensions
+      canvas.width = img.width;
+      canvas.height = img.height;
+      
+      // Clear canvas
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      // Apply filters
+      ctx.filter = `brightness(${brightness}%) contrast(${contrast}%) saturate(${saturation}%)`;
+      
+      // Apply rotation
+      ctx.save();
+      ctx.translate(canvas.width / 2, canvas.height / 2);
+      ctx.rotate((rotation * Math.PI) / 180);
+      ctx.drawImage(img, -img.width / 2, -img.height / 2);
+      ctx.restore();
+    };
+    
+    img.src = editingPhoto.url;
+  };
+
   const rotateImage = (direction) => {
     const newRotation = direction === 'left' ? rotation - 90 : rotation + 90;
     setRotation(newRotation % 360);
-  };
-
-  const startCrop = () => {
-    setCropMode('free');
-    setCropStart({ x: 0, y: 0 });
-    setCropEnd({ x: 100, y: 100 });
+    setTimeout(updateCanvas, 10);
   };
 
   const applyCrop = (ratio) => {
-    if (!imageRef.current || !canvasRef.current) return;
+    if (!editingPhoto || !canvasRef.current) return;
     
-    const img = imageRef.current;
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
+    const img = new Image();
     
-    if (ratio === '1:1') {
-      const size = Math.min(img.width, img.height);
-      const cropX = (img.width - size) / 2;
-      const cropY = (img.height - size) / 2;
+    img.onload = () => {
+      let newWidth, newHeight, cropX, cropY;
       
-      canvas.width = size;
-      canvas.height = size;
-      ctx.drawImage(img, cropX, cropY, size, size);
-    } else if (ratio === '16:9') {
-      const cropHeight = (img.width * 9) / 16;
-      const cropY = (img.height - cropHeight) / 2;
+      if (ratio === '1:1') {
+        newWidth = newHeight = Math.min(img.width, img.height);
+        cropX = (img.width - newWidth) / 2;
+        cropY = (img.height - newHeight) / 2;
+      } else if (ratio === '16:9') {
+        newWidth = img.width;
+        newHeight = (img.width * 9) / 16;
+        cropX = 0;
+        cropY = (img.height - newHeight) / 2;
+      } else {
+        // Free crop - use original
+        newWidth = img.width;
+        newHeight = img.height;
+        cropX = 0;
+        cropY = 0;
+      }
       
-      canvas.width = img.width;
-      canvas.height = cropHeight;
-      ctx.drawImage(img, 0, cropY, img.width, cropHeight);
-    }
+      canvas.width = newWidth;
+      canvas.height = newHeight;
+      
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.filter = `brightness(${brightness}%) contrast(${contrast}%) saturate(${saturation}%)`;
+      
+      if (rotation !== 0) {
+        ctx.save();
+        ctx.translate(canvas.width / 2, canvas.height / 2);
+        ctx.rotate((rotation * Math.PI) / 180);
+        ctx.drawImage(img, cropX - img.width / 2, cropY - img.height / 2, newWidth, newHeight);
+        ctx.restore();
+      } else {
+        ctx.drawImage(img, cropX, cropY, newWidth, newHeight);
+      }
+    };
     
-    setCropMode('none');
-    setCropStart(null);
-    setCropEnd(null);
+    img.src = editingPhoto.url;
+    setCropMode(ratio);
   };
 
   const resetImageEdits = () => {
@@ -333,50 +355,36 @@ export default function App() {
     setCropMode('none');
     setCropStart(null);
     setCropEnd(null);
+    setTimeout(updateCanvas, 10);
   };
 
   const applyImageEdits = () => {
-    if (!editingPhoto || !canvasRef.current || !imageRef.current) return;
+    if (!editingPhoto || !canvasRef.current) return;
     
     const canvas = canvasRef.current;
-    const ctx = canvas.getContext('2d');
-    const img = imageRef.current;
-    
-    img.onload = () => {
-      // Reset canvas to original image dimensions
-      canvas.width = img.width;
-      canvas.height = img.height;
-      
-      // Clear canvas
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      
-      // Save context state
-      ctx.save();
-      
-      // Apply transformations
-      ctx.translate(canvas.width / 2, canvas.height / 2);
-      ctx.rotate((rotation * Math.PI) / 180);
-      ctx.filter = `brightness(${brightness}%) contrast(${contrast}%) saturate(${saturation}%)`;
-      
-      // Draw image with transformations
-      ctx.drawImage(img, -img.width / 2, -img.height / 2);
-      
-      // Restore context
-      ctx.restore();
-      
-      // Convert to data URL and update photo
-      const editedUrl = canvas.toDataURL('image/jpeg', 0.9);
-      const updatedPhotos = uploadedPhotos.map(photo => 
-        photo.id === editingPhoto.id 
-          ? { ...photo, url: editedUrl }
-          : photo
-      );
-      setUploadedPhotos(updatedPhotos);
-      closeImageEditor();
-    };
-    
-    img.src = editingPhoto.url;
+    const editedUrl = canvas.toDataURL('image/jpeg', 0.9);
+    const updatedPhotos = uploadedPhotos.map(photo => 
+      photo.id === editingPhoto.id 
+        ? { ...photo, url: editedUrl }
+        : photo
+    );
+    setUploadedPhotos(updatedPhotos);
+    closeImageEditor();
   };
+
+  // Add useEffect for image loading
+  useEffect(() => {
+    if (imageEditModalOpen && editingPhoto) {
+      setTimeout(updateCanvas, 100);
+    }
+  }, [imageEditModalOpen, editingPhoto]);
+
+  // Add useEffect for filter updates
+  useEffect(() => {
+    if (imageEditModalOpen && editingPhoto) {
+      updateCanvas();
+    }
+  }, [brightness, contrast, saturation, rotation]);
 
   const renderImageEditModal = () => {
     if (!imageEditModalOpen || !editingPhoto) return null;
@@ -384,13 +392,6 @@ export default function App() {
     return (
       <div className="modern-modal-overlay" onClick={closeImageEditor}>
         <div className="modern-modal-container image-edit-modal" onClick={(e) => e.stopPropagation()}>
-          {/* Hidden image element for loading */}
-          <img 
-            ref={imageRef}
-            style={{ display: 'none' }}
-            alt="Editing image"
-          />
-          
           {/* Modal Header */}
           <div className="modern-modal-header">
             <div className="header-content">
@@ -491,11 +492,11 @@ export default function App() {
                   </h4>
                   <div className="button-group">
                     <button 
-                      className={`control-btn ${cropMode === 'free' ? 'primary' : ''}`}
-                      onClick={() => startCrop()}
+                      className={`control-btn ${cropMode === 'none' ? 'primary' : ''}`}
+                      onClick={() => applyCrop('none')}
                     >
                       <Crop size={14} />
-                      Free Crop
+                      Original
                     </button>
                     <button 
                       className={`control-btn ${cropMode === '1:1' ? 'primary' : ''}`}
