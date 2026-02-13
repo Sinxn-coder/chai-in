@@ -520,6 +520,18 @@ export default function ReviewsPage() {
                 />
                 <label>Select All ({selectedReviews.length}/{filteredReviews.length})</label>
               </div>
+              {selectedReviews.length > 0 && (
+                <div className="select-all-actions">
+                  <button className="batch-btn approve" onClick={handleBatchApprove}>
+                    <CheckCircle size={14} />
+                    Approve Selected
+                  </button>
+                  <button className="batch-btn reject" onClick={handleBatchReject}>
+                    <Trash2 size={14} />
+                    Reject Selected
+                  </button>
+                </div>
+              )}
             </div>
 
             {/* Reviews Grid */}
