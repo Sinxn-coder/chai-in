@@ -203,7 +203,11 @@ export default function App() {
   const [brightness, setBrightness] = useState(100);
   const [contrast, setContrast] = useState(100);
   const [saturation, setSaturation] = useState(100);
+  const [cropMode, setCropMode] = useState('none');
+  const [cropStart, setCropStart] = useState(null);
+  const [cropEnd, setCropEnd] = useState(null);
   const canvasRef = useRef(null);
+  const imageRef = useRef(null);
 
   // Handle file selection
   const handleFileSelect = (event) => {
@@ -250,7 +254,30 @@ export default function App() {
     setBrightness(100);
     setContrast(100);
     setSaturation(100);
+    setCropMode('none');
+    setCropStart(null);
+    setCropEnd(null);
     setImageEditModalOpen(true);
+    
+    // Load image after modal opens
+    setTimeout(() => {
+      if (imageRef.current) {
+        const img = new Image();
+        img.onload = () => {
+          if (canvasRef.current) {
+            const canvas = canvasRef.current;
+            const ctx = canvas.getContext('2d');
+            canvas.width = img.width;
+            canvas.height = img.height;
+            
+            // Draw original image
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(img, 0, 0);
+          }
+        };
+        img.src = photo.url;
+      }
+    }, 100);
   };
 
   const closeImageEditor = () => {
@@ -263,30 +290,78 @@ export default function App() {
     setRotation(newRotation % 360);
   };
 
+  const startCrop = () => {
+    setCropMode('free');
+    setCropStart({ x: 0, y: 0 });
+    setCropEnd({ x: 100, y: 100 });
+  };
+
+  const applyCrop = (ratio) => {
+    if (!imageRef.current || !canvasRef.current) return;
+    
+    const img = imageRef.current;
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+    
+    if (ratio === '1:1') {
+      const size = Math.min(img.width, img.height);
+      const cropX = (img.width - size) / 2;
+      const cropY = (img.height - size) / 2;
+      
+      canvas.width = size;
+      canvas.height = size;
+      ctx.drawImage(img, cropX, cropY, size, size);
+    } else if (ratio === '16:9') {
+      const cropHeight = (img.width * 9) / 16;
+      const cropY = (img.height - cropHeight) / 2;
+      
+      canvas.width = img.width;
+      canvas.height = cropHeight;
+      ctx.drawImage(img, 0, cropY, img.width, cropHeight);
+    }
+    
+    setCropMode('none');
+    setCropStart(null);
+    setCropEnd(null);
+  };
+
   const resetImageEdits = () => {
     setRotation(0);
     setBrightness(100);
     setContrast(100);
     setSaturation(100);
+    setCropMode('none');
+    setCropStart(null);
+    setCropEnd(null);
   };
 
   const applyImageEdits = () => {
-    if (!editingPhoto || !canvasRef.current) return;
+    if (!editingPhoto || !canvasRef.current || !imageRef.current) return;
     
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
-    const img = new Image();
+    const img = imageRef.current;
     
     img.onload = () => {
+      // Reset canvas to original image dimensions
       canvas.width = img.width;
       canvas.height = img.height;
       
-      // Apply transformations
+      // Clear canvas
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      // Save context state
       ctx.save();
+      
+      // Apply transformations
       ctx.translate(canvas.width / 2, canvas.height / 2);
       ctx.rotate((rotation * Math.PI) / 180);
       ctx.filter = `brightness(${brightness}%) contrast(${contrast}%) saturate(${saturation}%)`;
+      
+      // Draw image with transformations
       ctx.drawImage(img, -img.width / 2, -img.height / 2);
+      
+      // Restore context
       ctx.restore();
       
       // Convert to data URL and update photo
@@ -309,6 +384,13 @@ export default function App() {
     return (
       <div className="modern-modal-overlay" onClick={closeImageEditor}>
         <div className="modern-modal-container image-edit-modal" onClick={(e) => e.stopPropagation()}>
+          {/* Hidden image element for loading */}
+          <img 
+            ref={imageRef}
+            style={{ display: 'none' }}
+            alt="Editing image"
+          />
+          
           {/* Modal Header */}
           <div className="modern-modal-header">
             <div className="header-content">
@@ -336,9 +418,7 @@ export default function App() {
                   ref={canvasRef}
                   style={{
                     maxWidth: '100%',
-                    maxHeight: '400px',
-                    filter: `brightness(${brightness}%) contrast(${contrast}%) saturate(${saturation}%)`,
-                    transform: `rotate(${rotation}deg)`
+                    maxHeight: '400px'
                   }}
                 />
               </div>
@@ -410,15 +490,24 @@ export default function App() {
                     Crop
                   </h4>
                   <div className="button-group">
-                    <button className="control-btn">
+                    <button 
+                      className={`control-btn ${cropMode === 'free' ? 'primary' : ''}`}
+                      onClick={() => startCrop()}
+                    >
                       <Crop size={14} />
                       Free Crop
                     </button>
-                    <button className="control-btn">
+                    <button 
+                      className={`control-btn ${cropMode === '1:1' ? 'primary' : ''}`}
+                      onClick={() => applyCrop('1:1')}
+                    >
                       <Crop size={14} />
                       1:1
                     </button>
-                    <button className="control-btn">
+                    <button 
+                      className={`control-btn ${cropMode === '16:9' ? 'primary' : ''}`}
+                      onClick={() => applyCrop('16:9')}
+                    >
                       <Crop size={14} />
                       16:9
                     </button>
