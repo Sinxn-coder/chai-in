@@ -1113,20 +1113,6 @@
   transform: translateY(-1px);
 }
 
-.moderation-btn.selected {
-  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-  color: white;
-  font-weight: 600;
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
-  transform: translateY(-2px);
-}
-
-.moderation-btn.selected:hover {
-  background: linear-gradient(135deg, #2563eb, #1e40af);
-  transform: translateY(-3px);
-  box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
-}
-
 /* Responsive Design */
 @media (max-width: 768px) {
   .reviews-page {
