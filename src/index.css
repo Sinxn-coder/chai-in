@@ -1556,6 +1556,112 @@ main {
   font-weight: 400;
 }
 
+/* Photo Upload Modal Styles */
+.upload-area {
+  margin-bottom: 24px;
+}
+
+.upload-zone {
+  border: 2px dashed #d1d5db;
+  border-radius: 12px;
+  padding: 48px 24px;
+  text-align: center;
+  background: #f9fafb;
+  transition: all 0.3s ease;
+}
+
+.upload-zone:hover {
+  border-color: #3b82f6;
+  background: #eff6ff;
+}
+
+.upload-icon {
+  color: #9ca3af;
+  margin-bottom: 16px;
+}
+
+.upload-zone h4 {
+  color: #374151;
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.upload-zone p {
+  color: #6b7280;
+  font-size: 0.875rem;
+  margin-bottom: 24px;
+}
+
+.uploaded-photos h4 {
+  color: #374151;
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.photo-grid {
+  display: grid;
+  gap: 12px;
+}
+
+.photo-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+}
+
+.photo-placeholder {
+  width: 48px;
+  height: 48px;
+  background: #e5e7eb;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #9ca3af;
+}
+
+.photo-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.photo-name {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #374151;
+}
+
+.photo-size {
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+.photo-remove {
+  padding: 6px;
+  background: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.photo-remove:hover {
+  background: #dc2626;
+}
+
+.form-column.full-width {
+  width: 100%;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .edit-modal-content {
@@ -1587,6 +1693,10 @@ main {
   .footer-actions .btn {
     width: 100%;
     justify-content: center;
+  }
+  
+  .upload-zone {
+    padding: 32px 16px;
   }
 }
 

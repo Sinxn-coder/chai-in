@@ -194,6 +194,8 @@ export default function App() {
   const [editingSpotData, setEditingSpotData] = useState(null);
   const [viewDetailsModalOpen, setViewDetailsModalOpen] = useState(false);
   const [viewingSpotData, setViewingSpotData] = useState(null);
+  const [photoUploadModalOpen, setPhotoUploadModalOpen] = useState(false);
+  const [uploadingSpotData, setUploadingSpotData] = useState(null);
 
   // Filter and search users
   const filteredUsers = useMemo(() => {
@@ -992,7 +994,11 @@ export default function App() {
                       <Edit size={16} />
                       Edit Spot
                     </button>
-                    <button className="action-btn secondary">
+                    <button className="action-btn secondary" onClick={() => {
+                      setViewDetailsModalOpen(false);
+                      setUploadingSpotData(viewingSpotData);
+                      setPhotoUploadModalOpen(true);
+                    }}>
                       <Camera size={16} />
                       Add Photos
                     </button>
@@ -1015,6 +1021,112 @@ export default function App() {
               <div className="footer-actions">
                 <button className="modern-btn cancel" onClick={() => setViewDetailsModalOpen(false)}>
                   Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const renderPhotoUploadModal = () => {
+    if (!photoUploadModalOpen || !uploadingSpotData) return null;
+
+    return (
+      <div className="modern-modal-overlay" onClick={() => setPhotoUploadModalOpen(false)}>
+        <div className="modern-modal-container" onClick={(e) => e.stopPropagation()}>
+          {/* Modal Header */}
+          <div className="modern-modal-header">
+            <div className="header-content">
+              <div className="spot-info">
+                <div className="spot-avatar">
+                  <Camera size={24} />
+                </div>
+                <div className="spot-details">
+                  <h2 className="spot-name">Add Photos</h2>
+                  <p className="spot-category">{uploadingSpotData.name}</p>
+                </div>
+              </div>
+              <button className="modern-close-btn" onClick={() => setPhotoUploadModalOpen(false)}>
+                <X size={20} />
+              </button>
+            </div>
+          </div>
+
+          {/* Modal Body */}
+          <div className="modern-modal-body">
+            <div className="edit-form-container">
+              <div className="form-column full-width">
+                <div className="modern-section">
+                  <h3 className="section-title">
+                    <div className="title-icon">
+                      <Upload size={18} />
+                    </div>
+                    Photo Upload
+                  </h3>
+                  
+                  <div className="upload-area">
+                    <div className="upload-zone">
+                      <div className="upload-icon">
+                        <Upload size={48} />
+                      </div>
+                      <h4>Drop photos here or click to browse</h4>
+                      <p>Support for JPG, PNG, GIF up to 10MB each</p>
+                      <button className="modern-btn primary">
+                        <Upload size={16} />
+                        Choose Files
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="uploaded-photos">
+                    <h4>Current Photos</h4>
+                    <div className="photo-grid">
+                      <div className="photo-item">
+                        <div className="photo-placeholder">
+                          <Image size={24} />
+                        </div>
+                        <div className="photo-info">
+                          <span className="photo-name">spot-1.jpg</span>
+                          <span className="photo-size">2.3 MB</span>
+                        </div>
+                        <button className="photo-remove">
+                          <X size={16} />
+                        </button>
+                      </div>
+                      <div className="photo-item">
+                        <div className="photo-placeholder">
+                          <Image size={24} />
+                        </div>
+                        <div className="photo-info">
+                          <span className="photo-name">spot-2.jpg</span>
+                          <span className="photo-size">1.8 MB</span>
+                        </div>
+                        <button className="photo-remove">
+                          <X size={16} />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Modal Footer */}
+          <div className="modern-modal-footer">
+            <div className="footer-content">
+              <div className="footer-info">
+                <p className="last-modified">Uploading to: {uploadingSpotData.name}</p>
+              </div>
+              <div className="footer-actions">
+                <button className="modern-btn cancel" onClick={() => setPhotoUploadModalOpen(false)}>
+                  Cancel
+                </button>
+                <button className="modern-btn primary">
+                  <Upload size={16} />
+                  Upload Photos
                 </button>
               </div>
             </div>
@@ -1297,6 +1409,7 @@ export default function App() {
         {renderSpotModal()}
         {renderModernEditModal()}
         {renderViewDetailsModal()}
+        {renderPhotoUploadModal()}
       </>
     );
   };
