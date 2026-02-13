@@ -733,31 +733,79 @@ export default function App() {
       <div className="dashboard">
         <div className="stats-grid">
           <div className="stat-card">
-            <div className="stat-icon users">👥</div>
-            <div className="stat-info">
-              <div className="stat-number">1,234</div>
-              <div className="stat-label">Total Users</div>
+            <div className="stat-header">
+              <div className="stat-icon users">👥</div>
+              <h3>Total Users</h3>
+            </div>
+            <div className="stat-content">
+              <div className="stat-main">1,234</div>
+              <div className="stat-details">
+                <div className="stat-item">
+                  <div className="stat-icon-small success">↑</div>
+                  <span>12% from last month</span>
+                </div>
+                <div className="stat-item">
+                  <div className="stat-icon-small active">→</div>
+                  <span>892 active this week</span>
+                </div>
+              </div>
             </div>
           </div>
           <div className="stat-card">
-            <div className="stat-icon spots">📍</div>
-            <div className="stat-info">
-              <div className="stat-number">456</div>
-              <div className="stat-label">Food Spots</div>
+            <div className="stat-header">
+              <div className="stat-icon spots">📍</div>
+              <h3>Food Spots</h3>
+            </div>
+            <div className="stat-content">
+              <div className="stat-main">456</div>
+              <div className="stat-details">
+                <div className="stat-item">
+                  <div className="stat-icon-small success">↑</div>
+                  <span>8% from last month</span>
+                </div>
+                <div className="stat-item">
+                  <div className="stat-icon-small new">+</div>
+                  <span>23 new this week</span>
+                </div>
+              </div>
             </div>
           </div>
           <div className="stat-card">
-            <div className="stat-icon reviews">⭐</div>
-            <div className="stat-info">
-              <div className="stat-number">2,789</div>
-              <div className="stat-label">Reviews & Ratings</div>
+            <div className="stat-header">
+              <div className="stat-icon reviews">⭐</div>
+              <h3>Reviews & Ratings</h3>
+            </div>
+            <div className="stat-content">
+              <div className="stat-main">2,789</div>
+              <div className="stat-details">
+                <div className="stat-item">
+                  <div className="stat-icon-small success">↑</div>
+                  <span>15% from last month</span>
+                </div>
+                <div className="stat-item">
+                  <div className="stat-icon-small rating">⭐</div>
+                  <span>4.6 average rating</span>
+                </div>
+              </div>
             </div>
           </div>
           <div className="stat-card">
-            <div className="stat-icon analytics">📈</div>
-            <div className="stat-info">
-              <div className="stat-number">892</div>
-              <div className="stat-label">Active Users</div>
+            <div className="stat-header">
+              <div className="stat-icon analytics">📈</div>
+              <h3>Active Users</h3>
+            </div>
+            <div className="stat-content">
+              <div className="stat-main">892</div>
+              <div className="stat-details">
+                <div className="stat-item">
+                  <div className="stat-icon-small success">↑</div>
+                  <span>23% from last month</span>
+                </div>
+                <div className="stat-item">
+                  <div className="stat-icon-small weekly">📅</div>
+                  <span>156 daily average</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
