@@ -1085,25 +1085,7 @@ export default function ReviewsPage() {
         <div className="modal-overlay" onClick={closeAllModals}>
           <div className="modal-container" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
-              <div className="modal-header-content">
-                <h3>User Profile</h3>
-                <div className="modal-switch-buttons">
-                  <button 
-                    className={`switch-btn ${showUserProfile ? 'active' : ''}`}
-                    onClick={() => handleViewUserProfile(selectedReview)}
-                  >
-                    <Users size={14} />
-                    User Profile
-                  </button>
-                  <button 
-                    className={`switch-btn ${showSpotDetails ? 'active' : ''}`}
-                    onClick={() => handleViewSpotDetails(selectedReview)}
-                  >
-                    <MapPin size={14} />
-                    Spot Details
-                  </button>
-                </div>
-              </div>
+              <h3>User Profile</h3>
               <button className="modal-close-btn" onClick={closeAllModals}>
                 <X size={20} />
               </button>
@@ -1197,25 +1179,7 @@ export default function ReviewsPage() {
         <div className="modal-overlay" onClick={closeAllModals}>
           <div className="modal-container" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
-              <div className="modal-header-content">
-                <h3>Spot Details</h3>
-                <div className="modal-switch-buttons">
-                  <button 
-                    className={`switch-btn ${showUserProfile ? 'active' : ''}`}
-                    onClick={() => handleViewUserProfile(selectedReview)}
-                  >
-                    <Users size={14} />
-                    User Profile
-                  </button>
-                  <button 
-                    className={`switch-btn ${showSpotDetails ? 'active' : ''}`}
-                    onClick={() => handleViewSpotDetails(selectedReview)}
-                  >
-                    <MapPin size={14} />
-                    Spot Details
-                  </button>
-                </div>
-              </div>
+              <h3>Spot Details</h3>
               <button className="modal-close-btn" onClick={closeAllModals}>
                 <X size={20} />
               </button>
