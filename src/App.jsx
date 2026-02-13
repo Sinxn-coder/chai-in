@@ -733,28 +733,28 @@ export default function App() {
       <div className="dashboard">
         <div className="stats-grid">
           <div className="stat-card">
-            <div className="stat-icon">👥</div>
+            <div className="stat-icon users">👥</div>
             <div className="stat-info">
               <div className="stat-number">1,234</div>
               <div className="stat-label">Total Users</div>
             </div>
           </div>
           <div className="stat-card">
-            <div className="stat-icon">📍</div>
+            <div className="stat-icon spots">📍</div>
             <div className="stat-info">
               <div className="stat-number">456</div>
               <div className="stat-label">Food Spots</div>
             </div>
           </div>
           <div className="stat-card">
-            <div className="stat-icon">⭐</div>
+            <div className="stat-icon reviews">⭐</div>
             <div className="stat-info">
               <div className="stat-number">2,789</div>
               <div className="stat-label">Reviews & Ratings</div>
             </div>
           </div>
           <div className="stat-card">
-            <div className="stat-icon">📈</div>
+            <div className="stat-icon analytics">📈</div>
             <div className="stat-info">
               <div className="stat-number">892</div>
               <div className="stat-label">Active Users</div>
