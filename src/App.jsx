@@ -1,112 +1,42 @@
-import React, { useState } from 'react';
-import './index.css';
+import React from 'react';
 
 export default function App() {
-  console.log('App component mounting...');
-  
-  const [activeTab, setActiveTab] = useState('dashboard');
-  console.log('Active tab:', activeTab);
-
-  const navItems = [
-    { id: 'dashboard', name: 'Dashboard' },
-    { id: 'users', name: 'Users' },
-    { id: 'spots', name: 'Spots' },
-    { id: 'reviews', name: 'Reviews' },
-    { id: 'analytics', name: 'Analytics' },
-    { id: 'settings', name: 'Settings' }
-  ];
-
-  const getActiveTabName = () => {
-    const activeItem = navItems.find(item => item.id === activeTab);
-    return activeItem ? activeItem.name : 'Dashboard';
-  };
-
-  const renderContent = () => {
-    console.log('Rendering content for tab:', activeTab);
-    
-    switch (activeTab) {
-      case 'dashboard':
-        return (
-          <div className="dashboard">
-            <div className="stats-grid">
-              <div className="stat-card">
-                <div className="stat-icon">👥</div>
-                <div className="stat-info">
-                  <div className="stat-number">1,234</div>
-                  <div className="stat-label">Total Users</div>
-                </div>
-              </div>
-              <div className="stat-card">
-                <div className="stat-icon">📍</div>
-                <div className="stat-info">
-                  <div className="stat-number">456</div>
-                  <div className="stat-label">Food Spots</div>
-                </div>
-              </div>
-              <div className="stat-card">
-                <div className="stat-icon">⭐</div>
-                <div className="stat-info">
-                  <div className="stat-number">2,789</div>
-                  <div className="stat-label">Reviews & Ratings</div>
-                </div>
-              </div>
-              <div className="stat-card">
-                <div className="stat-icon">📈</div>
-                <div className="stat-info">
-                  <div className="stat-number">892</div>
-                  <div className="stat-label">Active Users</div>
-                </div>
-              </div>
-            </div>
-            <div className="content-placeholder">Dashboard Overview - Key metrics and performance indicators for BytSpot platform.</div>
-          </div>
-        );
-      case 'users':
-        return <div className="content-placeholder">User Management - Manage user accounts, permissions, and activity.</div>;
-      case 'spots':
-        return <div className="content-placeholder">Spot Management - Manage food spots, locations, and categories.</div>;
-      case 'reviews':
-        return <div className="content-placeholder">Review Moderation - Manage user reviews, ratings, photos, and reported content.</div>;
-      case 'analytics':
-        return <div className="content-placeholder">Analytics Dashboard - Track user engagement, popular spots, revenue metrics, and growth trends.</div>;
-      case 'settings':
-        return <div className="content-placeholder">Admin Settings - Configure platform preferences, API keys, and system parameters.</div>;
-      default:
-        return <div className="content-placeholder">Welcome to the BytSpot Admin Dashboard.</div>;
-    }
-  };
-
   return (
-    <>
-      <header>
-        <div className="app-bar-brand">
-          <div className="appIcon">🍵</div>
-          <h1>BytSpot</h1>
+    <div style={{ 
+      padding: '20px', 
+      fontFamily: 'Arial, sans-serif',
+      backgroundColor: '#f5f5f5',
+      minHeight: '100vh'
+    }}>
+      <h1 style={{ color: '#333', textAlign: 'center', marginBottom: '20px' }}>
+        BytSpot Admin Panel
+      </h1>
+      <div style={{ 
+        backgroundColor: 'white', 
+        padding: '20px', 
+        borderRadius: '8px',
+        boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+        maxWidth: '800px',
+        margin: '0 auto'
+      }}>
+        <h2 style={{ color: '#666', marginBottom: '10px' }}>Application Status</h2>
+        <p style={{ color: '#888', lineHeight: '1.6' }}>
+          The BytSpot Admin Panel is loading successfully. This is a basic test version 
+          to verify that the React application is working properly.
+        </p>
+        <div style={{ 
+          backgroundColor: '#e8f5e8', 
+          padding: '15px', 
+          borderRadius: '4px',
+          border: '1px solid #4caf50',
+          marginTop: '20px'
+        }}>
+          <strong style={{ color: '#2e7d32' }}>✅ Application Working</strong>
+          <p style={{ margin: '5px 0 0 0', color: '#2e7d32' }}>
+            React is rendering correctly and the page is displaying properly.
+          </p>
         </div>
-        <div className="header-center">{getActiveTabName()}</div>
-        <div className="header-right">Admin Panel</div>
-      </header>
-
-      <nav className="sidebar">
-        <ul className="nav-list">
-          {navItems.map((item) => (
-            <li
-              key={item.id}
-              className={`nav-item ${activeTab === item.id ? 'active' : ''}`}
-              onClick={() => setActiveTab(item.id)}
-            >
-              <div className="nav-icon">
-                <span style={{ fontSize: '24px' }}>📊</span>
-              </div>
-              <span className="nav-text">{item.name}</span>
-            </li>
-          ))}
-        </ul>
-      </nav>
-
-      <main>
-        {renderContent()}
-      </main>
-    </>
+      </div>
+    </div>
   );
 }
