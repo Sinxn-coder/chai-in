@@ -1047,16 +1047,6 @@ export default function App() {
                             </button>
                             <button 
                               className="dropdown-item"
-                              onClick={() => {
-                                handleSpotAction('view', spot);
-                                openSpotModal(spot);
-                              }}
-                            >
-                              <Eye size={14} />
-                              View Details
-                            </button>
-                            <button 
-                              className="dropdown-item"
                               onClick={() => handleSpotAction('message', spot)}
                             >
                               <MessageSquare size={14} />
