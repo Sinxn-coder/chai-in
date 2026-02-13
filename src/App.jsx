@@ -265,11 +265,17 @@ export default function App() {
   };
 
   const drawImageOnCanvas = () => {
-    if (!editingImage || !editorCanvasRef.current) return;
+    if (!editingImage || !editorCanvasRef.current) {
+      console.log('Missing editingImage or canvas ref');
+      return;
+    }
     
     const canvas = editorCanvasRef.current;
     const ctx = canvas.getContext('2d');
-    const img = new Image();
+    
+    // Create image using document.createElement for better compatibility
+    const img = document.createElement('img');
+    img.crossOrigin = 'anonymous';
     
     img.onload = () => {
       console.log('Image loaded, dimensions:', img.width, 'x', img.height);
@@ -315,10 +321,11 @@ export default function App() {
       console.log('Image drawn on canvas');
     };
     
-    img.onerror = () => {
-      console.error('Failed to load image:', editingImage.url);
+    img.onerror = (error) => {
+      console.error('Failed to load image:', editingImage.url, error);
     };
     
+    // Set the source after setting up event handlers
     img.src = editingImage.url;
   };
 
@@ -340,19 +347,28 @@ export default function App() {
   };
 
   const saveImageEdits = () => {
-    if (!editingImage || !editorCanvasRef.current) return;
+    if (!editingImage || !editorCanvasRef.current) {
+      console.log('Cannot save - missing image or canvas');
+      return;
+    }
     
     const canvas = editorCanvasRef.current;
-    const editedUrl = canvas.toDataURL('image/jpeg', 0.9);
     
-    const updatedPhotos = uploadedPhotos.map(photo => 
-      photo.id === editingImage.id 
-        ? { ...photo, url: editedUrl }
-        : photo
-    );
-    
-    setUploadedPhotos(updatedPhotos);
-    closeImageEditor();
+    try {
+      const editedUrl = canvas.toDataURL('image/jpeg', 0.9);
+      console.log('Image saved successfully');
+      
+      const updatedPhotos = uploadedPhotos.map(photo => 
+        photo.id === editingImage.id 
+          ? { ...photo, url: editedUrl }
+          : photo
+      );
+      
+      setUploadedPhotos(updatedPhotos);
+      closeImageEditor();
+    } catch (error) {
+      console.error('Failed to save image:', error);
+    }
   };
 
   // Use effect to update canvas when image editor opens or settings change
