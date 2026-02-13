@@ -99,6 +99,8 @@ export default function ReviewsPage() {
     startDate: '',
     endDate: ''
   });
+  const [currentPage, setCurrentPage] = useState(1);
+  const [reviewsPerPage] = useState(10);
 
   // Analytics calculations
   const analytics = useMemo(() => {
@@ -170,7 +172,29 @@ export default function ReviewsPage() {
           return 0;
       }
     });
-  }, [reviews, searchTerm, statusFilter, sortBy]);
+  }, [reviews, searchTerm, statusFilter, sortBy, dateRange]);
+
+  // Pagination logic
+  const paginatedReviews = useMemo(() => {
+    const indexOfLastReview = currentPage * reviewsPerPage;
+    const indexOfFirstReview = indexOfLastReview - reviewsPerPage;
+    return filteredReviews.slice(indexOfFirstReview, indexOfLastReview);
+  }, [filteredReviews, currentPage, reviewsPerPage]);
+
+  const totalPages = Math.ceil(filteredReviews.length / reviewsPerPage);
+
+  // Pagination controls
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+
+  const handlePreviousPage = () => {
+    setCurrentPage(prev => Math.max(1, prev - 1));
+  };
+
+  const handleNextPage = () => {
+    setCurrentPage(prev => Math.min(totalPages, prev + 1));
+  };
 
   const renderStars = (rating) => {
     return Array.from({ length: 5 }, (_, i) => (
@@ -561,7 +585,7 @@ export default function ReviewsPage() {
 
             {/* Reviews Grid */}
             <div className="reviews-grid">
-              {filteredReviews.map(review => (
+              {paginatedReviews.map(review => (
                 <div key={review.id} className={`review-card ${selectedReviews.includes(review.id) ? 'selected' : ''}`}>
                   {/* Review Header */}
                   <div className="review-header">
@@ -664,6 +688,46 @@ export default function ReviewsPage() {
               ))}
             </div>
           </>
+        )}
+        
+        {/* Pagination Controls */}
+        {totalPages > 1 && (
+          <div className="pagination-controls">
+            <div className="pagination-info">
+              <span>
+                Showing {((currentPage - 1) * reviewsPerPage) + 1} to {Math.min(currentPage * reviewsPerPage, filteredReviews.length)} of {filteredReviews.length} reviews
+              </span>
+            </div>
+            <div className="pagination-buttons">
+              <button 
+                className="pagination-btn prev"
+                onClick={handlePreviousPage}
+                disabled={currentPage === 1}
+              >
+                Previous
+              </button>
+              
+              <div className="page-numbers">
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                  <button
+                    key={page}
+                    className={`page-number ${page === currentPage ? 'active' : ''}`}
+                    onClick={() => handlePageChange(page)}
+                  >
+                    {page}
+                  </button>
+                ))}
+              </div>
+              
+              <button 
+                className="pagination-btn next"
+                onClick={handleNextPage}
+                disabled={currentPage === totalPages}
+              >
+                Next
+              </button>
+            </div>
+          </div>
         )}
       </div>
       </div>
