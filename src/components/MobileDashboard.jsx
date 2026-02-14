@@ -15,8 +15,9 @@ const MobileDashboard = () => {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
+  // Don't render anything on desktop
   if (!isMobile) {
-    return null; // Don't render on desktop
+    return null;
   }
 
   return (
@@ -29,7 +30,7 @@ const MobileDashboard = () => {
         </div>
       </div>
 
-      {/* Main Content */}
+      {/* Main Content - Only Admin Panel Text */}
       <div className="mobile-content">
         <div className="mobile-admin-panel">
           <h2>Admin Panel</h2>
