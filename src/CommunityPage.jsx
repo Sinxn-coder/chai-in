@@ -33,6 +33,8 @@ export default function CommunityPage() {
   const [activeSection, setActiveSection] = useState('posts');
   const [searchTerm, setSearchTerm] = useState('');
   const [savedSettings, setSavedSettings] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [selectedPostId, setSelectedPostId] = useState(null);
 
   // Mock posts data with enhanced structure
   const [posts, setPosts] = useState([
@@ -286,22 +288,28 @@ export default function CommunityPage() {
                       <div className="admin-post-text">
                         <p>{post.content}</p>
                       </div>
-                      {post.tags && (
+                      {post.images && (
                         <div className="admin-post-tags">
                           {post.tags.map((tag, index) => (
                             <span key={index} className="admin-tag">#{tag}</span>
                           ))}
                         </div>
                       )}
-                      <button className="admin-btn-small view-image-btn-full">
+                      <button 
+                        className="admin-btn-small view-image-btn-full"
+                        onClick={() => {
+                          setSelectedPostId(post.id);
+                          setSelectedImage(post.images[post.currentImageIndex]);
+                        }}
+                      >
                         <Eye size={14} />
                         View Image
                       </button>
                     </div>
 
-                    {/* Post Images Admin - Single Slider */}
+                    {/* Post Images Admin - Hidden */}
                     {post.images.length > 0 && (
-                      <div className="admin-post-images">
+                      <div className="admin-post-images" style={{ display: 'none' }}>
                         <div className="admin-image-header">
                           <span className="admin-image-count">{post.images.length} Images</span>
                           <div className="admin-image-actions">
@@ -357,19 +365,6 @@ export default function CommunityPage() {
                                     )
                                   );
                                 }}
-                              >
-                                <ChevronRight size={16} />
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Post Analytics */}
-                    <div className="admin-post-analytics">
-                      <div className="analytics-row">
-                        <div className="analytics-item">
                           <div className="analytics-icon">
                             <Eye size={16} />
                           </div>
@@ -408,37 +403,32 @@ export default function CommunityPage() {
                       </div>
                     </div>
 
-                    {/* Post Status & Moderation */}
+                    {/* Post Moderation */}
                     <div className="admin-post-moderation">
                       <div className="moderation-header">
-                        <h4>Moderation Actions</h4>
+                        <Shield size={16} />
+                        <span>Moderation Controls</span>
                       </div>
                       <div className="moderation-controls">
-                        <button className={`moderation-btn ${post.status === 'active' ? 'active' : ''}`}>
-                          <CheckCircle size={16} />
+                        <button className="moderation-btn approve">
+                          <CheckCircle size={14} />
                           Approve
                         </button>
-                        <button className={`moderation-btn ${post.status === 'flagged' ? 'active' : ''}`}>
-                          <Flag size={16} />
-                          Flag Content
+                        <button className="moderation-btn hide">
+                          <Eye size={14} />
+                          Hide
                         </button>
-                        <button className={`moderation-btn ${post.status === 'removed' ? 'active' : ''}`}>
-                          <X size={16} />
-                          Remove Post
+                        <button className="moderation-btn delete">
+                          <Trash2 size={14} />
+                          Delete
                         </button>
-                        <button className="moderation-btn danger">
-                          <Trash2 size={16} />
-                          Delete Permanently
-                        </button>
-                      </div>
-                      {post.reports > 0 && (
-                        <div className="report-info">
-                          <span className="report-count">{post.reports} user reports</span>
+                        {post.reports > 0 && (
                           <button className="review-reports-btn">
-                            <Shield size={16} />
-                            Review Reports
+                            <Flag size={14} />
+                            Review Reports ({post.reports})
                           </button>
-                        </div>
+                        )}
+                      </div>
                       )}
                     </div>
                   </div>
