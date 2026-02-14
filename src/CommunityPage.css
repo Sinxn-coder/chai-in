@@ -15,6 +15,14 @@
   flex-shrink: 0;
 }
 
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
 .community-header h1 {
   font-size: 28px;
   font-weight: 700;
@@ -86,8 +94,7 @@
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
-  overflow-y: auto;
-  height: 100%;
+  overflow: hidden;
 }
 
 .sidebar-header {
@@ -109,11 +116,14 @@
   margin: 0;
 }
 
+/* Scrollable Navigation Tabs */
 .nav-tabs {
   padding: 16px 20px;
   display: flex;
   flex-direction: column;
   gap: 4px;
+  overflow-y: auto;
+  flex: 1;
 }
 
 .nav-tab {
@@ -141,6 +151,19 @@
 .nav-tab.active {
   background: #3b82f6;
   color: white;
+}
+
+/* Scrollable Content Area */
+.community-content-area {
+  flex: 1;
+  overflow-y: auto;
+  background: #f8fafc;
+}
+
+.content-wrapper {
+  padding: 24px 32px;
+  max-width: 1000px;
+  margin: 0 auto;
 }
 
 /* Content Area */
