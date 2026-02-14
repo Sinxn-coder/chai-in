@@ -1283,6 +1283,23 @@ export default function ReviewsPage() {
                 </div>
               </div>
             </div>
+            
+            <div className="modal-actions">
+              <button 
+                className="action-button primary"
+                onClick={() => handleViewUserProfile(selectedReview)}
+              >
+                <Users size={16} />
+                View User Profile
+              </button>
+              <button 
+                className="action-button secondary"
+                onClick={() => handleViewSpotDetails(selectedReview)}
+              >
+                <MapPin size={16} />
+                View Spot Details
+              </button>
+            </div>
           </div>
         </div>
       )}
