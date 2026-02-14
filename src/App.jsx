@@ -45,6 +45,33 @@ import {
 import './index.css';
 
 export default function App() {
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Mobile detection effect
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  // If mobile, show only white screen
+  if (isMobile) {
+    return (
+      <div className="mobile-white-screen">
+        <div className="mobile-message">
+          <h2>Desktop Only</h2>
+          <p>This application is designed for desktop viewing only.</p>
+          <p>Please access this site from a desktop or tablet device.</p>
+        </div>
+      </div>
+    );
+  }
+
   const [activeTab, setActiveTab] = useState('dashboard');
 
   const navItems = [
@@ -2040,39 +2067,55 @@ export default function App() {
   };
 
   return (
-    <>
-      <header>
-        <div className="app-bar-brand">
-          <div className="appIcon">🍵</div>
-          <h1>BytSpot</h1>
+    <div className="app">
+      {/* Mobile White Screen */}
+      {isMobile ? (
+        <div className="mobile-white-screen">
+          <div className="mobile-message">
+            <h2>Desktop Only</h2>
+            <p>This application is designed for desktop viewing only.</p>
+            <p>Please access this site from a desktop or tablet device.</p>
+          </div>
         </div>
-        <div className="header-center">{getActiveTabName()}</div>
-        <div className="header-right">Admin Panel</div>
-      </header>
-
-      <nav className="sidebar">
-        <ul className="nav-list">
-          {navItems.map((item) => {
-            const Icon = item.icon;
-            return (
-              <li
-                key={item.id}
-                className={`nav-item ${activeTab === item.id ? 'active' : ''}`}
-                onClick={() => setActiveTab(item.id)}
-              >
-                <div className="nav-icon">
-                  <Icon size={24} />
-                </div>
-                <span className="nav-text">{item.name}</span>
-              </li>
-            );
-          })}
-        </ul>
-      </nav>
-
-      <main>
-        {renderContent()}
-      </main>
-    </>
+      ) : (
+        <>
+          {/* Navigation - Hide specific pages on mobile */}
+          <nav className="sidebar">
+            <div className="nav-header">
+              <h2>FoodSpot Platform</h2>
+            </div>
+            <ul className="nav-list">
+              {navItems.filter(item => 
+                (item.id !== 'users' && 
+                item.id !== 'spots' && 
+                item.id !== 'reviews' && 
+                item.id !== 'community' && 
+                item.id !== 'settings')
+              ).map((item) => (
+                <li
+                  key={item.id}
+                  className={`nav-item ${activeTab === item.id ? 'active' : ''}`}
+                  onClick={() => setActiveTab(item.id)}
+                >
+                  <item.icon size={20} className="nav-icon" />
+                  <span>{item.name}</span>
+                </li>
+              ))}
+            </ul>
+          </nav>
+          <header>
+            <div className="app-bar-brand">
+              <div className="appIcon">🍵</div>
+              <h1>BytSpot</h1>
+            </div>
+            <div className="header-center">{getActiveTabName()}</div>
+            <div className="header-right">Admin Panel</div>
+          </header>
+          <main>
+            {renderContent()}
+          </main>
+        </>
+      )}
+    </div>
   );
 }
