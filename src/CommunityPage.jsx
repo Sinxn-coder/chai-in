@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Search, 
   Filter, 
@@ -32,6 +32,7 @@ export default function CommunityPage() {
   const [savedSettings, setSavedSettings] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
   const [selectedPostId, setSelectedPostId] = useState(null);
+  const [activeDropdown, setActiveDropdown] = useState(null);
 
   // Mock posts data with enhanced structure
   const [posts, setPosts] = useState([
@@ -136,6 +137,18 @@ export default function CommunityPage() {
       })
     );
   };
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (!event.target.closest('.dropdown-container')) {
+        setActiveDropdown(null);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   return (
     <div className="community-page">
@@ -246,9 +259,30 @@ export default function CommunityPage() {
                           </div>
                         </div>
                         <div className="post-actions">
-                          <button className="action-btn">
-                            <MoreVertical size={16} />
-                          </button>
+                          <div className="dropdown-container">
+                            <button 
+                              className="action-btn"
+                              onClick={() => setActiveDropdown(activeDropdown === post.id ? null : post.id)}
+                            >
+                              <MoreVertical size={16} />
+                            </button>
+                            {activeDropdown === post.id && (
+                              <div className="moderation-dropdown">
+                                <button className="moderation-dropdown-item approve">
+                                  <CheckCircle size={14} />
+                                  Approve
+                                </button>
+                                <button className="moderation-dropdown-item hide">
+                                  <Eye size={14} />
+                                  Hide
+                                </button>
+                                <button className="moderation-dropdown-item delete">
+                                  <Trash2 size={14} />
+                                  Delete
+                                </button>
+                              </div>
+                            )}
+                          </div>
                         </div>
                       </div>
 
