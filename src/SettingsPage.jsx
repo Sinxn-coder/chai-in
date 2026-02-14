@@ -83,33 +83,6 @@ export default function SettingsPage() {
     analyticsEnabled: true
   });
 
-  const [privacySettings, setPrivacySettings] = useState({
-    analyticsData: false,
-    userBehaviorTracking: false,
-    performanceMetrics: true,
-    errorLogs: true,
-    userDataRetention: 365,
-    activityLogRetention: 90,
-    analyticsDataRetention: 180,
-    autoDataCleanup: true,
-    profileVisibility: true,
-    privateProfiles: true,
-    dataExport: true,
-    accountDeletion: true,
-    searchIndexing: false,
-    defaultPrivacyLevel: 'public',
-    publicAnalytics: false,
-    researchData: false,
-    marketingCommunications: false,
-    cookiesTracking: true,
-    gdprCompliance: true,
-    privacyPolicy: true,
-    consentManagement: true,
-    dataEncryption: true,
-    privacyPolicyUrl: '/privacy',
-    termsOfServiceUrl: '/terms'
-  });
-
   const handleSaveSettings = () => {
     setSavedSettings(true);
     setTimeout(() => setSavedSettings(false), 2000);
@@ -191,33 +164,6 @@ export default function SettingsPage() {
       errorReporting: true,
       analyticsEnabled: true
     });
-    
-    setPrivacySettings({
-      analyticsData: false,
-      userBehaviorTracking: false,
-      performanceMetrics: true,
-      errorLogs: true,
-      userDataRetention: 365,
-      activityLogRetention: 90,
-      analyticsDataRetention: 180,
-      autoDataCleanup: true,
-      profileVisibility: true,
-      privateProfiles: true,
-      dataExport: true,
-      accountDeletion: true,
-      searchIndexing: false,
-      defaultPrivacyLevel: 'public',
-      publicAnalytics: false,
-      researchData: false,
-      marketingCommunications: false,
-      cookiesTracking: true,
-      gdprCompliance: true,
-      privacyPolicy: true,
-      consentManagement: true,
-      dataEncryption: true,
-      privacyPolicyUrl: '/privacy',
-      termsOfServiceUrl: '/terms'
-    });
   };
 
   const handleToggle = (section, key) => {
@@ -236,9 +182,6 @@ export default function SettingsPage() {
         break;
       case 'advanced':
         setAdvancedSettings(prev => ({ ...prev, [key]: !prev[key] }));
-        break;
-      case 'privacy':
-        setPrivacySettings(prev => ({ ...prev, [key]: !prev[key] }));
         break;
       default:
         break;
@@ -262,9 +205,6 @@ export default function SettingsPage() {
       case 'advanced':
         setAdvancedSettings(prev => ({ ...prev, [field]: value }));
         break;
-      case 'privacy':
-        setPrivacySettings(prev => ({ ...prev, [field]: value }));
-        break;
       default:
         break;
     }
@@ -276,7 +216,6 @@ export default function SettingsPage() {
     { id: 'security', label: 'Security', icon: Lock },
     { id: 'users', label: 'User Management', icon: Users },
     { id: 'notifications', label: 'Notifications', icon: Bell },
-    { id: 'privacy', label: 'Privacy', icon: Eye },
     { id: 'advanced', label: 'Advanced', icon: Database },
     { id: 'help', label: 'Help & Support', icon: HelpCircle }
   ];
@@ -1332,37 +1271,221 @@ export default function SettingsPage() {
             <div className="settings-section">
               <div className="section-header">
                 <h2>Security Configuration</h2>
-                <p>Manage security policies</p>
+                <p>Manage security policies and authentication settings</p>
               </div>
 
-              <div className="settings-list">
-                <div className="setting-item">
-                  <div className="setting-info">
-                    <div className="setting-header">
-                      <Lock size={18} />
-                      <span>SSL Enforcement</span>
-                    </div>
-                    <p>Require HTTPS connections</p>
-                  </div>
-                  <label className="toggle-switch">
-                    <input 
-                      type="checkbox" 
-                      checked={settings.ssl}
-                      onChange={() => handleToggle('ssl')}
-                    />
-                    <span className="toggle-slider"></span>
-                  </label>
+              <div className="settings-subsection">
+                <div className="subsection-header">
+                  <h3>SSL & Encryption</h3>
+                  <p>Configure SSL/TLS and encryption settings</p>
                 </div>
+                <div className="settings-grid">
+                  <div className="setting-item">
+                    <div className="setting-info">
+                      <div className="setting-header">
+                        <Lock size={18} />
+                        <span>SSL Enforcement</span>
+                      </div>
+                      <p>Require HTTPS connections</p>
+                    </div>
+                    <label className="toggle-switch">
+                      <input 
+                        type="checkbox" 
+                        checked={securitySettings.ssl}
+                        onChange={() => handleToggle('security', 'ssl')}
+                      />
+                      <span className="toggle-slider"></span>
+                    </label>
+                  </div>
 
-                <div className="setting-item">
-                  <label>Password Min Length</label>
-                  <input 
-                    type="number" 
-                    defaultValue="8"
-                    min="6"
-                    max="20"
-                    className="setting-input" 
-                  />
+                  <div className="setting-item">
+                    <div className="setting-info">
+                      <div className="setting-header">
+                        <Key size={18} />
+                        <span>Session Encryption</span>
+                      </div>
+                      <p>Encrypt all session data</p>
+                    </div>
+                    <label className="toggle-switch">
+                      <input 
+                        type="checkbox" 
+                        checked={securitySettings.sessionEncryption}
+                        onChange={() => handleToggle('security', 'sessionEncryption')}
+                      />
+                      <span className="toggle-slider"></span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <div className="settings-subsection">
+                <div className="subsection-header">
+                  <h3>Password Policies</h3>
+                  <p>Configure password requirements and policies</p>
+                </div>
+                <div className="settings-grid">
+                  <div className="setting-item">
+                    <label>Password Min Length</label>
+                    <input 
+                      type="number" 
+                      value={securitySettings.passwordMinLength}
+                      onChange={(e) => handleInputChange('security', 'passwordMinLength', parseInt(e.target.value))}
+                      className="setting-input" 
+                      min="6"
+                      max="20"
+                    />
+                    <small>Minimum password length requirement</small>
+                  </div>
+
+                  <div className="setting-item">
+                    <div className="setting-info">
+                      <div className="setting-header">
+                        <Lock size={18} />
+                        <span>Require Uppercase</span>
+                      </div>
+                      <p>Require at least one uppercase letter</p>
+                    </div>
+                    <label className="toggle-switch">
+                      <input 
+                        type="checkbox" 
+                        checked={securitySettings.passwordRequireUppercase}
+                        onChange={() => handleToggle('security', 'passwordRequireUppercase')}
+                      />
+                      <span className="toggle-slider"></span>
+                    </label>
+                  </div>
+
+                  <div className="setting-item">
+                    <div className="setting-info">
+                      <div className="setting-header">
+                        <Lock size={18} />
+                        <span>Require Numbers</span>
+                      </div>
+                      <p>Require at least one number</p>
+                    </div>
+                    <label className="toggle-switch">
+                      <input 
+                        type="checkbox" 
+                        checked={securitySettings.passwordRequireNumbers}
+                        onChange={() => handleToggle('security', 'passwordRequireNumbers')}
+                      />
+                      <span className="toggle-slider"></span>
+                    </label>
+                  </div>
+
+                  <div className="setting-item">
+                    <div className="setting-info">
+                      <div className="setting-header">
+                        <Lock size={18} />
+                        <span>Require Symbols</span>
+                      </div>
+                      <p>Require at least one special character</p>
+                    </div>
+                    <label className="toggle-switch">
+                      <input 
+                        type="checkbox" 
+                        checked={securitySettings.passwordRequireSymbols}
+                        onChange={() => handleToggle('security', 'passwordRequireSymbols')}
+                      />
+                      <span className="toggle-slider"></span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <div className="settings-subsection">
+                <div className="subsection-header">
+                  <h3>Session Management</h3>
+                  <p>Configure session timeout and concurrent sessions</p>
+                </div>
+                <div className="settings-grid">
+                  <div className="setting-item">
+                    <label>Session Timeout (minutes)</label>
+                    <input 
+                      type="number" 
+                      value={securitySettings.sessionTimeoutMinutes}
+                      onChange={(e) => handleInputChange('security', 'sessionTimeoutMinutes', parseInt(e.target.value))}
+                      className="setting-input" 
+                      min="5"
+                      max="120"
+                    />
+                    <small>Automatically log out inactive users</small>
+                  </div>
+
+                  <div className="setting-item">
+                    <label>Max Concurrent Sessions</label>
+                    <input 
+                      type="number" 
+                      value={securitySettings.maxConcurrentSessions}
+                      onChange={(e) => handleInputChange('security', 'maxConcurrentSessions', parseInt(e.target.value))}
+                      className="setting-input" 
+                      min="1"
+                      max="10"
+                    />
+                    <small>Maximum sessions per user</small>
+                  </div>
+                </div>
+              </div>
+
+              <div className="settings-subsection">
+                <div className="subsection-header">
+                  <h3>Advanced Security</h3>
+                  <p>Additional security features and monitoring</p>
+                </div>
+                <div className="settings-grid">
+                  <div className="setting-item">
+                    <div className="setting-info">
+                      <div className="setting-header">
+                        <FileText size={18} />
+                        <span>Audit Logging</span>
+                      </div>
+                      <p>Log all security events and admin actions</p>
+                    </div>
+                    <label className="toggle-switch">
+                      <input 
+                        type="checkbox" 
+                        checked={securitySettings.auditLogging}
+                        onChange={() => handleToggle('security', 'auditLogging')}
+                      />
+                      <span className="toggle-slider"></span>
+                    </label>
+                  </div>
+
+                  <div className="setting-item">
+                    <div className="setting-info">
+                      <div className="setting-header">
+                        <Shield size={18} />
+                        <span>IP Restrictions</span>
+                      </div>
+                      <p>Restrict access to specific IP addresses</p>
+                    </div>
+                    <label className="toggle-switch">
+                      <input 
+                        type="checkbox" 
+                        checked={securitySettings.ipRestrictions}
+                        onChange={() => handleToggle('security', 'ipRestrictions')}
+                      />
+                      <span className="toggle-slider"></span>
+                    </label>
+                  </div>
+
+                  <div className="setting-item">
+                    <div className="setting-info">
+                      <div className="setting-header">
+                        <Key size={18} />
+                        <span>Two-Factor Auth</span>
+                      </div>
+                      <p>Require 2FA for all users</p>
+                    </div>
+                    <label className="toggle-switch">
+                      <input 
+                        type="checkbox" 
+                        checked={securitySettings.twoFactorAuth}
+                        onChange={() => handleToggle('security', 'twoFactorAuth')}
+                      />
+                      <span className="toggle-slider"></span>
+                    </label>
+                  </div>
                 </div>
               </div>
             </div>
@@ -1372,44 +1495,232 @@ export default function SettingsPage() {
             <div className="settings-section">
               <div className="section-header">
                 <h2>User Management</h2>
-                <p>Configure user registration and permissions</p>
+                <p>Configure user registration, permissions and access control</p>
               </div>
 
-              <div className="settings-list">
-                <div className="setting-item">
-                  <div className="setting-info">
-                    <div className="setting-header">
-                      <Mail size={18} />
-                      <span>Email Verification</span>
-                    </div>
-                    <p>Require email verification</p>
-                  </div>
-                  <label className="toggle-switch">
-                    <input 
-                      type="checkbox" 
-                      checked={settings.requireEmailVerification}
-                      onChange={() => handleToggle('requireEmailVerification')}
-                    />
-                    <span className="toggle-slider"></span>
-                  </label>
+              <div className="settings-subsection">
+                <div className="subsection-header">
+                  <h3>Registration Settings</h3>
+                  <p>Configure user registration and approval processes</p>
                 </div>
-
-                <div className="setting-item">
-                  <div className="setting-info">
-                    <div className="setting-header">
-                      <Users size={18} />
-                      <span>Self Registration</span>
-                    </div>
-                    <p>Allow users to register</p>
+                <div className="settings-grid">
+                  <div className="setting-item">
+                    <label>Default User Role</label>
+                    <select 
+                      value={userManagement.defaultUserRole}
+                      onChange={(e) => handleInputChange('userManagement', 'defaultUserRole', e.target.value)}
+                      className="setting-input"
+                    >
+                      <option value="user">Standard User</option>
+                      <option value="editor">Editor</option>
+                      <option value="moderator">Moderator</option>
+                      <option value="admin">Administrator</option>
+                    </select>
+                    <small>Default role for new users</small>
                   </div>
-                  <label className="toggle-switch">
+
+                  <div className="setting-item">
+                    <div className="setting-info">
+                      <div className="setting-header">
+                        <Mail size={18} />
+                        <span>Email Verification</span>
+                      </div>
+                      <p>Require email verification for new accounts</p>
+                    </div>
+                    <label className="toggle-switch">
+                      <input 
+                        type="checkbox" 
+                        checked={userManagement.requireEmailVerification}
+                        onChange={() => handleToggle('userManagement', 'requireEmailVerification')}
+                      />
+                      <span className="toggle-slider"></span>
+                    </label>
+                  </div>
+
+                  <div className="setting-item">
+                    <div className="setting-info">
+                      <div className="setting-header">
+                        <Users size={18} />
+                        <span>Self Registration</span>
+                      </div>
+                      <p>Allow users to register themselves</p>
+                    </div>
+                    <label className="toggle-switch">
+                      <input 
+                        type="checkbox" 
+                        checked={userManagement.allowSelfRegistration}
+                        onChange={() => handleToggle('userManagement', 'allowSelfRegistration')}
+                      />
+                      <span className="toggle-slider"></span>
+                    </label>
+                  </div>
+
+                  <div className="setting-item">
+                    <div className="setting-info">
+                      <div className="setting-header">
+                        <UserCheck size={18} />
+                        <span>Account Approval Required</span>
+                      </div>
+                      <p>Require admin approval for new accounts</p>
+                    </div>
+                    <label className="toggle-switch">
+                      <input 
+                        type="checkbox" 
+                        checked={userManagement.accountApprovalRequired}
+                        onChange={() => handleToggle('userManagement', 'accountApprovalRequired')}
+                      />
+                      <span className="toggle-slider"></span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <div className="settings-subsection">
+                <div className="subsection-header">
+                  <h3>Data Management</h3>
+                  <p>Configure user data policies and retention</p>
+                </div>
+                <div className="settings-grid">
+                  <div className="setting-item">
+                    <label>User Deletion Policy</label>
+                    <select 
+                      value={userManagement.userDeletionPolicy}
+                      onChange={(e) => handleInputChange('userManagement', 'userDeletionPolicy', e.target.value)}
+                      className="setting-input"
+                    >
+                      <option value="soft">Soft Delete (Recoverable)</option>
+                      <option value="hard">Hard Delete (Permanent)</option>
+                      <option value="archive">Archive Before Delete</option>
+                    </select>
+                    <small>How to handle user account deletion</small>
+                  </div>
+
+                  <div className="setting-item">
+                    <label>Data Retention (days)</label>
                     <input 
-                      type="checkbox" 
-                      checked={settings.allowSelfRegistration}
-                      onChange={() => handleToggle('allowSelfRegistration')}
+                      type="number" 
+                      value={userManagement.dataRetention || 365}
+                      onChange={(e) => handleInputChange('userManagement', 'dataRetention', parseInt(e.target.value))}
+                      className="setting-input" 
+                      min="30"
+                      max="2555"
                     />
-                    <span className="toggle-slider"></span>
-                  </label>
+                    <small>How long to keep deleted user data</small>
+                  </div>
+                </div>
+              </div>
+
+              <div className="settings-subsection">
+                <div className="subsection-header">
+                  <h3>Bulk Operations</h3>
+                  <p>Configure bulk user management operations</p>
+                </div>
+                <div className="settings-grid">
+                  <div className="setting-item">
+                    <div className="setting-info">
+                      <div className="setting-header">
+                        <Users size={18} />
+                        <span>Bulk User Actions</span>
+                      </div>
+                      <p>Allow bulk operations on multiple users</p>
+                    </div>
+                    <label className="toggle-switch">
+                      <input 
+                        type="checkbox" 
+                        checked={userManagement.bulkUserActions}
+                        onChange={() => handleToggle('userManagement', 'bulkUserActions')}
+                      />
+                      <span className="toggle-slider"></span>
+                    </label>
+                  </div>
+
+                  <div className="setting-item">
+                    <div className="setting-info">
+                      <div className="setting-header">
+                        <Upload size={18} />
+                        <span>User Import Enabled</span>
+                      </div>
+                      <p>Allow bulk user import from CSV/Excel</p>
+                    </div>
+                    <label className="toggle-switch">
+                      <input 
+                        type="checkbox" 
+                        checked={userManagement.userImportEnabled}
+                        onChange={() => handleToggle('userManagement', 'userImportEnabled')}
+                      />
+                      <span className="toggle-slider"></span>
+                    </label>
+                  </div>
+
+                  <div className="setting-item">
+                    <div className="setting-info">
+                      <div className="setting-header">
+                        <Download size={18} />
+                        <span>User Export Enabled</span>
+                      </div>
+                      <p>Allow bulk user export to CSV/Excel</p>
+                    </div>
+                    <label className="toggle-switch">
+                      <input 
+                        type="checkbox" 
+                        checked={userManagement.userExportEnabled}
+                        onChange={() => handleToggle('userManagement', 'userExportEnabled')}
+                      />
+                      <span className="toggle-slider"></span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <div className="settings-subsection">
+                <div className="subsection-header">
+                  <h3>Access Control</h3>
+                  <p>Configure user access and permission settings</p>
+                </div>
+                <div className="settings-grid">
+                  <div className="setting-item">
+                    <label>Max Users per Plan</label>
+                    <input 
+                      type="number" 
+                      value={userManagement.maxUsersPerPlan || 100}
+                      onChange={(e) => handleInputChange('userManagement', 'maxUsersPerPlan', parseInt(e.target.value))}
+                      className="setting-input" 
+                      min="1"
+                      max="10000"
+                    />
+                    <small>Maximum users allowed per subscription plan</small>
+                  </div>
+
+                  <div className="setting-item">
+                    <div className="setting-info">
+                      <div className="setting-header">
+                        <Ban size={18} />
+                        <span>Auto Ban Suspicious Activity</span>
+                      </div>
+                      <p>Automatically ban users with suspicious behavior</p>
+                    </div>
+                    <label className="toggle-switch">
+                      <input 
+                        type="checkbox" 
+                        checked={userManagement.autoBanSuspicious}
+                        onChange={() => handleToggle('userManagement', 'autoBanSuspicious')}
+                      />
+                      <span className="toggle-slider"></span>
+                    </label>
+                  </div>
+
+                  <div className="setting-item">
+                    <label>Suspicious Activity Threshold</label>
+                    <input 
+                      type="number" 
+                      value={userManagement.suspiciousThreshold || 5}
+                      onChange={(e) => handleInputChange('userManagement', 'suspiciousThreshold', parseInt(e.target.value))}
+                      className="setting-input" 
+                      min="1"
+                      max="20"
+                    />
+                    <small>Number of suspicious actions before ban</small>
+                  </div>
                 </div>
               </div>
             </div>
@@ -1547,461 +1858,6 @@ export default function SettingsPage() {
                     />
                     <span className="toggle-slider"></span>
                   </label>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {activeTab === 'privacy' && (
-            <div className="settings-section">
-              <div className="section-header">
-                <h2>Privacy Settings</h2>
-                <p>Configure privacy controls and data protection settings</p>
-              </div>
-
-              {/* Data Collection */}
-              <div className="settings-subsection">
-                <div className="subsection-header">
-                  <h3>Data Collection</h3>
-                  <p>Control what data is collected and stored</p>
-                </div>
-                <div className="settings-grid">
-                  <div className="setting-item">
-                    <div className="setting-info">
-                      <div className="setting-header">
-                        <Database size={18} />
-                        <span>Analytics Data</span>
-                      </div>
-                      <p>Collect usage analytics for improvement</p>
-                    </div>
-                    <label className="toggle-switch">
-                      <input 
-                        type="checkbox" 
-                        checked={privacySettings?.analyticsData || false}
-                        onChange={() => handleToggle('privacy', 'analyticsData')}
-                      />
-                      <span className="toggle-slider"></span>
-                    </label>
-                  </div>
-
-                  <div className="setting-item">
-                    <div className="setting-info">
-                      <div className="setting-header">
-                        <Users size={18} />
-                        <span>User Behavior Tracking</span>
-                      </div>
-                      <p>Track user interactions and behavior patterns</p>
-                    </div>
-                    <label className="toggle-switch">
-                      <input 
-                        type="checkbox" 
-                        checked={privacySettings?.userBehaviorTracking || false}
-                        onChange={() => handleToggle('privacy', 'userBehaviorTracking')}
-                      />
-                      <span className="toggle-slider"></span>
-                    </label>
-                  </div>
-
-                  <div className="setting-item">
-                    <div className="setting-info">
-                      <div className="setting-header">
-                        <BarChart3 size={18} />
-                        <span>Performance Metrics</span>
-                      </div>
-                      <p>Collect system performance data</p>
-                    </div>
-                    <label className="toggle-switch">
-                      <input 
-                        type="checkbox" 
-                        checked={privacySettings?.performanceMetrics || true}
-                        onChange={() => handleToggle('privacy', 'performanceMetrics')}
-                      />
-                      <span className="toggle-slider"></span>
-                    </label>
-                  </div>
-
-                  <div className="setting-item">
-                    <div className="setting-info">
-                      <div className="setting-header">
-                        <FileText size={18} />
-                        <span>Error Logs</span>
-                      </div>
-                      <p>Collect error logs for debugging</p>
-                    </div>
-                    <label className="toggle-switch">
-                      <input 
-                        type="checkbox" 
-                        checked={privacySettings?.errorLogs || true}
-                        onChange={() => handleToggle('privacy', 'errorLogs')}
-                      />
-                      <span className="toggle-slider"></span>
-                    </label>
-                  </div>
-                </div>
-              </div>
-
-              {/* Data Retention */}
-              <div className="settings-subsection">
-                <div className="subsection-header">
-                  <h3>Data Retention</h3>
-                  <p>Configure how long data is retained</p>
-                </div>
-                <div className="settings-grid">
-                  <div className="setting-item">
-                    <label>User Data Retention (days)</label>
-                    <input 
-                      type="number" 
-                      value={privacySettings?.userDataRetention || 365}
-                      onChange={(e) => handleInputChange('privacy', 'userDataRetention', parseInt(e.target.value))}
-                      className="setting-input" 
-                      min="30"
-                      max="2555"
-                    />
-                    <small>How long to keep user data</small>
-                  </div>
-
-                  <div className="setting-item">
-                    <label>Activity Log Retention (days)</label>
-                    <input 
-                      type="number" 
-                      value={privacySettings?.activityLogRetention || 90}
-                      onChange={(e) => handleInputChange('privacy', 'activityLogRetention', parseInt(e.target.value))}
-                      className="setting-input" 
-                      min="7"
-                      max="365"
-                    />
-                    <small>How long to keep activity logs</small>
-                  </div>
-
-                  <div className="setting-item">
-                    <label>Analytics Data Retention (days)</label>
-                    <input 
-                      type="number" 
-                      value={privacySettings?.analyticsDataRetention || 180}
-                      onChange={(e) => handleInputChange('privacy', 'analyticsDataRetention', parseInt(e.target.value))}
-                      className="setting-input" 
-                      min="30"
-                      max="730"
-                    />
-                    <small>How long to keep analytics data</small>
-                  </div>
-
-                  <div className="setting-item">
-                    <div className="setting-info">
-                      <div className="setting-header">
-                        <Trash2 size={18} />
-                        <span>Auto Data Cleanup</span>
-                      </div>
-                      <p>Automatically delete expired data</p>
-                    </div>
-                    <label className="toggle-switch">
-                      <input 
-                        type="checkbox" 
-                        checked={privacySettings?.autoDataCleanup || true}
-                        onChange={() => handleToggle('privacy', 'autoDataCleanup')}
-                      />
-                      <span className="toggle-slider"></span>
-                    </label>
-                  </div>
-                </div>
-              </div>
-
-              {/* User Privacy */}
-              <div className="settings-subsection">
-                <div className="subsection-header">
-                  <h3>User Privacy</h3>
-                  <p>Configure user privacy controls and permissions</p>
-                </div>
-                <div className="settings-grid">
-                  <div className="setting-item">
-                    <div className="setting-info">
-                      <div className="setting-header">
-                        <Eye size={18} />
-                        <span>Profile Visibility</span>
-                      </div>
-                      <p>Allow users to control profile visibility</p>
-                    </div>
-                    <label className="toggle-switch">
-                      <input 
-                        type="checkbox" 
-                        checked={privacySettings?.profileVisibility || true}
-                        onChange={() => handleToggle('privacy', 'profileVisibility')}
-                      />
-                      <span className="toggle-slider"></span>
-                    </label>
-                  </div>
-
-                  <div className="setting-item">
-                    <div className="setting-info">
-                      <div className="setting-header">
-                        <EyeOff size={18} />
-                        <span>Private Profiles</span>
-                      </div>
-                      <p>Allow users to make profiles private</p>
-                    </div>
-                    <label className="toggle-switch">
-                      <input 
-                        type="checkbox" 
-                        checked={privacySettings?.privateProfiles || true}
-                        onChange={() => handleToggle('privacy', 'privateProfiles')}
-                      />
-                      <span className="toggle-slider"></span>
-                    </label>
-                  </div>
-
-                  <div className="setting-item">
-                    <div className="setting-info">
-                      <div className="setting-header">
-                        <Users size={18} />
-                        <span>Data Export</span>
-                      </div>
-                      <p>Allow users to export their data</p>
-                    </div>
-                    <label className="toggle-switch">
-                      <input 
-                        type="checkbox" 
-                        checked={privacySettings?.dataExport || true}
-                        onChange={() => handleToggle('privacy', 'dataExport')}
-                      />
-                      <span className="toggle-slider"></span>
-                    </label>
-                  </div>
-
-                  <div className="setting-item">
-                    <div className="setting-info">
-                      <div className="setting-header">
-                        <Trash2 size={18} />
-                        <span>Account Deletion</span>
-                      </div>
-                      <p>Allow users to delete their accounts</p>
-                    </div>
-                    <label className="toggle-switch">
-                      <input 
-                        type="checkbox" 
-                        checked={privacySettings?.accountDeletion || true}
-                        onChange={() => handleToggle('privacy', 'accountDeletion')}
-                      />
-                      <span className="toggle-slider"></span>
-                    </label>
-                  </div>
-
-                  <div className="setting-item">
-                    <div className="setting-info">
-                      <div className="setting-header">
-                        <Search size={18} />
-                        <span>Search Indexing</span>
-                      </div>
-                      <p>Include user content in search results</p>
-                    </div>
-                    <label className="toggle-switch">
-                      <input 
-                        type="checkbox" 
-                        checked={privacySettings?.searchIndexing || false}
-                        onChange={() => handleToggle('privacy', 'searchIndexing')}
-                      />
-                      <span className="toggle-slider"></span>
-                    </label>
-                  </div>
-
-                  <div className="setting-item">
-                    <label>Default Privacy Level</label>
-                    <select 
-                      value={privacySettings?.defaultPrivacyLevel || 'public'}
-                      onChange={(e) => handleInputChange('privacy', 'defaultPrivacyLevel', e.target.value)}
-                      className="setting-input"
-                    >
-                      <option value="public">Public</option>
-                      <option value="friends">Friends Only</option>
-                      <option value="private">Private</option>
-                    </select>
-                    <small>Default privacy setting for new users</small>
-                  </div>
-                </div>
-              </div>
-
-              {/* Third-Party Sharing */}
-              <div className="settings-subsection">
-                <div className="subsection-header">
-                  <h3>Third-Party Sharing</h3>
-                  <p>Configure data sharing with third-party services</p>
-                </div>
-                <div className="settings-grid">
-                  <div className="setting-item">
-                    <div className="setting-info">
-                      <div className="setting-header">
-                        <Globe size={18} />
-                        <span>Public Analytics</span>
-                      </div>
-                      <p>Share anonymized usage data publicly</p>
-                    </div>
-                    <label className="toggle-switch">
-                      <input 
-                        type="checkbox" 
-                        checked={privacySettings?.publicAnalytics || false}
-                        onChange={() => handleToggle('privacy', 'publicAnalytics')}
-                      />
-                      <span className="toggle-slider"></span>
-                    </label>
-                  </div>
-
-                  <div className="setting-item">
-                    <div className="setting-info">
-                      <div className="setting-header">
-                        <Database size={18} />
-                        <span>Research Data</span>
-                      </div>
-                      <p>Share anonymized data for research</p>
-                    </div>
-                    <label className="toggle-switch">
-                      <input 
-                        type="checkbox" 
-                        checked={privacySettings?.researchData || false}
-                        onChange={() => handleToggle('privacy', 'researchData')}
-                      />
-                      <span className="toggle-slider"></span>
-                    </label>
-                  </div>
-
-                  <div className="setting-item">
-                    <div className="setting-info">
-                      <div className="setting-header">
-                        <Mail size={18} />
-                        <span>Marketing Communications</span>
-                      </div>
-                      <p>Share data with marketing partners</p>
-                    </div>
-                    <label className="toggle-switch">
-                      <input 
-                        type="checkbox" 
-                        checked={privacySettings?.marketingCommunications || false}
-                        onChange={() => handleToggle('privacy', 'marketingCommunications')}
-                      />
-                      <span className="toggle-slider"></span>
-                    </label>
-                  </div>
-
-                  <div className="setting-item">
-                    <div className="setting-info">
-                      <div className="setting-header">
-                        <AlertTriangle size={18} />
-                        <span>Cookies and Tracking</span>
-                      </div>
-                      <p>Use cookies and tracking technologies</p>
-                    </div>
-                    <label className="toggle-switch">
-                      <input 
-                        type="checkbox" 
-                        checked={privacySettings?.cookiesTracking || true}
-                        onChange={() => handleToggle('privacy', 'cookiesTracking')}
-                      />
-                      <span className="toggle-slider"></span>
-                    </label>
-                  </div>
-                </div>
-              </div>
-
-              {/* Compliance */}
-              <div className="settings-subsection">
-                <div className="subsection-header">
-                  <h3>Compliance</h3>
-                  <p>Legal compliance and regulatory requirements</p>
-                </div>
-                <div className="settings-grid">
-                  <div className="setting-item">
-                    <div className="setting-info">
-                      <div className="setting-header">
-                        <Shield size={18} />
-                        <span>GDPR Compliance</span>
-                      </div>
-                      <p>Enable GDPR compliance features</p>
-                    </div>
-                    <label className="toggle-switch">
-                      <input 
-                        type="checkbox" 
-                        checked={privacySettings?.gdprCompliance || true}
-                        onChange={() => handleToggle('privacy', 'gdprCompliance')}
-                      />
-                      <span className="toggle-slider"></span>
-                    </label>
-                  </div>
-
-                  <div className="setting-item">
-                    <div className="setting-info">
-                      <div className="setting-header">
-                        <FileText size={18} />
-                        <span>Privacy Policy</span>
-                      </div>
-                      <p>Display privacy policy to users</p>
-                    </div>
-                    <label className="toggle-switch">
-                      <input 
-                        type="checkbox" 
-                        checked={privacySettings?.privacyPolicy || true}
-                        onChange={() => handleToggle('privacy', 'privacyPolicy')}
-                      />
-                      <span className="toggle-slider"></span>
-                    </label>
-                  </div>
-
-                  <div className="setting-item">
-                    <div className="setting-info">
-                      <div className="setting-header">
-                        <Users size={18} />
-                        <span>Consent Management</span>
-                      </div>
-                      <p>Require explicit user consent</p>
-                    </div>
-                    <label className="toggle-switch">
-                      <input 
-                        type="checkbox" 
-                        checked={privacySettings?.consentManagement || true}
-                        onChange={() => handleToggle('privacy', 'consentManagement')}
-                      />
-                      <span className="toggle-slider"></span>
-                    </label>
-                  </div>
-
-                  <div className="setting-item">
-                    <div className="setting-info">
-                      <div className="setting-header">
-                        <Lock size={18} />
-                        <span>Data Encryption</span>
-                      </div>
-                      <p>Encrypt sensitive user data</p>
-                    </div>
-                    <label className="toggle-switch">
-                      <input 
-                        type="checkbox" 
-                        checked={privacySettings?.dataEncryption || true}
-                        onChange={() => handleToggle('privacy', 'dataEncryption')}
-                      />
-                      <span className="toggle-slider"></span>
-                    </label>
-                  </div>
-
-                  <div className="setting-item">
-                    <label>Privacy Policy URL</label>
-                    <input 
-                      type="url" 
-                      value={privacySettings?.privacyPolicyUrl || '/privacy'}
-                      onChange={(e) => handleInputChange('privacy', 'privacyPolicyUrl', e.target.value)}
-                      className="setting-input" 
-                      placeholder="/privacy"
-                    />
-                    <small>URL for privacy policy page</small>
-                  </div>
-
-                  <div className="setting-item">
-                    <label>Terms of Service URL</label>
-                    <input 
-                      type="url" 
-                      value={privacySettings?.termsOfServiceUrl || '/terms'}
-                      onChange={(e) => handleInputChange('privacy', 'termsOfServiceUrl', e.target.value)}
-                      className="setting-input" 
-                      placeholder="/terms"
-                    />
-                    <small>URL for terms of service page</small>
-                  </div>
                 </div>
               </div>
             </div>
