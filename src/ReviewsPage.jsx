@@ -262,6 +262,23 @@ export default function ReviewsPage() {
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [showUserProfile, setShowUserProfile] = useState(false);
   const [showSpotDetails, setShowSpotDetails] = useState(false);
+  const [toasts, setToasts] = useState([]);
+
+  // Toast notification system
+  const addToast = (message, type = 'info') => {
+    const id = Date.now();
+    const newToast = { id, message, type };
+    setToasts(prev => [...prev, newToast]);
+    
+    // Auto remove after 3 seconds
+    setTimeout(() => {
+      setToasts(prev => prev.filter(toast => toast.id !== id));
+    }, 3000);
+  };
+
+  const removeToast = (id) => {
+    setToasts(prev => prev.filter(toast => toast.id !== id));
+  };
 
   // Analytics calculations
   const analytics = useMemo(() => {
@@ -347,14 +364,23 @@ export default function ReviewsPage() {
   // Pagination controls
   const handlePageChange = (page) => {
     setCurrentPage(page);
+    addToast(`Navigated to page ${page}`, 'info');
   };
 
   const handlePreviousPage = () => {
-    setCurrentPage(prev => Math.max(1, prev - 1));
+    const prevPage = Math.max(1, currentPage - 1);
+    setCurrentPage(prevPage);
+    if (prevPage !== currentPage) {
+      addToast(`Navigated to page ${prevPage}`, 'info');
+    }
   };
 
   const handleNextPage = () => {
-    setCurrentPage(prev => Math.min(totalPages, prev + 1));
+    const nextPage = Math.min(totalPages, currentPage + 1);
+    setCurrentPage(nextPage);
+    if (nextPage !== currentPage) {
+      addToast(`Navigated to page ${nextPage}`, 'info');
+    }
   };
 
   // View details handlers
@@ -363,6 +389,7 @@ export default function ReviewsPage() {
     setShowDetailsModal(true);
     setShowUserProfile(false);
     setShowSpotDetails(false);
+    addToast(`Opening review details for ${review.userName}`, 'info');
   };
 
   const handleViewUserProfile = (review) => {
@@ -370,6 +397,7 @@ export default function ReviewsPage() {
     setShowDetailsModal(false);
     setShowUserProfile(true);
     setShowSpotDetails(false);
+    addToast(`Loading profile for ${review.userName}`, 'success');
   };
 
   const handleViewSpotDetails = (review) => {
@@ -377,6 +405,7 @@ export default function ReviewsPage() {
     setShowDetailsModal(false);
     setShowUserProfile(false);
     setShowSpotDetails(true);
+    addToast(`Loading details for ${review.spotName}`, 'info');
   };
 
   const closeAllModals = () => {
@@ -384,6 +413,7 @@ export default function ReviewsPage() {
     setShowUserProfile(false);
     setShowSpotDetails(false);
     setSelectedReview(null);
+    addToast('Modal closed', 'info');
   };
 
   const renderStars = (rating) => {
@@ -1345,6 +1375,27 @@ export default function ReviewsPage() {
           </div>
         </div>
       )}
+      
+      {/* Toast Notifications */}
+      <div className="toast-container">
+        {toasts.map(toast => (
+          <div 
+            key={toast.id} 
+            className={`toast toast-${toast.type}`}
+            onClick={() => removeToast(toast.id)}
+          >
+            <div className="toast-content">
+              {toast.type === 'success' && <CheckCircle size={16} />}
+              {toast.type === 'error' && <AlertCircle size={16} />}
+              {toast.type === 'info' && <MessageSquare size={16} />}
+              <span>{toast.message}</span>
+            </div>
+            <button className="toast-close" onClick={() => removeToast(toast.id)}>
+              <X size={14} />
+            </button>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
