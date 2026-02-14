@@ -33,6 +33,7 @@ export default function CommunityPage() {
   const [selectedImage, setSelectedImage] = useState(null);
   const [selectedPostId, setSelectedPostId] = useState(null);
   const [activeDropdown, setActiveDropdown] = useState(null);
+  const [chartPeriod, setChartPeriod] = useState('7days');
 
   // Mock posts data with enhanced structure
   const [posts, setPosts] = useState([
@@ -145,6 +146,32 @@ export default function CommunityPage() {
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
+  // Get chart data based on selected period
+  const getChartData = () => {
+    switch (chartPeriod) {
+      case '7days':
+        return {
+          labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+          data: [60, 80, 45, 90, 70, 85, 75]
+        };
+      case '30days':
+        return {
+          labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+          data: [45, 75, 60, 85]
+        };
+      case '3months':
+        return {
+          labels: ['Jan', 'Feb', 'Mar'],
+          data: [55, 70, 80]
+        };
+      default:
+        return {
+          labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+          data: [60, 80, 45, 90, 70, 85, 75]
+        };
+    }
+  };
 
   return (
     <div className="community-page">
@@ -410,32 +437,32 @@ export default function CommunityPage() {
                     <div className="chart-header">
                       <h3>Post Activity Trend</h3>
                       <div className="chart-controls">
-                        <select className="chart-select">
-                          <option>Last 7 days</option>
-                          <option>Last 30 days</option>
-                          <option>Last 3 months</option>
+                        <select 
+                          className="chart-select"
+                          value={chartPeriod}
+                          onChange={(e) => setChartPeriod(e.target.value)}
+                        >
+                          <option value="7days">Last 7 days</option>
+                          <option value="30days">Last 30 days</option>
+                          <option value="3months">Last 3 months</option>
                         </select>
                       </div>
                     </div>
                     <div className="chart-content">
                       <div className="mock-chart">
                         <div className="chart-bars">
-                          <div className="chart-bar" style={{height: '60%'}}></div>
-                          <div className="chart-bar" style={{height: '80%'}}></div>
-                          <div className="chart-bar" style={{height: '45%'}}></div>
-                          <div className="chart-bar" style={{height: '90%'}}></div>
-                          <div className="chart-bar" style={{height: '70%'}}></div>
-                          <div className="chart-bar" style={{height: '85%'}}></div>
-                          <div className="chart-bar" style={{height: '75%'}}></div>
+                          {getChartData().data.map((height, index) => (
+                            <div 
+                              key={index} 
+                              className="chart-bar" 
+                              style={{height: `${height}%`}}
+                            ></div>
+                          ))}
                         </div>
                         <div className="chart-labels">
-                          <span>Mon</span>
-                          <span>Tue</span>
-                          <span>Wed</span>
-                          <span>Thu</span>
-                          <span>Fri</span>
-                          <span>Sat</span>
-                          <span>Sun</span>
+                          {getChartData().labels.map((label, index) => (
+                            <span key={index}>{label}</span>
+                          ))}
                         </div>
                       </div>
                     </div>
