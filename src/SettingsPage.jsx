@@ -128,24 +128,79 @@ export default function SettingsPage() {
   };
 
   const handleResetSettings = () => {
-    // Reset to defaults
+    // Reset to admin defaults
+    setAdminSettings({
+      systemMaintenance: false,
+      debugMode: false,
+      logLevel: 'info',
+      sessionTimeout: 30,
+      maxLoginAttempts: 5,
+      passwordPolicy: 'strong',
+      twoFactorAuth: true,
+      ipWhitelist: '',
+      apiRateLimit: 1000,
+      backupFrequency: 'daily',
+      autoCleanup: true,
+      emailNotifications: true,
+      securityAlerts: true,
+      userRegistration: 'admin',
+      contentModeration: true,
+      dataRetention: 365
+    });
+    
+    setSystemConfig({
+      siteName: 'ReviewHub Admin',
+      adminEmail: 'admin@reviewhub.com',
+      timezone: 'UTC',
+      dateFormat: 'MM/DD/YYYY',
+      timeFormat: '12h',
+      language: 'en',
+      itemsPerPage: 25,
+      exportFormat: 'csv',
+      autoSave: true,
+      theme: 'light'
+    });
+    
+    setSecuritySettings({
+      enforceSSL: true,
+      sessionEncryption: true,
+      passwordMinLength: 8,
+      passwordRequireUppercase: true,
+      passwordRequireNumbers: true,
+      passwordRequireSymbols: true,
+      sessionTimeoutMinutes: 30,
+      maxConcurrentSessions: 3,
+      loginLockoutDuration: 15,
+      auditLogging: true,
+      ipRestrictions: false,
+      allowedIPs: '',
+      apiAuthentication: 'bearer'
+    });
+    
+    setUserManagement({
+      defaultUserRole: 'user',
+      requireEmailVerification: true,
+      allowSelfRegistration: false,
+      accountApprovalRequired: true,
+      userDeletionPolicy: 'soft',
+      bulkUserActions: true,
+      userImportEnabled: true,
+      userExportEnabled: true,
+      profileFieldsRequired: ['email', 'name'],
+      userProfileVisibility: 'public'
+    });
+    
     setNotifications({
       email: true,
       push: false,
       sms: true,
-      desktop: true
-    });
-    setPrivacy({
-      profileVisibility: 'public',
-      dataSharing: true,
-      analytics: false,
-      cookies: true
-    });
-    setAppearance({
-      theme: 'light',
-      language: 'en',
-      fontSize: 'medium',
-      compactMode: false
+      desktop: true,
+      systemAlerts: true,
+      userActivity: false,
+      securityEvents: true,
+      backupReminders: true,
+      maintenanceAlerts: true,
+      performanceAlerts: true
     });
   };
 
@@ -996,159 +1051,34 @@ export default function SettingsPage() {
             </div>
           )}
 
-          {/* Appearance Settings */}
-          {activeTab === 'appearance' && (
-            <div className="settings-section">
-              <div className="section-header">
-                <h2>Appearance</h2>
-                <p>Customize the look and feel of your interface</p>
-              </div>
-
-              <div className="settings-grid">
-                <div className="setting-item">
-                  <label>Theme</label>
-                  <div className="theme-selector">
-                    <button 
-                      className={`theme-option ${appearance.theme === 'light' ? 'active' : ''}`}
-                      onClick={() => setAppearance({...appearance, theme: 'light'})}
-                    >
-                      <Sun size={18} />
-                      <span>Light</span>
-                    </button>
-                    <button 
-                      className={`theme-option ${appearance.theme === 'dark' ? 'active' : ''}`}
-                      onClick={() => setAppearance({...appearance, theme: 'dark'})}
-                    >
-                      <Moon size={18} />
-                      <span>Dark</span>
-                    </button>
-                    <button 
-                      className={`theme-option ${appearance.theme === 'auto' ? 'active' : ''}`}
-                      onClick={() => setAppearance({...appearance, theme: 'auto'})}
-                    >
-                      <Palette size={18} />
-                      <span>Auto</span>
-                    </button>
-                  </div>
-                </div>
-
-                <div className="setting-item">
-                  <label>Language</label>
-                  <select 
-                    value={appearance.language}
-                    onChange={(e) => setAppearance({...appearance, language: e.target.value})}
-                    className="setting-input"
-                  >
-                    <option value="en">English</option>
-                    <option value="es">Spanish</option>
-                    <option value="fr">French</option>
-                    <option value="de">German</option>
-                    <option value="zh">Chinese</option>
-                    <option value="ja">Japanese</option>
-                  </select>
-                </div>
-
-                <div className="setting-item">
-                  <label>Font Size</label>
-                  <select 
-                    value={appearance.fontSize}
-                    onChange={(e) => setAppearance({...appearance, fontSize: e.target.value})}
-                    className="setting-input"
-                  >
-                    <option value="small">Small</option>
-                    <option value="medium">Medium</option>
-                    <option value="large">Large</option>
-                    <option value="extra-large">Extra Large</option>
-                  </select>
-                </div>
-
-                <div className="setting-item">
-                  <label>Interface Mode</label>
-                  <div className="mode-selector">
-                    <button 
-                      className={`mode-option ${!appearance.compactMode ? 'active' : ''}`}
-                      onClick={() => setAppearance({...appearance, compactMode: false})}
-                    >
-                      <span>Comfortable</span>
-                    </button>
-                    <button 
-                      className={`mode-option ${appearance.compactMode ? 'active' : ''}`}
-                      onClick={() => setAppearance({...appearance, compactMode: true})}
-                    >
-                      <span>Compact</span>
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Advanced Settings */}
-          {activeTab === 'advanced' && (
-            <div className="settings-section">
-              <div className="section-header">
-                <h2>Advanced Settings</h2>
-                <p>Advanced configuration options for power users</p>
-              </div>
-
-              <div className="settings-list">
-                <div className="setting-item">
-                  <label>API Rate Limit</label>
-                  <input type="number" defaultValue="1000" className="setting-input" />
-                  <small>Requests per hour</small>
-                </div>
-
-                <div className="setting-item">
-                  <label>Cache Duration</label>
-                  <input type="number" defaultValue="3600" className="setting-input" />
-                  <small>Seconds</small>
-                </div>
-
-                <div className="setting-item">
-                  <label>Session Timeout</label>
-                  <input type="number" defaultValue="30" className="setting-input" />
-                  <small>Minutes</small>
-                </div>
-
-                <div className="setting-item">
-                  <label>Debug Mode</label>
-                  <label className="toggle-switch">
-                    <input type="checkbox" />
-                    <span className="toggle-slider"></span>
-                  </label>
-                </div>
-              </div>
-            </div>
-          )}
-
           {/* Help & Support */}
           {activeTab === 'help' && (
             <div className="settings-section">
               <div className="section-header">
-                <h2>Help & Support</h2>
-                <p>Get help and find answers to common questions</p>
+                <h2>Admin Help & Support</h2>
+                <p>Get help with system administration and technical support</p>
               </div>
 
               <div className="help-cards">
                 <div className="help-card">
-                  <HelpCircle size={24} />
-                  <h3>Documentation</h3>
-                  <p>Browse our comprehensive documentation to learn about all features</p>
+                  <FileText size={24} />
+                  <h3>Admin Documentation</h3>
+                  <p>Browse comprehensive admin documentation and system guides</p>
                   <button className="help-btn">View Docs</button>
                 </div>
 
                 <div className="help-card">
                   <Mail size={24} />
-                  <h3>Contact Support</h3>
-                  <p>Get in touch with our support team for assistance</p>
-                  <button className="help-btn">Contact Us</button>
+                  <h3>Technical Support</h3>
+                  <p>Get in touch with our technical support team for system issues</p>
+                  <button className="help-btn">Contact Support</button>
                 </div>
 
                 <div className="help-card">
-                  <Globe size={24} />
-                  <h3>Community Forum</h3>
-                  <p>Join our community to discuss with other users</p>
-                  <button className="help-btn">Visit Forum</button>
+                  <Server size={24} />
+                  <h3>System Status</h3>
+                  <p>Check real-time system status and performance metrics</p>
+                  <button className="help-btn">View Status</button>
                 </div>
               </div>
             </div>
