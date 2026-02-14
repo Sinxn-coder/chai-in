@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, Bell, Settings, RefreshCw, Users, MapPin, Star, DollarSign, TrendingUp, Activity, Clock, MessageSquare, AlertCircle } from 'lucide-react';
+import { Search, Bell, Settings, RefreshCw, Users, MapPin, Star, DollarSign, TrendingUp, Activity, Clock, MessageSquare, AlertCircle, Plus, BarChart, FileText, UserPlus, Settings as SettingsIcon } from 'lucide-react';
 
 const DashboardPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -23,9 +23,46 @@ const DashboardPage = () => {
     { id: 6, user: 'Emma Davis', action: 'shared spot with friends', time: '1 day ago', type: 'share', avatar: 'https://picsum.photos/seed/user6/40/40' }
   ];
 
+  // Quick actions data
+  const quickActions = [
+    { id: 1, title: 'Add New Spot', description: 'Create a new food spot listing', icon: Plus, color: 'blue', action: 'add-spot' },
+    { id: 2, title: 'View Analytics', description: 'Check detailed platform analytics', icon: BarChart, color: 'green', action: 'analytics' },
+    { id: 3, title: 'Manage Users', description: 'Administer user accounts and permissions', icon: UserPlus, color: 'purple', action: 'users' },
+    { id: 4, title: 'Generate Report', description: 'Create and download activity reports', icon: FileText, color: 'orange', action: 'report' },
+    { id: 5, title: 'System Settings', description: 'Configure platform preferences', icon: SettingsIcon, color: 'gray', action: 'settings' },
+    { id: 6, title: 'Import Data', description: 'Bulk import spots and users', icon: Activity, color: 'teal', action: 'import' }
+  ];
+
   const handleRefresh = () => {
     setIsLoading(true);
     setTimeout(() => setIsLoading(false), 1000);
+  };
+
+  const handleQuickAction = (action) => {
+    console.log(`Quick action clicked: ${action}`);
+    // Handle different actions based on the action type
+    switch(action) {
+      case 'add-spot':
+        console.log('Opening add spot form...');
+        break;
+      case 'analytics':
+        console.log('Navigating to analytics...');
+        break;
+      case 'users':
+        console.log('Opening user management...');
+        break;
+      case 'report':
+        console.log('Generating report...');
+        break;
+      case 'settings':
+        console.log('Opening system settings...');
+        break;
+      case 'import':
+        console.log('Opening data import...');
+        break;
+      default:
+        console.log('Unknown action:', action);
+    }
   };
 
   return (
@@ -210,6 +247,35 @@ const DashboardPage = () => {
                 {activity.type === 'share' && <MessageSquare className="w-4 h-4" />}
               </div>
             </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Quick Actions Section */}
+      <div className="quick-actions-section">
+        <div className="section-header">
+          <h2>Quick Actions</h2>
+          <p>Common tasks and administrative shortcuts</p>
+        </div>
+        
+        <div className="actions-grid">
+          {quickActions.map((action) => (
+            <button 
+              key={action.id} 
+              className={`action-card ${action.color}`}
+              onClick={() => handleQuickAction(action.action)}
+            >
+              <div className="action-icon">
+                <action.icon className="w-8 h-8" />
+              </div>
+              <div className="action-content">
+                <h3>{action.title}</h3>
+                <p>{action.description}</p>
+              </div>
+              <div className="action-arrow">
+                <TrendingUp className="w-5 h-5" />
+              </div>
+            </button>
           ))}
         </div>
       </div>
