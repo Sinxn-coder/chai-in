@@ -291,12 +291,12 @@ export default function CommunityPage() {
                           {post.tags.map((tag, index) => (
                             <span key={index} className="admin-tag">#{tag}</span>
                           ))}
-                          <button className="admin-btn-small view-image-btn">
-                            <Eye size={14} />
-                            View Image
-                          </button>
                         </div>
                       )}
+                      <button className="admin-btn-small view-image-btn-full">
+                        <Eye size={14} />
+                        View Image
+                      </button>
                     </div>
 
                     {/* Post Images Admin - Single Slider */}
