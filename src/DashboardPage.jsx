@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
-import { Search, Bell, Settings, RefreshCw, Users, MapPin, Star, DollarSign, TrendingUp, BarChart } from 'lucide-react';
+import { Search, Bell, Settings, RefreshCw, Users, MapPin, Star, DollarSign, TrendingUp } from 'lucide-react';
 
 const DashboardPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [activeChartTab, setActiveChartTab] = useState('growth');
 
   // Mock data for stats
   const stats = {
@@ -14,57 +13,21 @@ const DashboardPage = () => {
     revenue: 45678
   };
 
-  // Chart data
-  const chartData = {
-    growth: {
-      users: [120, 135, 125, 145, 160, 155, 175, 190, 185, 210, 225, 240],
-      spots: [30, 35, 32, 38, 42, 40, 45, 48, 46, 52, 55, 58],
-      reviews: [180, 195, 190, 210, 225, 220, 240, 255, 250, 270, 285, 290],
-      revenue: [2800, 3200, 3000, 3600, 4000, 3800, 4200, 4500, 4300, 4800, 5200, 5500]
-    },
-    activity: {
-      daily: [45, 52, 48, 58, 62, 55, 68, 72, 65, 78, 82, 75],
-      weekly: [320, 350, 340, 380, 410, 390, 450, 480, 460, 520, 550, 510],
-      monthly: [1200, 1350, 1300, 1450, 1600, 1550, 1750, 1900, 1850, 2100, 2250, 2150]
-    },
-    revenue: {
-      subscriptions: [1200, 1350, 1300, 1450, 1600, 1550, 1750, 1900, 1850, 2100, 2250, 2400],
-      ads: [800, 900, 850, 950, 1050, 1000, 1100, 1200, 1150, 1300, 1400, 1500],
-      commissions: [800, 950, 850, 1200, 1350, 1250, 1350, 1400, 1300, 1400, 1550, 1600]
-    },
-    spots: {
-      restaurants: [120, 135, 125, 145, 160, 155, 175, 190, 185, 210, 225, 240],
-      cafes: [80, 90, 85, 95, 105, 100, 110, 120, 115, 130, 140, 145],
-      bars: [60, 70, 65, 75, 85, 80, 90, 100, 95, 110, 120, 125]
-    }
-  };
+  // Admin panel data
+  const adminActions = [
+    { id: 1, title: 'User Management', description: 'Manage users, roles, and permissions', icon: Users, color: 'blue' },
+    { id: 2, title: 'Spot Management', description: 'Add, edit, and manage food spots', icon: MapPin, color: 'green' },
+    { id: 3, title: 'Review Management', description: 'Moderate reviews and ratings', icon: Star, color: 'yellow' },
+    { id: 4, title: 'Revenue Analytics', description: 'Track revenue and financial metrics', icon: DollarSign, color: 'purple' },
+    { id: 5, title: 'System Settings', description: 'Configure platform settings', icon: Settings, color: 'gray' }
+  ];
 
-  const handleTabClick = (tab) => {
-    setActiveChartTab(tab);
-  };
-
-  // Bar chart rendering function
-  const renderBarChart = (data, color) => {
-    const maxValue = Math.max(...data);
-    return (
-      <div className="chart-bars-container">
-        {data.map((value, index) => (
-          <div key={index} className="chart-bar-wrapper">
-            <div
-              className="chart-bar-fill"
-              style={{
-                height: `${(value / maxValue) * 300}px`,
-                backgroundColor: color
-              }}
-            >
-              <div className="chart-bar-value">{value}</div>
-            </div>
-            <div className="chart-bar-label">{index + 1}</div>
-          </div>
-        ))}
-      </div>
-    );
-  };
+  const recentActivities = [
+    { id: 1, user: 'John Doe', action: 'added new spot "Pizza Palace"', time: '2 hours ago', type: 'spot' },
+    { id: 2, user: 'Jane Smith', action: 'left 5-star review', time: '4 hours ago', type: 'review' },
+    { id: 3, user: 'Bob Johnson', action: 'updated profile information', time: '6 hours ago', type: 'user' },
+    { id: 4, user: 'Alice Brown', action: 'reported issue with payment', time: '8 hours ago', type: 'issue' }
+  ];
 
   const handleRefresh = () => {
     setIsLoading(true);
@@ -224,129 +187,52 @@ const DashboardPage = () => {
         </div>
       </div>
 
-      {/* Charts Section */}
-      <div className="charts-section">
-        <div className="charts-header">
-          <h2>Analytics & Insights</h2>
-          <p>Track your platform performance with interactive charts</p>
+      {/* Admin Panel Section */}
+      <div className="admin-panel">
+        <div className="admin-header">
+          <h2>Admin Panel</h2>
+          <p>Manage your platform with powerful admin tools</p>
         </div>
-        
-        <div className="chart-tabs">
-          {[
-            { id: 'growth', label: 'Growth', icon: TrendingUp },
-            { id: 'activity', label: 'Activity', icon: BarChart },
-            { id: 'revenue', label: 'Revenue', icon: DollarSign },
-            { id: 'spots', label: 'Spots', icon: MapPin }
-          ].map((tab) => (
-            <button
-              key={tab.id}
-              className={`chart-tab ${activeChartTab === tab.id ? 'active' : ''}`}
-              onClick={() => handleTabClick(tab.id)}
-            >
-              <tab.icon className="w-4 h-4" />
-              {tab.label}
-            </button>
+
+        <div className="admin-grid">
+          {adminActions.map((action) => (
+            <div key={action.id} className={`admin-card ${action.color}`}>
+              <div className="admin-icon">
+                <action.icon className="w-8 h-8" />
+              </div>
+              <div className="admin-content">
+                <h3>{action.title}</h3>
+                <p>{action.description}</p>
+              </div>
+              <div className="admin-arrow">
+                <TrendingUp className="w-5 h-5" />
+              </div>
+            </div>
           ))}
         </div>
 
-        <div className="chart-content">
-          {activeChartTab === 'growth' && (
-            <div className="chart-grid">
-              <div className="chart-card">
-                <h3>User Growth</h3>
-                <div className="chart-container">
-                  {renderBarChart(chartData.growth.users, '#3b82f6')}
+        <div className="recent-activity">
+          <div className="activity-header">
+            <h3>Recent Activity</h3>
+            <button className="view-all-btn">View All</button>
+          </div>
+          <div className="activity-list">
+            {recentActivities.map((activity) => (
+              <div key={activity.id} className="activity-item">
+                <div className={`activity-icon ${activity.type}`}>
+                  {activity.type === 'spot' && <MapPin className="w-4 h-4" />}
+                  {activity.type === 'review' && <Star className="w-4 h-4" />}
+                  {activity.type === 'user' && <Users className="w-4 h-4" />}
+                  {activity.type === 'issue' && <Bell className="w-4 h-4" />}
+                </div>
+                <div className="activity-details">
+                  <div className="activity-user">{activity.user}</div>
+                  <div className="activity-action">{activity.action}</div>
+                  <div className="activity-time">{activity.time}</div>
                 </div>
               </div>
-              <div className="chart-card">
-                <h3>Spots Growth</h3>
-                <div className="chart-container">
-                  {renderBarChart(chartData.growth.spots, '#10b981')}
-                </div>
-              </div>
-              <div className="chart-card">
-                <h3>Reviews Growth</h3>
-                <div className="chart-container">
-                  {renderBarChart(chartData.growth.reviews, '#f59e0b')}
-                </div>
-              </div>
-              <div className="chart-card">
-                <h3>Revenue Growth</h3>
-                <div className="chart-container">
-                  {renderBarChart(chartData.growth.revenue, '#8b5cf6')}
-                </div>
-              </div>
-            </div>
-          )}
-
-          {activeChartTab === 'activity' && (
-            <div className="chart-grid">
-              <div className="chart-card">
-                <h3>Daily Activity</h3>
-                <div className="chart-container">
-                  {renderBarChart(chartData.activity.daily, '#3b82f6')}
-                </div>
-              </div>
-              <div className="chart-card">
-                <h3>Weekly Activity</h3>
-                <div className="chart-container">
-                  {renderBarChart(chartData.activity.weekly, '#10b981')}
-                </div>
-              </div>
-              <div className="chart-card">
-                <h3>Monthly Activity</h3>
-                <div className="chart-container">
-                  {renderBarChart(chartData.activity.monthly, '#8b5cf6')}
-                </div>
-              </div>
-            </div>
-          )}
-
-          {activeChartTab === 'revenue' && (
-            <div className="chart-grid">
-              <div className="chart-card">
-                <h3>Subscription Revenue</h3>
-                <div className="chart-container">
-                  {renderBarChart(chartData.revenue.subscriptions, '#3b82f6')}
-                </div>
-              </div>
-              <div className="chart-card">
-                <h3>Ad Revenue</h3>
-                <div className="chart-container">
-                  {renderBarChart(chartData.revenue.ads, '#10b981')}
-                </div>
-              </div>
-              <div className="chart-card">
-                <h3>Commission Revenue</h3>
-                <div className="chart-container">
-                  {renderBarChart(chartData.revenue.commissions, '#8b5cf6')}
-                </div>
-              </div>
-            </div>
-          )}
-
-          {activeChartTab === 'spots' && (
-            <div className="chart-grid">
-              <div className="chart-card">
-                <h3>Restaurants</h3>
-                <div className="chart-container">
-                  {renderBarChart(chartData.spots.restaurants, '#3b82f6')}
-                </div>
-              </div>
-              <div className="chart-card">
-                <h3>Cafes</h3>
-                <div className="chart-container">
-                  {renderBarChart(chartData.spots.cafes, '#10b981')}
-                </div>
-              </div>
-              <div className="chart-card">
-                <h3>Bars</h3>
-                <div className="chart-container">
-                  {renderBarChart(chartData.spots.bars, '#8b5cf6')}
-                </div>
-              </div>
-            </div>
-          )}
+            ))}
+          </div>
         </div>
       </div>
 
