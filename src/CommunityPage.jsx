@@ -50,8 +50,6 @@ export default function CommunityPage() {
       comments: 8,
       isLiked: false,
       isSaved: false,
-      status: 'active',
-      reports: 0,
       views: 1250,
       category: 'review',
       priority: 'normal'
@@ -71,8 +69,6 @@ export default function CommunityPage() {
       comments: 12,
       isLiked: false,
       isSaved: false,
-      status: 'active',
-      reports: 0,
       views: 890,
       category: 'review',
       priority: 'normal'
@@ -94,8 +90,6 @@ export default function CommunityPage() {
       comments: 6,
       isLiked: false,
       isSaved: false,
-      status: 'active',
-      reports: 0,
       views: 2100,
       category: 'spot',
       priority: 'featured'
@@ -305,34 +299,6 @@ export default function CommunityPage() {
                               <div className="analytics-label">Comments</div>
                             </div>
                           </div>
-                        </div>
-                      </div>
-
-                      {/* Post Moderation */}
-                      <div className="admin-post-moderation">
-                        <div className="moderation-header">
-                          <Shield size={16} />
-                          <span>Moderation Controls</span>
-                        </div>
-                        <div className="moderation-controls">
-                          <button className="moderation-btn approve">
-                            <CheckCircle size={14} />
-                            Approve
-                          </button>
-                          <button className="moderation-btn hide">
-                            <Eye size={14} />
-                            Hide
-                          </button>
-                          <button className="moderation-btn delete">
-                            <Trash2 size={14} />
-                            Delete
-                          </button>
-                          {post.reports > 0 && (
-                            <button className="review-reports-btn">
-                              <Flag size={14} />
-                              Review Reports ({post.reports})
-                            </button>
-                          )}
                         </div>
                       </div>
                     </div>
