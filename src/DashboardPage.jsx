@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, Bell, Settings, RefreshCw, Users, MapPin, Star, DollarSign, TrendingUp } from 'lucide-react';
+import { Search, Bell, Settings, RefreshCw, Users, MapPin, Star, DollarSign, TrendingUp, Activity, Clock, MessageSquare, AlertCircle } from 'lucide-react';
 
 const DashboardPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -12,6 +12,16 @@ const DashboardPage = () => {
     reviews: 2789,
     revenue: 45678
   };
+
+  // Recent activity data
+  const recentActivities = [
+    { id: 1, user: 'John Doe', action: 'added new spot "Pizza Palace"', time: '2 hours ago', type: 'spot', avatar: 'https://picsum.photos/seed/user1/40/40' },
+    { id: 2, user: 'Jane Smith', action: 'left 5-star review', time: '4 hours ago', type: 'review', avatar: 'https://picsum.photos/seed/user2/40/40' },
+    { id: 3, user: 'Bob Johnson', action: 'updated profile information', time: '6 hours ago', type: 'user', avatar: 'https://picsum.photos/seed/user3/40/40' },
+    { id: 4, user: 'Alice Brown', action: 'reported issue with payment', time: '8 hours ago', type: 'issue', avatar: 'https://picsum.photos/seed/user4/40/40' },
+    { id: 5, user: 'Charlie Wilson', action: 'completed profile verification', time: '12 hours ago', type: 'success', avatar: 'https://picsum.photos/seed/user5/40/40' },
+    { id: 6, user: 'Emma Davis', action: 'shared spot with friends', time: '1 day ago', type: 'share', avatar: 'https://picsum.photos/seed/user6/40/40' }
+  ];
 
   const handleRefresh = () => {
     setIsLoading(true);
@@ -168,6 +178,39 @@ const DashboardPage = () => {
               </div>
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* Recent Activity Section */}
+      <div className="activity-section">
+        <div className="section-header">
+          <h2>Recent Activity</h2>
+          <p>Latest updates and user actions on your platform</p>
+        </div>
+        
+        <div className="activity-list">
+          {recentActivities.map((activity) => (
+            <div key={activity.id} className="activity-item">
+              <div className="activity-avatar">
+                <img src={activity.avatar} alt={activity.user} />
+              </div>
+              <div className="activity-content">
+                <div className="activity-header-info">
+                  <span className="activity-user">{activity.user}</span>
+                  <span className="activity-time">{activity.time}</span>
+                </div>
+                <div className="activity-description">{activity.action}</div>
+              </div>
+              <div className="activity-icon">
+                {activity.type === 'spot' && <MapPin className="w-4 h-4" />}
+                {activity.type === 'review' && <Star className="w-4 h-4" />}
+                {activity.type === 'user' && <Users className="w-4 h-4" />}
+                {activity.type === 'issue' && <AlertCircle className="w-4 h-4" />}
+                {activity.type === 'success' && <Activity className="w-4 h-4" />}
+                {activity.type === 'share' && <MessageSquare className="w-4 h-4" />}
+              </div>
+            </div>
+          ))}
         </div>
       </div>
 
