@@ -18,7 +18,6 @@ import {
   CheckCircle,
   Flag,
   Star,
-  Users,
   BarChart3,
   Settings,
   ImageIcon,
@@ -96,7 +95,6 @@ export default function CommunityPage() {
 
   const sections = [
     { id: 'posts', name: 'Posts', icon: ImageIcon },
-    { id: 'users', name: 'Users', icon: Users },
     { id: 'analytics', name: 'Analytics', icon: BarChart3 },
     { id: 'moderation', name: 'Moderation', icon: Shield },
     { id: 'settings', name: 'Settings', icon: Settings }
@@ -331,15 +329,6 @@ export default function CommunityPage() {
             )}
 
             {/* Other sections */}
-            {activeSection === 'users' && (
-              <div className="settings-section">
-                <div className="section-header">
-                  <h2>User Management</h2>
-                  <p>Manage community users and permissions</p>
-                </div>
-              </div>
-            )}
-
             {activeSection === 'analytics' && (
               <div className="settings-section">
                 <div className="section-header">
