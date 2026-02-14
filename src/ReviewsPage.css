@@ -1298,7 +1298,8 @@
   max-width: 800px;
   width: 90%;
   max-height: 85vh;
-  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
   border: 1px solid #e5e7eb;
   position: relative;
@@ -1342,7 +1343,7 @@
 
 .modal-body {
   padding: 24px;
-  max-height: 65vh;
+  flex: 1;
   overflow-y: auto;
 }
 
@@ -1553,9 +1554,10 @@
 .modal-actions {
   display: flex;
   gap: 12px;
-  justify-content: flex-end;
-  padding-top: 16px;
+  justify-content: center;
+  padding: 20px 24px;
   border-top: 1px solid #f3f4f6;
+  background: #fafbfc;
 }
 
 .action-button {
@@ -1796,9 +1798,11 @@
 
 .modal-actions {
   display: flex;
-  gap: 16px;
+  gap: 12px;
   justify-content: center;
-  margin-top: 32px;
+  padding: 20px 24px;
+  border-top: 1px solid #f3f4f6;
+  background: #fafbfc;
 }
 
 .action-button {
