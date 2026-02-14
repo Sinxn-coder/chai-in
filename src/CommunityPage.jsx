@@ -23,7 +23,9 @@ import {
   Download,
   Upload,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Star,
+  Share2
 } from 'lucide-react';
 import './CommunityPage.css';
 
@@ -466,35 +468,40 @@ export default function CommunityPage() {
                     <ImageIcon size={24} />
                     <span>Total Posts</span>
                   </div>
-                  <div className="metric-value">{posts.length}</div>
-                  <div className="metric-change">+12% this week</div>
+                  <div className="metric-content">
+                    <div className="metric-number">{posts.length}</div>
+                    <div className="metric-label">Total Posts</div>
+                  </div>
                 </div>
-
                 <div className="metric-card">
                   <div className="metric-header">
                     <Users size={24} />
                     <span>Active Users</span>
                   </div>
-                  <div className="metric-value">1,234</div>
-                  <div className="metric-change positive">+8% this month</div>
+                  <div className="metric-content">
+                    <div className="metric-number">1,234</div>
+                    <div className="metric-label">Active Users</div>
+                  </div>
                 </div>
-
                 <div className="metric-card">
                   <div className="metric-header">
                     <Heart size={24} />
                     <span>Total Likes</span>
                   </div>
-                  <div className="metric-value">{posts.reduce((sum, post) => sum + post.likes, 0)}</div>
-                  <div className="metric-change positive">+15% this month</div>
+                  <div className="metric-content">
+                    <div className="metric-number">{posts.reduce((sum, post) => sum + post.likes, 0)}</div>
+                    <div className="metric-label">Total Likes</div>
+                  </div>
                 </div>
-
                 <div className="metric-card">
                   <div className="metric-header">
                     <MessageCircle size={24} />
                     <span>Total Comments</span>
                   </div>
-                  <div className="metric-value">{posts.reduce((sum, post) => sum + post.comments, 0)}</div>
-                  <div className="metric-change">+5% this month</div>
+                  <div className="metric-content">
+                    <div className="metric-number">{posts.reduce((sum, post) => sum + post.comments, 0)}</div>
+                    <div className="metric-label">Total Comments</div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -525,7 +532,11 @@ export default function CommunityPage() {
                         <button className="btn-danger">Remove</button>
                       </div>
                       <div className="report-info">
-                        <span>{post.reports} reports</span>
+                        <span className="report-count">{post.reports} reports</span>
+                        <button className="review-reports-btn">
+                          <Shield size={16} />
+                          Review Reports
+                        </button>
                       </div>
                     </div>
                   ))}
