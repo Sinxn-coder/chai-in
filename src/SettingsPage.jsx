@@ -227,9 +227,13 @@ export default function SettingsPage() {
         <p>Manage system configuration and administrative controls</p>
       </div>
 
-      <div className="settings-container">
-        {/* Navigation */}
-        <div className="settings-nav">
+      <div className="settings-layout">
+        {/* Fixed Sidebar Navigation */}
+        <div className="settings-sidebar">
+          <div className="sidebar-header">
+            <h3>Settings</h3>
+            <p>Choose a category</p>
+          </div>
           <div className="nav-tabs">
             {tabs.map(tab => {
               const Icon = tab.icon;
@@ -248,9 +252,10 @@ export default function SettingsPage() {
           </div>
         </div>
 
-        {/* Content */}
-        <div className="settings-content">
-          {activeTab === 'admin' && (
+        {/* Scrollable Content Area */}
+        <div className="settings-content-area">
+          <div className="content-wrapper">
+            {activeTab === 'admin' && (
             <div className="settings-section">
               <div className="section-header">
                 <h2>Administrative Controls</h2>
@@ -2026,6 +2031,7 @@ export default function SettingsPage() {
               <RefreshCw size={18} />
               Reset
             </button>
+          </div>
           </div>
         </div>
       </div>
