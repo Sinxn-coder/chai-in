@@ -867,6 +867,336 @@ export default function CommunityPage() {
                   <h2>Community Settings</h2>
                   <p>Configure community preferences and policies</p>
                 </div>
+
+                {/* General Settings */}
+                <div className="settings-group">
+                  <div className="settings-group-header">
+                    <h3>General Settings</h3>
+                    <p>Basic community configuration</p>
+                  </div>
+                  <div className="settings-grid">
+                    <div className="setting-item">
+                      <label className="setting-label">
+                        Community Name
+                        <small>The name displayed to users</small>
+                      </label>
+                      <input 
+                        type="text" 
+                        className="setting-input" 
+                        defaultValue="Chai-In Community"
+                        placeholder="Enter community name"
+                      />
+                    </div>
+                    <div className="setting-item">
+                      <label className="setting-label">
+                        Community Description
+                        <small>Brief description of your community</small>
+                      </label>
+                      <textarea 
+                        className="setting-textarea" 
+                        defaultValue="A vibrant community for food lovers and restaurant enthusiasts to share experiences, reviews, and discover amazing dining spots."
+                        placeholder="Enter community description"
+                        rows="3"
+                      ></textarea>
+                    </div>
+                    <div className="setting-item">
+                      <label className="setting-label">
+                        Community Type
+                        <small>Choose the type of community</small>
+                      </label>
+                      <select className="setting-input">
+                        <option>Public</option>
+                        <option>Private</option>
+                        <option>Restricted</option>
+                      </select>
+                    </div>
+                    <div className="setting-item">
+                      <label className="setting-label">
+                        Default Language
+                        <small>Primary language for the community</small>
+                      </label>
+                      <select className="setting-input">
+                        <option>English</option>
+                        <option>Spanish</option>
+                        <option>French</option>
+                        <option>German</option>
+                        <option>Chinese</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Posting Guidelines */}
+                <div className="settings-group">
+                  <div className="settings-group-header">
+                    <h3>Posting Guidelines</h3>
+                    <p>Rules and guidelines for community posts</p>
+                  </div>
+                  <div className="settings-grid">
+                    <div className="setting-item">
+                      <label className="setting-label">
+                        Minimum Post Length
+                        <small>Minimum characters required for posts</small>
+                      </label>
+                      <input 
+                        type="number" 
+                        className="setting-input" 
+                        defaultValue="50"
+                        min="10"
+                        max="1000"
+                      />
+                    </div>
+                    <div className="setting-item">
+                      <label className="setting-label">
+                        Maximum Images per Post
+                        <small>Limit images users can upload</small>
+                      </label>
+                      <input 
+                        type="number" 
+                        className="setting-input" 
+                        defaultValue="5"
+                        min="1"
+                        max="10"
+                      />
+                    </div>
+                    <div className="setting-item">
+                      <label className="setting-label">
+                        Allow External Links
+                        <small>Users can include links in posts</small>
+                      </label>
+                      <label className="toggle-switch">
+                        <input type="checkbox" defaultChecked />
+                        <span className="toggle-slider"></span>
+                      </label>
+                    </div>
+                    <div className="setting-item">
+                      <label className="setting-label">
+                        Require Post Approval
+                        <small>All posts need moderator approval</small>
+                      </label>
+                      <label className="toggle-switch">
+                        <input type="checkbox" />
+                        <span className="toggle-slider"></span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Moderation Settings */}
+                <div className="settings-group">
+                  <div className="settings-group-header">
+                    <h3>Moderation Settings</h3>
+                    <p>Configure content moderation policies</p>
+                  </div>
+                  <div className="settings-grid">
+                    <div className="setting-item">
+                      <label className="setting-label">
+                        Auto-Moderation
+                        <small>Automatically detect and flag inappropriate content</small>
+                      </label>
+                      <label className="toggle-switch">
+                        <input type="checkbox" defaultChecked />
+                        <span className="toggle-slider"></span>
+                      </label>
+                    </div>
+                    <div className="setting-item">
+                      <label className="setting-label">
+                        Report Threshold
+                        <small>Number of reports before auto-removal</small>
+                      </label>
+                      <input 
+                        type="number" 
+                        className="setting-input" 
+                        defaultValue="5"
+                        min="1"
+                        max="20"
+                      />
+                    </div>
+                    <div className="setting-item">
+                      <label className="setting-label">
+                        Blocked Words
+                        <small>Words to automatically filter</small>
+                      </label>
+                      <textarea 
+                        className="setting-textarea" 
+                        defaultValue="spam, fake, scam, inappropriate, offensive"
+                        placeholder="Enter blocked words separated by commas"
+                        rows="2"
+                      ></textarea>
+                    </div>
+                    <div className="setting-item">
+                      <label className="setting-label">
+                        User Report Limit
+                        <small>Max reports per user per day</small>
+                      </label>
+                      <input 
+                        type="number" 
+                        className="setting-input" 
+                        defaultValue="10"
+                        min="1"
+                        max="50"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Notification Settings */}
+                <div className="settings-group">
+                  <div className="settings-group-header">
+                    <h3>Notification Settings</h3>
+                    <p>Configure community notifications</p>
+                  </div>
+                  <div className="settings-grid">
+                    <div className="setting-item">
+                      <label className="setting-label">
+                        New Post Notifications
+                        <small>Notify moderators of new posts</small>
+                      </label>
+                      <label className="toggle-switch">
+                        <input type="checkbox" defaultChecked />
+                        <span className="toggle-slider"></span>
+                      </label>
+                    </div>
+                    <div className="setting-item">
+                      <label className="setting-label">
+                        Report Notifications
+                        <small>Notify when content is reported</small>
+                      </label>
+                      <label className="toggle-switch">
+                        <input type="checkbox" defaultChecked />
+                        <span className="toggle-slider"></span>
+                      </label>
+                    </div>
+                    <div className="setting-item">
+                      <label className="setting-label">
+                        User Join Notifications
+                        <small>Notify when new users join</small>
+                      </label>
+                      <label className="toggle-switch">
+                        <input type="checkbox" />
+                        <span className="toggle-slider"></span>
+                      </label>
+                    </div>
+                    <div className="setting-item">
+                      <label className="setting-label">
+                        Email Notifications
+                        <small>Send notifications via email</small>
+                      </label>
+                      <label className="toggle-switch">
+                        <input type="checkbox" defaultChecked />
+                        <span className="toggle-slider"></span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Privacy Settings */}
+                <div className="settings-group">
+                  <div className="settings-group-header">
+                    <h3>Privacy Settings</h3>
+                    <p>Configure community privacy and data settings</p>
+                  </div>
+                  <div className="settings-grid">
+                    <div className="setting-item">
+                      <label className="setting-label">
+                        Public Profile
+                        <small>Community is visible to everyone</small>
+                      </label>
+                      <label className="toggle-switch">
+                        <input type="checkbox" defaultChecked />
+                        <span className="toggle-slider"></span>
+                      </label>
+                    </div>
+                    <div className="setting-item">
+                      <label className="setting-label">
+                        Search Engine Indexing
+                        <small>Allow search engines to index community</small>
+                      </label>
+                      <label className="toggle-switch">
+                        <input type="checkbox" defaultChecked />
+                        <span className="toggle-slider"></span>
+                      </label>
+                    </div>
+                    <div className="setting-item">
+                      <label className="setting-label">
+                        User Data Retention
+                        <small>How long to keep user data</small>
+                      </label>
+                      <select className="setting-input">
+                        <option>30 days</option>
+                        <option>90 days</option>
+                        <option>1 year</option>
+                        <option>Forever</option>
+                      </select>
+                    </div>
+                    <div className="setting-item">
+                      <label className="setting-label">
+                        Analytics Tracking
+                        <small>Track community analytics</small>
+                      </label>
+                      <label className="toggle-switch">
+                        <input type="checkbox" defaultChecked />
+                        <span className="toggle-slider"></span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Advanced Settings */}
+                <div className="settings-group">
+                  <div className="settings-group-header">
+                    <h3>Advanced Settings</h3>
+                    <p>Advanced configuration options</p>
+                  </div>
+                  <div className="settings-grid">
+                    <div className="setting-item">
+                      <label className="setting-label">
+                        API Access
+                        <small>Enable API for third-party integrations</small>
+                      </label>
+                      <label className="toggle-switch">
+                        <input type="checkbox" />
+                        <span className="toggle-slider"></span>
+                      </label>
+                    </div>
+                    <div className="setting-item">
+                      <label className="setting-label">
+                        Custom CSS
+                        <small>Allow custom styling</small>
+                      </label>
+                      <label className="toggle-switch">
+                        <input type="checkbox" />
+                        <span className="toggle-slider"></span>
+                      </label>
+                    </div>
+                    <div className="setting-item">
+                      <label className="setting-label">
+                        Rate Limiting
+                        <small>Limit API requests per user</small>
+                      </label>
+                      <input 
+                        type="number" 
+                        className="setting-input" 
+                        defaultValue="100"
+                        min="10"
+                        max="1000"
+                      />
+                    </div>
+                    <div className="setting-item">
+                      <label className="setting-label">
+                        Cache Duration
+                        <small>How long to cache content (seconds)</small>
+                      </label>
+                      <input 
+                        type="number" 
+                        className="setting-input" 
+                        defaultValue="300"
+                        min="60"
+                        max="3600"
+                      />
+                    </div>
+                  </div>
+                </div>
               </div>
             )}
 
