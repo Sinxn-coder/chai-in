@@ -612,22 +612,22 @@ export default function CommunityPage() {
 
                 {/* Moderation Stats */}
                 <div className="moderation-stats">
-                  <div className="stat-card pending">
-                    <div className="stat-icon">
-                      <Clock size={20} />
-                    </div>
-                    <div className="stat-info">
-                      <h3>24</h3>
-                      <p>Pending Review</p>
-                    </div>
-                  </div>
                   <div className="stat-card flagged">
                     <div className="stat-icon">
                       <Flag size={20} />
                     </div>
                     <div className="stat-info">
-                      <h3>8</h3>
-                      <p>Flagged Content</p>
+                      <h3>4</h3>
+                      <p>Reported Posts</p>
+                    </div>
+                  </div>
+                  <div className="stat-card pending">
+                    <div className="stat-icon">
+                      <Clock size={20} />
+                    </div>
+                    <div className="stat-info">
+                      <h3>18</h3>
+                      <p>Total Reports</p>
                     </div>
                   </div>
                   <div className="stat-card removed">
@@ -635,7 +635,7 @@ export default function CommunityPage() {
                       <Trash2 size={20} />
                     </div>
                     <div className="stat-info">
-                      <h3>3</h3>
+                      <h3>2</h3>
                       <p>Removed Today</p>
                     </div>
                   </div>
@@ -646,12 +646,12 @@ export default function CommunityPage() {
                   <div className="queue-header">
                     <h3>Moderation Queue</h3>
                     <div className="queue-filters">
-                      <select className="filter-select">
-                        <option>All Content</option>
-                        <option>Pending Review</option>
-                        <option>Flagged</option>
-                        <option>Approved</option>
-                        <option>Removed</option>
+                      <select className="filter-select" defaultValue="flagged">
+                        <option value="flagged">Reported Content</option>
+                        <option value="all">All Content</option>
+                        <option value="pending">Pending Review</option>
+                        <option value="approved">Approved</option>
+                        <option value="removed">Removed</option>
                       </select>
                       <button className="refresh-btn">
                         <RefreshCw size={16} />
@@ -661,50 +661,11 @@ export default function CommunityPage() {
                   </div>
 
                   <div className="queue-list">
-                    <div className="queue-item pending">
-                      <div className="item-content">
-                        <div className="item-header">
-                          <div className="user-info">
-                            <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=40&auto=format&fit=crop" alt="User" className="user-avatar-small" />
-                            <div className="user-details">
-                              <h4>John Doe</h4>
-                              <span className="post-time">15 minutes ago</span>
-                            </div>
-                          </div>
-                          <div className="item-status pending">Pending</div>
-                        </div>
-                        <div className="item-body">
-                          <p>Check out this amazing new restaurant downtown! The food was incredible and the service was top-notch. Highly recommend trying their signature dish!</p>
-                          <div className="item-images">
-                            <img src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?q=80&w=100&auto=format&fit=crop" alt="Post image" className="item-image" />
-                          </div>
-                        </div>
-                        <div className="item-meta">
-                          <span className="report-count">2 reports</span>
-                          <span className="category">Review</span>
-                        </div>
-                      </div>
-                      <div className="item-actions">
-                        <button className="action-btn approve">
-                          <CheckCircle size={16} />
-                          Approve
-                        </button>
-                        <button className="action-btn hide">
-                          <Eye size={16} />
-                          Hide
-                        </button>
-                        <button className="action-btn remove">
-                          <Trash2 size={16} />
-                          Remove
-                        </button>
-                      </div>
-                    </div>
-
                     <div className="queue-item flagged">
                       <div className="item-content">
                         <div className="item-header">
                           <div className="user-info">
-                            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=40&auto=format&fit=crop" alt="User" className="user-avatar-small" />
+                            <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=40&auto=format&fit=crop" alt="User" className="user-avatar-small" />
                             <div className="user-details">
                               <h4>Jane Smith</h4>
                               <span className="post-time">1 hour ago</span>
@@ -736,27 +697,106 @@ export default function CommunityPage() {
                       </div>
                     </div>
 
-                    <div className="queue-item approved">
+                    <div className="queue-item flagged">
+                      <div className="item-content">
+                        <div className="item-header">
+                          <div className="user-info">
+                            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=40&auto=format&fit=crop" alt="User" className="user-avatar-small" />
+                            <div className="user-details">
+                              <h4>John Doe</h4>
+                              <span className="post-time">2 hours ago</span>
+                            </div>
+                          </div>
+                          <div className="item-status flagged">Flagged</div>
+                        </div>
+                        <div className="item-body">
+                          <p>Spam content with promotional links and fake reviews. This user is posting multiple similar reviews across different restaurants.</p>
+                          <div className="item-images">
+                            <img src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?q=80&w=100&auto=format&fit=crop" alt="Post image" className="item-image" />
+                          </div>
+                        </div>
+                        <div className="item-meta">
+                          <span className="report-count">3 reports</span>
+                          <span className="category">Review</span>
+                        </div>
+                      </div>
+                      <div className="item-actions">
+                        <button className="action-btn approve">
+                          <CheckCircle size={16} />
+                          Approve
+                        </button>
+                        <button className="action-btn hide">
+                          <Eye size={16} />
+                          Hide
+                        </button>
+                        <button className="action-btn remove">
+                          <Trash2 size={16} />
+                          Remove
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="queue-item flagged">
                       <div className="item-content">
                         <div className="item-header">
                           <div className="user-info">
                             <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=40&auto=format&fit=crop" alt="User" className="user-avatar-small" />
                             <div className="user-details">
-                              <h4>Mike Johnson</h4>
-                              <span className="post-time">2 hours ago</span>
+                              <h4>Anonymous User</h4>
+                              <span className="post-time">3 hours ago</span>
                             </div>
                           </div>
-                          <div className="item-status approved">Approved</div>
+                          <div className="item-status flagged">Flagged</div>
                         </div>
                         <div className="item-body">
-                          <p>Great coffee shop with amazing atmosphere! Perfect for working or catching up with friends. Their specialty latte is a must-try!</p>
+                          <p>Inappropriate language and offensive content. This post contains hate speech and personal attacks against other users.</p>
                         </div>
                         <div className="item-meta">
-                          <span className="report-count">0 reports</span>
+                          <span className="report-count">8 reports</span>
+                          <span className="category">Discussion</span>
+                        </div>
+                      </div>
+                      <div className="item-actions">
+                        <button className="action-btn approve">
+                          <CheckCircle size={16} />
+                          Approve
+                        </button>
+                        <button className="action-btn hide">
+                          <Eye size={16} />
+                          Hide
+                        </button>
+                        <button className="action-btn remove">
+                          <Trash2 size={16} />
+                          Remove
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="queue-item flagged">
+                      <div className="item-content">
+                        <div className="item-header">
+                          <div className="user-info">
+                            <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=40&auto=format&fit=crop" alt="User" className="user-avatar-small" />
+                            <div className="user-details">
+                              <h4>Mystery Reviewer</h4>
+                              <span className="post-time">5 hours ago</span>
+                            </div>
+                          </div>
+                          <div className="item-status flagged">Flagged</div>
+                        </div>
+                        <div className="item-body">
+                          <p>Fake review - this person has never actually visited the restaurant. They are posting false information to harm the business reputation.</p>
+                        </div>
+                        <div className="item-meta">
+                          <span className="report-count">2 reports</span>
                           <span className="category">Review</span>
                         </div>
                       </div>
                       <div className="item-actions">
+                        <button className="action-btn approve">
+                          <CheckCircle size={16} />
+                          Approve
+                        </button>
                         <button className="action-btn hide">
                           <Eye size={16} />
                           Hide
