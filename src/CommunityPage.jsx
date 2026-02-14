@@ -313,53 +313,43 @@ export default function CommunityPage() {
                         </div>
                         <div className="admin-image-slider">
                           <div className="slider-container">
-                            <div 
-                              className="slider-left-zone"
-                              onClick={() => {
-                                const currentIndex = post.currentImageIndex;
-                                const newIndex = currentIndex > 0 ? currentIndex - 1 : post.images.length - 1;
-                                setPosts(prevPosts => 
-                                  prevPosts.map(p => 
-                                    p.id === post.id 
-                                      ? { ...p, currentImageIndex: newIndex }
-                                      : p
-                                  )
-                                );
-                              }}
-                            />
                             <div className="slider-main">
                               {post.images.map((image, index) => (
                                 <div 
                                   key={index}
                                   className={`slider-image ${index === post.currentImageIndex ? 'active' : ''}`}
-                                  onClick={() => {
-                                    setPosts(prevPosts => 
-                                      prevPosts.map(p => 
-                                        p.id === post.id 
-                                          ? { ...p, currentImageIndex: index }
-                                          : p
-                                      )
-                                    );
+                                  onClick={(e) => {
+                                    const rect = e.currentTarget.getBoundingClientRect();
+                                    const clickX = e.clientX - rect.left;
+                                    const imageWidth = rect.width;
+                                    
+                                    if (clickX < imageWidth / 2) {
+                                      // Clicked on left side - move to previous image
+                                      const newIndex = post.currentImageIndex > 0 ? post.currentImageIndex - 1 : post.images.length - 1;
+                                      setPosts(prevPosts => 
+                                        prevPosts.map(p => 
+                                          p.id === post.id 
+                                            ? { ...p, currentImageIndex: newIndex }
+                                            : p
+                                        )
+                                      );
+                                    } else {
+                                      // Clicked on right side - move to next image
+                                      const newIndex = post.currentImageIndex < post.images.length - 1 ? post.currentImageIndex + 1 : 0;
+                                      setPosts(prevPosts => 
+                                        prevPosts.map(p => 
+                                          p.id === post.id 
+                                            ? { ...p, currentImageIndex: newIndex }
+                                            : p
+                                        )
+                                      );
+                                    }
                                   }}
                                 >
                                   <img src={image} alt={`Post image ${index + 1}`} />
                                 </div>
                               ))}
                             </div>
-                            <div 
-                              className="slider-right-zone"
-                              onClick={() => {
-                                const currentIndex = post.currentImageIndex;
-                                const newIndex = currentIndex < post.images.length - 1 ? currentIndex + 1 : 0;
-                                setPosts(prevPosts => 
-                                  prevPosts.map(p => 
-                                    p.id === post.id 
-                                      ? { ...p, currentImageIndex: newIndex }
-                                      : p
-                                  )
-                                );
-                              }}
-                            />
                           </div>
                         </div>
                       </div>
