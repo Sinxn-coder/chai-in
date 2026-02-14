@@ -36,7 +36,8 @@ import {
   Crop, 
   Sun, 
   Sliders, 
-  ChevronDown 
+  ChevronDown,
+  Users as Community
 } from 'lucide-react';
 import './index.css';
 
@@ -48,6 +49,7 @@ export default function App() {
     { id: 'users', name: 'Users', icon: Users },
     { id: 'spots', name: 'Spots', icon: MapPin },
     { id: 'reviews', name: 'Reviews', icon: Star },
+    { id: 'community', name: 'Community', icon: Community },
     { id: 'settings', name: 'Settings', icon: Settings }
   ];
 
@@ -2105,6 +2107,8 @@ export default function App() {
         return renderSpots();
       case 'reviews':
         return <ReviewsPage />;
+      case 'community':
+        return <div className="content-placeholder">Community Section - Manage community guidelines, discussions, events, and user interactions.</div>;
       case 'analytics':
         return <div className="content-placeholder">Analytics Dashboard - Track user engagement, popular spots, revenue metrics, and growth trends.</div>;
       case 'settings':
