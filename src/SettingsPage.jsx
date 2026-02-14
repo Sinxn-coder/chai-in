@@ -257,20 +257,66 @@ export default function SettingsPage() {
                 <p>Manage system-wide administrative settings and permissions</p>
               </div>
 
-              {/* System Status */}
-              <div className="settings-subsection">
-                <div className="subsection-header">
-                  <h3>System Status</h3>
-                  <p>Control system availability and maintenance</p>
+              {/* Admin Dashboard Overview */}
+              <div className="admin-dashboard">
+                <div className="dashboard-stats">
+                  <div className="stat-card">
+                    <div className="stat-icon">
+                      <Shield size={24} />
+                    </div>
+                    <div className="stat-content">
+                      <h4>System Health</h4>
+                      <div className="stat-value">Operational</div>
+                      <div className="stat-status online">● Online</div>
+                    </div>
+                  </div>
+                  <div className="stat-card">
+                    <div className="stat-icon">
+                      <Users size={24} />
+                    </div>
+                    <div className="stat-content">
+                      <h4>Active Admins</h4>
+                      <div className="stat-value">3</div>
+                      <div className="stat-status">● Active</div>
+                    </div>
+                  </div>
+                  <div className="stat-card">
+                    <div className="stat-icon">
+                      <Activity size={24} />
+                    </div>
+                    <div className="stat-content">
+                      <h4>System Load</h4>
+                      <div className="stat-value">45%</div>
+                      <div className="stat-status">● Normal</div>
+                    </div>
+                  </div>
+                  <div className="stat-card">
+                    <div className="stat-icon">
+                      <Database size={24} />
+                    </div>
+                    <div className="stat-content">
+                      <h4>Last Backup</h4>
+                      <div className="stat-value">2h ago</div>
+                      <div className="stat-status">● Success</div>
+                    </div>
+                  </div>
                 </div>
-                <div className="settings-list">
-                  <div className="setting-item">
-                    <div className="setting-info">
-                      <div className="setting-header">
-                        <AlertTriangle size={18} />
-                        <span>Maintenance Mode</span>
+              </div>
+
+              {/* Critical Controls */}
+              <div className="critical-controls">
+                <div className="controls-header">
+                  <h3>⚡ Critical Controls</h3>
+                  <p>Essential system management options</p>
+                </div>
+                <div className="controls-grid">
+                  <div className="control-card critical">
+                    <div className="control-header">
+                      <AlertTriangle size={20} />
+                      <div className="control-info">
+                        <h4>Maintenance Mode</h4>
+                        <p>Put system in maintenance mode</p>
                       </div>
-                      <p>Put system in maintenance mode for updates</p>
                     </div>
                     <label className="toggle-switch">
                       <input 
@@ -282,13 +328,13 @@ export default function SettingsPage() {
                     </label>
                   </div>
 
-                  <div className="setting-item">
-                    <div className="setting-info">
-                      <div className="setting-header">
-                        <Activity size={18} />
-                        <span>Debug Mode</span>
+                  <div className="control-card critical">
+                    <div className="control-header">
+                      <Activity size={20} />
+                      <div className="control-info">
+                        <h4>Debug Mode</h4>
+                        <p>Enable detailed logging</p>
                       </div>
-                      <p>Enable detailed logging and debug information</p>
                     </div>
                     <label className="toggle-switch">
                       <input 
@@ -300,13 +346,13 @@ export default function SettingsPage() {
                     </label>
                   </div>
 
-                  <div className="setting-item">
-                    <div className="setting-info">
-                      <div className="setting-header">
-                        <BarChart3 size={18} />
-                        <span>System Monitoring</span>
+                  <div className="control-card critical">
+                    <div className="control-header">
+                      <BarChart3 size={20} />
+                      <div className="control-info">
+                        <h4>System Monitoring</h4>
+                        <p>Performance tracking</p>
                       </div>
-                      <p>Monitor system performance and health metrics</p>
                     </div>
                     <label className="toggle-switch">
                       <input 
@@ -320,50 +366,148 @@ export default function SettingsPage() {
                 </div>
               </div>
 
-              {/* Logging Configuration */}
-              <div className="settings-subsection">
-                <div className="subsection-header">
-                  <h3>Logging Configuration</h3>
-                  <p>Configure system logging and monitoring</p>
+              {/* Security & Access */}
+              <div className="security-section">
+                <div className="controls-header">
+                  <h3>🔒 Security & Access</h3>
+                  <p>Authentication and security policies</p>
                 </div>
-                <div className="settings-grid">
-                  <div className="setting-item">
-                    <label>Log Level</label>
+                <div className="controls-grid">
+                  <div className="control-card">
+                    <div className="control-header">
+                      <Key size={20} />
+                      <div className="control-info">
+                        <h4>Two-Factor Auth</h4>
+                        <p>Required for admin accounts</p>
+                      </div>
+                    </div>
+                    <label className="toggle-switch">
+                      <input 
+                        type="checkbox" 
+                        checked={adminSettings.twoFactorAuth}
+                        onChange={() => handleToggle('admin', 'twoFactorAuth')}
+                      />
+                      <span className="toggle-slider"></span>
+                    </label>
+                  </div>
+
+                  <div className="control-card">
+                    <div className="control-header">
+                      <Lock size={20} />
+                      <div className="control-info">
+                        <h4>Session Timeout</h4>
+                        <p>Auto logout after inactivity</p>
+                      </div>
+                    </div>
+                    <div className="control-input-group">
+                      <input 
+                        type="number" 
+                        value={adminSettings.sessionTimeout}
+                        onChange={(e) => handleInputChange('admin', 'sessionTimeout', parseInt(e.target.value))}
+                        className="control-input" 
+                        min="5"
+                        max="120"
+                      />
+                      <span className="input-suffix">minutes</span>
+                    </div>
+                  </div>
+
+                  <div className="control-card">
+                    <div className="control-header">
+                      <Shield size={20} />
+                      <div className="control-info">
+                        <h4>Max Login Attempts</h4>
+                        <p>Account lockout threshold</p>
+                      </div>
+                    </div>
+                    <div className="control-input-group">
+                      <input 
+                        type="number" 
+                        value={adminSettings.maxLoginAttempts}
+                        onChange={(e) => handleInputChange('admin', 'maxLoginAttempts', parseInt(e.target.value))}
+                        className="control-input" 
+                        min="1"
+                        max="10"
+                      />
+                      <span className="input-suffix">attempts</span>
+                    </div>
+                  </div>
+
+                  <div className="control-card">
+                    <div className="control-header">
+                      <FileText size={20} />
+                      <div className="control-info">
+                        <h4>Password Policy</h4>
+                        <p>Security requirements</p>
+                      </div>
+                    </div>
+                    <select 
+                      value={adminSettings.passwordPolicy}
+                      onChange={(e) => handleInputChange('admin', 'passwordPolicy', e.target.value)}
+                      className="control-select"
+                    >
+                      <option value="basic">Basic (6+ chars)</option>
+                      <option value="medium">Medium (8+ chars, mixed case)</option>
+                      <option value="strong">Strong (8+ chars, mixed case, numbers, symbols)</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              {/* System Configuration */}
+              <div className="system-section">
+                <div className="controls-header">
+                  <h3>⚙️ System Configuration</h3>
+                  <p>System performance and maintenance</p>
+                </div>
+                <div className="controls-grid">
+                  <div className="control-card">
+                    <div className="control-header">
+                      <Activity size={20} />
+                      <div className="control-info">
+                        <h4>Log Level</h4>
+                        <p>System logging verbosity</p>
+                      </div>
+                    </div>
                     <select 
                       value={adminSettings.logLevel}
                       onChange={(e) => handleInputChange('admin', 'logLevel', e.target.value)}
-                      className="setting-input"
+                      className="control-select"
                     >
                       <option value="error">Error Only</option>
                       <option value="warn">Warning & Above</option>
                       <option value="info">Info & Above</option>
                       <option value="debug">Debug & Above</option>
                     </select>
-                    <small>Set minimum level of logs to record</small>
                   </div>
 
-                  <div className="setting-item">
-                    <label>Backup Frequency</label>
+                  <div className="control-card">
+                    <div className="control-header">
+                      <RefreshCw size={20} />
+                      <div className="control-info">
+                        <h4>Backup Frequency</h4>
+                        <p>Automated backup schedule</p>
+                      </div>
+                    </div>
                     <select 
                       value={adminSettings.backupFrequency}
                       onChange={(e) => handleInputChange('admin', 'backupFrequency', e.target.value)}
-                      className="setting-input"
+                      className="control-select"
                     >
                       <option value="hourly">Hourly</option>
                       <option value="daily">Daily</option>
                       <option value="weekly">Weekly</option>
                       <option value="monthly">Monthly</option>
                     </select>
-                    <small>How often to create system backups</small>
                   </div>
 
-                  <div className="setting-item">
-                    <div className="setting-info">
-                      <div className="setting-header">
-                        <Trash2 size={18} />
-                        <span>Auto Cleanup</span>
+                  <div className="control-card">
+                    <div className="control-header">
+                      <Trash2 size={20} />
+                      <div className="control-info">
+                        <h4>Auto Cleanup</h4>
+                        <p>Automatic log cleanup</p>
                       </div>
-                      <p>Automatically clean up old logs and temporary files</p>
                     </div>
                     <label className="toggle-switch">
                       <input 
@@ -377,92 +521,59 @@ export default function SettingsPage() {
                 </div>
               </div>
 
-              {/* Security Policies */}
-              <div className="settings-subsection">
-                <div className="subsection-header">
-                  <h3>Security Policies</h3>
-                  <p>Configure authentication and access control</p>
+              {/* API & Performance */}
+              <div className="api-section">
+                <div className="controls-header">
+                  <h3>🌐 API & Performance</h3>
+                  <p>API access and system performance</p>
                 </div>
-                <div className="settings-grid">
-                  <div className="setting-item">
-                    <label>Session Timeout (minutes)</label>
-                    <input 
-                      type="number" 
-                      value={adminSettings.sessionTimeout}
-                      onChange={(e) => handleInputChange('admin', 'sessionTimeout', parseInt(e.target.value))}
-                      className="setting-input" 
-                      min="5"
-                      max="120"
-                    />
-                    <small>Automatically log out inactive admins</small>
-                  </div>
-
-                  <div className="setting-item">
-                    <label>Max Login Attempts</label>
-                    <input 
-                      type="number" 
-                      value={adminSettings.maxLoginAttempts}
-                      onChange={(e) => handleInputChange('admin', 'maxLoginAttempts', parseInt(e.target.value))}
-                      className="setting-input" 
-                      min="1"
-                      max="10"
-                    />
-                    <small>Lock account after failed attempts</small>
-                  </div>
-
-                  <div className="setting-item">
-                    <label>Password Policy</label>
-                    <select 
-                      value={adminSettings.passwordPolicy}
-                      onChange={(e) => handleInputChange('admin', 'passwordPolicy', e.target.value)}
-                      className="setting-input"
-                    >
-                      <option value="basic">Basic (6+ chars)</option>
-                      <option value="medium">Medium (8+ chars, mixed case)</option>
-                      <option value="strong">Strong (8+ chars, mixed case, numbers, symbols)</option>
-                    </select>
-                    <small>Set minimum password requirements</small>
-                  </div>
-
-                  <div className="setting-item">
-                    <div className="setting-info">
-                      <div className="setting-header">
-                        <Key size={18} />
-                        <span>Two-Factor Authentication</span>
+                <div className="controls-grid">
+                  <div className="control-card">
+                    <div className="control-header">
+                      <Database size={20} />
+                      <div className="control-info">
+                        <h4>API Rate Limit</h4>
+                        <p>Requests per hour per admin</p>
                       </div>
-                      <p>Require 2FA for all admin accounts</p>
                     </div>
-                    <label className="toggle-switch">
+                    <div className="control-input-group">
                       <input 
-                        type="checkbox" 
-                        checked={adminSettings.twoFactorAuth}
-                        onChange={() => handleToggle('admin', 'twoFactorAuth')}
+                        type="number" 
+                        value={adminSettings.apiRateLimit}
+                        onChange={(e) => handleInputChange('admin', 'apiRateLimit', parseInt(e.target.value))}
+                        className="control-input" 
+                        min="100"
+                        max="10000"
                       />
-                      <span className="toggle-slider"></span>
-                    </label>
+                      <span className="input-suffix">req/hour</span>
+                    </div>
                   </div>
                 </div>
               </div>
 
-              {/* API Configuration */}
-              <div className="settings-subsection">
-                <div className="subsection-header">
-                  <h3>API Configuration</h3>
-                  <p>Configure API access and rate limiting</p>
+              {/* Quick Actions */}
+              <div className="quick-actions">
+                <div className="actions-header">
+                  <h3>⚡ Quick Actions</h3>
+                  <p>Common administrative tasks</p>
                 </div>
-                <div className="settings-grid">
-                  <div className="setting-item">
-                    <label>API Rate Limit (requests/hour)</label>
-                    <input 
-                      type="number" 
-                      value={adminSettings.apiRateLimit}
-                      onChange={(e) => handleInputChange('admin', 'apiRateLimit', parseInt(e.target.value))}
-                      className="setting-input" 
-                      min="100"
-                      max="10000"
-                    />
-                    <small>Limit API requests per admin per hour</small>
-                  </div>
+                <div className="actions-grid">
+                  <button className="action-btn primary">
+                    <RefreshCw size={16} />
+                    Restart System
+                  </button>
+                  <button className="action-btn secondary">
+                    <Download size={16} />
+                    Export Logs
+                  </button>
+                  <button className="action-btn secondary">
+                    <Trash2 size={16} />
+                    Clear Cache
+                  </button>
+                  <button className="action-btn secondary">
+                    <FileText size={16} />
+                    Generate Report
+                  </button>
                 </div>
               </div>
             </div>
