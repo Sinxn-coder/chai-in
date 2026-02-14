@@ -295,7 +295,7 @@ export default function CommunityPage() {
                       )}
                     </div>
 
-                    {/* Post Images Admin */}
+                    {/* Post Images Admin - Single Slider */}
                     {post.images.length > 0 && (
                       <div className="admin-post-images">
                         <div className="admin-image-header">
@@ -311,23 +311,78 @@ export default function CommunityPage() {
                             </button>
                           </div>
                         </div>
-                        <div className="admin-image-grid">
-                          {post.images.map((image, index) => (
-                            <div key={index} className="admin-image-item">
-                              <img src={image} alt={`Post image ${index + 1}`} className="admin-image" />
-                              <div className="admin-image-overlay">
-                                <button className="admin-image-btn">
-                                  <Eye size={14} />
-                                </button>
-                                <button className="admin-image-btn danger">
-                                  <X size={14} />
-                                </button>
-                              </div>
-                              <div className="admin-image-indicator">
-                                {index + 1}/{post.images.length}
-                              </div>
+                        <div className="admin-image-slider">
+                          <div className="slider-container">
+                            <button 
+                              className="slider-btn prev"
+                              onClick={() => {
+                                const newIndex = post.currentImageIndex > 0 ? post.currentImageIndex - 1 : post.images.length - 1;
+                                const updatedPosts = posts.map(p => 
+                                  p.id === post.id 
+                                    ? { ...p, currentImageIndex: newIndex }
+                                    : p
+                                );
+                                setPosts(updatedPosts);
+                              }}
+                            >
+                              <ChevronLeft size={20} />
+                            </button>
+                            <div className="slider-main">
+                              {post.images.map((image, index) => (
+                                <div 
+                                  key={index}
+                                  className={`slider-image ${index === post.currentImageIndex ? 'active' : ''}`}
+                                  onClick={() => {
+                                    const updatedPosts = posts.map(p => 
+                                      p.id === post.id 
+                                        ? { ...p, currentImageIndex: index }
+                                        : p
+                                    );
+                                    setPosts(updatedPosts);
+                                  }}
+                                >
+                                  <img src={image} alt={`Post image ${index + 1}`} />
+                                  <div className="slider-overlay">
+                                    <Eye size={20} />
+                                  </div>
+                                </div>
+                              ))}
                             </div>
-                          ))}
+                            <button 
+                              className="slider-btn next"
+                              onClick={() => {
+                                const newIndex = post.currentImageIndex < post.images.length - 1 ? post.currentImageIndex + 1 : 0;
+                                const updatedPosts = posts.map(p => 
+                                  p.id === post.id 
+                                    ? { ...p, currentImageIndex: newIndex }
+                                    : p
+                                );
+                                setPosts(updatedPosts);
+                              }}
+                            >
+                              <ChevronRight size={20} />
+                            </button>
+                          </div>
+                          <div className="slider-indicators">
+                            {post.images.map((_, index) => (
+                              <button
+                                key={index}
+                                className={`indicator ${index === post.currentImageIndex ? 'active' : ''}`}
+                                onClick={() => {
+                                  const updatedPosts = posts.map(p => 
+                                    p.id === post.id 
+                                      ? { ...p, currentImageIndex: index }
+                                      : p
+                                  );
+                                  setPosts(updatedPosts);
+                                }}
+                              />
+                            ))}
+                          </div>
+                          <div className="slider-info">
+                            <span className="current-slide">{post.currentImageIndex + 1}</span>
+                            <span className="total-slides">/ {post.images.length}</span>
+                          </div>
                         </div>
                       </div>
                     )}
