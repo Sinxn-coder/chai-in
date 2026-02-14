@@ -33,6 +33,7 @@ import {
 
 export default function DashboardPage() {
   const [selectedPeriod, setSelectedPeriod] = useState('7d');
+  const [activeChartTab, setActiveChartTab] = useState('growth');
   const [isLoading, setIsLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -68,6 +69,99 @@ export default function DashboardPage() {
     spots: [8, 12, 10, 15, 18, 14, 20],
     reviews: [45, 52, 48, 58, 62, 55, 68]
   };
+
+  // User Activity Data
+  const userActivityData = {
+    daily: [
+      { day: 'Mon', active: 234, new: 45, returning: 189 },
+      { day: 'Tue', active: 289, new: 52, returning: 237 },
+      { day: 'Wed', active: 267, new: 38, returning: 229 },
+      { day: 'Thu', active: 312, new: 67, returning: 245 },
+      { day: 'Fri', active: 398, new: 89, returning: 309 },
+      { day: 'Sat', active: 445, new: 102, returning: 343 },
+      { day: 'Sun', active: 412, new: 78, returning: 334 }
+    ],
+    hourly: [
+      { hour: '00:00', users: 120 },
+      { hour: '04:00', users: 89 },
+      { hour: '08:00', users: 234 },
+      { hour: '12:00', users: 389 },
+      { hour: '16:00', users: 412 },
+      { hour: '20:00', users: 298 }
+    ]
+  };
+
+  // Revenue Analysis Data
+  const revenueData = {
+    monthly: [
+      { month: 'Jan', revenue: 8450, spots: 234, reviews: 1567 },
+      { month: 'Feb', revenue: 9230, spots: 267, reviews: 1789 },
+      { month: 'Mar', revenue: 10120, spots: 289, reviews: 1945 },
+      { month: 'Apr', revenue: 11280, spots: 312, reviews: 2156 },
+      { month: 'May', revenue: 12847, spots: 342, reviews: 2389 },
+      { month: 'Jun', revenue: 13560, spots: 378, reviews: 2567 }
+    ],
+    sources: [
+      { source: 'Spot Listings', amount: 45678, percentage: 65 },
+      { source: 'Premium Features', amount: 12345, percentage: 18 },
+      { source: 'Advertising', amount: 8901, percentage: 13 },
+      { source: 'Partnerships', amount: 3456, percentage: 4 }
+    ]
+  };
+
+  // Spot Performance Data
+  const spotPerformanceData = [
+    { 
+      name: 'Sunset Cafe', 
+      category: 'Restaurant', 
+      rating: 4.8, 
+      reviews: 234, 
+      views: 5678, 
+      bookings: 189,
+      revenue: 12450,
+      trend: 'up'
+    },
+    { 
+      name: 'Mountain View Restaurant', 
+      category: 'Fine Dining', 
+      rating: 4.7, 
+      reviews: 189, 
+      views: 4234, 
+      bookings: 156,
+      revenue: 18900,
+      trend: 'up'
+    },
+    { 
+      name: 'Ocean Breeze', 
+      category: 'Cafe', 
+      rating: 4.6, 
+      reviews: 156, 
+      views: 3890, 
+      bookings: 134,
+      revenue: 8900,
+      trend: 'stable'
+    },
+    { 
+      name: 'City Lights', 
+      category: 'Bar', 
+      rating: 4.5, 
+      reviews: 143, 
+      views: 3456, 
+      bookings: 98,
+      revenue: 6780,
+      trend: 'down'
+    },
+    { 
+      name: 'Green Garden', 
+      category: 'Restaurant', 
+      rating: 4.9, 
+      reviews: 267, 
+      views: 6234, 
+      bookings: 223,
+      revenue: 15670,
+      trend: 'up'
+    }
+  ];
 
   const handleRefresh = () => {
     setIsLoading(true);
@@ -338,55 +432,205 @@ export default function DashboardPage() {
           {/* Main Chart Area */}
           <div className="chart-area">
             <div className="chart-tabs">
-              <button className="chart-tab active">Growth Trends</button>
-              <button className="chart-tab">User Activity</button>
-              <button className="chart-tab">Revenue Analysis</button>
-              <button className="chart-tab">Spot Performance</button>
+              <button 
+                className={`chart-tab ${activeChartTab === 'growth' ? 'active' : ''}`}
+                onClick={() => setActiveChartTab('growth')}
+              >
+                Growth Trends
+              </button>
+              <button 
+                className={`chart-tab ${activeChartTab === 'activity' ? 'active' : ''}`}
+                onClick={() => setActiveChartTab('activity')}
+              >
+                User Activity
+              </button>
+              <button 
+                className={`chart-tab ${activeChartTab === 'revenue' ? 'active' : ''}`}
+                onClick={() => setActiveChartTab('revenue')}
+              >
+                Revenue Analysis
+              </button>
+              <button 
+                className={`chart-tab ${activeChartTab === 'spots' ? 'active' : ''}`}
+                onClick={() => setActiveChartTab('spots')}
+              >
+                Spot Performance
+              </button>
             </div>
             
             <div className="main-chart">
-              <div className="chart-legend">
-                <div className="legend-item">
-                  <div className="legend-color users"></div>
-                  <span>Users</span>
-                </div>
-                <div className="legend-item">
-                  <div className="legend-color spots"></div>
-                  <span>Spots</span>
-                </div>
-                <div className="legend-item">
-                  <div className="legend-color reviews"></div>
-                  <span>Reviews</span>
-                </div>
-                <div className="legend-item">
-                  <div className="legend-color revenue"></div>
-                  <span>Revenue</span>
-                </div>
-              </div>
-              
-              <div className="chart-visualization">
-                <div className="chart-grid">
-                  <div className="chart-y-axis">
-                    {[100, 80, 60, 40, 20, 0].map((value) => (
-                      <div key={value} className="y-label">{value}</div>
-                    ))}
+              {activeChartTab === 'growth' && (
+                <div className="chart-content growth-chart">
+                  <div className="chart-legend">
+                    <div className="legend-item">
+                      <div className="legend-color users"></div>
+                      <span>Users</span>
+                    </div>
+                    <div className="legend-item">
+                      <div className="legend-color spots"></div>
+                      <span>Spots</span>
+                    </div>
+                    <div className="legend-item">
+                      <div className="legend-color reviews"></div>
+                      <span>Reviews</span>
+                    </div>
+                    <div className="legend-item">
+                      <div className="legend-color revenue"></div>
+                      <span>Revenue</span>
+                    </div>
                   </div>
-                  <div className="chart-content">
-                    <div className="chart-bars">
-                      {chartData.users.map((value, index) => (
-                        <div key={index} className="chart-column">
-                          <div className="bar-group">
-                            <div className="bar users" style={{ height: `${value * 0.8}px` }}></div>
-                            <div className="bar spots" style={{ height: `${chartData.spots[index] * 0.4}px` }}></div>
-                            <div className="bar reviews" style={{ height: `${chartData.reviews[index] * 0.6}px` }}></div>
-                          </div>
-                          <div className="x-label">Day {index + 1}</div>
+                  
+                  <div className="chart-visualization">
+                    <div className="chart-grid">
+                      <div className="chart-y-axis">
+                        {[100, 80, 60, 40, 20, 0].map((value) => (
+                          <div key={value} className="y-label">{value}</div>
+                        ))}
+                      </div>
+                      <div className="chart-content">
+                        <div className="chart-bars">
+                          {chartData.users.map((value, index) => (
+                            <div key={index} className="chart-column">
+                              <div className="bar-group">
+                                <div className="bar users" style={{ height: `${value * 0.8}px` }}></div>
+                                <div className="bar spots" style={{ height: `${chartData.spots[index] * 0.4}px` }}></div>
+                                <div className="bar reviews" style={{ height: `${chartData.reviews[index] * 0.6}px` }}></div>
+                              </div>
+                              <div className="x-label">Day {index + 1}</div>
+                            </div>
+                          ))}
                         </div>
-                      ))}
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
+              )}
+
+              {activeChartTab === 'activity' && (
+                <div className="chart-content activity-chart">
+                  <div className="activity-grid">
+                    <div className="activity-section">
+                      <h4>Daily Active Users</h4>
+                      <div className="activity-bars">
+                        {userActivityData.daily.map((data, index) => (
+                          <div key={index} className="activity-day">
+                            <div className="day-label">{data.day}</div>
+                            <div className="day-stats">
+                              <div className="stat-bar new-users" style={{ height: `${data.new * 2}px` }} title="New Users"></div>
+                              <div className="stat-bar returning-users" style={{ height: `${data.returning * 0.8}px` }} title="Returning Users"></div>
+                            </div>
+                            <div className="day-total">{data.active}</div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    <div className="activity-section">
+                      <h4>Peak Activity Hours</h4>
+                      <div className="hourly-activity">
+                        {userActivityData.hourly.map((data, index) => (
+                          <div key={index} className="hour-item">
+                            <div className="hour-label">{data.hour}</div>
+                            <div className="hour-bar" style={{ height: `${data.users * 0.8}px` }}></div>
+                            <div className="hour-users">{data.users}</div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {activeChartTab === 'revenue' && (
+                <div className="chart-content revenue-chart">
+                  <div className="revenue-grid">
+                    <div className="revenue-section">
+                      <h4>Monthly Revenue Breakdown</h4>
+                      <div className="revenue-bars">
+                        {revenueData.monthly.map((data, index) => (
+                          <div key={index} className="revenue-month">
+                            <div className="month-label">{data.month}</div>
+                            <div className="revenue-bar" style={{ height: `${data.revenue * 2}px` }}>
+                              <div className="revenue-amount">${data.revenue.toLocaleString()}</div>
+                            </div>
+                            <div className="month-stats">
+                              <div className="mini-stat">
+                                <span className="mini-label">Spots</span>
+                                <span className="mini-value">{data.spots}</span>
+                              </div>
+                              <div className="mini-stat">
+                                <span className="mini-label">Reviews</span>
+                                <span className="mini-value">{data.reviews}</span>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    <div className="revenue-section">
+                      <h4>Revenue Sources</h4>
+                      <div className="revenue-sources">
+                        {revenueData.sources.map((source, index) => (
+                          <div key={index} className="source-item">
+                            <div className="source-info">
+                              <h5>{source.source}</h5>
+                              <div className="source-amount">${source.amount.toLocaleString()}</div>
+                              <div className="source-percentage">{source.percentage}%</div>
+                            </div>
+                            <div className="source-bar">
+                              <div className="source-fill" style={{ width: `${source.percentage}%` }}></div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {activeChartTab === 'spots' && (
+                <div className="chart-content spots-chart">
+                  <div className="spots-performance-table">
+                    <div className="table-header">
+                      <div className="header-cell">Spot Name</div>
+                      <div className="header-cell">Category</div>
+                      <div className="header-cell">Rating</div>
+                      <div className="header-cell">Reviews</div>
+                      <div className="header-cell">Views</div>
+                      <div className="header-cell">Bookings</div>
+                      <div className="header-cell">Revenue</div>
+                      <div className="header-cell">Trend</div>
+                    </div>
+                    {spotPerformanceData.map((spot, index) => (
+                      <div key={index} className="table-row">
+                        <div className="cell spot-name">
+                          <div className="spot-info">
+                            <h5>{spot.name}</h5>
+                            <span className="category-tag">{spot.category}</span>
+                          </div>
+                        </div>
+                        <div className="cell">{spot.category}</div>
+                        <div className="cell rating-cell">
+                          <div className="rating-display">
+                            <Star className="w-4 h-4 text-yellow-500 fill-current" />
+                            <span>{spot.rating}</span>
+                          </div>
+                        </div>
+                        <div className="cell">{spot.reviews}</div>
+                        <div className="cell">{spot.views.toLocaleString()}</div>
+                        <div className="cell">{spot.bookings}</div>
+                        <div className="cell revenue-cell">${spot.revenue.toLocaleString()}</div>
+                        <div className="cell trend-cell">
+                          <div className={`trend-indicator ${spot.trend}`}>
+                            {spot.trend === 'up' && <TrendingUp className="w-4 h-4 text-green-500" />}
+                            {spot.trend === 'down' && <TrendingDown className="w-4 h-4 text-red-500" />}
+                            {spot.trend === 'stable' && <Activity className="w-4 h-4 text-blue-500" />}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
@@ -413,7 +657,7 @@ export default function DashboardPage() {
                 </div>
                 <div className="insight-content">
                   <h5>Retention Rate Declining</h5>
-                  <p>User retention dropped 3.2% - consider improving onboarding experience</p>
+                 <p>User retention dropped 3.2% - consider improving onboarding experience</p>
                 </div>
               </div>
               
@@ -425,240 +669,6 @@ export default function DashboardPage() {
                   <h5>Revenue Milestone Achieved</h5>
                   <p>Monthly revenue exceeded targets by 24% with strong spot performance</p>
                 </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Predictive Analytics */}
-          <div className="predictive-analytics">
-            <div className="analytics-header">
-              <h4>Predictive Analytics</h4>
-              <p>AI-powered forecasts and recommendations</p>
-            </div>
-            <div className="predictions-grid">
-              <div className="prediction-card">
-                <div className="prediction-header">
-                  <div className="prediction-icon growth">
-                    <TrendingUp className="w-5 h-5" />
-                  </div>
-                  <div className="prediction-confidence">
-                    <span>87% Confidence</span>
-                  </div>
-                </div>
-                <div className="prediction-body">
-                  <h5>Next Month Growth</h5>
-                  <div className="prediction-value">
-                    <span className="value">+24.5%</span>
-                    <span className="target">vs target 15%</span>
-                  </div>
-                  <div className="prediction-chart">
-                    {[65, 72, 68, 78, 82, 85, 92].map((value, index) => (
-                      <div key={index} className="prediction-bar" style={{ height: `${value * 1.2}px` }}></div>
-                    ))}
-                  </div>
-                </div>
-                <div className="prediction-footer">
-                  <span>Based on historical trends and current momentum</span>
-                </div>
-              </div>
-
-              <div className="prediction-card">
-                <div className="prediction-header">
-                  <div className="prediction-icon revenue">
-                    <DollarSign className="w-5 h-5" />
-                  </div>
-                  <div className="prediction-confidence">
-                    <span>92% Confidence</span>
-                  </div>
-                </div>
-                <div className="prediction-body">
-                  <h5>Revenue Forecast</h5>
-                  <div className="prediction-value">
-                    <span className="value">$18,420</span>
-                    <span className="target">+43% from current</span>
-                  </div>
-                  <div className="prediction-chart">
-                    {[45, 52, 58, 65, 72, 78, 85].map((value, index) => (
-                      <div key={index} className="prediction-bar revenue" style={{ height: `${value * 1.5}px` }}></div>
-                    ))}
-                  </div>
-                </div>
-                <div className="prediction-footer">
-                  <span>Strong seasonal performance expected</span>
-                </div>
-              </div>
-
-              <div className="prediction-card">
-                <div className="prediction-header">
-                  <div className="prediction-icon users">
-                    <Users className="w-5 h-5" />
-                  </div>
-                  <div className="prediction-confidence">
-                    <span>78% Confidence</span>
-                  </div>
-                </div>
-                <div className="prediction-body">
-                  <h5>User Acquisition</h5>
-                  <div className="prediction-value">
-                    <span className="value">3,847</span>
-                    <span className="target">new users</span>
-                  </div>
-                  <div className="prediction-chart">
-                    {[28, 35, 42, 48, 52, 58, 65].map((value, index) => (
-                      <div key={index} className="prediction-bar users" style={{ height: `${value * 1.8}px` }}></div>
-                    ))}
-                  </div>
-                </div>
-                <div className="prediction-footer">
-                  <span>Marketing campaigns showing strong ROI</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Real-time Metrics */}
-          <div className="realtime-metrics">
-            <div className="realtime-header">
-              <h4>Real-time Activity</h4>
-              <div className="live-indicator">
-                <div className="live-dot"></div>
-                <span>Live</span>
-              </div>
-            </div>
-            <div className="realtime-grid">
-              <div className="realtime-card">
-                <div className="realtime-icon">
-                  <Users className="w-5 h-5" />
-                </div>
-                <div className="realtime-content">
-                  <h5>Active Users</h5>
-                  <div className="realtime-value">
-                    <span className="value">1,247</span>
-                    <span className="change positive">+127</span>
-                  </div>
-                  <div className="realtime-sparkline">
-                    {[45, 52, 48, 58, 62, 68, 72, 78, 82, 85].map((value, index) => (
-                      <div key={index} className="sparkline-dot" style={{ height: `${value * 0.8}px` }}></div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              <div className="realtime-card">
-                <div className="realtime-icon">
-                  <MessageSquare className="w-5 h-5" />
-                </div>
-                <div className="realtime-content">
-                  <h5>Reviews/Min</h5>
-                  <div className="realtime-value">
-                    <span className="value">8.4</span>
-                    <span className="change positive">+2.1</span>
-                  </div>
-                  <div className="realtime-sparkline">
-                    {[3, 4, 3.5, 5, 6, 7, 8, 8.5, 9, 8.4].map((value, index) => (
-                      <div key={index} className="sparkline-dot reviews" style={{ height: `${value * 6}px` }}></div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              <div className="realtime-card">
-                <div className="realtime-icon">
-                  <MapPin className="w-5 h-5" />
-                </div>
-                <div className="realtime-content">
-                  <h5>Spot Searches</h5>
-                  <div className="realtime-value">
-                    <span className="value">342</span>
-                    <span className="change positive">+89</span>
-                  </div>
-                  <div className="realtime-sparkline">
-                    {[12, 18, 15, 22, 28, 32, 35, 38, 42, 45].map((value, index) => (
-                      <div key={index} className="sparkline-dot spots" style={{ height: `${value * 2}px` }}></div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              <div className="realtime-card">
-                <div className="realtime-icon">
-                  <Heart className="w-5 h-5" />
-                </div>
-                <div className="realtime-content">
-                  <h5>Engagement</h5>
-                  <div className="realtime-value">
-                    <span className="value">92.3%</span>
-                    <span className="change positive">+5.7</span>
-                  </div>
-                  <div className="realtime-sparkline">
-                    {[78, 82, 80, 85, 87, 89, 91, 93, 94, 92.3].map((value, index) => (
-                      <div key={index} className="sparkline-dot engagement" style={{ height: `${value * 0.9}px` }}></div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Actionable Recommendations */}
-          <div className="recommendations">
-            <div className="recommendations-header">
-              <h4>AI Recommendations</h4>
-              <p>Personalized actions to improve performance</p>
-            </div>
-            <div className="recommendations-list">
-              <div className="recommendation-item high-priority">
-                <div className="recommendation-priority">
-                  <span>High</span>
-                </div>
-                <div className="recommendation-content">
-                  <h5>Optimize Onboarding Flow</h5>
-                  <p>Users dropping off at step 3 of registration. Simplify the process to improve retention by 15%</p>
-                  <div className="recommendation-impact">
-                    <span className="impact-label">Expected Impact:</span>
-                    <span className="impact-value">+15% Retention</span>
-                  </div>
-                </div>
-                <button className="recommendation-action">
-                  Implement
-                  <ChevronRight className="w-4 h-4" />
-                </button>
-              </div>
-
-              <div className="recommendation-item medium-priority">
-                <div className="recommendation-priority">
-                  <span>Medium</span>
-                </div>
-                <div className="recommendation-content">
-                  <h5>Expand to New Markets</h5>
-                  <p>Analysis shows high demand in neighboring cities. Launch in 2 new locations next quarter</p>
-                  <div className="recommendation-impact">
-                    <span className="impact-label">Expected Impact:</span>
-                    <span className="impact-value">+28% Users</span>
-                  </div>
-                </div>
-                <button className="recommendation-action">
-                  View Details
-                  <ChevronRight className="w-4 h-4" />
-                </button>
-              </div>
-
-              <div className="recommendation-item low-priority">
-                <div className="recommendation-priority">
-                  <span>Low</span>
-                </div>
-                <div className="recommendation-content">
-                  <h5>Update Mobile App</h5>
-                  <p>Current version has performance issues. Update to improve user experience</p>
-                  <div className="recommendation-impact">
-                    <span className="impact-label">Expected Impact:</span>
-                    <span className="impact-value">+8% Satisfaction</span>
-                  </div>
-                </div>
-                <button className="recommendation-action">
-                  Schedule Update
-                  <ChevronRight className="w-4 h-4" />
-                </button>
               </div>
             </div>
           </div>
