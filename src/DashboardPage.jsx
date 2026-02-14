@@ -4,6 +4,17 @@ import { Search, Bell, Settings, RefreshCw, Users, MapPin, Star, DollarSign, Tre
 const DashboardPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [showAddSpotModal, setShowAddSpotModal] = useState(false);
+  const [newSpot, setNewSpot] = useState({
+    name: '',
+    category: '',
+    description: '',
+    address: '',
+    phone: '',
+    website: '',
+    hours: '',
+    priceRange: ''
+  });
 
   // Mock data for stats
   const stats = {
@@ -40,10 +51,10 @@ const DashboardPage = () => {
 
   const handleQuickAction = (action) => {
     console.log(`Quick action clicked: ${action}`);
-    // Handle different actions based on the action type
+    // Handle different actions based on action type
     switch(action) {
       case 'add-spot':
-        console.log('Opening add spot form...');
+        setShowAddSpotModal(true);
         break;
       case 'analytics':
         console.log('Navigating to analytics...');
@@ -63,6 +74,32 @@ const DashboardPage = () => {
       default:
         console.log('Unknown action:', action);
     }
+  };
+
+  const handleSpotSubmit = (e) => {
+    e.preventDefault();
+    console.log('Submitting new spot:', newSpot);
+    // Here you would typically make an API call to save the spot
+    // For now, just show success message
+    alert(`New spot "${newSpot.name}" added successfully!`);
+    setShowAddSpotModal(false);
+    setNewSpot({
+      name: '',
+      category: '',
+      description: '',
+      address: '',
+      phone: '',
+      website: '',
+      hours: '',
+      priceRange: ''
+    });
+  };
+
+  const handleSpotChange = (field, value) => {
+    setNewSpot(prev => ({
+      ...prev,
+      [field]: value
+    }));
   };
 
   return (
@@ -279,6 +316,135 @@ const DashboardPage = () => {
           ))}
         </div>
       </div>
+
+      {/* Add Spot Modal */}
+      {showAddSpotModal && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h2>Add New Spot</h2>
+              <button className="modal-close" onClick={() => setShowAddSpotModal(false)}>
+                <SettingsIcon className="w-5 h-5" />
+              </button>
+            </div>
+            
+            <form onSubmit={handleSpotSubmit} className="spot-form">
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Spot Name</label>
+                  <input
+                    type="text"
+                    value={newSpot.name}
+                    onChange={(e) => handleSpotChange('name', e.target.value)}
+                    placeholder="Enter spot name"
+                    required
+                  />
+                </div>
+              </div>
+              
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Category</label>
+                  <select
+                    value={newSpot.category}
+                    onChange={(e) => handleSpotChange('category', e.target.value)}
+                    required
+                  >
+                    <option value="">Select category</option>
+                    <option value="restaurant">Restaurant</option>
+                    <option value="cafe">Cafe</option>
+                    <option value="bar">Bar</option>
+                    <option value="bakery">Bakery</option>
+                    <option value="fast-food">Fast Food</option>
+                  </select>
+                </div>
+              </div>
+              
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Description</label>
+                  <textarea
+                    value={newSpot.description}
+                    onChange={(e) => handleSpotChange('description', e.target.value)}
+                    placeholder="Describe your spot"
+                    rows={3}
+                  />
+                </div>
+              </div>
+              
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Address</label>
+                  <input
+                    type="text"
+                    value={newSpot.address}
+                    onChange={(e) => handleSpotChange('address', e.target.value)}
+                    placeholder="Enter address"
+                    required
+                  />
+                </div>
+              </div>
+              
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Phone</label>
+                  <input
+                    type="tel"
+                    value={newSpot.phone}
+                    onChange={(e) => handleSpotChange('phone', e.target.value)}
+                    placeholder="Enter phone number"
+                  />
+                </div>
+              </div>
+              
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Website</label>
+                  <input
+                    type="url"
+                    value={newSpot.website}
+                    onChange={(e) => handleSpotChange('website', e.target.value)}
+                    placeholder="Enter website URL"
+                  />
+                </div>
+              </div>
+              
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Hours</label>
+                  <input
+                    type="text"
+                    value={newSpot.hours}
+                    onChange={(e) => handleSpotChange('hours', e.target.value)}
+                    placeholder="Enter operating hours"
+                  />
+                </div>
+              </div>
+              
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Price Range</label>
+                  <input
+                    type="text"
+                    value={newSpot.priceRange}
+                    onChange={(e) => handleSpotChange('priceRange', e.target.value)}
+                    placeholder="Enter price range (e.g., $10-20)"
+                  />
+                </div>
+              </div>
+              
+              <div className="form-actions">
+                <button type="button" className="btn-secondary" onClick={() => setShowAddSpotModal(false)}>
+                  Cancel
+                </button>
+                <button type="submit" className="btn-primary">
+                  Add Spot
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
       <div className="dashboard-empty">
         <h1>Dashboard</h1>
