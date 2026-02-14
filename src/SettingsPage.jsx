@@ -83,6 +83,33 @@ export default function SettingsPage() {
     analyticsEnabled: true
   });
 
+  const [privacySettings, setPrivacySettings] = useState({
+    analyticsData: false,
+    userBehaviorTracking: false,
+    performanceMetrics: true,
+    errorLogs: true,
+    userDataRetention: 365,
+    activityLogRetention: 90,
+    analyticsDataRetention: 180,
+    autoDataCleanup: true,
+    profileVisibility: true,
+    privateProfiles: true,
+    dataExport: true,
+    accountDeletion: true,
+    searchIndexing: false,
+    defaultPrivacyLevel: 'public',
+    publicAnalytics: false,
+    researchData: false,
+    marketingCommunications: false,
+    cookiesTracking: true,
+    gdprCompliance: true,
+    privacyPolicy: true,
+    consentManagement: true,
+    dataEncryption: true,
+    privacyPolicyUrl: '/privacy',
+    termsOfServiceUrl: '/terms'
+  });
+
   const handleSaveSettings = () => {
     setSavedSettings(true);
     setTimeout(() => setSavedSettings(false), 2000);
@@ -164,6 +191,33 @@ export default function SettingsPage() {
       errorReporting: true,
       analyticsEnabled: true
     });
+    
+    setPrivacySettings({
+      analyticsData: false,
+      userBehaviorTracking: false,
+      performanceMetrics: true,
+      errorLogs: true,
+      userDataRetention: 365,
+      activityLogRetention: 90,
+      analyticsDataRetention: 180,
+      autoDataCleanup: true,
+      profileVisibility: true,
+      privateProfiles: true,
+      dataExport: true,
+      accountDeletion: true,
+      searchIndexing: false,
+      defaultPrivacyLevel: 'public',
+      publicAnalytics: false,
+      researchData: false,
+      marketingCommunications: false,
+      cookiesTracking: true,
+      gdprCompliance: true,
+      privacyPolicy: true,
+      consentManagement: true,
+      dataEncryption: true,
+      privacyPolicyUrl: '/privacy',
+      termsOfServiceUrl: '/terms'
+    });
   };
 
   const handleToggle = (section, key) => {
@@ -182,6 +236,9 @@ export default function SettingsPage() {
         break;
       case 'advanced':
         setAdvancedSettings(prev => ({ ...prev, [key]: !prev[key] }));
+        break;
+      case 'privacy':
+        setPrivacySettings(prev => ({ ...prev, [key]: !prev[key] }));
         break;
       default:
         break;
@@ -205,6 +262,9 @@ export default function SettingsPage() {
       case 'advanced':
         setAdvancedSettings(prev => ({ ...prev, [field]: value }));
         break;
+      case 'privacy':
+        setPrivacySettings(prev => ({ ...prev, [field]: value }));
+        break;
       default:
         break;
     }
@@ -216,6 +276,7 @@ export default function SettingsPage() {
     { id: 'security', label: 'Security', icon: Lock },
     { id: 'users', label: 'User Management', icon: Users },
     { id: 'notifications', label: 'Notifications', icon: Bell },
+    { id: 'privacy', label: 'Privacy', icon: Eye },
     { id: 'advanced', label: 'Advanced', icon: Database },
     { id: 'help', label: 'Help & Support', icon: HelpCircle }
   ];
@@ -1486,6 +1547,461 @@ export default function SettingsPage() {
                     />
                     <span className="toggle-slider"></span>
                   </label>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'privacy' && (
+            <div className="settings-section">
+              <div className="section-header">
+                <h2>Privacy Settings</h2>
+                <p>Configure privacy controls and data protection settings</p>
+              </div>
+
+              {/* Data Collection */}
+              <div className="settings-subsection">
+                <div className="subsection-header">
+                  <h3>Data Collection</h3>
+                  <p>Control what data is collected and stored</p>
+                </div>
+                <div className="settings-grid">
+                  <div className="setting-item">
+                    <div className="setting-info">
+                      <div className="setting-header">
+                        <Database size={18} />
+                        <span>Analytics Data</span>
+                      </div>
+                      <p>Collect usage analytics for improvement</p>
+                    </div>
+                    <label className="toggle-switch">
+                      <input 
+                        type="checkbox" 
+                        checked={privacySettings?.analyticsData || false}
+                        onChange={() => handleToggle('privacy', 'analyticsData')}
+                      />
+                      <span className="toggle-slider"></span>
+                    </label>
+                  </div>
+
+                  <div className="setting-item">
+                    <div className="setting-info">
+                      <div className="setting-header">
+                        <Users size={18} />
+                        <span>User Behavior Tracking</span>
+                      </div>
+                      <p>Track user interactions and behavior patterns</p>
+                    </div>
+                    <label className="toggle-switch">
+                      <input 
+                        type="checkbox" 
+                        checked={privacySettings?.userBehaviorTracking || false}
+                        onChange={() => handleToggle('privacy', 'userBehaviorTracking')}
+                      />
+                      <span className="toggle-slider"></span>
+                    </label>
+                  </div>
+
+                  <div className="setting-item">
+                    <div className="setting-info">
+                      <div className="setting-header">
+                        <BarChart3 size={18} />
+                        <span>Performance Metrics</span>
+                      </div>
+                      <p>Collect system performance data</p>
+                    </div>
+                    <label className="toggle-switch">
+                      <input 
+                        type="checkbox" 
+                        checked={privacySettings?.performanceMetrics || true}
+                        onChange={() => handleToggle('privacy', 'performanceMetrics')}
+                      />
+                      <span className="toggle-slider"></span>
+                    </label>
+                  </div>
+
+                  <div className="setting-item">
+                    <div className="setting-info">
+                      <div className="setting-header">
+                        <FileText size={18} />
+                        <span>Error Logs</span>
+                      </div>
+                      <p>Collect error logs for debugging</p>
+                    </div>
+                    <label className="toggle-switch">
+                      <input 
+                        type="checkbox" 
+                        checked={privacySettings?.errorLogs || true}
+                        onChange={() => handleToggle('privacy', 'errorLogs')}
+                      />
+                      <span className="toggle-slider"></span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              {/* Data Retention */}
+              <div className="settings-subsection">
+                <div className="subsection-header">
+                  <h3>Data Retention</h3>
+                  <p>Configure how long data is retained</p>
+                </div>
+                <div className="settings-grid">
+                  <div className="setting-item">
+                    <label>User Data Retention (days)</label>
+                    <input 
+                      type="number" 
+                      value={privacySettings?.userDataRetention || 365}
+                      onChange={(e) => handleInputChange('privacy', 'userDataRetention', parseInt(e.target.value))}
+                      className="setting-input" 
+                      min="30"
+                      max="2555"
+                    />
+                    <small>How long to keep user data</small>
+                  </div>
+
+                  <div className="setting-item">
+                    <label>Activity Log Retention (days)</label>
+                    <input 
+                      type="number" 
+                      value={privacySettings?.activityLogRetention || 90}
+                      onChange={(e) => handleInputChange('privacy', 'activityLogRetention', parseInt(e.target.value))}
+                      className="setting-input" 
+                      min="7"
+                      max="365"
+                    />
+                    <small>How long to keep activity logs</small>
+                  </div>
+
+                  <div className="setting-item">
+                    <label>Analytics Data Retention (days)</label>
+                    <input 
+                      type="number" 
+                      value={privacySettings?.analyticsDataRetention || 180}
+                      onChange={(e) => handleInputChange('privacy', 'analyticsDataRetention', parseInt(e.target.value))}
+                      className="setting-input" 
+                      min="30"
+                      max="730"
+                    />
+                    <small>How long to keep analytics data</small>
+                  </div>
+
+                  <div className="setting-item">
+                    <div className="setting-info">
+                      <div className="setting-header">
+                        <Trash2 size={18} />
+                        <span>Auto Data Cleanup</span>
+                      </div>
+                      <p>Automatically delete expired data</p>
+                    </div>
+                    <label className="toggle-switch">
+                      <input 
+                        type="checkbox" 
+                        checked={privacySettings?.autoDataCleanup || true}
+                        onChange={() => handleToggle('privacy', 'autoDataCleanup')}
+                      />
+                      <span className="toggle-slider"></span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              {/* User Privacy */}
+              <div className="settings-subsection">
+                <div className="subsection-header">
+                  <h3>User Privacy</h3>
+                  <p>Configure user privacy controls and permissions</p>
+                </div>
+                <div className="settings-grid">
+                  <div className="setting-item">
+                    <div className="setting-info">
+                      <div className="setting-header">
+                        <Eye size={18} />
+                        <span>Profile Visibility</span>
+                      </div>
+                      <p>Allow users to control profile visibility</p>
+                    </div>
+                    <label className="toggle-switch">
+                      <input 
+                        type="checkbox" 
+                        checked={privacySettings?.profileVisibility || true}
+                        onChange={() => handleToggle('privacy', 'profileVisibility')}
+                      />
+                      <span className="toggle-slider"></span>
+                    </label>
+                  </div>
+
+                  <div className="setting-item">
+                    <div className="setting-info">
+                      <div className="setting-header">
+                        <EyeOff size={18} />
+                        <span>Private Profiles</span>
+                      </div>
+                      <p>Allow users to make profiles private</p>
+                    </div>
+                    <label className="toggle-switch">
+                      <input 
+                        type="checkbox" 
+                        checked={privacySettings?.privateProfiles || true}
+                        onChange={() => handleToggle('privacy', 'privateProfiles')}
+                      />
+                      <span className="toggle-slider"></span>
+                    </label>
+                  </div>
+
+                  <div className="setting-item">
+                    <div className="setting-info">
+                      <div className="setting-header">
+                        <Users size={18} />
+                        <span>Data Export</span>
+                      </div>
+                      <p>Allow users to export their data</p>
+                    </div>
+                    <label className="toggle-switch">
+                      <input 
+                        type="checkbox" 
+                        checked={privacySettings?.dataExport || true}
+                        onChange={() => handleToggle('privacy', 'dataExport')}
+                      />
+                      <span className="toggle-slider"></span>
+                    </label>
+                  </div>
+
+                  <div className="setting-item">
+                    <div className="setting-info">
+                      <div className="setting-header">
+                        <Trash2 size={18} />
+                        <span>Account Deletion</span>
+                      </div>
+                      <p>Allow users to delete their accounts</p>
+                    </div>
+                    <label className="toggle-switch">
+                      <input 
+                        type="checkbox" 
+                        checked={privacySettings?.accountDeletion || true}
+                        onChange={() => handleToggle('privacy', 'accountDeletion')}
+                      />
+                      <span className="toggle-slider"></span>
+                    </label>
+                  </div>
+
+                  <div className="setting-item">
+                    <div className="setting-info">
+                      <div className="setting-header">
+                        <Search size={18} />
+                        <span>Search Indexing</span>
+                      </div>
+                      <p>Include user content in search results</p>
+                    </div>
+                    <label className="toggle-switch">
+                      <input 
+                        type="checkbox" 
+                        checked={privacySettings?.searchIndexing || false}
+                        onChange={() => handleToggle('privacy', 'searchIndexing')}
+                      />
+                      <span className="toggle-slider"></span>
+                    </label>
+                  </div>
+
+                  <div className="setting-item">
+                    <label>Default Privacy Level</label>
+                    <select 
+                      value={privacySettings?.defaultPrivacyLevel || 'public'}
+                      onChange={(e) => handleInputChange('privacy', 'defaultPrivacyLevel', e.target.value)}
+                      className="setting-input"
+                    >
+                      <option value="public">Public</option>
+                      <option value="friends">Friends Only</option>
+                      <option value="private">Private</option>
+                    </select>
+                    <small>Default privacy setting for new users</small>
+                  </div>
+                </div>
+              </div>
+
+              {/* Third-Party Sharing */}
+              <div className="settings-subsection">
+                <div className="subsection-header">
+                  <h3>Third-Party Sharing</h3>
+                  <p>Configure data sharing with third-party services</p>
+                </div>
+                <div className="settings-grid">
+                  <div className="setting-item">
+                    <div className="setting-info">
+                      <div className="setting-header">
+                        <Globe size={18} />
+                        <span>Public Analytics</span>
+                      </div>
+                      <p>Share anonymized usage data publicly</p>
+                    </div>
+                    <label className="toggle-switch">
+                      <input 
+                        type="checkbox" 
+                        checked={privacySettings?.publicAnalytics || false}
+                        onChange={() => handleToggle('privacy', 'publicAnalytics')}
+                      />
+                      <span className="toggle-slider"></span>
+                    </label>
+                  </div>
+
+                  <div className="setting-item">
+                    <div className="setting-info">
+                      <div className="setting-header">
+                        <Database size={18} />
+                        <span>Research Data</span>
+                      </div>
+                      <p>Share anonymized data for research</p>
+                    </div>
+                    <label className="toggle-switch">
+                      <input 
+                        type="checkbox" 
+                        checked={privacySettings?.researchData || false}
+                        onChange={() => handleToggle('privacy', 'researchData')}
+                      />
+                      <span className="toggle-slider"></span>
+                    </label>
+                  </div>
+
+                  <div className="setting-item">
+                    <div className="setting-info">
+                      <div className="setting-header">
+                        <Mail size={18} />
+                        <span>Marketing Communications</span>
+                      </div>
+                      <p>Share data with marketing partners</p>
+                    </div>
+                    <label className="toggle-switch">
+                      <input 
+                        type="checkbox" 
+                        checked={privacySettings?.marketingCommunications || false}
+                        onChange={() => handleToggle('privacy', 'marketingCommunications')}
+                      />
+                      <span className="toggle-slider"></span>
+                    </label>
+                  </div>
+
+                  <div className="setting-item">
+                    <div className="setting-info">
+                      <div className="setting-header">
+                        <AlertTriangle size={18} />
+                        <span>Cookies and Tracking</span>
+                      </div>
+                      <p>Use cookies and tracking technologies</p>
+                    </div>
+                    <label className="toggle-switch">
+                      <input 
+                        type="checkbox" 
+                        checked={privacySettings?.cookiesTracking || true}
+                        onChange={() => handleToggle('privacy', 'cookiesTracking')}
+                      />
+                      <span className="toggle-slider"></span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              {/* Compliance */}
+              <div className="settings-subsection">
+                <div className="subsection-header">
+                  <h3>Compliance</h3>
+                  <p>Legal compliance and regulatory requirements</p>
+                </div>
+                <div className="settings-grid">
+                  <div className="setting-item">
+                    <div className="setting-info">
+                      <div className="setting-header">
+                        <Shield size={18} />
+                        <span>GDPR Compliance</span>
+                      </div>
+                      <p>Enable GDPR compliance features</p>
+                    </div>
+                    <label className="toggle-switch">
+                      <input 
+                        type="checkbox" 
+                        checked={privacySettings?.gdprCompliance || true}
+                        onChange={() => handleToggle('privacy', 'gdprCompliance')}
+                      />
+                      <span className="toggle-slider"></span>
+                    </label>
+                  </div>
+
+                  <div className="setting-item">
+                    <div className="setting-info">
+                      <div className="setting-header">
+                        <FileText size={18} />
+                        <span>Privacy Policy</span>
+                      </div>
+                      <p>Display privacy policy to users</p>
+                    </div>
+                    <label className="toggle-switch">
+                      <input 
+                        type="checkbox" 
+                        checked={privacySettings?.privacyPolicy || true}
+                        onChange={() => handleToggle('privacy', 'privacyPolicy')}
+                      />
+                      <span className="toggle-slider"></span>
+                    </label>
+                  </div>
+
+                  <div className="setting-item">
+                    <div className="setting-info">
+                      <div className="setting-header">
+                        <Users size={18} />
+                        <span>Consent Management</span>
+                      </div>
+                      <p>Require explicit user consent</p>
+                    </div>
+                    <label className="toggle-switch">
+                      <input 
+                        type="checkbox" 
+                        checked={privacySettings?.consentManagement || true}
+                        onChange={() => handleToggle('privacy', 'consentManagement')}
+                      />
+                      <span className="toggle-slider"></span>
+                    </label>
+                  </div>
+
+                  <div className="setting-item">
+                    <div className="setting-info">
+                      <div className="setting-header">
+                        <Lock size={18} />
+                        <span>Data Encryption</span>
+                      </div>
+                      <p>Encrypt sensitive user data</p>
+                    </div>
+                    <label className="toggle-switch">
+                      <input 
+                        type="checkbox" 
+                        checked={privacySettings?.dataEncryption || true}
+                        onChange={() => handleToggle('privacy', 'dataEncryption')}
+                      />
+                      <span className="toggle-slider"></span>
+                    </label>
+                  </div>
+
+                  <div className="setting-item">
+                    <label>Privacy Policy URL</label>
+                    <input 
+                      type="url" 
+                      value={privacySettings?.privacyPolicyUrl || '/privacy'}
+                      onChange={(e) => handleInputChange('privacy', 'privacyPolicyUrl', e.target.value)}
+                      className="setting-input" 
+                      placeholder="/privacy"
+                    />
+                    <small>URL for privacy policy page</small>
+                  </div>
+
+                  <div className="setting-item">
+                    <label>Terms of Service URL</label>
+                    <input 
+                      type="url" 
+                      value={privacySettings?.termsOfServiceUrl || '/terms'}
+                      onChange={(e) => handleInputChange('privacy', 'termsOfServiceUrl', e.target.value)}
+                      className="setting-input" 
+                      placeholder="/terms"
+                    />
+                    <small>URL for terms of service page</small>
+                  </div>
                 </div>
               </div>
             </div>
