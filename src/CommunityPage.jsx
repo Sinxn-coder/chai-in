@@ -327,6 +327,21 @@ export default function CommunityPage() {
                         </div>
                         <div className="admin-image-slider">
                           <div className="slider-container">
+                            <button 
+                              className="slider-btn prev"
+                              onClick={() => {
+                                const newIndex = post.currentImageIndex > 0 ? post.currentImageIndex - 1 : post.images.length - 1;
+                                setPosts(prevPosts => 
+                                  prevPosts.map(p => 
+                                    p.id === post.id 
+                                      ? { ...p, currentImageIndex: newIndex }
+                                      : p
+                                  )
+                                );
+                              }}
+                            >
+                              <ChevronLeft size={20} />
+                            </button>
                             <div className="slider-main">
                               {post.images.map((image, index) => (
                                 <div 
@@ -367,6 +382,21 @@ export default function CommunityPage() {
                                 </div>
                               ))}
                             </div>
+                            <button 
+                              className="slider-btn next"
+                              onClick={() => {
+                                const newIndex = post.currentImageIndex < post.images.length - 1 ? post.currentImageIndex + 1 : 0;
+                                setPosts(prevPosts => 
+                                  prevPosts.map(p => 
+                                    p.id === post.id 
+                                      ? { ...p, currentImageIndex: newIndex }
+                                      : p
+                                  )
+                                );
+                              }}
+                            >
+                              <ChevronRight size={20} />
+                            </button>
                           </div>
                         </div>
                       </div>
