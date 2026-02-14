@@ -245,7 +245,6 @@ export default function CommunityPage() {
                       {post.priority === 'featured' && (
                         <div className="priority-badge featured">
                           <Star size={14} />
-                          Featured
                         </div>
                       )}
 
