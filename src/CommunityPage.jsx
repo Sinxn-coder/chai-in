@@ -291,6 +291,10 @@ export default function CommunityPage() {
                           {post.tags.map((tag, index) => (
                             <span key={index} className="admin-tag">#{tag}</span>
                           ))}
+                          <button className="admin-btn-small view-image-btn">
+                            <Eye size={14} />
+                            View Image
+                          </button>
                         </div>
                       )}
                     </div>
@@ -356,23 +360,6 @@ export default function CommunityPage() {
                               >
                                 <ChevronRight size={16} />
                               </button>
-                            </div>
-                            <div className="slider-dots">
-                              {post.images.map((_, index) => (
-                                <div
-                                  key={index}
-                                  className={`dot ${index === post.currentImageIndex ? 'active' : ''}`}
-                                  onClick={() => {
-                                    setPosts(prevPosts => 
-                                      prevPosts.map(p => 
-                                        p.id === post.id 
-                                          ? { ...p, currentImageIndex: index }
-                                          : p
-                                      )
-                                    );
-                                  }}
-                                />
-                              ))}
                             </div>
                           </div>
                         </div>

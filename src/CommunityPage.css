@@ -545,7 +545,28 @@
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  margin-top: 12px;
+  margin-bottom: 16px;
+  align-items: center;
+}
+
+.view-image-btn {
+  background: #3b82f6;
+  border: none;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  margin-left: auto;
+}
+
+.view-image-btn:hover {
+  background: #2563eb;
 }
 
 .admin-tag {
@@ -690,30 +711,6 @@
 
 .image-nav-btn:hover {
   background: rgba(0, 0, 0.9);
-}
-
-.slider-dots {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 8px;
-  margin-top: 12px;
-}
-
-.dot {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  border: 2px solid #e5e7eb;
-  background: white;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.dot.active {
-  background: #3b82f6;
-  border-color: #3b82f6;
-  transform: scale(1.2);
 }
 
 .admin-post-analytics {
