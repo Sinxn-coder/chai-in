@@ -257,66 +257,20 @@ export default function SettingsPage() {
                 <p>Manage system-wide administrative settings and permissions</p>
               </div>
 
-              {/* Admin Dashboard Overview */}
-              <div className="admin-dashboard">
-                <div className="dashboard-stats">
-                  <div className="stat-card">
-                    <div className="stat-icon">
-                      <Shield size={24} />
-                    </div>
-                    <div className="stat-content">
-                      <h4>System Health</h4>
-                      <div className="stat-value">Operational</div>
-                      <div className="stat-status online">● Online</div>
-                    </div>
-                  </div>
-                  <div className="stat-card">
-                    <div className="stat-icon">
-                      <Users size={24} />
-                    </div>
-                    <div className="stat-content">
-                      <h4>Active Admins</h4>
-                      <div className="stat-value">3</div>
-                      <div className="stat-status">● Active</div>
-                    </div>
-                  </div>
-                  <div className="stat-card">
-                    <div className="stat-icon">
-                      <Activity size={24} />
-                    </div>
-                    <div className="stat-content">
-                      <h4>System Load</h4>
-                      <div className="stat-value">45%</div>
-                      <div className="stat-status">● Normal</div>
-                    </div>
-                  </div>
-                  <div className="stat-card">
-                    <div className="stat-icon">
-                      <Database size={24} />
-                    </div>
-                    <div className="stat-content">
-                      <h4>Last Backup</h4>
-                      <div className="stat-value">2h ago</div>
-                      <div className="stat-status">● Success</div>
-                    </div>
-                  </div>
+              {/* System Operations */}
+              <div className="settings-subsection">
+                <div className="subsection-header">
+                  <h3>System Operations</h3>
+                  <p>Control system availability and maintenance operations</p>
                 </div>
-              </div>
-
-              {/* Critical Controls */}
-              <div className="critical-controls">
-                <div className="controls-header">
-                  <h3>⚡ Critical Controls</h3>
-                  <p>Essential system management options</p>
-                </div>
-                <div className="controls-grid">
-                  <div className="control-card critical">
-                    <div className="control-header">
-                      <AlertTriangle size={20} />
-                      <div className="control-info">
-                        <h4>Maintenance Mode</h4>
-                        <p>Put system in maintenance mode</p>
+                <div className="settings-grid">
+                  <div className="setting-item">
+                    <div className="setting-info">
+                      <div className="setting-header">
+                        <AlertTriangle size={18} />
+                        <span>Maintenance Mode</span>
                       </div>
+                      <p>Put system in maintenance mode for updates</p>
                     </div>
                     <label className="toggle-switch">
                       <input 
@@ -328,13 +282,13 @@ export default function SettingsPage() {
                     </label>
                   </div>
 
-                  <div className="control-card critical">
-                    <div className="control-header">
-                      <Activity size={20} />
-                      <div className="control-info">
-                        <h4>Debug Mode</h4>
-                        <p>Enable detailed logging</p>
+                  <div className="setting-item">
+                    <div className="setting-info">
+                      <div className="setting-header">
+                        <Activity size={18} />
+                        <span>Debug Mode</span>
                       </div>
+                      <p>Enable detailed logging and debug information</p>
                     </div>
                     <label className="toggle-switch">
                       <input 
@@ -346,13 +300,13 @@ export default function SettingsPage() {
                     </label>
                   </div>
 
-                  <div className="control-card critical">
-                    <div className="control-header">
-                      <BarChart3 size={20} />
-                      <div className="control-info">
-                        <h4>System Monitoring</h4>
-                        <p>Performance tracking</p>
+                  <div className="setting-item">
+                    <div className="setting-info">
+                      <div className="setting-header">
+                        <BarChart3 size={18} />
+                        <span>System Monitoring</span>
                       </div>
+                      <p>Monitor system performance and health metrics</p>
                     </div>
                     <label className="toggle-switch">
                       <input 
@@ -363,23 +317,217 @@ export default function SettingsPage() {
                       <span className="toggle-slider"></span>
                     </label>
                   </div>
+
+                  <div className="setting-item">
+                    <label>System Status</label>
+                    <select 
+                      value={adminSettings.systemStatus || 'operational'}
+                      onChange={(e) => handleInputChange('admin', 'systemStatus', e.target.value)}
+                      className="setting-input"
+                    >
+                      <option value="operational">Operational</option>
+                      <option value="degraded">Degraded Performance</option>
+                      <option value="maintenance">Under Maintenance</option>
+                      <option value="critical">Critical Issues</option>
+                    </select>
+                    <small>Current system operational status</small>
+                  </div>
+
+                  <div className="setting-item">
+                    <label>Emergency Contact</label>
+                    <input 
+                      type="email" 
+                      value={adminSettings.emergencyContact || ''}
+                      onChange={(e) => handleInputChange('admin', 'emergencyContact', e.target.value)}
+                      className="setting-input" 
+                      placeholder="admin@company.com"
+                    />
+                    <small>Contact for system emergencies</small>
+                  </div>
                 </div>
               </div>
 
-              {/* Security & Access */}
-              <div className="security-section">
-                <div className="controls-header">
-                  <h3>🔒 Security & Access</h3>
-                  <p>Authentication and security policies</p>
+              {/* Logging & Monitoring */}
+              <div className="settings-subsection">
+                <div className="subsection-header">
+                  <h3>Logging & Monitoring</h3>
+                  <p>Configure system logging, monitoring and backup strategies</p>
                 </div>
-                <div className="controls-grid">
-                  <div className="control-card">
-                    <div className="control-header">
-                      <Key size={20} />
-                      <div className="control-info">
-                        <h4>Two-Factor Auth</h4>
-                        <p>Required for admin accounts</p>
+                <div className="settings-grid">
+                  <div className="setting-item">
+                    <label>Log Level</label>
+                    <select 
+                      value={adminSettings.logLevel}
+                      onChange={(e) => handleInputChange('admin', 'logLevel', e.target.value)}
+                      className="setting-input"
+                    >
+                      <option value="error">Error Only</option>
+                      <option value="warn">Warning & Above</option>
+                      <option value="info">Info & Above</option>
+                      <option value="debug">Debug & Above</option>
+                    </select>
+                    <small>Set minimum level of logs to record</small>
+                  </div>
+
+                  <div className="setting-item">
+                    <label>Log Retention (days)</label>
+                    <input 
+                      type="number" 
+                      value={adminSettings.logRetention || 30}
+                      onChange={(e) => handleInputChange('admin', 'logRetention', parseInt(e.target.value))}
+                      className="setting-input" 
+                      min="1"
+                      max="365"
+                    />
+                    <small>How long to keep system logs</small>
+                  </div>
+
+                  <div className="setting-item">
+                    <label>Backup Frequency</label>
+                    <select 
+                      value={adminSettings.backupFrequency}
+                      onChange={(e) => handleInputChange('admin', 'backupFrequency', e.target.value)}
+                      className="setting-input"
+                    >
+                      <option value="hourly">Hourly</option>
+                      <option value="daily">Daily</option>
+                      <option value="weekly">Weekly</option>
+                      <option value="monthly">Monthly</option>
+                    </select>
+                    <small>How often to create system backups</small>
+                  </div>
+
+                  <div className="setting-item">
+                    <label>Backup Location</label>
+                    <input 
+                      type="text" 
+                      value={adminSettings.backupLocation || '/backups'}
+                      onChange={(e) => handleInputChange('admin', 'backupLocation', e.target.value)}
+                      className="setting-input" 
+                      placeholder="/var/backups"
+                    />
+                    <small>Directory for system backups</small>
+                  </div>
+
+                  <div className="setting-item">
+                    <div className="setting-info">
+                      <div className="setting-header">
+                        <Trash2 size={18} />
+                        <span>Auto Cleanup</span>
                       </div>
+                      <p>Automatically clean up old logs and temporary files</p>
+                    </div>
+                    <label className="toggle-switch">
+                      <input 
+                        type="checkbox" 
+                        checked={adminSettings.autoCleanup}
+                        onChange={() => handleToggle('admin', 'autoCleanup')}
+                      />
+                      <span className="toggle-slider"></span>
+                    </label>
+                  </div>
+
+                  <div className="setting-item">
+                    <div className="setting-info">
+                      <div className="setting-header">
+                        <Database size={18} />
+                        <span>Database Optimization</span>
+                      </div>
+                      <p>Automatically optimize database performance</p>
+                    </div>
+                    <label className="toggle-switch">
+                      <input 
+                        type="checkbox" 
+                        checked={adminSettings.dbOptimization}
+                        onChange={() => handleToggle('admin', 'dbOptimization')}
+                      />
+                      <span className="toggle-slider"></span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              {/* Security & Authentication */}
+              <div className="settings-subsection">
+                <div className="subsection-header">
+                  <h3>Security & Authentication</h3>
+                  <p>Configure authentication, access control and security policies</p>
+                </div>
+                <div className="settings-grid">
+                  <div className="setting-item">
+                    <label>Session Timeout (minutes)</label>
+                    <input 
+                      type="number" 
+                      value={adminSettings.sessionTimeout}
+                      onChange={(e) => handleInputChange('admin', 'sessionTimeout', parseInt(e.target.value))}
+                      className="setting-input" 
+                      min="5"
+                      max="120"
+                    />
+                    <small>Automatically log out inactive admins</small>
+                  </div>
+
+                  <div className="setting-item">
+                    <label>Max Login Attempts</label>
+                    <input 
+                      type="number" 
+                      value={adminSettings.maxLoginAttempts}
+                      onChange={(e) => handleInputChange('admin', 'maxLoginAttempts', parseInt(e.target.value))}
+                      className="setting-input" 
+                      min="1"
+                      max="10"
+                    />
+                    <small>Lock account after failed attempts</small>
+                  </div>
+
+                  <div className="setting-item">
+                    <label>Account Lockout Duration (minutes)</label>
+                    <input 
+                      type="number" 
+                      value={adminSettings.lockoutDuration || 15}
+                      onChange={(e) => handleInputChange('admin', 'lockoutDuration', parseInt(e.target.value))}
+                      className="setting-input" 
+                      min="5"
+                      max="60"
+                    />
+                    <small>Duration of account lockout</small>
+                  </div>
+
+                  <div className="setting-item">
+                    <label>Password Policy</label>
+                    <select 
+                      value={adminSettings.passwordPolicy}
+                      onChange={(e) => handleInputChange('admin', 'passwordPolicy', e.target.value)}
+                      className="setting-input"
+                    >
+                      <option value="basic">Basic (6+ chars)</option>
+                      <option value="medium">Medium (8+ chars, mixed case)</option>
+                      <option value="strong">Strong (8+ chars, mixed case, numbers, symbols)</option>
+                      <option value="enterprise">Enterprise (12+ chars, all requirements)</option>
+                    </select>
+                    <small>Set minimum password requirements</small>
+                  </div>
+
+                  <div className="setting-item">
+                    <label>Password Expiry (days)</label>
+                    <input 
+                      type="number" 
+                      value={adminSettings.passwordExpiry || 90}
+                      onChange={(e) => handleInputChange('admin', 'passwordExpiry', parseInt(e.target.value))}
+                      className="setting-input" 
+                      min="30"
+                      max="365"
+                    />
+                    <small>Force password change after this period</small>
+                  </div>
+
+                  <div className="setting-item">
+                    <div className="setting-info">
+                      <div className="setting-header">
+                        <Key size={18} />
+                        <span>Two-Factor Authentication</span>
+                      </div>
+                      <p>Require 2FA for all admin accounts</p>
                     </div>
                     <label className="toggle-switch">
                       <input 
@@ -391,129 +539,49 @@ export default function SettingsPage() {
                     </label>
                   </div>
 
-                  <div className="control-card">
-                    <div className="control-header">
-                      <Lock size={20} />
-                      <div className="control-info">
-                        <h4>Session Timeout</h4>
-                        <p>Auto logout after inactivity</p>
+                  <div className="setting-item">
+                    <div className="setting-info">
+                      <div className="setting-header">
+                        <Shield size={18} />
+                        <span>IP Whitelist</span>
                       </div>
-                    </div>
-                    <div className="control-input-group">
-                      <input 
-                        type="number" 
-                        value={adminSettings.sessionTimeout}
-                        onChange={(e) => handleInputChange('admin', 'sessionTimeout', parseInt(e.target.value))}
-                        className="control-input" 
-                        min="5"
-                        max="120"
-                      />
-                      <span className="input-suffix">minutes</span>
-                    </div>
-                  </div>
-
-                  <div className="control-card">
-                    <div className="control-header">
-                      <Shield size={20} />
-                      <div className="control-info">
-                        <h4>Max Login Attempts</h4>
-                        <p>Account lockout threshold</p>
-                      </div>
-                    </div>
-                    <div className="control-input-group">
-                      <input 
-                        type="number" 
-                        value={adminSettings.maxLoginAttempts}
-                        onChange={(e) => handleInputChange('admin', 'maxLoginAttempts', parseInt(e.target.value))}
-                        className="control-input" 
-                        min="1"
-                        max="10"
-                      />
-                      <span className="input-suffix">attempts</span>
-                    </div>
-                  </div>
-
-                  <div className="control-card">
-                    <div className="control-header">
-                      <FileText size={20} />
-                      <div className="control-info">
-                        <h4>Password Policy</h4>
-                        <p>Security requirements</p>
-                      </div>
-                    </div>
-                    <select 
-                      value={adminSettings.passwordPolicy}
-                      onChange={(e) => handleInputChange('admin', 'passwordPolicy', e.target.value)}
-                      className="control-select"
-                    >
-                      <option value="basic">Basic (6+ chars)</option>
-                      <option value="medium">Medium (8+ chars, mixed case)</option>
-                      <option value="strong">Strong (8+ chars, mixed case, numbers, symbols)</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-
-              {/* System Configuration */}
-              <div className="system-section">
-                <div className="controls-header">
-                  <h3>⚙️ System Configuration</h3>
-                  <p>System performance and maintenance</p>
-                </div>
-                <div className="controls-grid">
-                  <div className="control-card">
-                    <div className="control-header">
-                      <Activity size={20} />
-                      <div className="control-info">
-                        <h4>Log Level</h4>
-                        <p>System logging verbosity</p>
-                      </div>
-                    </div>
-                    <select 
-                      value={adminSettings.logLevel}
-                      onChange={(e) => handleInputChange('admin', 'logLevel', e.target.value)}
-                      className="control-select"
-                    >
-                      <option value="error">Error Only</option>
-                      <option value="warn">Warning & Above</option>
-                      <option value="info">Info & Above</option>
-                      <option value="debug">Debug & Above</option>
-                    </select>
-                  </div>
-
-                  <div className="control-card">
-                    <div className="control-header">
-                      <RefreshCw size={20} />
-                      <div className="control-info">
-                        <h4>Backup Frequency</h4>
-                        <p>Automated backup schedule</p>
-                      </div>
-                    </div>
-                    <select 
-                      value={adminSettings.backupFrequency}
-                      onChange={(e) => handleInputChange('admin', 'backupFrequency', e.target.value)}
-                      className="control-select"
-                    >
-                      <option value="hourly">Hourly</option>
-                      <option value="daily">Daily</option>
-                      <option value="weekly">Weekly</option>
-                      <option value="monthly">Monthly</option>
-                    </select>
-                  </div>
-
-                  <div className="control-card">
-                    <div className="control-header">
-                      <Trash2 size={20} />
-                      <div className="control-info">
-                        <h4>Auto Cleanup</h4>
-                        <p>Automatic log cleanup</p>
-                      </div>
+                      <p>Restrict access to specific IP addresses</p>
                     </div>
                     <label className="toggle-switch">
                       <input 
                         type="checkbox" 
-                        checked={adminSettings.autoCleanup}
-                        onChange={() => handleToggle('admin', 'autoCleanup')}
+                        checked={adminSettings.ipWhitelist}
+                        onChange={() => handleToggle('admin', 'ipWhitelist')}
+                      />
+                      <span className="toggle-slider"></span>
+                    </label>
+                  </div>
+
+                  <div className="setting-item">
+                    <label>Allowed IP Addresses</label>
+                    <textarea 
+                      value={adminSettings.allowedIPs || ''}
+                      onChange={(e) => handleInputChange('admin', 'allowedIPs', e.target.value)}
+                      className="setting-input" 
+                      rows={3}
+                      placeholder="192.168.1.1, 10.0.0.1"
+                    />
+                    <small>Comma-separated IP addresses</small>
+                  </div>
+
+                  <div className="setting-item">
+                    <div className="setting-info">
+                      <div className="setting-header">
+                        <Activity size={18} />
+                        <span>Failed Login Alerts</span>
+                      </div>
+                      <p>Send alerts for failed login attempts</p>
+                    </div>
+                    <label className="toggle-switch">
+                      <input 
+                        type="checkbox" 
+                        checked={adminSettings.failedLoginAlerts}
+                        onChange={() => handleToggle('admin', 'failedLoginAlerts')}
                       />
                       <span className="toggle-slider"></span>
                     </label>
@@ -521,59 +589,532 @@ export default function SettingsPage() {
                 </div>
               </div>
 
-              {/* API & Performance */}
-              <div className="api-section">
-                <div className="controls-header">
-                  <h3>🌐 API & Performance</h3>
-                  <p>API access and system performance</p>
+              {/* API & Integration */}
+              <div className="settings-subsection">
+                <div className="subsection-header">
+                  <h3>API & Integration</h3>
+                  <p>Configure API access, rate limiting and third-party integrations</p>
                 </div>
-                <div className="controls-grid">
-                  <div className="control-card">
-                    <div className="control-header">
-                      <Database size={20} />
-                      <div className="control-info">
-                        <h4>API Rate Limit</h4>
-                        <p>Requests per hour per admin</p>
+                <div className="settings-grid">
+                  <div className="setting-item">
+                    <label>API Rate Limit (requests/hour)</label>
+                    <input 
+                      type="number" 
+                      value={adminSettings.apiRateLimit}
+                      onChange={(e) => handleInputChange('admin', 'apiRateLimit', parseInt(e.target.value))}
+                      className="setting-input" 
+                      min="100"
+                      max="10000"
+                    />
+                    <small>Limit API requests per admin per hour</small>
+                  </div>
+
+                  <div className="setting-item">
+                    <label>API Key Expiry (days)</label>
+                    <input 
+                      type="number" 
+                      value={adminSettings.apiKeyExpiry || 365}
+                      onChange={(e) => handleInputChange('admin', 'apiKeyExpiry', parseInt(e.target.value))}
+                      className="setting-input" 
+                      min="30"
+                      max="730"
+                    />
+                    <small>API key expiration period</small>
+                  </div>
+
+                  <div className="setting-item">
+                    <div className="setting-info">
+                      <div className="setting-header">
+                        <Globe size={18} />
+                        <span>CORS Enabled</span>
                       </div>
+                      <p>Allow cross-origin requests</p>
                     </div>
-                    <div className="control-input-group">
+                    <label className="toggle-switch">
                       <input 
-                        type="number" 
-                        value={adminSettings.apiRateLimit}
-                        onChange={(e) => handleInputChange('admin', 'apiRateLimit', parseInt(e.target.value))}
-                        className="control-input" 
-                        min="100"
-                        max="10000"
+                        type="checkbox" 
+                        checked={adminSettings.corsEnabled}
+                        onChange={() => handleToggle('admin', 'corsEnabled')}
                       />
-                      <span className="input-suffix">req/hour</span>
+                      <span className="toggle-slider"></span>
+                    </label>
+                  </div>
+
+                  <div className="setting-item">
+                    <label>Allowed Origins</label>
+                    <textarea 
+                      value={adminSettings.allowedOrigins || ''}
+                      onChange={(e) => handleInputChange('admin', 'allowedOrigins', e.target.value)}
+                      className="setting-input" 
+                      rows={3}
+                      placeholder="https://example.com, https://app.example.com"
+                    />
+                    <small>Comma-separated allowed origins</small>
+                  </div>
+
+                  <div className="setting-item">
+                    <div className="setting-info">
+                      <div className="setting-header">
+                        <Download size={18} />
+                        <span>Webhook Support</span>
+                      </div>
+                      <p>Enable webhook notifications</p>
                     </div>
+                    <label className="toggle-switch">
+                      <input 
+                        type="checkbox" 
+                        checked={adminSettings.webhookSupport}
+                        onChange={() => handleToggle('admin', 'webhookSupport')}
+                      />
+                      <span className="toggle-slider"></span>
+                    </label>
+                  </div>
+
+                  <div className="setting-item">
+                    <label>Webhook URL</label>
+                    <input 
+                      type="url" 
+                      value={adminSettings.webhookUrl || ''}
+                      onChange={(e) => handleInputChange('admin', 'webhookUrl', e.target.value)}
+                      className="setting-input" 
+                      placeholder="https://api.example.com/webhook"
+                    />
+                    <small>Endpoint for webhook notifications</small>
+                  </div>
+
+                  <div className="setting-item">
+                    <div className="setting-info">
+                      <div className="setting-header">
+                        <RefreshCw size={18} />
+                        <span>API Version</span>
+                      </div>
+                      <p>Current API version</p>
+                    </div>
+                    <select 
+                      value={adminSettings.apiVersion || 'v1'}
+                      onChange={(e) => handleInputChange('admin', 'apiVersion', e.target.value)}
+                      className="setting-input"
+                    >
+                      <option value="v1">Version 1.0</option>
+                      <option value="v2">Version 2.0</option>
+                      <option value="beta">Beta Version</option>
+                    </select>
                   </div>
                 </div>
               </div>
 
-              {/* Quick Actions */}
-              <div className="quick-actions">
-                <div className="actions-header">
-                  <h3>⚡ Quick Actions</h3>
-                  <p>Common administrative tasks</p>
+              {/* Performance & Optimization */}
+              <div className="settings-subsection">
+                <div className="subsection-header">
+                  <h3>Performance & Optimization</h3>
+                  <p>Configure system performance settings and optimization</p>
                 </div>
-                <div className="actions-grid">
-                  <button className="action-btn primary">
-                    <RefreshCw size={16} />
-                    Restart System
-                  </button>
-                  <button className="action-btn secondary">
-                    <Download size={16} />
-                    Export Logs
-                  </button>
-                  <button className="action-btn secondary">
-                    <Trash2 size={16} />
-                    Clear Cache
-                  </button>
-                  <button className="action-btn secondary">
-                    <FileText size={16} />
-                    Generate Report
-                  </button>
+                <div className="settings-grid">
+                  <div className="setting-item">
+                    <label>Cache Duration (seconds)</label>
+                    <input 
+                      type="number" 
+                      value={adminSettings.cacheDuration || 3600}
+                      onChange={(e) => handleInputChange('admin', 'cacheDuration', parseInt(e.target.value))}
+                      className="setting-input" 
+                      min="60"
+                      max="86400"
+                    />
+                    <small>How long to cache data in memory</small>
+                  </div>
+
+                  <div className="setting-item">
+                    <label>Cache Size (MB)</label>
+                    <input 
+                      type="number" 
+                      value={adminSettings.cacheSize || 512}
+                      onChange={(e) => handleInputChange('admin', 'cacheSize', parseInt(e.target.value))}
+                      className="setting-input" 
+                      min="64"
+                      max="4096"
+                    />
+                    <small>Maximum cache memory allocation</small>
+                  </div>
+
+                  <div className="setting-item">
+                    <div className="setting-info">
+                      <div className="setting-header">
+                        <TrendingUp size={18} />
+                        <span>Performance Monitoring</span>
+                      </div>
+                      <p>Track system performance metrics</p>
+                    </div>
+                    <label className="toggle-switch">
+                      <input 
+                        type="checkbox" 
+                        checked={adminSettings.performanceMonitoring}
+                        onChange={() => handleToggle('admin', 'performanceMonitoring')}
+                      />
+                      <span className="toggle-slider"></span>
+                    </label>
+                  </div>
+
+                  <div className="setting-item">
+                    <label>Performance Threshold (%)</label>
+                    <input 
+                      type="number" 
+                      value={adminSettings.performanceThreshold || 80}
+                      onChange={(e) => handleInputChange('admin', 'performanceThreshold', parseInt(e.target.value))}
+                      className="setting-input" 
+                      min="50"
+                      max="95"
+                    />
+                    <small>Alert when CPU usage exceeds this percentage</small>
+                  </div>
+
+                  <div className="setting-item">
+                    <div className="setting-info">
+                      <div className="setting-header">
+                        <Database size={18} />
+                        <span>Database Pool Size</span>
+                      </div>
+                      <p>Database connection pool size</p>
+                    </div>
+                    <input 
+                      type="number" 
+                      value={adminSettings.dbPoolSize || 10}
+                      onChange={(e) => handleInputChange('admin', 'dbPoolSize', parseInt(e.target.value))}
+                      className="setting-input" 
+                      min="1"
+                      max="50"
+                    />
+                    <small>Number of database connections</small>
+                  </div>
+
+                  <div className="setting-item">
+                    <div className="setting-info">
+                      <div className="setting-header">
+                        <Clock size={18} />
+                        <span>Scheduled Tasks</span>
+                      </div>
+                      <p>Enable scheduled system tasks</p>
+                    </div>
+                    <label className="toggle-switch">
+                      <input 
+                        type="checkbox" 
+                        checked={adminSettings.scheduledTasks}
+                        onChange={() => handleToggle('admin', 'scheduledTasks')}
+                      />
+                      <span className="toggle-slider"></span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              {/* Email & Notifications */}
+              <div className="settings-subsection">
+                <div className="subsection-header">
+                  <h3>Email & Notifications</h3>
+                  <p>Configure email settings and notification preferences</p>
+                </div>
+                <div className="settings-grid">
+                  <div className="setting-item">
+                    <label>SMTP Server</label>
+                    <input 
+                      type="text" 
+                      value={adminSettings.smtpServer || ''}
+                      onChange={(e) => handleInputChange('admin', 'smtpServer', e.target.value)}
+                      className="setting-input" 
+                      placeholder="smtp.example.com"
+                    />
+                    <small>SMTP server for email notifications</small>
+                  </div>
+
+                  <div className="setting-item">
+                    <label>SMTP Port</label>
+                    <input 
+                      type="number" 
+                      value={adminSettings.smtpPort || 587}
+                      onChange={(e) => handleInputChange('admin', 'smtpPort', parseInt(e.target.value))}
+                      className="setting-input" 
+                      min="25"
+                      max="65535"
+                    />
+                    <small>SMTP server port</small>
+                  </div>
+
+                  <div className="setting-item">
+                    <label>From Email</label>
+                    <input 
+                      type="email" 
+                      value={adminSettings.fromEmail || ''}
+                      onChange={(e) => handleInputChange('admin', 'fromEmail', e.target.value)}
+                      className="setting-input" 
+                      placeholder="noreply@example.com"
+                    />
+                    <small>Default sender email address</small>
+                  </div>
+
+                  <div className="setting-item">
+                    <div className="setting-info">
+                      <div className="setting-header">
+                        <Mail size={18} />
+                        <span>Admin Notifications</span>
+                      </div>
+                      <p>Receive admin alerts via email</p>
+                    </div>
+                    <label className="toggle-switch">
+                      <input 
+                        type="checkbox" 
+                        checked={adminSettings.adminNotifications}
+                        onChange={() => handleToggle('admin', 'adminNotifications')}
+                      />
+                      <span className="toggle-slider"></span>
+                    </label>
+                  </div>
+
+                  <div className="setting-item">
+                    <div className="setting-info">
+                      <div className="setting-header">
+                        <AlertTriangle size={18} />
+                        <span>Critical Alerts</span>
+                      </div>
+                      <p>Send critical system alerts immediately</p>
+                    </div>
+                    <label className="toggle-switch">
+                      <input 
+                        type="checkbox" 
+                        checked={adminSettings.criticalAlerts}
+                        onChange={() => handleToggle('admin', 'criticalAlerts')}
+                      />
+                      <span className="toggle-slider"></span>
+                    </label>
+                  </div>
+
+                  <div className="setting-item">
+                    <label>Email Template</label>
+                    <select 
+                      value={adminSettings.emailTemplate || 'default'}
+                      onChange={(e) => handleInputChange('admin', 'emailTemplate', e.target.value)}
+                      className="setting-input"
+                    >
+                      <option value="default">Default Template</option>
+                      <option value="professional">Professional</option>
+                      <option value="minimal">Minimal</option>
+                    </select>
+                    <small>Email template for notifications</small>
+                  </div>
+                </div>
+              </div>
+
+              {/* Compliance & Audit */}
+              <div className="settings-subsection">
+                <div className="subsection-header">
+                  <h3>Compliance & Audit</h3>
+                  <p>Configure compliance settings and audit trails</p>
+                </div>
+                <div className="settings-grid">
+                  <div className="setting-item">
+                    <div className="setting-info">
+                      <div className="setting-header">
+                        <FileText size={18} />
+                        <span>Audit Logging</span>
+                      </div>
+                      <p>Log all admin actions for compliance</p>
+                    </div>
+                    <label className="toggle-switch">
+                      <input 
+                        type="checkbox" 
+                        checked={adminSettings.auditLogging}
+                        onChange={() => handleToggle('admin', 'auditLogging')}
+                      />
+                      <span className="toggle-slider"></span>
+                    </label>
+                  </div>
+
+                  <div className="setting">
+                    <label>Audit Retention (days)</label>
+                    <input 
+                      type="number" 
+                      value={adminSettings.auditRetention || 90}
+                      onChange={(e) => handleInputChange('admin', 'auditRetention', parseInt(e.target.value))}
+                      className="setting-input" 
+                      min="30"
+                      max="2555"
+                    />
+                    <small>How long to keep audit logs</small>
+                  </div>
+
+                  <div className="setting-item">
+                    <div className="setting-info">
+                      <div className="setting-header">
+                        <Shield size={18} />
+                        <span>GDPR Compliance</span>
+                      </div>
+                      <p>Enable GDPR compliance features</p>
+                    </div>
+                    <label className="toggle-switch">
+                      <input 
+                        type="checkbox" 
+                        checked={adminSettings.gdprCompliance}
+                        onChange={() => handleToggle('admin', 'gdprCompliance')}
+                      />
+                      <span className="toggle-slider"></span>
+                    </label>
+                  </div>
+
+                  <div className="setting-item">
+                    <div className="setting-info">
+                      <div className="setting-header">
+                        <Lock size={18} />
+                        <span>Data Encryption</span>
+                      </div>
+                      <p>Encrypt sensitive data at rest</p>
+                    </div>
+                    <label className="toggle-switch">
+                      <input 
+                        type="checkbox" 
+                        checked={adminSettings.dataEncryption}
+                        onChange={() => handleToggle('admin', 'dataEncryption')}
+                      />
+                      <span className="toggle-slider"></span>
+                    </label>
+                  </div>
+
+                  <div className="setting-item">
+                    <div className="setting-info">
+                      <div className="setting-header">
+                        <Users size={18} />
+                        <span>User Consent Required</span>
+                      </div>
+                      <p>Require user consent for data processing</p>
+                    </div>
+                    <label className="toggle-switch">
+                      <input 
+                        type="checkbox" 
+                        checked={adminSettings.userConsent}
+                        onChange={() => handleToggle('admin', 'userConsent')}
+                      />
+                      <span className="toggle-slider"></span>
+                    </label>
+                  </div>
+
+                  <div className="setting-item">
+                    <label>Compliance Reports</label>
+                    <select 
+                      value={adminSettings.complianceReports || 'monthly'}
+                      onChange={(e) => handleInputChange('admin', 'complianceReports', e.target.value)}
+                      className="setting-input"
+                    >
+                      <option value="weekly">Weekly</option>
+                      <option value="monthly">Monthly</option>
+                      <option value="quarterly">Quarterly</option>
+                      <option value="annually">Annually</option>
+                    </select>
+                    <small>Frequency of compliance reports</small>
+                  </div>
+                </div>
+              </div>
+
+              {/* Advanced Features */}
+              <div className="settings-subsection">
+                <div className="subsection-header">
+                  <h3>Advanced Features</h3>
+                  <p>Configure advanced system features and experimental options</p>
+                </div>
+                <div className="settings-grid">
+                  <div className="setting-item">
+                    <div className="setting-info">
+                      <div className="setting-header">
+                        <Database size={18} />
+                        <span>Database Migration</span>
+                      </div>
+                      <p>Enable database migration tools</p>
+                    </div>
+                    <label className="toggle-switch">
+                      <input 
+                        type="checkbox" 
+                        checked={adminSettings.dbMigration}
+                        onChange={() => handleToggle('admin', 'dbMigration')}
+                      />
+                      <span className="toggle-slider"></span>
+                    </label>
+                  </div>
+
+                  <div className="setting-item">
+                    <div className="setting-info">
+                      <div className="setting-header">
+                        <RefreshCw size={18} />
+                        <span>Auto Updates</span>
+                      </div>
+                      <p>Automatically update system components</p>
+                    </div>
+                    <label className="toggle-switch">
+                      <input 
+                        type="checkbox" 
+                        checked={adminSettings.autoUpdates}
+                        onChange={() => handleToggle('admin', 'autoUpdates')}
+                      />
+                      <span className="toggle-slider"></span>
+                    </label>
+                  </div>
+
+                  <div className="setting-item">
+                    <div className="setting-info">
+                      <div className="setting-header">
+                        <Activity size={18} />
+                        <span>Beta Features</span>
+                      </div>
+                      <p>Enable experimental beta features</p>
+                    </div>
+                    <label className="toggle-switch">
+                      <input 
+                        type="checkbox" 
+                        checked={adminSettings.betaFeatures}
+                        onChange={() => handleToggle('admin', 'betaFeatures')}
+                      />
+                      <span className="toggle-slider"></span>
+                    </label>
+                  </div>
+
+                  <div className="setting-item">
+                    <div className="setting-info">
+                      <div className="setting-header">
+                        <AlertTriangle size={18} />
+                        <span>Safe Mode</span>
+                      </div>
+                      <p>Run system in safe mode for testing</p>
+                    </div>
+                    <label className="toggle-switch">
+                      <input 
+                        type="checkbox" 
+                        checked={adminSettings.safeMode}
+                        onChange={() => handleToggle('admin', 'safeMode')}
+                      />
+                      <span className="toggle-slider"></span>
+                    </label>
+                  </div>
+
+                  <div className="setting-item">
+                    <label>Environment</label>
+                    <select 
+                      value={adminSettings.environment || 'production'}
+                      onChange={(e) => handleInputChange('admin', 'environment', e.target.value)}
+                      className="setting-input"
+                    >
+                      <option value="development">Development</option>
+                      <option value="staging">Staging</option>
+                      <option value="production">Production</option>
+                    </select>
+                    <small>Current deployment environment</small>
+                  </div>
+
+                  <div className="setting-item">
+                    <label>Feature Flags</label>
+                    <textarea 
+                      value={adminSettings.featureFlags || ''}
+                      onChange={(e) => handleInputChange('admin', 'featureFlags', e.target.value)}
+                      className="setting-input" 
+                      rows={3}
+                      placeholder="new_dashboard, advanced_search"
+                    />
+                    <small>Comma-separated feature flags</small>
+                  </div>
                 </div>
               </div>
             </div>
