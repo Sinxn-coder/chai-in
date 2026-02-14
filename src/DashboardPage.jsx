@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { 
   Users, 
   MapPin, 
@@ -28,7 +28,9 @@ import {
   ArrowUp,
   ArrowDown,
   MoreVertical,
-  AlertCircle
+  AlertCircle,
+  LineChart,
+  AreaChart
 } from 'lucide-react';
 
 export default function DashboardPage() {
@@ -187,6 +189,184 @@ export default function DashboardPage() {
   const handleSpotClick = (spot) => {
     console.log(`Spot clicked:`, spot);
     // Add functionality for spot interactions
+  };
+
+  // Chart rendering functions
+  const renderLineChart = (data, color, label) => {
+    const maxValue = Math.max(...data);
+    const points = data.map((value, index) => {
+      const x = (index / (data.length - 1)) * 100;
+      const y = 100 - (value / maxValue) * 80;
+      return `${x},${y}`;
+    }).join(' ');
+
+    return (
+      <div className="line-chart">
+        <svg viewBox="0 0 100 100" className="chart-svg">
+          <polyline
+            points={points}
+            fill="none"
+            stroke={color}
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          {data.map((value, index) => {
+            const x = (index / (data.length - 1)) * 100;
+            const y = 100 - (value / maxValue) * 80;
+            return (
+              <circle
+                key={index}
+                cx={x}
+                cy={y}
+                r="3"
+                fill={color}
+                className="chart-point"
+              />
+            );
+          })}
+        </svg>
+        <div className="chart-label">{label}</div>
+      </div>
+    );
+  };
+
+  const renderAreaChart = (data, color, label) => {
+    const maxValue = Math.max(...data);
+    const points = data.map((value, index) => {
+      const x = (index / (data.length - 1)) * 100;
+      const y = 100 - (value / maxValue) * 80;
+      return `${x},${y}`;
+    }).join(' ');
+
+    const areaPoints = `${points} 100,0`;
+
+    return (
+      <div className="area-chart">
+        <svg viewBox="0 0 100 100" className="chart-svg">
+          <defs>
+            <linearGradient id={`gradient-${label}`} x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor={color} stopOpacity="0.3" />
+              <stop offset="100%" stopColor={color} stopOpacity="0.1" />
+            </linearGradient>
+          </defs>
+          <polygon
+            points={areaPoints}
+            fill={`url(#gradient-${label})`}
+            stroke="none"
+          />
+          <polyline
+            points={points}
+            fill="none"
+            stroke={color}
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          {data.map((value, index) => {
+            const x = (index / (data.length - 1)) * 100;
+            const y = 100 - (value / maxValue) * 80;
+            return (
+              <circle
+                key={index}
+                cx={x}
+                cy={y}
+                r="3"
+                fill={color}
+                className="chart-point"
+              />
+            );
+          })}
+        </svg>
+        <div className="chart-label">{label}</div>
+      </div>
+    );
+  };
+
+  const renderBarChart = (data, color, label) => {
+    const maxValue = Math.max(...data);
+    
+    return (
+      <div className="bar-chart">
+        <div className="chart-bars-container">
+          {data.map((value, index) => (
+            <div key={index} className="chart-bar-wrapper">
+              <div 
+                className="chart-bar-fill" 
+                style={{ 
+                  height: `${(value / maxValue) * 100}%`,
+                  backgroundColor: color 
+                }}
+              >
+                <div className="chart-bar-value">{value}</div>
+              </div>
+              <div className="chart-bar-label">{index + 1}</div>
+            </div>
+          ))}
+        </div>
+        <div className="chart-label">{label}</div>
+      </div>
+    );
+  };
+
+  const renderPieChart = (data, label) => {
+    const total = data.reduce((sum, item) => sum + item.value, 0);
+    let currentAngle = 0;
+    
+    return (
+      <div className="pie-chart">
+        <svg viewBox="0 0 100 100" className="chart-svg">
+          {data.map((item, index) => {
+            const percentage = (item.value / total) * 100;
+            const angle = (percentage / 100) * 360;
+            const startAngle = currentAngle;
+            const endAngle = currentAngle + angle;
+            
+            const x1 = 50 + 40 * Math.cos((startAngle - 90) * Math.PI / 180);
+            const y1 = 50 + 40 * Math.sin((startAngle - 90) * Math.PI / 180);
+            const x2 = 50 + 40 * Math.cos((endAngle - 90) * Math.PI / 180);
+            const y2 = 50 + 40 * Math.sin((endAngle - 90) * Math.PI / 180);
+            
+            const largeArcFlag = angle > 180 ? 1 : 0;
+            
+            currentAngle = endAngle;
+            
+            return (
+              <g key={index}>
+                <path
+                  d={`M ${x1} ${y1} A 40 40 0 ${largeArcFlag} 1 ${x2} ${y2} Z`}
+                  fill={item.color}
+                  stroke="white"
+                  strokeWidth="2"
+                  className="pie-slice"
+                />
+                <text
+                  x={50 + 25 * Math.cos(((startAngle + endAngle) / 2 - 90) * Math.PI / 180)}
+                  y={50 + 25 * Math.sin(((startAngle + endAngle) / 2 - 90) * Math.PI / 180)}
+                  textAnchor="middle"
+                  dominantBaseline="middle"
+                  fill="white"
+                  fontSize="12"
+                  fontWeight="600"
+                >
+                  {`${Math.round(percentage)}%`}
+                </text>
+              </g>
+            );
+          })}
+        </svg>
+        <div className="pie-legend">
+          {data.map((item, index) => (
+            <div key={index} className="legend-item">
+              <div className="legend-color" style={{ backgroundColor: item.color }}></div>
+              <span className="legend-text">{item.label}</span>
+              <span className="legend-value">{item.value}</span>
+            </div>
+          ))}
+        </div>
+        <div className="chart-label">{label}</div>
+      </div>
+    );
   };
 
   const getActivityIcon = (type) => {
@@ -482,80 +662,48 @@ export default function DashboardPage() {
             <div className="main-chart">
               {activeChartTab === 'growth' && (
                 <div className="chart-content growth-chart">
-                  <div className="chart-legend">
-                    <div className="legend-item">
-                      <div className="legend-color users"></div>
-                      <span>Users</span>
-                    </div>
-                    <div className="legend-item">
-                      <div className="legend-color spots"></div>
-                      <span>Spots</span>
-                    </div>
-                    <div className="legend-item">
-                      <div className="legend-color reviews"></div>
-                      <span>Reviews</span>
-                    </div>
-                    <div className="legend-item">
-                      <div className="legend-color revenue"></div>
-                      <span>Revenue</span>
-                    </div>
-                  </div>
-                  
-                  <div className="chart-visualization">
-                    <div className="chart-grid">
-                      <div className="chart-y-axis">
-                        {[100, 80, 60, 40, 20, 0].map((value) => (
-                          <div key={value} className="y-label">{value}</div>
-                        ))}
-                      </div>
-                      <div className="chart-content">
-                        <div className="chart-bars">
-                          {chartData.users.map((value, index) => (
-                            <div key={index} className="chart-column">
-                              <div className="bar-group">
-                                <div className="bar users" style={{ height: `${value * 0.8}px` }}></div>
-                                <div className="bar spots" style={{ height: `${chartData.spots[index] * 0.4}px` }}></div>
-                                <div className="bar reviews" style={{ height: `${chartData.reviews[index] * 0.6}px` }}></div>
-                              </div>
-                              <div className="x-label">Day {index + 1}</div>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
+                  <div className="charts-grid">
+                    {renderLineChart(chartData.users, '#3b82f6', 'Users')}
+                    {renderAreaChart(chartData.spots, '#10b981', 'Spots')}
+                    {renderBarChart(chartData.reviews, '#f59e0b', 'Reviews')}
                   </div>
                 </div>
               )}
 
               {activeChartTab === 'activity' && (
                 <div className="chart-content activity-chart">
-                  <div className="activity-grid">
-                    <div className="activity-section">
+                  <div className="activity-charts">
+                    <div className="chart-section">
                       <h4>Daily Active Users</h4>
-                      <div className="activity-bars">
-                        {userActivityData.daily.map((data, index) => (
-                          <div key={index} className="activity-day" onClick={() => handleActivityClick('daily', data)}>
-                            <div className="day-label">{data.day}</div>
-                            <div className="day-stats">
-                              <div className="stat-bar new-users" style={{ height: `${data.new * 2}px` }} title="New Users"></div>
-                              <div className="stat-bar returning-users" style={{ height: `${data.returning * 0.8}px` }} title="Returning Users"></div>
-                            </div>
-                            <div className="day-total">{data.active}</div>
-                          </div>
-                        ))}
+                      {renderAreaChart(
+                        userActivityData.daily.map(d => d.active), 
+                        '#8b5cf6', 
+                        'Daily Active Users'
+                      )}
+                      <div className="activity-breakdown">
+                        <div className="breakdown-chart">
+                          {renderBarChart(
+                            userActivityData.daily.map(d => d.new),
+                            '#3b82f6',
+                            'New Users'
+                          )}
+                        </div>
+                        <div className="breakdown-chart">
+                          {renderBarChart(
+                            userActivityData.daily.map(d => d.returning),
+                            '#10b981',
+                            'Returning Users'
+                          )}
+                        </div>
                       </div>
                     </div>
-                    <div className="activity-section">
+                    <div className="chart-section">
                       <h4>Peak Activity Hours</h4>
-                      <div className="hourly-activity">
-                        {userActivityData.hourly.map((data, index) => (
-                          <div key={index} className="hour-item" onClick={() => handleActivityClick('hourly', data)}>
-                            <div className="hour-label">{data.hour}</div>
-                            <div className="hour-bar" style={{ height: `${data.users * 0.8}px` }}></div>
-                            <div className="hour-users">{data.users}</div>
-                          </div>
-                        ))}
-                      </div>
+                      {renderLineChart(
+                        userActivityData.hourly.map(h => h.users),
+                        '#f59e0b',
+                        'Hourly Activity'
+                      )}
                     </div>
                   </div>
                 </div>
@@ -563,46 +711,23 @@ export default function DashboardPage() {
 
               {activeChartTab === 'revenue' && (
                 <div className="chart-content revenue-chart">
-                  <div className="revenue-grid">
-                    <div className="revenue-section">
+                  <div className="revenue-charts">
+                    <div className="chart-section">
                       <h4>Monthly Revenue Breakdown</h4>
-                      <div className="revenue-bars">
-                        {revenueData.monthly.map((data, index) => (
-                          <div key={index} className="revenue-month" onClick={() => handleRevenueClick('monthly', data)}>
-                            <div className="month-label">{data.month}</div>
-                            <div className="revenue-bar" style={{ height: `${data.revenue * 2}px` }}>
-                              <div className="revenue-amount">${data.revenue.toLocaleString()}</div>
-                            </div>
-                            <div className="month-stats">
-                              <div className="mini-stat">
-                                <span className="mini-label">Spots</span>
-                                <span className="mini-value">{data.spots}</span>
-                              </div>
-                              <div className="mini-stat">
-                                <span className="mini-label">Reviews</span>
-                                <span className="mini-value">{data.reviews}</span>
-                              </div>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
+                      {renderAreaChart(
+                        revenueData.monthly.map(m => m.revenue),
+                        '#10b981',
+                        'Monthly Revenue'
+                      )}
                     </div>
-                    <div className="revenue-section">
+                    <div className="chart-section">
                       <h4>Revenue Sources</h4>
-                      <div className="revenue-sources">
-                        {revenueData.sources.map((source, index) => (
-                          <div key={index} className="source-item" onClick={() => handleRevenueClick('source', source)}>
-                            <div className="source-info">
-                              <h5>{source.source}</h5>
-                              <div className="source-amount">${source.amount.toLocaleString()}</div>
-                              <div className="source-percentage">{source.percentage}%</div>
-                            </div>
-                            <div className="source-bar">
-                              <div className="source-fill" style={{ width: `${source.percentage}%` }}></div>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
+                      {renderPieChart([
+                        { label: 'Spot Listings', value: 45678, color: '#3b82f6' },
+                        { label: 'Premium Features', value: 12345, color: '#8b5cf6' },
+                        { label: 'Advertising', value: 8901, color: '#f59e0b' },
+                        { label: 'Partnerships', value: 3456, color: '#10b981' }
+                      ], 'Revenue Sources')}
                     </div>
                   </div>
                 </div>
@@ -610,45 +735,56 @@ export default function DashboardPage() {
 
               {activeChartTab === 'spots' && (
                 <div className="chart-content spots-chart">
-                  <div className="spots-performance-table">
-                    <div className="table-header">
-                      <div className="header-cell">Spot Name</div>
-                      <div className="header-cell">Category</div>
-                      <div className="header-cell">Rating</div>
-                      <div className="header-cell">Reviews</div>
-                      <div className="header-cell">Views</div>
-                      <div className="header-cell">Bookings</div>
-                      <div className="header-cell">Revenue</div>
-                      <div className="header-cell">Trend</div>
+                  <div className="spot-performance-charts">
+                    <div className="chart-section">
+                      <h4>Spot Ratings Distribution</h4>
+                      {renderBarChart(
+                        spotPerformanceData.map(s => s.rating * 100),
+                        '#f59e0b',
+                        'Rating Scores'
+                      )}
                     </div>
-                    {spotPerformanceData.map((spot, index) => (
-                      <div key={index} className="table-row" onClick={() => handleSpotClick(spot)}>
-                        <div className="cell spot-name">
-                          <div className="spot-info">
+                    <div className="chart-section">
+                      <h4>Revenue by Category</h4>
+                      {renderPieChart([
+                        { label: 'Restaurant', value: 31250, color: '#3b82f6' },
+                        { label: 'Fine Dining', value: 18900, color: '#8b5cf6' },
+                        { label: 'Cafe', value: 8900, color: '#10b981' },
+                        { label: 'Bar', value: 6780, color: '#f59e0b' }
+                      ], 'Revenue by Category')}
+                    </div>
+                    <div className="performance-table">
+                      <div className="table-header">
+                        <div className="header-cell">Spot Name</div>
+                        <div className="header-cell">Rating</div>
+                        <div className="header-cell">Reviews</div>
+                        <div className="header-cell">Revenue</div>
+                        <div className="header-cell">Trend</div>
+                      </div>
+                      {spotPerformanceData.map((spot, index) => (
+                        <div key={index} className="table-row" onClick={() => handleSpotClick(spot)}>
+                          <div className="cell spot-name">
                             <h5>{spot.name}</h5>
                             <span className="category-tag">{spot.category}</span>
                           </div>
-                        </div>
-                        <div className="cell">{spot.category}</div>
-                        <div className="cell rating-cell">
-                          <div className="rating-display">
-                            <Star className="w-4 h-4 text-yellow-500 fill-current" />
-                            <span>{spot.rating}</span>
+                          <div className="cell rating-cell">
+                            <div className="rating-display">
+                              <Star className="w-4 h-4 text-yellow-500 fill-current" />
+                              <span>{spot.rating}</span>
+                            </div>
+                          </div>
+                          <div className="cell">{spot.reviews}</div>
+                          <div className="cell revenue-cell">${spot.revenue.toLocaleString()}</div>
+                          <div className="cell trend-cell">
+                            <div className={`trend-indicator ${spot.trend}`}>
+                              {spot.trend === 'up' && <TrendingUp className="w-4 h-4 text-green-500" />}
+                              {spot.trend === 'down' && <TrendingDown className="w-4 h-4 text-red-500" />}
+                              {spot.trend === 'stable' && <Activity className="w-4 h-4 text-blue-500" />}
+                            </div>
                           </div>
                         </div>
-                        <div className="cell">{spot.reviews}</div>
-                        <div className="cell">{spot.views.toLocaleString()}</div>
-                        <div className="cell">{spot.bookings}</div>
-                        <div className="cell revenue-cell">${spot.revenue.toLocaleString()}</div>
-                        <div className="cell trend-cell">
-                          <div className={`trend-indicator ${spot.trend}`}>
-                            {spot.trend === 'up' && <TrendingUp className="w-4 h-4 text-green-500" />}
-                            {spot.trend === 'down' && <TrendingDown className="w-4 h-4 text-red-500" />}
-                            {spot.trend === 'stable' && <Activity className="w-4 h-4 text-blue-500" />}
-                          </div>
-                        </div>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
                   </div>
                 </div>
               )}
