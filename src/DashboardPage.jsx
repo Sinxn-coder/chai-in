@@ -418,21 +418,21 @@ const DashboardPage = () => {
               </div>
               <div className="settings-content">
                 <div className="setting-item">
-                  <label>Email Notifications</label>
+                  <label>SET fully working</label>
                   <div className="toggle-switch">
                     <input type="checkbox" defaultChecked />
                     <span className="toggle-slider"></span>
                   </div>
                 </div>
                 <div className="setting-item">
-                  <label>Push Notifications</label>
+                  <label>Set under Construction</label>
                   <div className="toggle-switch">
                     <input type="checkbox" defaultChecked />
                     <span className="toggle-slider"></span>
                   </div>
                 </div>
                 <div className="setting-item">
-                  <label>Weekly Reports</label>
+                  <label>Set over users</label>
                   <div className="toggle-switch">
                     <input type="checkbox" defaultChecked />
                     <span className="toggle-slider"></span>
