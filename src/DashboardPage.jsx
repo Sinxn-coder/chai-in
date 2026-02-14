@@ -518,51 +518,180 @@ export default function DashboardPage() {
               </select>
               <button className="chart-btn">
                 <Download className="w-4 h-4" />
-                Export Report
+                Export
               </button>
             </div>
           </div>
+        </div>
+      </div>
 
-          {/* Key Metrics Row */}
-          <div className="key-metrics">
-            <div className="metric-card">
-              <div className="metric-header">
-                <div className="metric-icon user-metric">
-                  <Users className="w-5 h-5" />
+      {/* Performance Insights */}
+      <div className="performance-insights">
+        <div className="insights-header">
+          <h4>Key Insights</h4>
+          <p>AI-powered analysis of your performance data</p>
+        </div>
+        <div className="insights-grid">
+          <div className="insight-card">
+            <div className="insight-icon positive">
+              <TrendingUp className="w-5 h-5" />
+            </div>
+            <div className="insight-content">
+              <h5>User Growth Accelerating</h5>
+              <p>18.2% increase in active users this month, driven by improved engagement features</p>
+            </div>
+          </div>
+          <div className="insight-card">
+            <div className="insight-icon warning">
+              <AlertTriangle className="w-5 h-5" />
+            </div>
+            <div className="insight-content">
+              <h5>Spot Retention Needs Attention</h5>
+              <p>12% drop in returning users suggests need for better spot discovery features</p>
+            </div>
+          </div>
+          <div className="insight-card">
+            <div className="insight-icon info">
+              <Target className="w-5 h-5" />
+            </div>
+            <div className="insight-content">
+              <h5>Revenue Opportunities</h5>
+              <p>Premium features showing 32% growth, consider expanding subscription tiers</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Content Grid */}
+      <div className="content-grid">
+        {/* Recent Activity */}
+        <div className="content-card">
+          <div className="card-header">
+            <h3>Recent Activity</h3>
+            <button className="card-action">
+              <MoreVertical className="w-4 h-4" />
+            </button>
+          </div>
+          <div className="activity-list">
+            {recentActivity.map((activity) => (
+              <div key={activity.id} className="activity-item">
+                <div className="activity-avatar">
+                  <img src={activity.avatar} alt={activity.name} />
                 </div>
-                <div className="metric-change positive">
-                  <TrendingUp className="w-4 h-4" />
-                  <span>18.2%</span>
-                </div>
-              </div>
-              <div className="metric-body">
-                <h4 className="metric-value">2,847</h4>
-                <p className="metric-label">New Users</p>
-              </div>
-              <div className="metric-footer">
-                <div className="metric-sparkline">
-                  <div className="sparkline-data">
-                    {[45, 52, 48, 58, 62, 55, 68].map((value, index) => (
-                      <div key={index} className="sparkline-bar" style={{ height: `${value * 1.5}px` }}></div>
-                    ))}
+                <div className="activity-details">
+                  <div className="activity-text">
+                    <strong>{activity.name}</strong> {activity.action}
                   </div>
+                  <div className="activity-time">{activity.time}</div>
                 </div>
-                <span className="metric-period">vs last period</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Quick Stats */}
+        <div className="content-card">
+          <div className="card-header">
+            <h3>Quick Stats</h3>
+            <button className="card-action">
+              <MoreVertical className="w-4 h-4" />
+            </button>
+          </div>
+          <div className="stats-grid">
+            <div className="stat-item">
+              <div className="stat-icon">
+                <Users className="w-5 h-5" />
+              </div>
+              <div className="stat-info">
+                <div className="stat-value">1,234</div>
+                <div className="stat-label">Active Users</div>
               </div>
             </div>
+            <div className="stat-item">
+              <div className="stat-icon">
+                <MapPin className="w-5 h-5" />
+              </div>
+              <div className="stat-info">
+                <div className="stat-value">456</div>
+                <div className="stat-label">Total Spots</div>
+              </div>
+            </div>
+            <div className="stat-item">
+              <div className="stat-icon">
+                <Star className="w-5 h-5" />
+              </div>
+              <div className="stat-info">
+                <div className="stat-value">2,789</div>
+                <div className="stat-label">Reviews</div>
+              </div>
+            </div>
+            <div className="stat-item">
+              <div className="stat-icon">
+                <TrendingUp className="w-5 h-5" />
+              </div>
+              <div className="stat-info">
+                <div className="stat-value">892</div>
+                <div className="stat-label">Growth Rate</div>
+              </div>
+            </div>
+          </div>
+        </div>
 
-            <div className="metric-card">
-              <div className="metric-header">
-                <div className="metric-icon engagement-metric">
-                  <Activity className="w-5 h-5" />
+        {/* Top Spots */}
+        <div className="content-card">
+          <div className="card-header">
+            <h3>Top Spots</h3>
+            <button className="card-action">
+              <MoreVertical className="w-4 h-4" />
+            </button>
+          </div>
+          <div className="spots-list">
+            {topSpots.map((spot) => (
+              <div key={spot.id} className="spot-item">
+                <div className="spot-image">
+                  <img src={spot.image} alt={spot.name} />
                 </div>
-                <div className="metric-change positive">
-                  <TrendingUp className="w-4 h-4" />
-                  <span>24.7%</span>
+                <div className="spot-info">
+                  <div className="spot-name">{spot.name}</div>
+                  <div className="spot-category">{spot.category}</div>
+                </div>
+                <div className="spot-rating">
+                  <Star className="w-4 h-4 text-yellow-500 fill-current" />
+                  <span>{spot.rating}</span>
                 </div>
               </div>
-              <div className="metric-body">
-                <h4 className="metric-value">68.4%</h4>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Quick Actions */}
+      <div className="quick-actions">
+        <div className="action-card">
+          <div className="action-icon">
+            <Plus className="w-6 h-6" />
+          </div>
+          <h4>Add New Spot</h4>
+          <p>List a new food spot on the platform</p>
+        </div>
+        <div className="action-card">
+          <div className="action-icon">
+            <BarChart className="w-6 h-6" />
+          </div>
+          <h4>View Analytics</h4>
+          <p>Detailed performance metrics and insights</p>
+        </div>
+        <div className="action-card">
+          <div className="action-icon">
+            <Settings className="w-6 h-6" />
+          </div>
+          <h4>Settings</h4>
+          <p>Configure platform</p>
+        </div>
+      </div>
+    </div>
+  );
+};
                 <p className="metric-label">Engagement Rate</p>
               </div>
               <div className="metric-footer">
@@ -1034,62 +1163,21 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          {/* Performance Insights */}
-          <div className="performance-insights">
-            <div className="insights-header">
-              <h4>Key Insights</h4>
-              <p>AI-powered analysis of your performance data</p>
-            </div>
-            <div className="insights-grid">
-              <div className="insight-card positive">
-                <div className="insight-icon">
-                  <Zap className="w-5 h-5" />
-                </div>
-                <div className="insight-content">
-                  <h5>User Growth Accelerating</h5>
-                  <p>User acquisition increased by 32% this week, driven by successful marketing campaigns</p>
-                </div>
+          {/* Content Grid */}
+          <div className="content-grid">
+            {/* Recent Activity */}
+            <div className="content-card">
+              <div className="card-header">
+                <h3>Recent Activity</h3>
+                <button className="card-action">
+                  <MoreVertical className="w-4 h-4" />
+                </button>
               </div>
-              
-              <div className="insight-card warning">
-                <div className="insight-icon">
-                  <AlertCircle className="w-5 h-5" />
-                </div>
-                <div className="insight-content">
-                  <h5>Retention Rate Declining</h5>
-                 <p>User retention dropped 3.2% - consider improving onboarding experience</p>
-                </div>
-              </div>
-              
-              <div className="insight-card positive">
-                <div className="insight-icon">
-                  <Award className="w-5 h-5" />
-                </div>
-                <div className="insight-content">
-                  <h5>Revenue Milestone Achieved</h5>
-                  <p>Monthly revenue exceeded targets by 24% with strong spot performance</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Content Grid */}
-      <div className="content-grid">
-        {/* Recent Activity */}
-        <div className="content-card">
-          <div className="card-header">
-            <h3>Recent Activity</h3>
-            <button className="card-action">
-              <MoreVertical className="w-4 h-4" />
-            </button>
-          </div>
-          <div className="activity-list">
-            {recentActivity.map((activity) => (
-              <div key={activity.id} className="activity-item">
-                <div className="activity-avatar">
-                  <img src={activity.avatar} alt={activity.name} />
+              <div className="activity-list">
+                {recentActivity.map((activity) => (
+                  <div key={activity.id} className="activity-item">
+                    <div className="activity-avatar">
+                      <img src={activity.avatar} alt={activity.name} />
                 </div>
                 <div className="activity-content">
                   <p className="activity-text">
@@ -1195,4 +1283,4 @@ export default function DashboardPage() {
       </div>
     </div>
   );
-}
+};
