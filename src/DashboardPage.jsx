@@ -382,57 +382,26 @@ const DashboardPage = () => {
           <div className="settings-grid">
             <div className="settings-card">
               <div className="settings-header">
-                <SettingsIcon className="w-6 h-6 text-gray-500" />
-                <h3>General Settings</h3>
+                <SettingsIcon className="w-6 h-6 text-green-500" />
+                <h3>SET fully working</h3>
               </div>
               <div className="settings-content">
                 <div className="setting-item">
-                  <label>Platform Name</label>
-                  <input type="text" defaultValue="FoodSpot Platform" />
-                </div>
-                <div className="setting-item">
-                  <label>Time Zone</label>
-                  <select defaultValue="UTC">
-                    <option>UTC</option>
-                    <option>EST</option>
-                    <option>PST</option>
-                    <option>CET</option>
-                  </select>
-                </div>
-                <div className="setting-item">
-                  <label>Language</label>
-                  <select defaultValue="English">
-                    <option>English</option>
-                    <option>Spanish</option>
-                    <option>French</option>
-                    <option>German</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-
-            <div className="settings-card">
-              <div className="settings-header">
-                <Bell className="w-6 h-6 text-blue-500" />
-                <h3>Notifications</h3>
-              </div>
-              <div className="settings-content">
-                <div className="setting-item">
-                  <label>SET fully working</label>
+                  <label>Enable Full System Operation</label>
                   <div className="toggle-switch">
                     <input type="checkbox" defaultChecked />
                     <span className="toggle-slider"></span>
                   </div>
                 </div>
                 <div className="setting-item">
-                  <label>Set under Construction</label>
+                  <label>Activate All Features</label>
                   <div className="toggle-switch">
                     <input type="checkbox" defaultChecked />
                     <span className="toggle-slider"></span>
                   </div>
                 </div>
                 <div className="setting-item">
-                  <label>Set over users</label>
+                  <label>Enable Complete Functionality</label>
                   <div className="toggle-switch">
                     <input type="checkbox" defaultChecked />
                     <span className="toggle-slider"></span>
@@ -443,29 +412,58 @@ const DashboardPage = () => {
 
             <div className="settings-card">
               <div className="settings-header">
-                <Users className="w-6 h-6 text-purple-500" />
-                <h3>User Management</h3>
+                <Activity className="w-6 h-6 text-orange-500" />
+                <h3>Set under Construction</h3>
               </div>
               <div className="settings-content">
                 <div className="setting-item">
-                  <label>Default User Role</label>
-                  <select defaultValue="User">
-                    <option>User</option>
-                    <option>Moderator</option>
-                    <option>Admin</option>
-                  </select>
-                </div>
-                <div className="setting-item">
-                  <label>Require Email Verification</label>
+                  <label>Enable Maintenance Mode</label>
                   <div className="toggle-switch">
-                    <input type="checkbox" defaultChecked />
+                    <input type="checkbox" />
                     <span className="toggle-slider"></span>
                   </div>
                 </div>
                 <div className="setting-item">
-                  <label>Allow User Registration</label>
+                  <label>Show Construction Notice</label>
                   <div className="toggle-switch">
-                    <input type="checkbox" defaultChecked />
+                    <input type="checkbox" />
+                    <span className="toggle-slider"></span>
+                  </div>
+                </div>
+                <div className="setting-item">
+                  <label>Limit User Access</label>
+                  <div className="toggle-switch">
+                    <input type="checkbox" />
+                    <span className="toggle-slider"></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="settings-card">
+              <div className="settings-header">
+                <Users className="w-6 h-6 text-blue-500" />
+                <h3>Set over users</h3>
+              </div>
+              <div className="settings-content">
+                <div className="setting-item">
+                  <label>Enable Admin Override</label>
+                  <div className="toggle-switch">
+                    <input type="checkbox" />
+                    <span className="toggle-slider"></span>
+                  </div>
+                </div>
+                <div className="setting-item">
+                  <label>Super User Access</label>
+                  <div className="toggle-switch">
+                    <input type="checkbox" />
+                    <span className="toggle-slider"></span>
+                  </div>
+                </div>
+                <div className="setting-item">
+                  <label>Override User Permissions</label>
+                  <div className="toggle-switch">
+                    <input type="checkbox" />
                     <span className="toggle-slider"></span>
                   </div>
                 </div>
