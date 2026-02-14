@@ -26,10 +26,9 @@ const DashboardPage = () => {
   // Quick actions data
   const quickActions = [
     { id: 2, title: 'View Analytics', description: 'Check detailed platform analytics', icon: BarChart, color: 'green', action: 'analytics' },
-    { id: 3, title: 'Manage Users', description: 'Administer user accounts and permissions', icon: UserPlus, color: 'purple', action: 'users' },
-    { id: 4, title: 'Generate Report', description: 'Create and download activity reports', icon: FileText, color: 'orange', action: 'report' },
-    { id: 5, title: 'System Settings', description: 'Configure platform preferences', icon: SettingsIcon, color: 'gray', action: 'settings' },
-    { id: 6, title: 'Import Data', description: 'Bulk import spots and users', icon: Activity, color: 'teal', action: 'import' }
+    { id: 3, title: 'Generate Report', description: 'Create and download activity reports', icon: FileText, color: 'orange', action: 'report' },
+    { id: 4, title: 'System Settings', description: 'Configure platform preferences', icon: SettingsIcon, color: 'gray', action: 'settings' },
+    { id: 5, title: 'Import Data', description: 'Bulk import spots and users', icon: Activity, color: 'teal', action: 'import' }
   ];
 
   const handleRefresh = () => {
@@ -43,9 +42,6 @@ const DashboardPage = () => {
     switch(action) {
       case 'analytics':
         console.log('Navigating to analytics...');
-        break;
-      case 'users':
-        console.log('Opening user management...');
         break;
       case 'report':
         console.log('Generating report...');
