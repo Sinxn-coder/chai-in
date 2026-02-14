@@ -1,198 +1,154 @@
 import React, { useState } from 'react';
 import { 
-  MessageSquare, 
   Users, 
-  Calendar, 
-  TrendingUp, 
-  Shield, 
-  Settings, 
-  FileText, 
   Heart, 
   MessageCircle, 
-  Flag, 
-  ThumbsUp, 
+  Bookmark, 
+  Search, 
+  Plus, 
+  MoreVertical, 
   Eye, 
-  BarChart3, 
-  Clock, 
-  MapPin, 
-  Star, 
-  Award, 
-  AlertTriangle,
+  Flag, 
+  Trash2, 
+  Edit, 
+  Filter,
+  TrendingUp,
+  Clock,
+  Image as ImageIcon,
+  BarChart3,
+  Shield,
+  Settings,
   CheckCircle,
   X,
-  Edit,
-  Trash2,
-  Plus,
-  Search,
-  Filter,
   Download,
   Upload
 } from 'lucide-react';
 import './CommunityPage.css';
 
 export default function CommunityPage() {
-  const [activeSection, setActiveSection] = useState('guidelines');
+  const [activeSection, setActiveSection] = useState('posts');
+  const [searchTerm, setSearchTerm] = useState('');
   const [savedSettings, setSavedSettings] = useState(false);
 
-  // Community Guidelines State
-  const [guidelines, setGuidelines] = useState({
-    communityRules: true,
-    postingGuidelines: true,
-    reviewPolicies: true,
-    spotSubmissionRules: true,
-    userConductPolicy: true,
-    moderationPolicy: true,
-    privacyGuidelines: true,
-    spamPolicy: true
-  });
-
-  // Discussions State
-  const [discussions, setDiscussions] = useState([
+  // Mock posts data matching Flutter app structure
+  const [posts, setPosts] = useState([
     {
       id: 1,
-      title: "Welcome to the Community!",
-      author: "Admin",
-      category: "Announcements",
-      replies: 45,
-      views: 1200,
-      lastActivity: "2 hours ago",
-      pinned: true,
-      status: "active"
+      userName: 'Sarah Johnson',
+      userPfp: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=1000&auto=format&fit=crop',
+      time: '2 hours ago',
+      content: 'Just discovered this amazing hidden gem downtown! The pasta was incredible and atmosphere was perfect. Highly recommend checking it out! 🍝',
+      images: [
+        'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?q=80&w=1000&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1000&q=80'
+      ],
+      currentImageIndex: 0,
+      likes: 42,
+      comments: 8,
+      isLiked: false,
+      isSaved: false,
+      status: 'active',
+      reports: 0
     },
     {
       id: 2,
-      title: "Best practices for spot reviews",
-      author: "John Doe",
-      category: "Tips & Tricks",
-      replies: 23,
-      views: 890,
-      lastActivity: "5 hours ago",
-      pinned: false,
-      status: "active"
+      userName: 'Mike Chen',
+      userPfp: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=1000&auto=format&fit=crop',
+      time: '4 hours ago',
+      content: 'Coffee lovers, you need to try this new cafe! Their specialty latte is life-changing. Plus the vibes are just perfect for working or catching up with friends. ☕',
+      images: [
+        'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?q=80&w=1000&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1000&q=80'
+      ],
+      currentImageIndex: 0,
+      likes: 28,
+      comments: 12,
+      isLiked: false,
+      isSaved: false,
+      status: 'active',
+      reports: 0
     },
     {
       id: 3,
-      title: "Community meetup - NYC",
-      author: "Jane Smith",
-      category: "Events",
-      replies: 67,
-      views: 2100,
-      lastActivity: "1 day ago",
-      pinned: true,
-      status: "active"
+      userName: 'Emma Wilson',
+      userPfp: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=1000&auto=format&fit=crop',
+      time: '6 hours ago',
+      content: 'Best brunch spot I\'ve found this month! The avocado toast was perfection and they have most beautiful outdoor seating. Perfect for weekend vibes! 🥑',
+      images: [
+        'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1000&q=80',
+        'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?q=80&w=1000&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?q=80&w=1000&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?q=80&w=1000&auto=format&fit=crop'
+      ],
+      currentImageIndex: 0,
+      likes: 35,
+      comments: 6,
+      isLiked: false,
+      isSaved: false,
+      status: 'active',
+      reports: 0
     }
   ]);
-
-  // Events State
-  const [events, setEvents] = useState([
-    {
-      id: 1,
-      title: "Community Coffee Meetup",
-      date: "2024-03-15",
-      time: "3:00 PM",
-      location: "Central Perk Cafe",
-      attendees: 24,
-      maxAttendees: 50,
-      status: "upcoming",
-      description: "Monthly community meetup to discuss new spots and share experiences"
-    },
-    {
-      id: 2,
-      title: "Photography Walk",
-      date: "2024-03-20",
-      time: "10:00 AM",
-      location: "Riverside Park",
-      attendees: 15,
-      maxAttendees: 30,
-      status: "upcoming",
-      description: "Photography walk to capture and review new spots"
-    }
-  ]);
-
-  // Moderation State
-  const [moderation, setModeration] = useState({
-    autoModeration: true,
-    profanityFilter: true,
-    spamDetection: true,
-    requireApproval: false,
-    reportThreshold: 3,
-    banDuration: 7,
-    warningSystem: true
-  });
-
-  // Community Analytics State
-  const [analytics, setAnalytics] = useState({
-    totalMembers: 2847,
-    activeUsers: 892,
-    newMembersThisMonth: 156,
-    totalDiscussions: 1234,
-    totalEvents: 45,
-    engagementRate: 78,
-    topContributors: [
-      { name: "John Doe", contributions: 234, badge: "gold" },
-      { name: "Jane Smith", contributions: 189, badge: "silver" },
-      { name: "Mike Johnson", contributions: 156, badge: "bronze" }
-    ]
-  });
 
   const sections = [
-    { id: 'guidelines', name: 'Guidelines', icon: FileText },
-    { id: 'discussions', name: 'Discussions', icon: MessageSquare },
-    { id: 'events', name: 'Events', icon: Calendar },
-    { id: 'moderation', name: 'Moderation', icon: Shield },
+    { id: 'posts', name: 'Posts', icon: ImageIcon },
+    { id: 'users', name: 'Users', icon: Users },
     { id: 'analytics', name: 'Analytics', icon: BarChart3 },
+    { id: 'moderation', name: 'Moderation', icon: Shield },
     { id: 'settings', name: 'Settings', icon: Settings }
   ];
 
-  const handleToggle = (section, field) => {
-    switch (section) {
-      case 'guidelines':
-        setGuidelines(prev => ({ ...prev, [field]: !prev[field] }));
-        break;
-      case 'moderation':
-        setModeration(prev => ({ ...prev, [field]: !prev[field] }));
-        break;
-      default:
-        break;
-    }
+  const handleToggleLike = (postId) => {
+    setPosts(prev => prev.map(post => 
+      post.id === postId 
+        ? { ...post, isLiked: !post.isLiked, likes: post.isLiked ? post.likes - 1 : post.likes + 1 }
+        : post
+    ));
   };
 
-  const handleSaveSettings = () => {
-    setSavedSettings(true);
-    setTimeout(() => setSavedSettings(false), 2000);
+  const handleToggleSave = (postId) => {
+    setPosts(prev => prev.map(post => 
+      post.id === postId 
+        ? { ...post, isSaved: !post.isSaved }
+        : post
+    ));
+  };
+
+  const handleDeletePost = (postId) => {
+    setPosts(prev => prev.filter(post => post.id !== postId));
+  };
+
+  const handleReportPost = (postId) => {
+    setPosts(prev => prev.map(post => 
+      post.id === postId 
+        ? { ...post, reports: post.reports + 1 }
+        : post
+    ));
   };
 
   const getStatusBadge = (status) => {
     switch (status) {
       case 'active':
         return <span className="status-badge active">Active</span>;
-      case 'upcoming':
-        return <span className="status-badge upcoming">Upcoming</span>;
-      case 'pinned':
-        return <span className="status-badge pinned">Pinned</span>;
+      case 'flagged':
+        return <span className="status-badge flagged">Flagged</span>;
+      case 'removed':
+        return <span className="status-badge removed">Removed</span>;
       default:
         return <span className="status-badge">Unknown</span>;
     }
   };
 
-  const getBadgeIcon = (badge) => {
-    switch (badge) {
-      case 'gold':
-        return <Award className="badge-icon gold" />;
-      case 'silver':
-        return <Award className="badge-icon silver" />;
-      case 'bronze':
-        return <Award className="badge-icon bronze" />;
-      default:
-        return <Award className="badge-icon" />;
-    }
-  };
+  const filteredPosts = posts.filter(post => 
+    post.content.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    post.userName.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <div className="community-page">
       <div className="community-header">
         <h1>Community Management</h1>
-        <p>Manage community guidelines, discussions, events, and user interactions</p>
+        <p>Manage community posts, users, and engagement</p>
       </div>
 
       <div className="community-layout">
@@ -200,7 +156,7 @@ export default function CommunityPage() {
         <div className="community-sidebar">
           <div className="sidebar-header">
             <h3>Community</h3>
-            <p>Choose a section</p>
+            <p>Manage social feed</p>
           </div>
           <div className="nav-tabs">
             {sections.map(section => {
@@ -221,366 +177,170 @@ export default function CommunityPage() {
 
         {/* Content Area */}
         <div className="community-content">
-          {activeSection === 'guidelines' && (
+          {activeSection === 'posts' && (
             <div className="content-section">
               <div className="section-header">
-                <h2>Community Guidelines</h2>
-                <p>Configure community rules and content policies</p>
+                <h2>Community Posts</h2>
+                <p>Manage user-generated content and interactions</p>
               </div>
 
-              <div className="guidelines-grid">
-                <div className="guideline-item">
-                  <div className="guideline-info">
-                    <div className="guideline-header">
-                      <FileText size={18} />
-                      <span>Community Rules</span>
-                    </div>
-                    <p>General community conduct and behavior guidelines</p>
-                  </div>
-                  <label className="toggle-switch">
-                    <input 
-                      type="checkbox" 
-                      checked={guidelines.communityRules}
-                      onChange={() => handleToggle('guidelines', 'communityRules')}
-                    />
-                    <span className="toggle-slider"></span>
-                  </label>
+              {/* Search and Filter Bar */}
+              <div className="posts-toolbar">
+                <div className="search-box">
+                  <Search size={18} />
+                  <input 
+                    type="text" 
+                    placeholder="Search posts..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  />
                 </div>
+                <div className="filter-dropdown">
+                  <Filter size={18} />
+                  <select>
+                    <option>All Posts</option>
+                    <option>Most Liked</option>
+                    <option>Most Commented</option>
+                    <option>Recent</option>
+                  </select>
+                </div>
+                <button className="btn-primary">
+                  <Plus size={18} />
+                  Create Post
+                </button>
+              </div>
 
-                <div className="guideline-item">
-                  <div className="guideline-info">
-                    <div className="guideline-header">
-                      <Star size={18} />
-                      <span>Posting Guidelines</span>
+              {/* Posts Feed */}
+              <div className="posts-feed">
+                {filteredPosts.map(post => (
+                  <div key={post.id} className="post-card">
+                    {/* Post Header */}
+                    <div className="post-header">
+                      <div className="user-info">
+                        <img src={post.userPfp} alt={post.userName} className="user-pfp" />
+                        <div className="user-details">
+                          <div className="user-name">{post.userName}</div>
+                          <div className="post-time">{post.time}</div>
+                        </div>
+                      </div>
+                      <div className="post-actions">
+                        <button className="btn-icon">
+                          <MoreVertical size={16} />
+                        </button>
+                      </div>
                     </div>
-                    <p>Rules for posting reviews and spot submissions</p>
-                  </div>
-                  <label className="toggle-switch">
-                    <input 
-                      type="checkbox" 
-                      checked={guidelines.postingGuidelines}
-                      onChange={() => handleToggle('guidelines', 'postingGuidelines')}
-                    />
-                    <span className="toggle-slider"></span>
-                  </label>
-                </div>
 
-                <div className="guideline-item">
-                  <div className="guideline-info">
-                    <div className="guideline-header">
-                      <Shield size={18} />
-                      <span>Review Policies</span>
+                    {/* Post Content */}
+                    <div className="post-content">
+                      <p>{post.content}</p>
                     </div>
-                    <p>Specific policies for review content and quality</p>
-                  </div>
-                  <label className="toggle-switch">
-                    <input 
-                      type="checkbox" 
-                      checked={guidelines.reviewPolicies}
-                      onChange={() => handleToggle('guidelines', 'reviewPolicies')}
-                    />
-                    <span className="toggle-slider"></span>
-                  </label>
-                </div>
 
-                <div className="guideline-item">
-                  <div className="guideline-info">
-                    <div className="guideline-header">
-                      <MapPin size={18} />
-                      <span>Spot Submission Rules</span>
-                    </div>
-                    <p>Guidelines for submitting new spots</p>
-                  </div>
-                  <label className="toggle-switch">
-                    <input 
-                      type="checkbox" 
-                      checked={guidelines.spotSubmissionRules}
-                      onChange={() => handleToggle('guidelines', 'spotSubmissionRules')}
-                    />
-                    <span className="toggle-slider"></span>
-                  </label>
-                </div>
+                    {/* Post Images */}
+                    {post.images.length > 0 && (
+                      <div className="post-images">
+                        <div className="image-carousel">
+                          <img 
+                            src={post.images[post.currentImageIndex]} 
+                            alt="Post image" 
+                            className="main-image"
+                          />
+                          {post.images.length > 1 && (
+                            <div className="image-indicator">
+                              {post.currentImageIndex + 1}/{post.images.length}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
 
-                <div className="guideline-item">
-                  <div className="guideline-info">
-                    <div className="guideline-header">
-                      <Users size={18} />
-                      <span>User Conduct Policy</span>
+                    {/* Engagement Bar */}
+                    <div className="engagement-bar">
+                      <div className="engagement-left">
+                        <button 
+                          className={`engagement-btn ${post.isLiked ? 'liked' : ''}`}
+                          onClick={() => handleToggleLike(post.id)}
+                        >
+                          <Heart size={16} fill={post.isLiked ? 'currentColor' : 'none'} />
+                          <span>{post.likes}</span>
+                        </button>
+                        <button className="engagement-btn">
+                          <MessageCircle size={16} />
+                          <span>{post.comments}</span>
+                        </button>
+                      </div>
+                      <div className="engagement-right">
+                        <button 
+                          className={`engagement-btn ${post.isSaved ? 'saved' : ''}`}
+                          onClick={() => handleToggleSave(post.id)}
+                        >
+                          <Bookmark size={16} fill={post.isSaved ? 'currentColor' : 'none'} />
+                        </button>
+                        <button className="engagement-btn">
+                          <Eye size={16} />
+                        </button>
+                        <button className="engagement-btn">
+                          <Flag size={16} />
+                        </button>
+                        <button 
+                          className="engagement-btn danger"
+                          onClick={() => handleDeletePost(post.id)}
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
                     </div>
-                    <p>Expected behavior and user interaction policies</p>
-                  </div>
-                  <label className="toggle-switch">
-                    <input 
-                      type="checkbox" 
-                      checked={guidelines.userConductPolicy}
-                      onChange={() => handleToggle('guidelines', 'userConductPolicy')}
-                    />
-                    <span className="toggle-slider"></span>
-                  </label>
-                </div>
 
-                <div className="guideline-item">
-                  <div className="guideline-info">
-                    <div className="guideline-header">
-                      <AlertTriangle size={18} />
-                      <span>Moderation Policy</span>
-                    </div>
-                    <p>How content moderation is handled</p>
+                    {/* Post Status */}
+                    {post.reports > 0 && (
+                      <div className="post-status">
+                        {getStatusBadge(post.status)}
+                        <span className="report-count">{post.reports} reports</span>
+                      </div>
+                    )}
                   </div>
-                  <label className="toggle-switch">
-                    <input 
-                      type="checkbox" 
-                      checked={guidelines.moderationPolicy}
-                      onChange={() => handleToggle('guidelines', 'moderationPolicy')}
-                    />
-                    <span className="toggle-slider"></span>
-                  </label>
-                </div>
+                ))}
               </div>
             </div>
           )}
 
-          {activeSection === 'discussions' && (
+          {activeSection === 'users' && (
             <div className="content-section">
               <div className="section-header">
-                <h2>Community Discussions</h2>
-                <p>Manage and moderate community discussions</p>
+                <h2>Community Users</h2>
+                <p>Manage community members and user activity</p>
               </div>
 
-              <div className="discussions-toolbar">
-                <div className="toolbar-left">
-                  <div className="search-box">
-                    <Search size={18} />
-                    <input type="text" placeholder="Search discussions..." />
-                  </div>
-                  <div className="filter-dropdown">
-                    <Filter size={18} />
-                    <select>
-                      <option>All Categories</option>
-                      <option>Announcements</option>
-                      <option>Tips & Tricks</option>
-                      <option>Events</option>
-                      <option>General</option>
-                    </select>
-                  </div>
-                </div>
-                <div className="toolbar-right">
-                  <button className="btn-primary">
-                    <Plus size={18} />
-                    New Discussion
-                  </button>
-                </div>
-              </div>
-
-              <div className="discussions-list">
-                {discussions.map(discussion => (
-                  <div key={discussion.id} className="discussion-item">
-                    <div className="discussion-content">
-                      <div className="discussion-header">
-                        <h3 className="discussion-title">
-                          {discussion.pinned && <Flag size={16} className="pinned-icon" />}
-                          {discussion.title}
-                        </h3>
-                        <div className="discussion-meta">
-                          <span className="author">by {discussion.author}</span>
-                          <span className="category">{discussion.category}</span>
-                          {getStatusBadge(discussion.pinned ? 'pinned' : discussion.status)}
-                        </div>
-                      </div>
-                      <div className="discussion-stats">
+              <div className="users-grid">
+                {['Sarah Johnson', 'Mike Chen', 'Emma Wilson', 'Alex Rodriguez'].map((user, index) => (
+                  <div key={index} className="user-card">
+                    <img 
+                      src={`https://images.unsplash.com/photo-1438761681033-${index}-6461ffad8d80?q=80&w=1000&auto=format&fit=crop`}
+                      alt={user} 
+                      className="user-avatar"
+                    />
+                    <div className="user-info">
+                      <div className="user-name">{user}</div>
+                      <div className="user-stats">
                         <div className="stat">
-                          <MessageCircle size={16} />
-                          <span>{discussion.replies}</span>
+                          <TrendingUp size={14} />
+                          <span>156 posts</span>
                         </div>
                         <div className="stat">
-                          <Eye size={16} />
-                          <span>{discussion.views}</span>
-                        </div>
-                        <div className="stat">
-                          <Clock size={16} />
-                          <span>{discussion.lastActivity}</span>
+                          <Heart size={14} />
+                          <span>2.3k likes</span>
                         </div>
                       </div>
                     </div>
-                    <div className="discussion-actions">
+                    <div className="user-actions">
                       <button className="btn-icon">
                         <Edit size={16} />
                       </button>
                       <button className="btn-icon">
-                        <Trash2 size={16} />
+                        <Shield size={16} />
                       </button>
                     </div>
                   </div>
                 ))}
-              </div>
-            </div>
-          )}
-
-          {activeSection === 'events' && (
-            <div className="content-section">
-              <div className="section-header">
-                <h2>Community Events</h2>
-                <p>Manage community meetups and events</p>
-              </div>
-
-              <div className="events-toolbar">
-                <button className="btn-primary">
-                  <Plus size={18} />
-                  Create Event
-                </button>
-              </div>
-
-              <div className="events-grid">
-                {events.map(event => (
-                  <div key={event.id} className="event-card">
-                    <div className="event-header">
-                      <h3 className="event-title">{event.title}</h3>
-                      {getStatusBadge(event.status)}
-                    </div>
-                    <div className="event-details">
-                      <div className="event-info">
-                        <Calendar size={16} />
-                        <span>{event.date}</span>
-                      </div>
-                      <div className="event-info">
-                        <Clock size={16} />
-                        <span>{event.time}</span>
-                      </div>
-                      <div className="event-info">
-                        <MapPin size={16} />
-                        <span>{event.location}</span>
-                      </div>
-                    </div>
-                    <div className="event-description">
-                      <p>{event.description}</p>
-                    </div>
-                    <div className="event-attendees">
-                      <div className="attendee-count">
-                        <Users size={16} />
-                        <span>{event.attendees}/{event.maxAttendees}</span>
-                      </div>
-                      <div className="attendee-bar">
-                        <div 
-                          className="attendee-progress" 
-                          style={{ width: `${(event.attendees / event.maxAttendees) * 100}%` }}
-                        ></div>
-                      </div>
-                    </div>
-                    <div className="event-actions">
-                      <button className="btn-secondary">View Details</button>
-                      <button className="btn-primary">Join Event</button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {activeSection === 'moderation' && (
-            <div className="content-section">
-              <div className="section-header">
-                <h2>Moderation Tools</h2>
-                <p>Configure content moderation and user management</p>
-              </div>
-
-              <div className="moderation-grid">
-                <div className="moderation-item">
-                  <div className="moderation-info">
-                    <div className="moderation-header">
-                      <Shield size={18} />
-                      <span>Auto Moderation</span>
-                    </div>
-                    <p>Automatically filter and flag inappropriate content</p>
-                  </div>
-                  <label className="toggle-switch">
-                    <input 
-                      type="checkbox" 
-                      checked={moderation.autoModeration}
-                      onChange={() => handleToggle('moderation', 'autoModeration')}
-                    />
-                    <span className="toggle-slider"></span>
-                  </label>
-                </div>
-
-                <div className="moderation-item">
-                  <div className="moderation-info">
-                    <div className="moderation-header">
-                      <AlertTriangle size={18} />
-                      <span>Profanity Filter</span>
-                    </div>
-                    <p>Filter out profane language automatically</p>
-                  </div>
-                  <label className="toggle-switch">
-                    <input 
-                      type="checkbox" 
-                      checked={moderation.profanityFilter}
-                      onChange={() => handleToggle('moderation', 'profanityFilter')}
-                    />
-                    <span className="toggle-slider"></span>
-                  </label>
-                </div>
-
-                <div className="moderation-item">
-                  <div className="moderation-info">
-                    <div className="moderation-header">
-                      <Flag size={18} />
-                      <span>Spam Detection</span>
-                    </div>
-                    <p>Identify and flag spam content automatically</p>
-                  </div>
-                  <label className="toggle-switch">
-                    <input 
-                      type="checkbox" 
-                      checked={moderation.spamDetection}
-                      onChange={() => handleToggle('moderation', 'spamDetection')}
-                    />
-                    <span className="toggle-slider"></span>
-                  </label>
-                </div>
-
-                <div className="moderation-item">
-                  <div className="moderation-info">
-                    <div className="moderation-header">
-                      <CheckCircle size={18} />
-                      <span>Require Approval</span>
-                    </div>
-                    <p>Require admin approval for new posts</p>
-                  </div>
-                  <label className="toggle-switch">
-                    <input 
-                      type="checkbox" 
-                      checked={moderation.requireApproval}
-                      onChange={() => handleToggle('moderation', 'requireApproval')}
-                    />
-                    <span className="toggle-slider"></span>
-                  </label>
-                </div>
-
-                <div className="moderation-item">
-                  <label>Report Threshold</label>
-                  <input 
-                    type="number" 
-                    value={moderation.reportThreshold}
-                    onChange={(e) => setModeration(prev => ({ ...prev, reportThreshold: parseInt(e.target.value) }))}
-                    className="setting-input" 
-                    min="1"
-                    max="10"
-                  />
-                  <small>Number of reports before auto-action</small>
-                </div>
-
-                <div className="moderation-item">
-                  <label>Ban Duration (days)</label>
-                  <input 
-                    type="number" 
-                    value={moderation.banDuration}
-                    onChange={(e) => setModeration(prev => ({ ...prev, banDuration: parseInt(e.target.value) }))}
-                    className="setting-input" 
-                    min="1"
-                    max="365"
-                  />
-                  <small>Default ban duration for violations</small>
-                </div>
               </div>
             </div>
           )}
@@ -589,70 +349,75 @@ export default function CommunityPage() {
             <div className="content-section">
               <div className="section-header">
                 <h2>Community Analytics</h2>
-                <p>Track community engagement and growth metrics</p>
+                <p>Track engagement and community growth</p>
               </div>
 
               <div className="analytics-grid">
                 <div className="metric-card">
                   <div className="metric-header">
-                    <Users size={24} />
-                    <span>Total Members</span>
+                    <ImageIcon size={24} />
+                    <span>Total Posts</span>
                   </div>
-                  <div className="metric-value">{analytics.totalMembers.toLocaleString()}</div>
-                  <div className="metric-change positive">+{analytics.newMembersThisMonth} this month</div>
+                  <div className="metric-value">{posts.length}</div>
+                  <div className="metric-change">+12% this week</div>
                 </div>
 
                 <div className="metric-card">
                   <div className="metric-header">
-                    <TrendingUp size={24} />
+                    <Users size={24} />
                     <span>Active Users</span>
                   </div>
-                  <div className="metric-value">{analytics.activeUsers.toLocaleString()}</div>
-                  <div className="metric-change">Active in last 30 days</div>
-                </div>
-
-                <div className="metric-card">
-                  <div className="metric-header">
-                    <MessageSquare size={24} />
-                    <span>Total Discussions</span>
-                  </div>
-                  <div className="metric-value">{analytics.totalDiscussions.toLocaleString()}</div>
-                  <div className="metric-change">All time</div>
-                </div>
-
-                <div className="metric-card">
-                  <div className="metric-header">
-                    <Calendar size={24} />
-                    <span>Total Events</span>
-                  </div>
-                  <div className="metric-value">{analytics.totalEvents}</div>
-                  <div className="metric-change">Past 6 months</div>
+                  <div className="metric-value">1,234</div>
+                  <div className="metric-change positive">+8% this month</div>
                 </div>
 
                 <div className="metric-card">
                   <div className="metric-header">
                     <Heart size={24} />
-                    <span>Engagement Rate</span>
+                    <span>Total Likes</span>
                   </div>
-                  <div className="metric-value">{analytics.engagementRate}%</div>
-                  <div className="metric-change positive">+5% from last month</div>
+                  <div className="metric-value">{posts.reduce((sum, post) => sum + post.likes, 0)}</div>
+                  <div className="metric-change positive">+15% this month</div>
+                </div>
+
+                <div className="metric-card">
+                  <div className="metric-header">
+                    <MessageCircle size={24} />
+                    <span>Total Comments</span>
+                  </div>
+                  <div className="metric-value">{posts.reduce((sum, post) => sum + post.comments, 0)}</div>
+                  <div className="metric-change">+5% this month</div>
                 </div>
               </div>
+            </div>
+          )}
 
-              <div className="top-contributors">
-                <h3>Top Contributors</h3>
-                <div className="contributors-list">
-                  {analytics.topContributors.map((contributor, index) => (
-                    <div key={index} className="contributor-item">
-                      <div className="contributor-info">
-                        <div className="contributor-rank">#{index + 1}</div>
-                        <div className="contributor-details">
-                          <div className="contributor-name">{contributor.name}</div>
-                          <div className="contributor-stats">{contributor.contributions} contributions</div>
+          {activeSection === 'moderation' && (
+            <div className="content-section">
+              <div className="section-header">
+                <h2>Content Moderation</h2>
+                <p>Review flagged content and manage community guidelines</p>
+              </div>
+
+              <div className="moderation-queue">
+                <h3>Flagged Posts</h3>
+                <div className="flagged-posts">
+                  {posts.filter(post => post.reports > 0).map(post => (
+                    <div key={post.id} className="flagged-post">
+                      <div className="post-preview">
+                        <img src={post.userPfp} alt={post.userName} className="preview-pfp" />
+                        <div className="preview-content">
+                          <div className="preview-user">{post.userName}</div>
+                          <div className="preview-text">{post.content.substring(0, 100)}...</div>
                         </div>
                       </div>
-                      <div className="contributor-badge">
-                        {getBadgeIcon(contributor.badge)}
+                      <div className="moderation-actions">
+                        <button className="btn-secondary">Review</button>
+                        <button className="btn-success">Approve</button>
+                        <button className="btn-danger">Remove</button>
+                      </div>
+                      <div className="report-info">
+                        <span>{post.reports} reports</span>
                       </div>
                     </div>
                   ))}
@@ -665,49 +430,48 @@ export default function CommunityPage() {
             <div className="content-section">
               <div className="section-header">
                 <h2>Community Settings</h2>
-                <p>General community configuration and preferences</p>
+                <p>Configure community behavior and features</p>
               </div>
 
               <div className="settings-grid">
                 <div className="setting-item">
-                  <label>Community Name</label>
-                  <input 
-                    type="text" 
-                    defaultValue="Chai-In Community"
-                    className="setting-input" 
-                  />
-                  <small>Display name for your community</small>
-                </div>
-
-                <div className="setting-item">
-                  <label>Community Description</label>
-                  <textarea 
-                    defaultValue="A vibrant community for discovering and reviewing amazing spots"
-                    className="setting-textarea"
-                    rows="3"
-                  ></textarea>
-                  <small>Brief description of your community</small>
-                </div>
-
-                <div className="setting-item">
-                  <label>Default Event Location</label>
-                  <input 
-                    type="text" 
-                    defaultValue="New York, NY"
-                    className="setting-input" 
-                  />
-                  <small>Default location for community events</small>
-                </div>
-
-                <div className="setting-item">
-                  <label>Timezone</label>
+                  <label>Allow Image Posts</label>
                   <select className="setting-input">
-                    <option>Eastern Time (ET)</option>
-                    <option>Central Time (CT)</option>
-                    <option>Mountain Time (MT)</option>
-                    <option>Pacific Time (PT)</option>
+                    <option>Enabled</option>
+                    <option>Disabled</option>
                   </select>
-                  <small>Community timezone for events</small>
+                  <small>Users can post multiple images</small>
+                </div>
+
+                <div className="setting-item">
+                  <label>Post Length Limit</label>
+                  <input 
+                    type="number" 
+                    defaultValue="500"
+                    className="setting-input" 
+                    min="100"
+                    max="2000"
+                  />
+                  <small>Maximum characters per post</small>
+                </div>
+
+                <div className="setting-item">
+                  <label>Auto-Moderation</label>
+                  <select className="setting-input">
+                    <option>Enabled</option>
+                    <option>Disabled</option>
+                  </select>
+                  <small>Automatically filter inappropriate content</small>
+                </div>
+
+                <div className="setting-item">
+                  <label>Community Theme</label>
+                  <select className="setting-input">
+                    <option>Default</option>
+                    <option>Dark</option>
+                    <option>Light</option>
+                  </select>
+                  <small>Visual theme for community</small>
                 </div>
               </div>
             </div>
@@ -717,7 +481,7 @@ export default function CommunityPage() {
           <div className="community-actions">
             <button 
               className={`save-btn ${savedSettings ? 'saved' : ''}`}
-              onClick={handleSaveSettings}
+              onClick={() => setSavedSettings(true)}
             >
               <CheckCircle size={18} />
               {savedSettings ? 'Saved!' : 'Save Changes'}
