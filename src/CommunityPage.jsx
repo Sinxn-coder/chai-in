@@ -106,20 +106,6 @@ export default function CommunityPage() {
     }
   ]);
 
-  // Auto-cycle images
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setPosts(prevPosts => 
-        prevPosts.map(post => ({
-          ...post,
-          currentImageIndex: (post.currentImageIndex + 1) % post.images.length
-        }))
-      );
-    }, 2000); // Change every 2 seconds
-
-    return () => clearInterval(interval);
-  }, []);
-
   const sections = [
     { id: 'posts', name: 'Posts', icon: ImageIcon },
     { id: 'users', name: 'Users', icon: Users },
