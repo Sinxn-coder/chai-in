@@ -47,21 +47,21 @@ const DashboardPage = () => {
   const renderLineChart = (data, color) => {
     const maxValue = Math.max(...data);
     const points = data.map((value, index) => {
-      const x = (index / (data.length - 1)) * 360 + 20;
-      const y = 240 - (value / maxValue) * 200;
+      const x = (index / (data.length - 1)) * 460 + 20;
+      const y = 320 - (value / maxValue) * 280;
       return `${x},${y}`;
     }).join(' ');
 
     return (
-      <svg className="chart-svg" viewBox="0 0 400 260">
+      <svg className="chart-svg" viewBox="0 0 500 340">
         {/* Grid lines */}
-        {[0, 1, 2, 3, 4].map((i) => (
+        {[0, 1, 2, 3, 4, 5].map((i) => (
           <line
             key={`h-${i}`}
             x1="20"
-            y1={40 + i * 50}
-            x2="380"
-            y2={40 + i * 50}
+            y1={20 + i * 50}
+            x2="480"
+            y2={20 + i * 50}
             stroke="#e5e7eb"
             strokeWidth="1"
           />
@@ -69,10 +69,10 @@ const DashboardPage = () => {
         {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].map((i) => (
           <line
             key={`v-${i}`}
-            x1={20 + i * 30}
-            y1="40"
-            x2={20 + i * 30}
-            y2="240"
+            x1={20 + i * 40}
+            y1="20"
+            x2={20 + i * 40}
+            y2="320"
             stroke="#e5e7eb"
             strokeWidth="1"
           />
@@ -83,28 +83,28 @@ const DashboardPage = () => {
           points={points}
           fill="none"
           stroke={color}
-          strokeWidth="3"
+          strokeWidth="4"
           strokeLinecap="round"
           strokeLinejoin="round"
         />
         
         {/* Data points */}
         {data.map((value, index) => {
-          const x = (index / (data.length - 1)) * 360 + 20;
-          const y = 240 - (value / maxValue) * 200;
+          const x = (index / (data.length - 1)) * 460 + 20;
+          const y = 320 - (value / maxValue) * 280;
           return (
             <g key={index}>
               <circle
                 cx={x}
                 cy={y}
-                r="4"
+                r="6"
                 fill={color}
                 className="chart-point"
               />
               <circle
                 cx={x}
                 cy={y}
-                r="8"
+                r="12"
                 fill={color}
                 fillOpacity="0.2"
                 className="chart-point"
@@ -125,7 +125,7 @@ const DashboardPage = () => {
             <div
               className="chart-bar-fill"
               style={{
-                height: `${(value / maxValue) * 220}px`,
+                height: `${(value / maxValue) * 300}px`,
                 backgroundColor: color
               }}
             >
