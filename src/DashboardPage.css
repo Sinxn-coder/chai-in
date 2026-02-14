@@ -347,17 +347,16 @@
 }
 
 .chart-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  display: flex;
+  flex-direction: column;
   gap: 32px;
   width: 100%;
-  align-items: start;
 }
 
 .chart-card {
   background: white;
   border-radius: 20px;
-  padding: 28px;
+  padding: 32px;
   box-shadow: 0 6px 24px rgba(0, 0, 0, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.2);
   transition: all 0.3s ease;
