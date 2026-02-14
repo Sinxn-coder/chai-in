@@ -7,6 +7,7 @@ const DashboardPage = () => {
   const [showAnalytics, setShowAnalytics] = useState(false);
   const [showReport, setShowReport] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
+  const [showTopSpots, setShowTopSpots] = useState(false);
 
   // Mock data for stats
   const stats = {
@@ -24,6 +25,16 @@ const DashboardPage = () => {
     { id: 4, user: 'Alice Brown', action: 'reported issue with payment', time: '8 hours ago', type: 'issue', avatar: 'https://picsum.photos/seed/user4/40/40' },
     { id: 5, user: 'Charlie Wilson', action: 'completed profile verification', time: '12 hours ago', type: 'success', avatar: 'https://picsum.photos/seed/user5/40/40' },
     { id: 6, user: 'Emma Davis', action: 'shared spot with friends', time: '1 day ago', type: 'share', avatar: 'https://picsum.photos/seed/user6/40/40' }
+  ];
+
+  // Top spots data
+  const topSpots = [
+    { id: 1, name: 'Pizza Palace', category: 'Italian', rating: 4.8, reviews: 234, image: 'https://picsum.photos/seed/pizza/200/150', price: '$$', featured: true },
+    { id: 2, name: 'Burger Barn', category: 'American', rating: 4.6, reviews: 189, image: 'https://picsum.photos/seed/burger/200/150', price: '$$', featured: false },
+    { id: 3, name: 'Sushi Express', category: 'Japanese', rating: 4.9, reviews: 156, image: 'https://picsum.photos/seed/sushi/200/150', price: '$$$', featured: true },
+    { id: 4, name: 'Taco Town', category: 'Mexican', rating: 4.5, reviews: 203, image: 'https://picsum.photos/seed/taco/200/150', price: '$', featured: false },
+    { id: 5, name: 'Pasta Paradise', category: 'Italian', rating: 4.7, reviews: 178, image: 'https://picsum.photos/seed/pasta/200/150', price: '$$', featured: false },
+    { id: 6, name: 'BBQ Master', category: 'American', rating: 4.8, reviews: 145, image: 'https://picsum.photos/seed/bbq/200/150', price: '$$$', featured: true }
   ];
 
   // Quick actions data
@@ -472,6 +483,48 @@ const DashboardPage = () => {
           </div>
         </div>
       )}
+
+      {/* Top Spots Section */}
+      <div className="top-spots-section">
+        <div className="section-header">
+          <h2>Top Spots</h2>
+          <p>Popular food spots with highest ratings and reviews</p>
+        </div>
+        
+        <div className="spots-grid">
+          {topSpots.map((spot) => (
+            <div key={spot.id} className="spot-card">
+              <div className="spot-image">
+                <img src={spot.image} alt={spot.name} />
+                {spot.featured && <div className="featured-badge">Featured</div>}
+              </div>
+              <div className="spot-content">
+                <div className="spot-header">
+                  <h3>{spot.name}</h3>
+                  <div className="spot-rating">
+                    <Star className="w-4 h-4 text-yellow-500 fill-current" />
+                    <span>{spot.rating}</span>
+                  </div>
+                </div>
+                <div className="spot-details">
+                  <div className="spot-category">
+                    <MapPin className="w-4 h-4 text-gray-500" />
+                    <span>{spot.category}</span>
+                  </div>
+                  <div className="spot-reviews">
+                    <MessageSquare className="w-4 h-4 text-blue-500" />
+                    <span>{spot.reviews} reviews</span>
+                  </div>
+                  <div className="spot-price">
+                    <DollarSign className="w-4 h-4 text-green-500" />
+                    <span>{spot.price}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
 
       <div className="dashboard-empty">
         <h1>Dashboard</h1>

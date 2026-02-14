@@ -925,3 +925,109 @@
 .toggle-switch input:checked + .toggle-slider:before {
   transform: translateX(24px);
 }
+
+/* Top Spots Section */
+.top-spots-section {
+  margin-bottom: 32px;
+}
+
+.spots-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 24px;
+}
+
+.spot-card {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.spot-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 16px 64px rgba(0, 0, 0, 0.15);
+}
+
+.spot-image {
+  position: relative;
+  width: 100%;
+  height: 180px;
+  overflow: hidden;
+}
+
+.spot-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.spot-card:hover .spot-image img {
+  transform: scale(1.05);
+}
+
+.featured-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+}
+
+.spot-content {
+  padding: 20px;
+}
+
+.spot-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.spot-header h3 {
+  font-size: 20px;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0;
+}
+
+.spot-rating {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.spot-details {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.spot-category,
+.spot-reviews,
+.spot-price {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.spot-category span,
+.spot-reviews span,
+.spot-price span {
+  font-weight: 600;
+  color: #374151;
+}
