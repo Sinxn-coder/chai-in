@@ -313,16 +313,53 @@ export default function CommunityPage() {
                         </div>
                         <div className="admin-image-slider">
                           <div className="slider-container">
+                            <div 
+                              className="slider-left-zone"
+                              onClick={() => {
+                                const currentIndex = post.currentImageIndex;
+                                const newIndex = currentIndex > 0 ? currentIndex - 1 : post.images.length - 1;
+                                setPosts(prevPosts => 
+                                  prevPosts.map(p => 
+                                    p.id === post.id 
+                                      ? { ...p, currentImageIndex: newIndex }
+                                      : p
+                                  )
+                                );
+                              }}
+                            />
                             <div className="slider-main">
                               {post.images.map((image, index) => (
                                 <div 
                                   key={index}
                                   className={`slider-image ${index === post.currentImageIndex ? 'active' : ''}`}
+                                  onClick={() => {
+                                    setPosts(prevPosts => 
+                                      prevPosts.map(p => 
+                                        p.id === post.id 
+                                          ? { ...p, currentImageIndex: index }
+                                          : p
+                                      )
+                                    );
+                                  }}
                                 >
                                   <img src={image} alt={`Post image ${index + 1}`} />
                                 </div>
                               ))}
                             </div>
+                            <div 
+                              className="slider-right-zone"
+                              onClick={() => {
+                                const currentIndex = post.currentImageIndex;
+                                const newIndex = currentIndex < post.images.length - 1 ? currentIndex + 1 : 0;
+                                setPosts(prevPosts => 
+                                  prevPosts.map(p => 
+                                    p.id === post.id 
+                                      ? { ...p, currentImageIndex: newIndex }
+                                      : p
+                                  )
+                                );
+                              }}
+                            />
                           </div>
                         </div>
                       </div>
