@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Users, 
   Heart, 
@@ -105,6 +105,20 @@ export default function CommunityPage() {
       priority: 'featured'
     }
   ]);
+
+  // Auto-cycle images
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setPosts(prevPosts => 
+        prevPosts.map(post => ({
+          ...post,
+          currentImageIndex: (post.currentImageIndex + 1) % post.images.length
+        }))
+      );
+    }, 2000); // Change every 2 seconds
+
+    return () => clearInterval(interval);
+  }, []);
 
   const sections = [
     { id: 'posts', name: 'Posts', icon: ImageIcon },
