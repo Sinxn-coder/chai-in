@@ -148,46 +148,121 @@ export default function CommunityPage() {
 
   return (
     <div className="community-page">
-      {/* Header */}
-      <div className="community-header">
-        <div className="header-content">
-          <div className="header-text">
-            <h1>Community Management</h1>
-            <p>Admin dashboard for community content and user engagement</p>
-          </div>
-          <div className="header-actions">
-            <div className="search-bar">
-              <Search size={18} />
-              <input 
-                type="text" 
-                placeholder="Search posts, users, or content..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
+      {/* Left Sidebar */}
+      <div className="community-sidebar">
+        {/* Quick Stats */}
+        <div className="sidebar-section">
+          <h3>
+            <BarChart3 size={16} />
+            Quick Stats
+          </h3>
+          <div className="sidebar-stats">
+            <div className="stat-item">
+              <span className="stat-label">Total Posts</span>
+              <span className="stat-value">{posts.length}</span>
             </div>
-            <button className="filter-btn">
-              <Filter size={18} />
-            </button>
+            <div className="stat-item">
+              <span className="stat-label">Active Users</span>
+              <span className="stat-value">1,234</span>
+            </div>
+            <div className="stat-item">
+              <span className="stat-label">Pending Review</span>
+              <span className="stat-value">12</span>
+            </div>
+            <div className="stat-item">
+              <span className="stat-label">Flagged Content</span>
+              <span className="stat-value">3</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Quick Actions */}
+        <div className="sidebar-section">
+          <h3>
+            <Settings size={16} />
+            Quick Actions
+          </h3>
+          <div className="sidebar-item" onClick={() => setActiveSection('posts')}>
+            <ImageIcon size={16} />
+            <span>Manage Posts</span>
+          </div>
+          <div className="sidebar-item" onClick={() => setActiveSection('users')}>
+            <Users size={16} />
+            <span>User Management</span>
+          </div>
+          <div className="sidebar-item" onClick={() => setActiveSection('moderation')}>
+            <Shield size={16} />
+            <span>Moderation Queue</span>
+          </div>
+          <div className="sidebar-item" onClick={() => setActiveSection('analytics')}>
+            <BarChart3 size={16} />
+            <span>View Analytics</span>
+          </div>
+        </div>
+
+        {/* Recent Activity */}
+        <div className="sidebar-section">
+          <h3>
+            <MessageCircle size={16} />
+            Recent Activity
+          </h3>
+          <div className="sidebar-item">
+            <div className="activity-dot"></div>
+            <span>New post by Sarah J.</span>
+          </div>
+          <div className="sidebar-item">
+            <div className="activity-dot"></div>
+            <span>3 posts flagged</span>
+          </div>
+          <div className="sidebar-item">
+            <div className="activity-dot"></div>
+            <span>5 new users joined</span>
           </div>
         </div>
       </div>
 
-      {/* Navigation Tabs */}
-      <div className="community-tabs">
-        {sections.map(section => (
-          <button
-            key={section.id}
-            className={`tab-btn ${activeSection === section.id ? 'active' : ''}`}
-            onClick={() => setActiveSection(section.id)}
-          >
-            <section.icon size={18} />
-            {section.name}
-          </button>
-        ))}
-      </div>
+      {/* Main Content */}
+      <div className="community-main">
+        {/* Header */}
+        <div className="community-header">
+          <div className="header-content">
+            <div className="header-text">
+              <h1>Community Management</h1>
+              <p>Admin dashboard for community content and user engagement</p>
+            </div>
+            <div className="header-actions">
+              <div className="search-bar">
+                <Search size={18} />
+                <input 
+                  type="text" 
+                  placeholder="Search posts, users, or content..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+              </div>
+              <button className="filter-btn">
+                <Filter size={18} />
+              </button>
+            </div>
+          </div>
+        </div>
 
-      {/* Content Area */}
-      <div className="community-content">
+        {/* Navigation Tabs */}
+        <div className="community-tabs">
+          {sections.map(section => (
+            <button
+              key={section.id}
+              className={`tab-btn ${activeSection === section.id ? 'active' : ''}`}
+              onClick={() => setActiveSection(section.id)}
+            >
+              <section.icon size={18} />
+              {section.name}
+            </button>
+          ))}
+        </div>
+
+        {/* Content Area */}
+        <div className="community-content">
         {activeSection === 'posts' && (
           <div className="content-section">
             <div className="section-header">
@@ -388,6 +463,7 @@ export default function CommunityPage() {
             <CheckCircle size={18} />
             {savedSettings ? 'Saved!' : 'Save Changes'}
           </button>
+        </div>
         </div>
       </div>
 
