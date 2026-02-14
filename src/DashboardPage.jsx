@@ -13,22 +13,6 @@ const DashboardPage = () => {
     revenue: 45678
   };
 
-  // Admin panel data
-  const adminActions = [
-    { id: 1, title: 'User Management', description: 'Manage users, roles, and permissions', icon: Users, color: 'blue' },
-    { id: 2, title: 'Spot Management', description: 'Add, edit, and manage food spots', icon: MapPin, color: 'green' },
-    { id: 3, title: 'Review Management', description: 'Moderate reviews and ratings', icon: Star, color: 'yellow' },
-    { id: 4, title: 'Revenue Analytics', description: 'Track revenue and financial metrics', icon: DollarSign, color: 'purple' },
-    { id: 5, title: 'System Settings', description: 'Configure platform settings', icon: Settings, color: 'gray' }
-  ];
-
-  const recentActivities = [
-    { id: 1, user: 'John Doe', action: 'added new spot "Pizza Palace"', time: '2 hours ago', type: 'spot' },
-    { id: 2, user: 'Jane Smith', action: 'left 5-star review', time: '4 hours ago', type: 'review' },
-    { id: 3, user: 'Bob Johnson', action: 'updated profile information', time: '6 hours ago', type: 'user' },
-    { id: 4, user: 'Alice Brown', action: 'reported issue with payment', time: '8 hours ago', type: 'issue' }
-  ];
-
   const handleRefresh = () => {
     setIsLoading(true);
     setTimeout(() => setIsLoading(false), 1000);
@@ -183,55 +167,6 @@ const DashboardPage = () => {
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Admin Panel Section */}
-      <div className="admin-panel">
-        <div className="admin-header">
-          <h2>Admin Panel</h2>
-          <p>Manage your platform with powerful admin tools</p>
-        </div>
-
-        <div className="admin-grid">
-          {adminActions.map((action) => (
-            <div key={action.id} className={`admin-card ${action.color}`}>
-              <div className="admin-icon">
-                <action.icon className="w-8 h-8" />
-              </div>
-              <div className="admin-content">
-                <h3>{action.title}</h3>
-                <p>{action.description}</p>
-              </div>
-              <div className="admin-arrow">
-                <TrendingUp className="w-5 h-5" />
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <div className="recent-activity">
-          <div className="activity-header">
-            <h3>Recent Activity</h3>
-            <button className="view-all-btn">View All</button>
-          </div>
-          <div className="activity-list">
-            {recentActivities.map((activity) => (
-              <div key={activity.id} className="activity-item">
-                <div className={`activity-icon ${activity.type}`}>
-                  {activity.type === 'spot' && <MapPin className="w-4 h-4" />}
-                  {activity.type === 'review' && <Star className="w-4 h-4" />}
-                  {activity.type === 'user' && <Users className="w-4 h-4" />}
-                  {activity.type === 'issue' && <Bell className="w-4 h-4" />}
-                </div>
-                <div className="activity-details">
-                  <div className="activity-user">{activity.user}</div>
-                  <div className="activity-action">{activity.action}</div>
-                  <div className="activity-time">{activity.time}</div>
-                </div>
-              </div>
-            ))}
           </div>
         </div>
       </div>
