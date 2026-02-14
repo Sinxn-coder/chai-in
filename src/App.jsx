@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import ReviewsPage from './ReviewsPage';
 import SettingsPage from './SettingsPage';
+import CommunityPage from './CommunityPage';
 import { 
   Layout, 
   Users, 
@@ -2108,7 +2109,7 @@ export default function App() {
       case 'reviews':
         return <ReviewsPage />;
       case 'community':
-        return <div className="content-placeholder">Community Section - Manage community guidelines, discussions, events, and user interactions.</div>;
+        return <CommunityPage />;
       case 'analytics':
         return <div className="content-placeholder">Analytics Dashboard - Track user engagement, popular spots, revenue metrics, and growth trends.</div>;
       case 'settings':
