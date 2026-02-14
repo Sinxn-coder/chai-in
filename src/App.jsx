@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import ReviewsPage from './ReviewsPage';
+import SettingsPage from './SettingsPage';
 import { 
   Layout, 
   Users, 
@@ -2107,7 +2108,7 @@ export default function App() {
       case 'analytics':
         return <div className="content-placeholder">Analytics Dashboard - Track user engagement, popular spots, revenue metrics, and growth trends.</div>;
       case 'settings':
-        return <div className="content-placeholder">Admin Settings - Configure platform preferences, API keys, and system parameters.</div>;
+        return <SettingsPage />;
       default:
         return <div className="content-placeholder">Welcome to the BytSpot Admin Dashboard.</div>;
     }
