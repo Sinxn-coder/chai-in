@@ -357,6 +357,23 @@ export default function CommunityPage() {
                                 <ChevronRight size={16} />
                               </button>
                             </div>
+                            <div className="slider-dots">
+                              {post.images.map((_, index) => (
+                                <div
+                                  key={index}
+                                  className={`dot ${index === post.currentImageIndex ? 'active' : ''}`}
+                                  onClick={() => {
+                                    setPosts(prevPosts => 
+                                      prevPosts.map(p => 
+                                        p.id === post.id 
+                                          ? { ...p, currentImageIndex: index }
+                                          : p
+                                      )
+                                    );
+                                  }}
+                                />
+                              ))}
+                            </div>
                           </div>
                         </div>
                       </div>
