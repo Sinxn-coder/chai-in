@@ -449,12 +449,10 @@
   border-radius: 12px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
   animation: slideIn 0.5s ease-out;
+  text-align: center;
 }
 
 .mobile-admin-header {
-  display: flex;
-  align-items: center;
-  gap: 12px;
   margin-bottom: 20px;
   padding-bottom: 16px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.2);
@@ -468,33 +466,16 @@
 }
 
 .mobile-admin-content {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 16px;
-}
-
-.mobile-admin-item {
   display: flex;
+  justify-content: center;
   align-items: center;
-  gap: 12px;
-  padding: 16px;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  transition: all 0.3s ease;
-  cursor: pointer;
 }
 
-.mobile-admin-item:hover {
-  background: rgba(255, 255, 255, 0.2);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-}
-
-.mobile-admin-item span {
-  font-size: 14px;
+.mobile-admin-content p {
+  font-size: 16px;
   font-weight: 600;
   color: white;
+  margin: 0;
 }
 
 /* Responsive Design */
@@ -523,7 +504,16 @@
   }
 
   .mobile-admin-content {
-    grid-template-columns: 1fr;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .mobile-admin-content p {
+    font-size: 16px;
+    font-weight: 600;
+    color: white;
+    margin: 0;
   }
 
   .actions-grid {

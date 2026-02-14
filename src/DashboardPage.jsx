@@ -82,34 +82,10 @@ const DashboardPage = () => {
       {isMobile && (
         <div className="mobile-admin-panel">
           <div className="mobile-admin-header">
-            <SettingsIcon className="w-6 h-6 text-white" />
             <h2>Admin Panel</h2>
           </div>
           <div className="mobile-admin-content">
-            <div className="mobile-admin-item">
-              <Users className="w-5 h-5 text-blue-400" />
-              <span>Manage Users</span>
-            </div>
-            <div className="mobile-admin-item">
-              <MapPin className="w-5 h-5 text-green-400" />
-              <span>Manage Spots</span>
-            </div>
-            <div className="mobile-admin-item">
-              <Star className="w-5 h-5 text-yellow-400" />
-              <span>Manage Reviews</span>
-            </div>
-            <div className="mobile-admin-item">
-              <BarChart className="w-5 h-5 text-purple-400" />
-              <span>View Analytics</span>
-            </div>
-            <div className="mobile-admin-item">
-              <FileText className="w-5 h-5 text-orange-400" />
-              <span>Generate Reports</span>
-            </div>
-            <div className="mobile-admin-item">
-              <SettingsIcon className="w-5 h-5 text-red-400" />
-              <span>System Settings</span>
-            </div>
+            <p>Admin Panel</p>
           </div>
         </div>
       )}
