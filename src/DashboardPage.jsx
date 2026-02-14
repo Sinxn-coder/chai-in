@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { Search, Bell, Settings, RefreshCw, Users, MapPin, Star, DollarSign, TrendingUp, Activity, Clock, MessageSquare, AlertCircle, Plus, BarChart, FileText, UserPlus, Settings as SettingsIcon, ChevronRight } from 'lucide-react';
+import MobileDashboard from './components/MobileDashboard';
+import './components/MobileDashboard.css';
 
 const DashboardPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -71,18 +73,9 @@ const DashboardPage = () => {
 
   return (
     <div className="dashboard-page">
-      {/* Mobile Admin Panel */}
-      {isMobile && (
-        <div className="mobile-admin-panel">
-          <div className="mobile-admin-header">
-            <h2>Admin Panel</h2>
-          </div>
-          <div className="mobile-admin-content">
-            <p>Admin Panel</p>
-          </div>
-        </div>
-      )}
-
+      {/* Mobile Dashboard */}
+      <MobileDashboard />
+      
       {/* Desktop Only Content */}
       {!isMobile && (
         <>
