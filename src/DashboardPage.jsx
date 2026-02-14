@@ -413,7 +413,7 @@ export default function DashboardPage() {
                 </div>
                 <div className="insight-content">
                   <h5>Retention Rate Declining</h5>
-                 <p>User retention dropped 3.2% - consider improving onboarding experience</p>
+                  <p>User retention dropped 3.2% - consider improving onboarding experience</p>
                 </div>
               </div>
               
@@ -425,6 +425,240 @@ export default function DashboardPage() {
                   <h5>Revenue Milestone Achieved</h5>
                   <p>Monthly revenue exceeded targets by 24% with strong spot performance</p>
                 </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Predictive Analytics */}
+          <div className="predictive-analytics">
+            <div className="analytics-header">
+              <h4>Predictive Analytics</h4>
+              <p>AI-powered forecasts and recommendations</p>
+            </div>
+            <div className="predictions-grid">
+              <div className="prediction-card">
+                <div className="prediction-header">
+                  <div className="prediction-icon growth">
+                    <TrendingUp className="w-5 h-5" />
+                  </div>
+                  <div className="prediction-confidence">
+                    <span>87% Confidence</span>
+                  </div>
+                </div>
+                <div className="prediction-body">
+                  <h5>Next Month Growth</h5>
+                  <div className="prediction-value">
+                    <span className="value">+24.5%</span>
+                    <span className="target">vs target 15%</span>
+                  </div>
+                  <div className="prediction-chart">
+                    {[65, 72, 68, 78, 82, 85, 92].map((value, index) => (
+                      <div key={index} className="prediction-bar" style={{ height: `${value * 1.2}px` }}></div>
+                    ))}
+                  </div>
+                </div>
+                <div className="prediction-footer">
+                  <span>Based on historical trends and current momentum</span>
+                </div>
+              </div>
+
+              <div className="prediction-card">
+                <div className="prediction-header">
+                  <div className="prediction-icon revenue">
+                    <DollarSign className="w-5 h-5" />
+                  </div>
+                  <div className="prediction-confidence">
+                    <span>92% Confidence</span>
+                  </div>
+                </div>
+                <div className="prediction-body">
+                  <h5>Revenue Forecast</h5>
+                  <div className="prediction-value">
+                    <span className="value">$18,420</span>
+                    <span className="target">+43% from current</span>
+                  </div>
+                  <div className="prediction-chart">
+                    {[45, 52, 58, 65, 72, 78, 85].map((value, index) => (
+                      <div key={index} className="prediction-bar revenue" style={{ height: `${value * 1.5}px` }}></div>
+                    ))}
+                  </div>
+                </div>
+                <div className="prediction-footer">
+                  <span>Strong seasonal performance expected</span>
+                </div>
+              </div>
+
+              <div className="prediction-card">
+                <div className="prediction-header">
+                  <div className="prediction-icon users">
+                    <Users className="w-5 h-5" />
+                  </div>
+                  <div className="prediction-confidence">
+                    <span>78% Confidence</span>
+                  </div>
+                </div>
+                <div className="prediction-body">
+                  <h5>User Acquisition</h5>
+                  <div className="prediction-value">
+                    <span className="value">3,847</span>
+                    <span className="target">new users</span>
+                  </div>
+                  <div className="prediction-chart">
+                    {[28, 35, 42, 48, 52, 58, 65].map((value, index) => (
+                      <div key={index} className="prediction-bar users" style={{ height: `${value * 1.8}px` }}></div>
+                    ))}
+                  </div>
+                </div>
+                <div className="prediction-footer">
+                  <span>Marketing campaigns showing strong ROI</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Real-time Metrics */}
+          <div className="realtime-metrics">
+            <div className="realtime-header">
+              <h4>Real-time Activity</h4>
+              <div className="live-indicator">
+                <div className="live-dot"></div>
+                <span>Live</span>
+              </div>
+            </div>
+            <div className="realtime-grid">
+              <div className="realtime-card">
+                <div className="realtime-icon">
+                  <Users className="w-5 h-5" />
+                </div>
+                <div className="realtime-content">
+                  <h5>Active Users</h5>
+                  <div className="realtime-value">
+                    <span className="value">1,247</span>
+                    <span className="change positive">+127</span>
+                  </div>
+                  <div className="realtime-sparkline">
+                    {[45, 52, 48, 58, 62, 68, 72, 78, 82, 85].map((value, index) => (
+                      <div key={index} className="sparkline-dot" style={{ height: `${value * 0.8}px` }}></div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div className="realtime-card">
+                <div className="realtime-icon">
+                  <MessageSquare className="w-5 h-5" />
+                </div>
+                <div className="realtime-content">
+                  <h5>Reviews/Min</h5>
+                  <div className="realtime-value">
+                    <span className="value">8.4</span>
+                    <span className="change positive">+2.1</span>
+                  </div>
+                  <div className="realtime-sparkline">
+                    {[3, 4, 3.5, 5, 6, 7, 8, 8.5, 9, 8.4].map((value, index) => (
+                      <div key={index} className="sparkline-dot reviews" style={{ height: `${value * 6}px` }}></div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div className="realtime-card">
+                <div className="realtime-icon">
+                  <MapPin className="w-5 h-5" />
+                </div>
+                <div className="realtime-content">
+                  <h5>Spot Searches</h5>
+                  <div className="realtime-value">
+                    <span className="value">342</span>
+                    <span className="change positive">+89</span>
+                  </div>
+                  <div className="realtime-sparkline">
+                    {[12, 18, 15, 22, 28, 32, 35, 38, 42, 45].map((value, index) => (
+                      <div key={index} className="sparkline-dot spots" style={{ height: `${value * 2}px` }}></div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div className="realtime-card">
+                <div className="realtime-icon">
+                  <Heart className="w-5 h-5" />
+                </div>
+                <div className="realtime-content">
+                  <h5>Engagement</h5>
+                  <div className="realtime-value">
+                    <span className="value">92.3%</span>
+                    <span className="change positive">+5.7</span>
+                  </div>
+                  <div className="realtime-sparkline">
+                    {[78, 82, 80, 85, 87, 89, 91, 93, 94, 92.3].map((value, index) => (
+                      <div key={index} className="sparkline-dot engagement" style={{ height: `${value * 0.9}px` }}></div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Actionable Recommendations */}
+          <div className="recommendations">
+            <div className="recommendations-header">
+              <h4>AI Recommendations</h4>
+              <p>Personalized actions to improve performance</p>
+            </div>
+            <div className="recommendations-list">
+              <div className="recommendation-item high-priority">
+                <div className="recommendation-priority">
+                  <span>High</span>
+                </div>
+                <div className="recommendation-content">
+                  <h5>Optimize Onboarding Flow</h5>
+                  <p>Users dropping off at step 3 of registration. Simplify the process to improve retention by 15%</p>
+                  <div className="recommendation-impact">
+                    <span className="impact-label">Expected Impact:</span>
+                    <span className="impact-value">+15% Retention</span>
+                  </div>
+                </div>
+                <button className="recommendation-action">
+                  Implement
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
+
+              <div className="recommendation-item medium-priority">
+                <div className="recommendation-priority">
+                  <span>Medium</span>
+                </div>
+                <div className="recommendation-content">
+                  <h5>Expand to New Markets</h5>
+                  <p>Analysis shows high demand in neighboring cities. Launch in 2 new locations next quarter</p>
+                  <div className="recommendation-impact">
+                    <span className="impact-label">Expected Impact:</span>
+                    <span className="impact-value">+28% Users</span>
+                  </div>
+                </div>
+                <button className="recommendation-action">
+                  View Details
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
+
+              <div className="recommendation-item low-priority">
+                <div className="recommendation-priority">
+                  <span>Low</span>
+                </div>
+                <div className="recommendation-content">
+                  <h5>Update Mobile App</h5>
+                  <p>Current version has performance issues. Update to improve user experience</p>
+                  <div className="recommendation-impact">
+                    <span className="impact-label">Expected Impact:</span>
+                    <span className="impact-value">+8% Satisfaction</span>
+                  </div>
+                </div>
+                <button className="recommendation-action">
+                  Schedule Update
+                  <ChevronRight className="w-4 h-4" />
+                </button>
               </div>
             </div>
           </div>
