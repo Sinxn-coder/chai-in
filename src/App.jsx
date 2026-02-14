@@ -2061,15 +2061,9 @@ export default function App() {
 
   return (
     <div className="app">
-      {/* Mobile White Screen */}
+      {/* Mobile Page */}
       {isMobile ? (
-        <div className="mobile-white-screen">
-          <div className="mobile-message">
-            <h2>Desktop Only</h2>
-            <p>This application is designed for desktop viewing only.</p>
-            <p>Please access this site from a desktop or tablet device.</p>
-          </div>
-        </div>
+        <MobilePage />
       ) : (
         <>
           {/* Navigation - Hide specific pages on mobile */}
