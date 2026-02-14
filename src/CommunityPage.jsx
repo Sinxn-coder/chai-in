@@ -52,8 +52,7 @@ export default function CommunityPage() {
       isLiked: false,
       isSaved: false,
       views: 1250,
-      category: 'review',
-      priority: 'normal'
+      category: 'review'
     },
     {
       id: 2,
@@ -71,8 +70,7 @@ export default function CommunityPage() {
       isLiked: false,
       isSaved: false,
       views: 890,
-      category: 'review',
-      priority: 'normal'
+      category: 'review'
     },
     {
       id: 3,
@@ -92,8 +90,7 @@ export default function CommunityPage() {
       isLiked: false,
       isSaved: false,
       views: 2100,
-      category: 'spot',
-      priority: 'featured'
+      category: 'spot'
     }
   ]);
 
@@ -241,13 +238,6 @@ export default function CommunityPage() {
                 <div className="admin-posts-grid">
                   {posts.map(post => (
                     <div key={post.id} className="admin-post-card">
-                      {/* Post Priority Badge */}
-                      {post.priority === 'featured' && (
-                        <div className="priority-badge featured">
-                          <Star size={14} />
-                        </div>
-                      )}
-
                       {/* Post Header */}
                       <div className="admin-post-header">
                         <div className="user-info">
