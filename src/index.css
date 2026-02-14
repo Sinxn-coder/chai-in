@@ -1848,6 +1848,133 @@ main {
   line-height: 1.5;
 }
 
+/* Mobile Page Styles */
+.mobile-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #1a1a1a 0%, #374151 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.mobile-content {
+  text-align: center;
+  max-width: 400px;
+}
+
+.mobile-page-header {
+  margin-bottom: 32px;
+}
+
+.mobile-page-header h2 {
+  font-size: 28px;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0 0 16px 0;
+}
+
+.mobile-page-header p {
+  font-size: 16px;
+  color: #e5e7eb;
+  margin: 0 0 8px 0;
+  line-height: 1.5;
+}
+
+.mobile-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.mobile-stat-card {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+  backdrop-filter: blur(10px);
+}
+
+.mobile-stat-icon {
+  font-size: 24px;
+  margin-bottom: 8px;
+}
+
+.mobile-stat-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.mobile-stat-number {
+  font-size: 24px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.mobile-stat-label {
+  font-size: 12px;
+  color: #e5e7eb;
+  margin-top: 4px;
+}
+
+/* Mobile App Bar */
+.mobile-app-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: linear-gradient(90deg, #dc2626 0%, #b91c1c 100%);
+  backdrop-filter: blur(10px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+}
+
+.mobile-app-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mobile-app-icon {
+  font-size: 20px;
+  color: #ffffff;
+}
+
+.mobile-app-brand h1 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #ffffff;
+  margin: 0;
+}
+
+.mobile-app-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.mobile-action-btn {
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 8px;
+  padding: 8px 12px;
+  color: #ffffff;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.mobile-action-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+}
+
 /* Image Editor Styles */
 .image-edit-modal {
   max-width: 900px;

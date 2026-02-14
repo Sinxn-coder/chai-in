@@ -2045,6 +2045,73 @@ export default function App() {
     return <DashboardPage />;
   };
 
+  const renderMobilePage = () => {
+    return (
+      <div className="mobile-page">
+        {/* Red App Bar for Mobile */}
+        <div className="mobile-app-bar">
+          <div className="mobile-app-brand">
+            <div className="mobile-app-icon">🍵</div>
+            <h1>BytSpot</h1>
+          </div>
+          <div className="mobile-app-actions">
+            <button className="mobile-action-btn">
+              <Settings size={16} />
+            </button>
+            <button className="mobile-action-btn">
+              <Bell size={16} />
+            </button>
+            <button className="mobile-action-btn">
+              <Users size={16} />
+            </button>
+          </div>
+        </div>
+        
+        {/* Mobile Page Content */}
+        <div className="mobile-content">
+          <div className="mobile-page-header">
+            <h2>Mobile Dashboard</h2>
+            <p>Access this application from a desktop device for full features</p>
+          </div>
+          
+          <div className="mobile-stats-grid">
+            <div className="mobile-stat-card">
+              <div className="mobile-stat-icon">👥</div>
+              <div className="mobile-stat-info">
+                <div className="mobile-stat-number">15,234</div>
+                <div className="mobile-stat-label">Total Users</div>
+              </div>
+            </div>
+            
+            <div className="mobile-stat-card">
+              <div className="mobile-stat-icon">📍</div>
+              <div className="mobile-stat-info">
+                <div className="mobile-stat-number">456</div>
+                <div className="mobile-stat-label">Food Spots</div>
+              </div>
+            </div>
+            
+            <div className="mobile-stat-card">
+              <div className="mobile-stat-icon">⭐</div>
+              <div className="mobile-stat-info">
+                <div className="mobile-stat-number">2,789</div>
+                <div className="mobile-stat-label">Reviews</div>
+              </div>
+            </div>
+            
+            <div className="mobile-stat-card">
+              <div className="mobile-stat-icon">💰</div>
+              <div className="mobile-stat-info">
+                <div className="mobile-stat-number">$45,678</div>
+                <div className="mobile-stat-label">Revenue</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   const renderContent = () => {
     switch (activeTab) {
       case 'dashboard':
@@ -2061,8 +2128,10 @@ export default function App() {
         return <div className="content-placeholder">Analytics Dashboard - Track user engagement, popular spots, revenue metrics, and growth trends.</div>;
       case 'settings':
         return <SettingsPage />;
+      case 'mobile':
+        return renderMobilePage();
       default:
-        return <div className="content-placeholder">Welcome to the BytSpot Admin Dashboard.</div>;
+        return <div className="content-placeholder">Welcome to BytSpot Admin Dashboard.</div>;
     }
   };
 
@@ -2103,6 +2172,14 @@ export default function App() {
               ))}
             </ul>
           </nav>
+          <header>
+            <div className="app-bar-brand">
+              <div className="appIcon">🍵</div>
+              <h1>BytSpot</h1>
+            </div>
+            <div className="header-center">{getActiveTabName()}</div>
+            <div className="header-right">Admin Panel</div>
+          </header>
           <header>
             <div className="app-bar-brand">
               <div className="appIcon">🍵</div>
