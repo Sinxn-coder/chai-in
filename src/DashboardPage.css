@@ -890,12 +890,14 @@
   border: 1px solid #e5e7eb;
   border-radius: 12px;
   transition: all 0.3s ease;
+  cursor: pointer;
 }
 
 .source-item:hover {
   background: white;
   border-color: #d1d5db;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
 }
 
 .source-info h5 {

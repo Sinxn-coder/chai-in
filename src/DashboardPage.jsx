@@ -168,6 +168,27 @@ export default function DashboardPage() {
     setTimeout(() => setIsLoading(false), 1500);
   };
 
+  const handleTabClick = (tab) => {
+    setActiveChartTab(tab);
+    // Add any additional logic needed when switching tabs
+    console.log(`Switched to ${tab} tab`);
+  };
+
+  const handleActivityClick = (type, data) => {
+    console.log(`Activity clicked:`, type, data);
+    // Add functionality for activity interactions
+  };
+
+  const handleRevenueClick = (source) => {
+    console.log(`Revenue source clicked:`, source);
+    // Add functionality for revenue source interactions
+  };
+
+  const handleSpotClick = (spot) => {
+    console.log(`Spot clicked:`, spot);
+    // Add functionality for spot interactions
+  };
+
   const getActivityIcon = (type) => {
     switch(type) {
       case 'user': return <Users className="w-4 h-4 text-blue-500" />;
@@ -513,7 +534,7 @@ export default function DashboardPage() {
                       <h4>Daily Active Users</h4>
                       <div className="activity-bars">
                         {userActivityData.daily.map((data, index) => (
-                          <div key={index} className="activity-day">
+                          <div key={index} className="activity-day" onClick={() => handleActivityClick('daily', data)}>
                             <div className="day-label">{data.day}</div>
                             <div className="day-stats">
                               <div className="stat-bar new-users" style={{ height: `${data.new * 2}px` }} title="New Users"></div>
@@ -528,7 +549,7 @@ export default function DashboardPage() {
                       <h4>Peak Activity Hours</h4>
                       <div className="hourly-activity">
                         {userActivityData.hourly.map((data, index) => (
-                          <div key={index} className="hour-item">
+                          <div key={index} className="hour-item" onClick={() => handleActivityClick('hourly', data)}>
                             <div className="hour-label">{data.hour}</div>
                             <div className="hour-bar" style={{ height: `${data.users * 0.8}px` }}></div>
                             <div className="hour-users">{data.users}</div>
@@ -547,7 +568,7 @@ export default function DashboardPage() {
                       <h4>Monthly Revenue Breakdown</h4>
                       <div className="revenue-bars">
                         {revenueData.monthly.map((data, index) => (
-                          <div key={index} className="revenue-month">
+                          <div key={index} className="revenue-month" onClick={() => handleRevenueClick('monthly', data)}>
                             <div className="month-label">{data.month}</div>
                             <div className="revenue-bar" style={{ height: `${data.revenue * 2}px` }}>
                               <div className="revenue-amount">${data.revenue.toLocaleString()}</div>
@@ -570,7 +591,7 @@ export default function DashboardPage() {
                       <h4>Revenue Sources</h4>
                       <div className="revenue-sources">
                         {revenueData.sources.map((source, index) => (
-                          <div key={index} className="source-item">
+                          <div key={index} className="source-item" onClick={() => handleRevenueClick('source', source)}>
                             <div className="source-info">
                               <h5>{source.source}</h5>
                               <div className="source-amount">${source.amount.toLocaleString()}</div>
@@ -601,7 +622,7 @@ export default function DashboardPage() {
                       <div className="header-cell">Trend</div>
                     </div>
                     {spotPerformanceData.map((spot, index) => (
-                      <div key={index} className="table-row">
+                      <div key={index} className="table-row" onClick={() => handleSpotClick(spot)}>
                         <div className="cell spot-name">
                           <div className="spot-info">
                             <h5>{spot.name}</h5>
