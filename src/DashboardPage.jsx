@@ -716,6 +716,82 @@ export default function DashboardPage() {
                         <p>Deep dive into user behavior and engagement patterns</p>
                       </div>
                       <div className="dual-chart-layout">
+                        <div className="metrics-showcase">
+                          <div className="metrics-header">
+                            <h3>Key Performance Indicators</h3>
+                            <div className="metrics-summary">
+                              <span className="summary-item positive">
+                                <TrendingUp className="w-4 h-4" />
+                                18.2% growth
+                              </span>
+                              <span className="summary-item neutral">
+                                <Activity className="w-4 h-4" />
+                                2,847 new users
+                              </span>
+                            </div>
+                          </div>
+                          <div className="metrics-grid-redesigned">
+                            <div className="metric-card-redesigned primary">
+                              <div className="metric-icon-large">
+                                <Users className="w-8 h-8" />
+                              </div>
+                              <div className="metric-content">
+                                <div className="metric-value-large">15,420</div>
+                                <div className="metric-label-large">Total Users</div>
+                                <div className="metric-change positive">
+                                  <TrendingUp className="w-4 h-4" />
+                                  <span>+2,847</span>
+                                  <span className="change-period">this month</span>
+                                </div>
+                              </div>
+                            </div>
+
+                            <div className="metric-card-redesigned success">
+                              <div className="metric-icon-large">
+                                <MapPin className="w-8 h-8" />
+                              </div>
+                              <div className="metric-content">
+                                <div className="metric-value-large">342</div>
+                                <div className="metric-label-large">Active Spots</div>
+                                <div className="metric-change positive">
+                                  <TrendingUp className="w-4 h-4" />
+                                  <span>+28</span>
+                                  <span className="change-period">this month</span>
+                                </div>
+                              </div>
+                            </div>
+
+                            <div className="metric-card-redesigned info">
+                              <div className="metric-icon-large">
+                                <Star className="w-8 h-8" />
+                              </div>
+                              <div className="metric-content">
+                                <div className="metric-value-large">8,756</div>
+                                <div className="metric-label-large">Total Reviews</div>
+                                <div className="metric-change positive">
+                                  <TrendingUp className="w-4 h-4" />
+                                  <span>+234</span>
+                                  <span className="change-period">this month</span>
+                                </div>
+                              </div>
+                            </div>
+
+                            <div className="metric-card-redesigned warning">
+                              <div className="metric-icon-large">
+                                <DollarSign className="w-8 h-8" />
+                              </div>
+                              <div className="metric-content">
+                                <div className="metric-value-large">$45,678</div>
+                                <div className="metric-label-large">Monthly Revenue</div>
+                                <div className="metric-change positive">
+                                  <TrendingUp className="w-4 h-4" />
+                                  <span>+32.1%</span>
+                                  <span className="change-period">vs last month</span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
                         <div className="chart-half">
                           <div className="mini-chart-header">
                             <h5>Daily Active Users</h5>
