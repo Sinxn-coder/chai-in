@@ -96,6 +96,117 @@
   to { transform: rotate(360deg); }
 }
 
+/* Stats Cards Section */
+.stats-section {
+  margin-bottom: 32px;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+}
+
+.stat-card {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+}
+
+.stat-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+}
+
+.stat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.stat-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.stat-icon.user-stat {
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+}
+
+.stat-icon.spots-stat {
+  background: linear-gradient(135deg, #10b981, #059669);
+}
+
+.stat-icon.reviews-stat {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+}
+
+.stat-icon.revenue-stat {
+  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+}
+
+.stat-change {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.stat-change.positive {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.stat-body {
+  margin-bottom: 16px;
+}
+
+.stat-value {
+  font-size: 32px;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0 0 4px 0;
+}
+
+.stat-label {
+  font-size: 14px;
+  color: #6b7280;
+  margin: 0;
+}
+
+.stat-footer {
+  font-size: 12px;
+  color: #9ca3af;
+}
+
+.stat-detail {
+  font-weight: 500;
+}
+
 /* Dashboard Empty */
 .dashboard-empty {
   text-align: center;
@@ -132,6 +243,11 @@
   
   .header-actions {
     justify-content: space-between;
+  }
+  
+  .stats-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
   }
 }
 
