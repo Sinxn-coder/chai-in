@@ -22,7 +22,9 @@ import {
   BarChart3,
   Settings,
   ImageIcon,
-  X
+  X,
+  Clock,
+  RefreshCw
 } from 'lucide-react';
 import './CommunityPage.css';
 
@@ -606,6 +608,215 @@ export default function CommunityPage() {
                 <div className="section-header">
                   <h2>Content Moderation</h2>
                   <p>Review and moderate community content</p>
+                </div>
+
+                {/* Moderation Stats */}
+                <div className="moderation-stats">
+                  <div className="stat-card pending">
+                    <div className="stat-icon">
+                      <Clock size={20} />
+                    </div>
+                    <div className="stat-info">
+                      <h3>24</h3>
+                      <p>Pending Review</p>
+                    </div>
+                  </div>
+                  <div className="stat-card flagged">
+                    <div className="stat-icon">
+                      <Flag size={20} />
+                    </div>
+                    <div className="stat-info">
+                      <h3>8</h3>
+                      <p>Flagged Content</p>
+                    </div>
+                  </div>
+                  <div className="stat-card removed">
+                    <div className="stat-icon">
+                      <Trash2 size={20} />
+                    </div>
+                    <div className="stat-info">
+                      <h3>3</h3>
+                      <p>Removed Today</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Moderation Queue */}
+                <div className="moderation-queue">
+                  <div className="queue-header">
+                    <h3>Moderation Queue</h3>
+                    <div className="queue-filters">
+                      <select className="filter-select">
+                        <option>All Content</option>
+                        <option>Pending Review</option>
+                        <option>Flagged</option>
+                        <option>Approved</option>
+                        <option>Removed</option>
+                      </select>
+                      <button className="refresh-btn">
+                        <RefreshCw size={16} />
+                        Refresh
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="queue-list">
+                    <div className="queue-item pending">
+                      <div className="item-content">
+                        <div className="item-header">
+                          <div className="user-info">
+                            <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=40&auto=format&fit=crop" alt="User" className="user-avatar-small" />
+                            <div className="user-details">
+                              <h4>John Doe</h4>
+                              <span className="post-time">15 minutes ago</span>
+                            </div>
+                          </div>
+                          <div className="item-status pending">Pending</div>
+                        </div>
+                        <div className="item-body">
+                          <p>Check out this amazing new restaurant downtown! The food was incredible and the service was top-notch. Highly recommend trying their signature dish!</p>
+                          <div className="item-images">
+                            <img src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?q=80&w=100&auto=format&fit=crop" alt="Post image" className="item-image" />
+                          </div>
+                        </div>
+                        <div className="item-meta">
+                          <span className="report-count">2 reports</span>
+                          <span className="category">Review</span>
+                        </div>
+                      </div>
+                      <div className="item-actions">
+                        <button className="action-btn approve">
+                          <CheckCircle size={16} />
+                          Approve
+                        </button>
+                        <button className="action-btn hide">
+                          <Eye size={16} />
+                          Hide
+                        </button>
+                        <button className="action-btn remove">
+                          <Trash2 size={16} />
+                          Remove
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="queue-item flagged">
+                      <div className="item-content">
+                        <div className="item-header">
+                          <div className="user-info">
+                            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=40&auto=format&fit=crop" alt="User" className="user-avatar-small" />
+                            <div className="user-details">
+                              <h4>Jane Smith</h4>
+                              <span className="post-time">1 hour ago</span>
+                            </div>
+                          </div>
+                          <div className="item-status flagged">Flagged</div>
+                        </div>
+                        <div className="item-body">
+                          <p>This place is terrible! Worst service ever, completely overpriced and the food was cold. Don't waste your time or money here.</p>
+                        </div>
+                        <div className="item-meta">
+                          <span className="report-count">5 reports</span>
+                          <span className="category">Review</span>
+                        </div>
+                      </div>
+                      <div className="item-actions">
+                        <button className="action-btn approve">
+                          <CheckCircle size={16} />
+                          Approve
+                        </button>
+                        <button className="action-btn hide">
+                          <Eye size={16} />
+                          Hide
+                        </button>
+                        <button className="action-btn remove">
+                          <Trash2 size={16} />
+                          Remove
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="queue-item approved">
+                      <div className="item-content">
+                        <div className="item-header">
+                          <div className="user-info">
+                            <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=40&auto=format&fit=crop" alt="User" className="user-avatar-small" />
+                            <div className="user-details">
+                              <h4>Mike Johnson</h4>
+                              <span className="post-time">2 hours ago</span>
+                            </div>
+                          </div>
+                          <div className="item-status approved">Approved</div>
+                        </div>
+                        <div className="item-body">
+                          <p>Great coffee shop with amazing atmosphere! Perfect for working or catching up with friends. Their specialty latte is a must-try!</p>
+                        </div>
+                        <div className="item-meta">
+                          <span className="report-count">0 reports</span>
+                          <span className="category">Review</span>
+                        </div>
+                      </div>
+                      <div className="item-actions">
+                        <button className="action-btn hide">
+                          <Eye size={16} />
+                          Hide
+                        </button>
+                        <button className="action-btn remove">
+                          <Trash2 size={16} />
+                          Remove
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Moderation Rules */}
+                <div className="moderation-rules">
+                  <div className="rules-header">
+                    <h3>Moderation Rules</h3>
+                    <button className="add-rule-btn">
+                      <Plus size={16} />
+                      Add Rule
+                    </button>
+                  </div>
+                  <div className="rules-list">
+                    <div className="rule-item">
+                      <div className="rule-info">
+                        <h4>No Spam or Promotional Content</h4>
+                        <p>Automatically remove posts containing excessive promotional language or links</p>
+                      </div>
+                      <div className="rule-status active">
+                        <label className="toggle-switch">
+                          <input type="checkbox" defaultChecked />
+                          <span className="toggle-slider"></span>
+                        </label>
+                      </div>
+                    </div>
+                    <div className="rule-item">
+                      <div className="rule-info">
+                        <h4>Inappropriate Language Filter</h4>
+                        <p>Flag posts containing profanity or inappropriate language for manual review</p>
+                      </div>
+                      <div className="rule-status active">
+                        <label className="toggle-switch">
+                          <input type="checkbox" defaultChecked />
+                          <span className="toggle-slider"></span>
+                        </label>
+                      </div>
+                    </div>
+                    <div className="rule-item">
+                      <div className="rule-info">
+                        <h4>Duplicate Content Detection</h4>
+                        <p>Identify and flag potentially duplicate or copied content</p>
+                      </div>
+                      <div className="rule-status inactive">
+                        <label className="toggle-switch">
+                          <input type="checkbox" />
+                          <span className="toggle-slider"></span>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             )}
