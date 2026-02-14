@@ -172,222 +172,233 @@ export default function CommunityPage() {
         </div>
       </div>
 
-      {/* Navigation Tabs */}
-      <div className="community-tabs">
-        {sections.map(section => (
-          <button
-            key={section.id}
-            className={`tab-btn ${activeSection === section.id ? 'active' : ''}`}
-            onClick={() => setActiveSection(section.id)}
-          >
-            <section.icon size={18} />
-            {section.name}
-          </button>
-        ))}
-      </div>
+      {/* Layout with Sidebar */}
+      <div className="community-layout">
+        {/* Fixed Sidebar Navigation */}
+        <div className="community-sidebar">
+          <div className="sidebar-header">
+            <h3>Community</h3>
+            <p>Manage your community</p>
+          </div>
+          <div className="nav-tabs">
+            {sections.map(section => (
+              <button
+                key={section.id}
+                className={`nav-tab ${activeSection === section.id ? 'active' : ''}`}
+                onClick={() => setActiveSection(section.id)}
+              >
+                <section.icon size={18} />
+                {section.name}
+              </button>
+            ))}
+          </div>
+        </div>
 
-      {/* Content Area */}
-      <div className="community-content">
-        {activeSection === 'posts' && (
-          <div className="content-section">
-            <div className="section-header">
-              <h2>Posts Management</h2>
-              <p>Admin control for community posts and content moderation</p>
-            </div>
-
-            {/* Admin Actions Bar */}
-            <div className="admin-toolbar">
-              <div className="admin-actions-left">
-                <button className="btn-primary">
-                  <Plus size={18} />
-                  Create New Post
-                </button>
-                <button className="btn-secondary">
-                  <Download size={18} />
-                  Export Data
-                </button>
-                <button className="btn-secondary">
-                  <Upload size={18} />
-                  Bulk Import
-                </button>
-              </div>
-              <div className="admin-actions-right">
-                <div className="filter-group">
-                  <select className="admin-select">
-                    <option>All Posts</option>
-                    <option>Pending Review</option>
-                    <option>Flagged Content</option>
-                    <option>Removed Posts</option>
-                    <option>High Priority</option>
-                  </select>
+        {/* Scrollable Content Area */}
+        <div className="community-content-area">
+          <div className="content-wrapper">
+            {activeSection === 'posts' && (
+              <div className="settings-section">
+                <div className="section-header">
+                  <h2>Posts Management</h2>
+                  <p>Admin control for community posts and content moderation</p>
                 </div>
-              </div>
-            </div>
 
-            {/* Posts Management Grid */}
-            <div className="admin-posts-grid">
-              {posts.map(post => (
-                <div key={post.id} className="admin-post-card">
-                  {/* Post Priority Badge */}
-                  {post.priority === 'featured' && (
-                    <div className="priority-badge featured">
-                      <Star size={14} />
-                      Featured
-                    </div>
-                  )}
-
-                  {/* Post Header */}
-                  <div className="admin-post-header">
-                    <div className="user-info">
-                      <img src={post.userPfp} alt={post.userName} className="user-avatar" />
-                      <div className="user-details">
-                        <h4>{post.userName}</h4>
-                        <span className="post-time">{post.time}</span>
-                      </div>
-                    </div>
-                    <div className="post-actions">
-                      <button className="action-btn">
-                        <MoreVertical size={16} />
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Post Content */}
-                  <div className="admin-post-content">
-                    <div className="admin-post-text">
-                      <p>{post.content}</p>
-                    </div>
-                    {post.tags && (
-                      <div className="admin-post-tags">
-                        {post.tags.map((tag, index) => (
-                          <span key={index} className="admin-tag">#{tag}</span>
-                        ))}
-                      </div>
-                    )}
-                    <button 
-                      className="admin-btn-small view-image-btn-full"
-                      onClick={() => {
-                        setSelectedPostId(post.id);
-                        setSelectedImage(post.images[post.currentImageIndex]);
-                      }}
-                    >
-                      <Eye size={14} />
-                      View Image
+                {/* Admin Actions Bar */}
+                <div className="admin-toolbar">
+                  <div className="admin-actions-left">
+                    <button className="btn-primary">
+                      <Plus size={18} />
+                      Create New Post
+                    </button>
+                    <button className="btn-secondary">
+                      <Download size={18} />
+                      Export Data
+                    </button>
+                    <button className="btn-secondary">
+                      <Upload size={18} />
+                      Bulk Import
                     </button>
                   </div>
-
-                  {/* Post Analytics */}
-                  <div className="admin-post-analytics">
-                    <div className="analytics-row">
-                      <div className="analytics-item">
-                        <div className="analytics-icon">
-                          <Eye size={16} />
-                        </div>
-                        <div className="analytics-data">
-                          <div className="analytics-number">{post.views?.toLocaleString() || '0'}</div>
-                          <div className="analytics-label">Views</div>
-                        </div>
-                      </div>
-                      <div className="analytics-item">
-                        <div className="analytics-icon">
-                          <Heart size={16} />
-                        </div>
-                        <div className="analytics-data">
-                          <div className="analytics-number">{post.likes}</div>
-                          <div className="analytics-label">Likes</div>
-                        </div>
-                      </div>
-                      <div className="analytics-item">
-                        <div className="analytics-icon">
-                          <MessageCircle size={16} />
-                        </div>
-                        <div className="analytics-data">
-                          <div className="analytics-number">{post.comments}</div>
-                          <div className="analytics-label">Comments</div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Post Moderation */}
-                  <div className="admin-post-moderation">
-                    <div className="moderation-header">
-                      <Shield size={16} />
-                      <span>Moderation Controls</span>
-                    </div>
-                    <div className="moderation-controls">
-                      <button className="moderation-btn approve">
-                        <CheckCircle size={14} />
-                        Approve
-                      </button>
-                      <button className="moderation-btn hide">
-                        <Eye size={14} />
-                        Hide
-                      </button>
-                      <button className="moderation-btn delete">
-                        <Trash2 size={14} />
-                        Delete
-                      </button>
-                      {post.reports > 0 && (
-                        <button className="review-reports-btn">
-                          <Flag size={14} />
-                          Review Reports ({post.reports})
-                        </button>
-                      )}
+                  <div className="admin-actions-right">
+                    <div className="filter-group">
+                      <select className="admin-select">
+                        <option>All Posts</option>
+                        <option>Pending Review</option>
+                        <option>Flagged Content</option>
+                        <option>Removed Posts</option>
+                        <option>High Priority</option>
+                      </select>
                     </div>
                   </div>
                 </div>
-              ))}
+
+                {/* Posts Management Grid */}
+                <div className="admin-posts-grid">
+                  {posts.map(post => (
+                    <div key={post.id} className="admin-post-card">
+                      {/* Post Priority Badge */}
+                      {post.priority === 'featured' && (
+                        <div className="priority-badge featured">
+                          <Star size={14} />
+                          Featured
+                        </div>
+                      )}
+
+                      {/* Post Header */}
+                      <div className="admin-post-header">
+                        <div className="user-info">
+                          <img src={post.userPfp} alt={post.userName} className="user-avatar" />
+                          <div className="user-details">
+                            <h4>{post.userName}</h4>
+                            <span className="post-time">{post.time}</span>
+                          </div>
+                        </div>
+                        <div className="post-actions">
+                          <button className="action-btn">
+                            <MoreVertical size={16} />
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Post Content */}
+                      <div className="admin-post-content">
+                        <div className="admin-post-text">
+                          <p>{post.content}</p>
+                        </div>
+                        {post.tags && (
+                          <div className="admin-post-tags">
+                            {post.tags.map((tag, index) => (
+                              <span key={index} className="admin-tag">#{tag}</span>
+                            ))}
+                          </div>
+                        )}
+                        <button 
+                          className="admin-btn-small view-image-btn-full"
+                          onClick={() => {
+                            setSelectedPostId(post.id);
+                            setSelectedImage(post.images[post.currentImageIndex]);
+                          }}
+                        >
+                          <Eye size={14} />
+                          View Image
+                        </button>
+                      </div>
+
+                      {/* Post Analytics */}
+                      <div className="admin-post-analytics">
+                        <div className="analytics-row">
+                          <div className="analytics-item">
+                            <div className="analytics-icon">
+                              <Eye size={16} />
+                            </div>
+                            <div className="analytics-data">
+                              <div className="analytics-number">{post.views?.toLocaleString() || '0'}</div>
+                              <div className="analytics-label">Views</div>
+                            </div>
+                          </div>
+                          <div className="analytics-item">
+                            <div className="analytics-icon">
+                              <Heart size={16} />
+                            </div>
+                            <div className="analytics-data">
+                              <div className="analytics-number">{post.likes}</div>
+                              <div className="analytics-label">Likes</div>
+                            </div>
+                          </div>
+                          <div className="analytics-item">
+                            <div className="analytics-icon">
+                              <MessageCircle size={16} />
+                            </div>
+                            <div className="analytics-data">
+                              <div className="analytics-number">{post.comments}</div>
+                              <div className="analytics-label">Comments</div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Post Moderation */}
+                      <div className="admin-post-moderation">
+                        <div className="moderation-header">
+                          <Shield size={16} />
+                          <span>Moderation Controls</span>
+                        </div>
+                        <div className="moderation-controls">
+                          <button className="moderation-btn approve">
+                            <CheckCircle size={14} />
+                            Approve
+                          </button>
+                          <button className="moderation-btn hide">
+                            <Eye size={14} />
+                            Hide
+                          </button>
+                          <button className="moderation-btn delete">
+                            <Trash2 size={14} />
+                            Delete
+                          </button>
+                          {post.reports > 0 && (
+                            <button className="review-reports-btn">
+                              <Flag size={14} />
+                              Review Reports ({post.reports})
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Other sections */}
+            {activeSection === 'users' && (
+              <div className="settings-section">
+                <div className="section-header">
+                  <h2>User Management</h2>
+                  <p>Manage community users and permissions</p>
+                </div>
+              </div>
+            )}
+
+            {activeSection === 'analytics' && (
+              <div className="settings-section">
+                <div className="section-header">
+                  <h2>Analytics Dashboard</h2>
+                  <p>Community engagement and performance metrics</p>
+                </div>
+              </div>
+            )}
+
+            {activeSection === 'moderation' && (
+              <div className="settings-section">
+                <div className="section-header">
+                  <h2>Content Moderation</h2>
+                  <p>Review and moderate community content</p>
+                </div>
+              </div>
+            )}
+
+            {activeSection === 'settings' && (
+              <div className="settings-section">
+                <div className="section-header">
+                  <h2>Community Settings</h2>
+                  <p>Configure community preferences and policies</p>
+                </div>
+              </div>
+            )}
+
+            {/* Actions */}
+            <div className="community-actions">
+              <button 
+                className={`save-btn ${savedSettings ? 'saved' : ''}`}
+                onClick={() => setSavedSettings(true)}
+              >
+                <CheckCircle size={18} />
+                {savedSettings ? 'Saved!' : 'Save Changes'}
+              </button>
             </div>
           </div>
-        )}
-
-        {/* Other sections would go here */}
-        {activeSection === 'users' && (
-          <div className="content-section">
-            <div className="section-header">
-              <h2>User Management</h2>
-              <p>Manage community users and permissions</p>
-            </div>
-          </div>
-        )}
-
-        {activeSection === 'analytics' && (
-          <div className="content-section">
-            <div className="section-header">
-              <h2>Analytics Dashboard</h2>
-              <p>Community engagement and performance metrics</p>
-            </div>
-          </div>
-        )}
-
-        {activeSection === 'moderation' && (
-          <div className="content-section">
-            <div className="section-header">
-              <h2>Content Moderation</h2>
-              <p>Review and moderate community content</p>
-            </div>
-          </div>
-        )}
-
-        {activeSection === 'settings' && (
-          <div className="content-section">
-            <div className="section-header">
-              <h2>Community Settings</h2>
-              <p>Configure community preferences and policies</p>
-            </div>
-          </div>
-        )}
-
-        {/* Actions */}
-        <div className="community-actions">
-          <button 
-            className={`save-btn ${savedSettings ? 'saved' : ''}`}
-            onClick={() => setSavedSettings(true)}
-          >
-            <CheckCircle size={18} />
-            {savedSettings ? 'Saved!' : 'Save Changes'}
-          </button>
         </div>
       </div>
 
