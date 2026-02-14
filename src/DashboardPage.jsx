@@ -27,7 +27,8 @@ import {
   ChevronRight,
   ArrowUp,
   ArrowDown,
-  MoreVertical
+  MoreVertical,
+  AlertCircle
 } from 'lucide-react';
 
 export default function DashboardPage() {
@@ -203,13 +204,13 @@ export default function DashboardPage() {
 
       {/* Charts Section */}
       <div className="charts-section">
-        <div className="chart-container">
-          <div className="chart-header">
-            <div className="chart-title">
+        <div className="performance-overview">
+          <div className="overview-header">
+            <div className="overview-title">
               <h3>Performance Overview</h3>
-              <p>Track key metrics over time</p>
+              <p>Comprehensive analytics and insights</p>
             </div>
-            <div className="chart-controls">
+            <div className="overview-controls">
               <select 
                 className="period-select"
                 value={selectedPeriod}
@@ -222,38 +223,207 @@ export default function DashboardPage() {
               </select>
               <button className="chart-btn">
                 <Download className="w-4 h-4" />
-                Export
+                Export Report
               </button>
             </div>
           </div>
-          <div className="chart-content">
-            <div className="chart-placeholder">
-              <BarChart3 className="w-16 h-16 text-gray-300 mb-4" />
-              <p className="text-gray-500">Interactive chart showing user growth, spots added, and reviews over time</p>
-              <div className="chart-metrics">
-                <div className="metric">
-                  <span className="metric-label">Users</span>
-                  <div className="metric-bar">
-                    {chartData.users.map((value, index) => (
-                      <div key={index} className="bar" style={{ height: `${value * 2}px` }}></div>
+
+          {/* Key Metrics Row */}
+          <div className="key-metrics">
+            <div className="metric-card">
+              <div className="metric-header">
+                <div className="metric-icon user-metric">
+                  <Users className="w-5 h-5" />
+                </div>
+                <div className="metric-change positive">
+                  <TrendingUp className="w-4 h-4" />
+                  <span>18.2%</span>
+                </div>
+              </div>
+              <div className="metric-body">
+                <h4 className="metric-value">2,847</h4>
+                <p className="metric-label">New Users</p>
+              </div>
+              <div className="metric-footer">
+                <div className="metric-sparkline">
+                  <div className="sparkline-data">
+                    {[45, 52, 48, 58, 62, 55, 68].map((value, index) => (
+                      <div key={index} className="sparkline-bar" style={{ height: `${value * 1.5}px` }}></div>
                     ))}
                   </div>
                 </div>
-                <div className="metric">
-                  <span className="metric-label">Spots</span>
-                  <div className="metric-bar">
-                    {chartData.spots.map((value, index) => (
-                      <div key={index} className="bar spots" style={{ height: `${value * 8}px` }}></div>
+                <span className="metric-period">vs last period</span>
+              </div>
+            </div>
+
+            <div className="metric-card">
+              <div className="metric-header">
+                <div className="metric-icon engagement-metric">
+                  <Activity className="w-5 h-5" />
+                </div>
+                <div className="metric-change positive">
+                  <TrendingUp className="w-4 h-4" />
+                  <span>24.7%</span>
+                </div>
+              </div>
+              <div className="metric-body">
+                <h4 className="metric-value">68.4%</h4>
+                <p className="metric-label">Engagement Rate</p>
+              </div>
+              <div className="metric-footer">
+                <div className="metric-sparkline">
+                  <div className="sparkline-data">
+                    {[52, 58, 55, 62, 68, 64, 72].map((value, index) => (
+                      <div key={index} className="sparkline-bar engagement" style={{ height: `${value * 1.2}px` }}></div>
                     ))}
                   </div>
                 </div>
-                <div className="metric">
-                  <span className="metric-label">Reviews</span>
-                  <div className="metric-bar">
-                    {chartData.reviews.map((value, index) => (
-                      <div key={index} className="bar reviews" style={{ height: `${value * 3}px` }}></div>
+                <span className="metric-period">+12.3% average</span>
+              </div>
+            </div>
+
+            <div className="metric-card">
+              <div className="metric-header">
+                <div className="metric-icon revenue-metric">
+                  <DollarSign className="w-5 h-5" />
+                </div>
+                <div className="metric-change positive">
+                  <TrendingUp className="w-4 h-4" />
+                  <span>32.1%</span>
+                </div>
+              </div>
+              <div className="metric-body">
+                <h4 className="metric-value">$12,847</h4>
+                <p className="metric-label">Revenue</p>
+              </div>
+              <div className="metric-footer">
+                <div className="metric-sparkline">
+                  <div className="sparkline-data">
+                    {[28, 35, 32, 42, 48, 45, 52].map((value, index) => (
+                      <div key={index} className="sparkline-bar revenue" style={{ height: `${value * 1.8}px` }}></div>
                     ))}
                   </div>
+                </div>
+                <span className="metric-period">Best month</span>
+              </div>
+            </div>
+
+            <div className="metric-card">
+              <div className="metric-header">
+                <div className="metric-icon retention-metric">
+                  <Target className="w-5 h-5" />
+                </div>
+                <div className="metric-change negative">
+                  <TrendingDown className="w-4 h-4" />
+                  <span>3.2%</span>
+                </div>
+              </div>
+              <div className="metric-body">
+                <h4 className="metric-value">84.7%</h4>
+                <p className="metric-label">Retention Rate</p>
+              </div>
+              <div className="metric-footer">
+                <div className="metric-sparkline">
+                  <div className="sparkline-data">
+                    {[88, 86, 87, 85, 84, 85, 84].map((value, index) => (
+                      <div key={index} className="sparkline-bar retention" style={{ height: `${value * 1.5}px` }}></div>
+                    ))}
+                  </div>
+                </div>
+                <span className="metric-period">Needs attention</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Main Chart Area */}
+          <div className="chart-area">
+            <div className="chart-tabs">
+              <button className="chart-tab active">Growth Trends</button>
+              <button className="chart-tab">User Activity</button>
+              <button className="chart-tab">Revenue Analysis</button>
+              <button className="chart-tab">Spot Performance</button>
+            </div>
+            
+            <div className="main-chart">
+              <div className="chart-legend">
+                <div className="legend-item">
+                  <div className="legend-color users"></div>
+                  <span>Users</span>
+                </div>
+                <div className="legend-item">
+                  <div className="legend-color spots"></div>
+                  <span>Spots</span>
+                </div>
+                <div className="legend-item">
+                  <div className="legend-color reviews"></div>
+                  <span>Reviews</span>
+                </div>
+                <div className="legend-item">
+                  <div className="legend-color revenue"></div>
+                  <span>Revenue</span>
+                </div>
+              </div>
+              
+              <div className="chart-visualization">
+                <div className="chart-grid">
+                  <div className="chart-y-axis">
+                    {[100, 80, 60, 40, 20, 0].map((value) => (
+                      <div key={value} className="y-label">{value}</div>
+                    ))}
+                  </div>
+                  <div className="chart-content">
+                    <div className="chart-bars">
+                      {chartData.users.map((value, index) => (
+                        <div key={index} className="chart-column">
+                          <div className="bar-group">
+                            <div className="bar users" style={{ height: `${value * 0.8}px` }}></div>
+                            <div className="bar spots" style={{ height: `${chartData.spots[index] * 0.4}px` }}></div>
+                            <div className="bar reviews" style={{ height: `${chartData.reviews[index] * 0.6}px` }}></div>
+                          </div>
+                          <div className="x-label">Day {index + 1}</div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Performance Insights */}
+          <div className="performance-insights">
+            <div className="insights-header">
+              <h4>Key Insights</h4>
+              <p>AI-powered analysis of your performance data</p>
+            </div>
+            <div className="insights-grid">
+              <div className="insight-card positive">
+                <div className="insight-icon">
+                  <Zap className="w-5 h-5" />
+                </div>
+                <div className="insight-content">
+                  <h5>User Growth Accelerating</h5>
+                  <p>User acquisition increased by 32% this week, driven by successful marketing campaigns</p>
+                </div>
+              </div>
+              
+              <div className="insight-card warning">
+                <div className="insight-icon">
+                  <AlertCircle className="w-5 h-5" />
+                </div>
+                <div className="insight-content">
+                  <h5>Retention Rate Declining</h5>
+                 <p>User retention dropped 3.2% - consider improving onboarding experience</p>
+                </div>
+              </div>
+              
+              <div className="insight-card positive">
+                <div className="insight-icon">
+                  <Award className="w-5 h-5" />
+                </div>
+                <div className="insight-content">
+                  <h5>Revenue Milestone Achieved</h5>
+                  <p>Monthly revenue exceeded targets by 24% with strong spot performance</p>
                 </div>
               </div>
             </div>
