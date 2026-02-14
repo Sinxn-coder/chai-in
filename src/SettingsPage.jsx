@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Shield, Server, Lock, Users, Bell, HelpCircle, ChevronRight, AlertTriangle, Activity, Mail, FileText, RefreshCw, Save, Check, Database, Globe, Key, Download, Upload, BarChart3, Clock, TrendingUp, UserCheck, Ban, Search, Filter, Calendar, Eye, EyeOff, Copy, Trash2, Edit, Plus, X } from 'lucide-react';
+import { Shield, Server, Lock, Users, Bell, HelpCircle, ChevronRight, AlertTriangle, Activity, Mail, FileText, RefreshCw, Save, Check, Database, Globe, Key, Download, Upload, BarChart3, Clock, TrendingUp, UserCheck, Ban, Search, Filter, Calendar, Eye, EyeOff, Copy, Trash2, Edit, Plus, X, Smartphone, Monitor } from 'lucide-react';
 import './SettingsPage.css';
 
 export default function SettingsPage() {
@@ -1734,135 +1734,461 @@ export default function SettingsPage() {
           {activeTab === 'notifications' && (
             <div className="settings-section">
               <div className="section-header">
-                <h2>Admin Notifications</h2>
-                <p>Configure system alerts and administrative notifications</p>
+                <h2>Notification Management</h2>
+                <p>Configure system alerts, email notifications, and communication channels</p>
               </div>
 
-              <div className="settings-list">
-                <div className="setting-item">
-                  <div className="setting-info">
-                    <div className="setting-header">
-                      <Mail size={18} />
-                      <span>Email Notifications</span>
-                    </div>
-                    <p>Receive admin alerts and system updates via email</p>
-                  </div>
-                  <label className="toggle-switch">
-                    <input 
-                      type="checkbox" 
-                      checked={notifications.email}
-                      onChange={() => handleToggle('notifications', 'email')}
-                    />
-                    <span className="toggle-slider"></span>
-                  </label>
+              <div className="settings-subsection">
+                <div className="subsection-header">
+                  <h3>Notification Channels</h3>
+                  <p>Configure how and where you receive notifications</p>
                 </div>
-
-                <div className="setting-item">
-                  <div className="setting-info">
-                    <div className="setting-header">
-                      <Bell size={18} />
-                      <span>Push Notifications</span>
+                <div className="settings-grid">
+                  <div className="setting-item">
+                    <div className="setting-info">
+                      <div className="setting-header">
+                        <Mail size={18} />
+                        <span>Email Notifications</span>
+                      </div>
+                      <p>Receive admin alerts and system updates via email</p>
                     </div>
-                    <p>Get instant push notifications on mobile devices</p>
+                    <label className="toggle-switch">
+                      <input 
+                        type="checkbox" 
+                        checked={notifications.email}
+                        onChange={() => handleToggle('notifications', 'email')}
+                      />
+                      <span className="toggle-slider"></span>
+                    </label>
                   </div>
-                  <label className="toggle-switch">
-                    <input 
-                      type="checkbox" 
-                      checked={notifications.push}
-                      onChange={() => handleToggle('notifications', 'push')}
-                    />
-                    <span className="toggle-slider"></span>
-                  </label>
+
+                  <div className="setting-item">
+                    <div className="setting-info">
+                      <div className="setting-header">
+                        <Bell size={18} />
+                        <span>Push Notifications</span>
+                      </div>
+                      <p>Get instant push notifications on mobile devices</p>
+                    </div>
+                    <label className="toggle-switch">
+                      <input 
+                        type="checkbox" 
+                        checked={notifications.push}
+                        onChange={() => handleToggle('notifications', 'push')}
+                      />
+                      <span className="toggle-slider"></span>
+                    </label>
+                  </div>
+
+                  <div className="setting-item">
+                    <div className="setting-info">
+                      <div className="setting-header">
+                        <Smartphone size={18} />
+                        <span>SMS Notifications</span>
+                      </div>
+                      <p>Receive critical alerts via SMS messages</p>
+                    </div>
+                    <label className="toggle-switch">
+                      <input 
+                        type="checkbox" 
+                        checked={notifications.sms}
+                        onChange={() => handleToggle('notifications', 'sms')}
+                      />
+                      <span className="toggle-slider"></span>
+                    </label>
+                  </div>
+
+                  <div className="setting-item">
+                    <div className="setting-info">
+                      <div className="setting-header">
+                        <Monitor size={18} />
+                        <span>Desktop Notifications</span>
+                      </div>
+                      <p>Show browser desktop notifications for alerts</p>
+                    </div>
+                    <label className="toggle-switch">
+                      <input 
+                        type="checkbox" 
+                        checked={notifications.desktop}
+                        onChange={() => handleToggle('notifications', 'desktop')}
+                      />
+                      <span className="toggle-slider"></span>
+                    </label>
+                  </div>
                 </div>
+              </div>
 
-                <div className="setting-item">
-                  <div className="setting-info">
-                    <div className="setting-header">
-                      <AlertTriangle size={18} />
-                      <span>System Alerts</span>
-                    </div>
-                    <p>Get notified about critical system issues and errors</p>
-                  </div>
-                  <label className="toggle-switch">
-                    <input 
-                      type="checkbox" 
-                      checked={notifications.systemAlerts}
-                      onChange={() => handleToggle('notifications', 'systemAlerts')}
-                    />
-                    <span className="toggle-slider"></span>
-                  </label>
+              <div className="settings-subsection">
+                <div className="subsection-header">
+                  <h3>System Alerts</h3>
+                  <p>Configure critical system and infrastructure notifications</p>
                 </div>
-
-                <div className="setting-item">
-                  <div className="setting-info">
-                    <div className="setting-header">
-                      <Users size={18} />
-                      <span>User Activity</span>
+                <div className="settings-grid">
+                  <div className="setting-item">
+                    <div className="setting-info">
+                      <div className="setting-header">
+                        <AlertTriangle size={18} />
+                        <span>System Alerts</span>
+                      </div>
+                      <p>Get notified about critical system issues and errors</p>
                     </div>
-                    <p>Monitor user registrations and profile changes</p>
+                    <label className="toggle-switch">
+                      <input 
+                        type="checkbox" 
+                        checked={notifications.systemAlerts}
+                        onChange={() => handleToggle('notifications', 'systemAlerts')}
+                      />
+                      <span className="toggle-slider"></span>
+                    </label>
                   </div>
-                  <label className="toggle-switch">
-                    <input 
-                      type="checkbox" 
-                      checked={notifications.userActivity}
-                      onChange={() => handleToggle('notifications', 'userActivity')}
-                    />
-                    <span className="toggle-slider"></span>
-                  </label>
+
+                  <div className="setting-item">
+                    <div className="setting-info">
+                      <div className="setting-header">
+                        <TrendingUp size={18} />
+                        <span>Performance Alerts</span>
+                      </div>
+                      <p>Alert when system performance exceeds thresholds</p>
+                    </div>
+                    <label className="toggle-switch">
+                      <input 
+                        type="checkbox" 
+                        checked={notifications.performanceAlerts}
+                        onChange={() => handleToggle('notifications', 'performanceAlerts')}
+                      />
+                      <span className="toggle-slider"></span>
+                    </label>
+                  </div>
+
+                  <div className="setting-item">
+                    <div className="setting-info">
+                      <div className="setting-header">
+                        <Database size={18} />
+                        <span>Database Alerts</span>
+                      </div>
+                      <p>Notify about database connectivity and performance issues</p>
+                    </div>
+                    <label className="toggle-switch">
+                      <input 
+                        type="checkbox" 
+                        checked={notifications.databaseAlerts || false}
+                        onChange={() => handleToggle('notifications', 'databaseAlerts')}
+                      />
+                      <span className="toggle-slider"></span>
+                    </label>
+                  </div>
+
+                  <div className="setting-item">
+                    <div className="setting-info">
+                      <div className="setting-header">
+                        <Server size={18} />
+                        <span>Server Health</span>
+                      </div>
+                      <p>Monitor server status and resource usage</p>
+                    </div>
+                    <label className="toggle-switch">
+                      <input 
+                        type="checkbox" 
+                        checked={notifications.serverHealth || false}
+                        onChange={() => handleToggle('notifications', 'serverHealth')}
+                      />
+                      <span className="toggle-slider"></span>
+                    </label>
+                  </div>
                 </div>
+              </div>
 
-                <div className="setting-item">
-                  <div className="setting-info">
-                    <div className="setting-header">
-                      <Lock size={18} />
-                      <span>Security Events</span>
-                    </div>
-                    <p>Alert on security breaches and suspicious activities</p>
-                  </div>
-                  <label className="toggle-switch">
-                    <input 
-                      type="checkbox" 
-                      checked={notifications.securityEvents}
-                      onChange={() => handleToggle('notifications', 'securityEvents')}
-                    />
-                    <span className="toggle-slider"></span>
-                  </label>
+              <div className="settings-subsection">
+                <div className="subsection-header">
+                  <h3>User & Security Notifications</h3>
+                  <p>Monitor user activities and security events</p>
                 </div>
-
-                <div className="setting-item">
-                  <div className="setting-info">
-                    <div className="setting-header">
-                      <RefreshCw size={18} />
-                      <span>Backup Reminders</span>
+                <div className="settings-grid">
+                  <div className="setting-item">
+                    <div className="setting-info">
+                      <div className="setting-header">
+                        <Users size={18} />
+                        <span>User Activity</span>
+                      </div>
+                      <p>Monitor user registrations and profile changes</p>
                     </div>
-                    <p>Get notified about backup status and failures</p>
+                    <label className="toggle-switch">
+                      <input 
+                        type="checkbox" 
+                        checked={notifications.userActivity}
+                        onChange={() => handleToggle('notifications', 'userActivity')}
+                      />
+                      <span className="toggle-slider"></span>
+                    </label>
                   </div>
-                  <label className="toggle-switch">
-                    <input 
-                      type="checkbox" 
-                      checked={notifications.backupReminders}
-                      onChange={() => handleToggle('notifications', 'backupReminders')}
-                    />
-                    <span className="toggle-slider"></span>
-                  </label>
+
+                  <div className="setting-item">
+                    <div className="setting-info">
+                      <div className="setting-header">
+                        <Lock size={18} />
+                        <span>Security Events</span>
+                      </div>
+                      <p>Alert on security breaches and suspicious activities</p>
+                    </div>
+                    <label className="toggle-switch">
+                      <input 
+                        type="checkbox" 
+                        checked={notifications.securityEvents}
+                        onChange={() => handleToggle('notifications', 'securityEvents')}
+                      />
+                      <span className="toggle-slider"></span>
+                    </label>
+                  </div>
+
+                  <div className="setting-item">
+                    <div className="setting-info">
+                      <div className="setting-header">
+                        <Ban size={18} />
+                        <span>Failed Login Attempts</span>
+                      </div>
+                      <p>Notify about multiple failed login attempts</p>
+                    </div>
+                    <label className="toggle-switch">
+                      <input 
+                        type="checkbox" 
+                        checked={notifications.failedLogins || false}
+                        onChange={() => handleToggle('notifications', 'failedLogins')}
+                      />
+                      <span className="toggle-slider"></span>
+                    </label>
+                  </div>
+
+                  <div className="setting-item">
+                    <div className="setting-info">
+                      <div className="setting-header">
+                        <UserCheck size={18} />
+                        <span>New User Registrations</span>
+                      </div>
+                      <p>Get notified when new users register</p>
+                    </div>
+                    <label className="toggle-switch">
+                      <input 
+                        type="checkbox" 
+                        checked={notifications.newRegistrations || false}
+                        onChange={() => handleToggle('notifications', 'newRegistrations')}
+                      />
+                      <span className="toggle-slider"></span>
+                    </label>
+                  </div>
                 </div>
+              </div>
 
-                <div className="setting-item">
-                  <div className="setting-info">
-                    <div className="setting-header">
-                      <TrendingUp size={18} />
-                      <span>Performance Alerts</span>
+              <div className="settings-subsection">
+                <div className="subsection-header">
+                  <h3>Backup & Maintenance</h3>
+                  <p>Configure notifications for system maintenance and backup operations</p>
+                </div>
+                <div className="settings-grid">
+                  <div className="setting-item">
+                    <div className="setting-info">
+                      <div className="setting-header">
+                        <RefreshCw size={18} />
+                        <span>Backup Reminders</span>
+                      </div>
+                      <p>Get notified about backup status and failures</p>
                     </div>
-                    <p>Alert when system performance exceeds thresholds</p>
+                    <label className="toggle-switch">
+                      <input 
+                        type="checkbox" 
+                        checked={notifications.backupReminders}
+                        onChange={() => handleToggle('notifications', 'backupReminders')}
+                      />
+                      <span className="toggle-slider"></span>
+                    </label>
                   </div>
-                  <label className="toggle-switch">
+
+                  <div className="setting-item">
+                    <div className="setting-info">
+                      <div className="setting-header">
+                        <Clock size={18} />
+                        <span>Maintenance Alerts</span>
+                      </div>
+                      <p>Notify about scheduled maintenance and downtime</p>
+                    </div>
+                    <label className="toggle-switch">
+                      <input 
+                        type="checkbox" 
+                        checked={notifications.maintenanceAlerts}
+                        onChange={() => handleToggle('notifications', 'maintenanceAlerts')}
+                      />
+                      <span className="toggle-slider"></span>
+                    </label>
+                  </div>
+
+                  <div className="setting-item">
+                    <div className="setting-info">
+                      <div className="setting-header">
+                        <Download size={18} />
+                        <span>Update Notifications</span>
+                      </div>
+                      <p>Alert about system updates and patches</p>
+                    </div>
+                    <label className="toggle-switch">
+                      <input 
+                        type="checkbox" 
+                        checked={notifications.updateNotifications || false}
+                        onChange={() => handleToggle('notifications', 'updateNotifications')}
+                      />
+                      <span className="toggle-slider"></span>
+                    </label>
+                  </div>
+
+                  <div className="setting-item">
+                    <div className="setting-info">
+                      <div className="setting-header">
+                        <FileText size={18} />
+                        <span>Storage Warnings</span>
+                      </div>
+                      <p>Alert when storage space is running low</p>
+                    </div>
+                    <label className="toggle-switch">
+                      <input 
+                        type="checkbox" 
+                        checked={notifications.storageWarnings || false}
+                        onChange={() => handleToggle('notifications', 'storageWarnings')}
+                      />
+                      <span className="toggle-slider"></span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <div className="settings-subsection">
+                <div className="subsection-header">
+                  <h3>Email Configuration</h3>
+                  <p>Configure email settings and delivery preferences</p>
+                </div>
+                <div className="settings-grid">
+                  <div className="setting-item">
+                    <label>SMTP Server</label>
                     <input 
-                      type="checkbox" 
-                      checked={notifications.performanceAlerts}
-                      onChange={() => handleToggle('notifications', 'performanceAlerts')}
+                      type="text" 
+                      value={notifications.smtpServer || ''}
+                      onChange={(e) => handleInputChange('notifications', 'smtpServer', e.target.value)}
+                      className="setting-input" 
+                      placeholder="smtp.example.com"
                     />
-                    <span className="toggle-slider"></span>
-                  </label>
+                    <small>Outgoing mail server address</small>
+                  </div>
+
+                  <div className="setting-item">
+                    <label>SMTP Port</label>
+                    <input 
+                      type="number" 
+                      value={notifications.smtpPort || 587}
+                      onChange={(e) => handleInputChange('notifications', 'smtpPort', parseInt(e.target.value))}
+                      className="setting-input" 
+                      min="25"
+                      max="65535"
+                    />
+                    <small>SMTP server port number</small>
+                  </div>
+
+                  <div className="setting-item">
+                    <label>From Email</label>
+                    <input 
+                      type="email" 
+                      value={notifications.fromEmail || ''}
+                      onChange={(e) => handleInputChange('notifications', 'fromEmail', e.target.value)}
+                      className="setting-input" 
+                      placeholder="noreply@example.com"
+                    />
+                    <small>Default sender email address</small>
+                  </div>
+
+                  <div className="setting-item">
+                    <label>Email Template</label>
+                    <select 
+                      value={notifications.emailTemplate || 'default'}
+                      onChange={(e) => handleInputChange('notifications', 'emailTemplate', e.target.value)}
+                      className="setting-input"
+                    >
+                      <option value="default">Default Template</option>
+                      <option value="modern">Modern Template</option>
+                      <option value="minimal">Minimal Template</option>
+                      <option value="custom">Custom Template</option>
+                    </select>
+                    <small>Email notification template style</small>
+                  </div>
+                </div>
+              </div>
+
+              <div className="settings-subsection">
+                <div className="subsection-header">
+                  <h3>Notification Preferences</h3>
+                  <p>Configure notification frequency and delivery settings</p>
+                </div>
+                <div className="settings-grid">
+                  <div className="setting-item">
+                    <label>Notification Frequency</label>
+                    <select 
+                      value={notifications.frequency || 'immediate'}
+                      onChange={(e) => handleInputChange('notifications', 'frequency', e.target.value)}
+                      className="setting-input"
+                    >
+                      <option value="immediate">Immediate</option>
+                      <option value="hourly">Hourly Digest</option>
+                      <option value="daily">Daily Digest</option>
+                      <option value="weekly">Weekly Digest</option>
+                    </select>
+                    <small>How often to receive notifications</small>
+                  </div>
+
+                  <div className="setting-item">
+                    <label>Quiet Hours</label>
+                    <select 
+                      value={notifications.quietHours || 'none'}
+                      onChange={(e) => handleInputChange('notifications', 'quietHours', e.target.value)}
+                      className="setting-input"
+                    >
+                      <option value="none">No Quiet Hours</option>
+                      <option value="22-6">10 PM - 6 AM</option>
+                      <option value="23-7">11 PM - 7 AM</option>
+                      <option value="custom">Custom Hours</option>
+                    </select>
+                    <small>Disable notifications during quiet hours</small>
+                  </div>
+
+                  <div className="setting-item">
+                    <div className="setting-info">
+                      <div className="setting-header">
+                        <Eye size={18} />
+                        <span>Group Similar Notifications</span>
+                      </div>
+                      <p>Combine similar notifications into single alerts</p>
+                    </div>
+                    <label className="toggle-switch">
+                      <input 
+                        type="checkbox" 
+                        checked={notifications.groupNotifications || false}
+                        onChange={() => handleToggle('notifications', 'groupNotifications')}
+                      />
+                      <span className="toggle-slider"></span>
+                    </label>
+                  </div>
+
+                  <div className="setting-item">
+                    <div className="setting-info">
+                      <div className="setting-header">
+                        <EyeOff size={18} />
+                        <span>Do Not Disturb</span>
+                      </div>
+                      <p>Temporarily disable all notifications</p>
+                    </div>
+                    <label className="toggle-switch">
+                      <input 
+                        type="checkbox" 
+                        checked={notifications.doNotDisturb || false}
+                        onChange={() => handleToggle('notifications', 'doNotDisturb')}
+                      />
+                      <span className="toggle-slider"></span>
+                    </label>
+                  </div>
                 </div>
               </div>
             </div>
