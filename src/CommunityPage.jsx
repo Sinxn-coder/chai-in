@@ -319,6 +319,9 @@ export default function CommunityPage() {
                                   key={index}
                                   className={`slider-image ${index === post.currentImageIndex ? 'active' : ''}`}
                                   onClick={(e) => {
+                                    // Only allow navigation on the active image
+                                    if (index !== post.currentImageIndex) return;
+                                    
                                     const rect = e.currentTarget.getBoundingClientRect();
                                     const clickX = e.clientX - rect.left;
                                     const imageWidth = rect.width;
