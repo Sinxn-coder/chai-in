@@ -1,122 +1,11 @@
 /* Community Page - Comprehensive Community Management Styles */
 
-/* Left Section Styling */
 .community-page {
-  display: flex;
-  min-height: 100vh;
+  height: 100vh;
   background: #f8fafc;
-}
-
-.community-sidebar {
-  width: 280px;
-  background: white;
-  border-right: 1px solid #e5e7eb;
-  padding: 24px;
   display: flex;
   flex-direction: column;
-  gap: 24px;
-}
-
-.sidebar-section {
-  background: #f8fafc;
-  border-radius: 12px;
-  padding: 16px;
-  border: 1px solid #e5e7eb;
-}
-
-.sidebar-section h3 {
-  margin: 0 0 12px 0;
-  font-size: 14px;
-  font-weight: 600;
-  color: #374151;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.sidebar-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 8px 12px;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  font-size: 14px;
-  color: #6b7280;
-}
-
-.sidebar-item:hover {
-  background: #e5e7eb;
-  color: #374151;
-}
-
-.sidebar-item.active {
-  background: #3b82f6;
-  color: white;
-}
-
-.sidebar-stats {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.stat-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 8px 0;
-  border-bottom: 1px solid #e5e7eb;
-}
-
-.stat-item:last-child {
-  border-bottom: none;
-}
-
-.stat-label {
-  font-size: 13px;
-  color: #6b7280;
-}
-
-.stat-value {
-  font-size: 14px;
-  font-weight: 600;
-  color: #374151;
-}
-
-.activity-dot {
-  width: 8px;
-  height: 8px;
-  background: #10b981;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-
-.community-main {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
-
-.community-header {
-  background: white;
-  border-bottom: 1px solid #e5e7eb;
-  padding: 24px 32px;
-}
-
-.community-tabs {
-  background: white;
-  border-bottom: 1px solid #e5e7eb;
-  padding: 0 32px;
-  display: flex;
-  gap: 2px;
-}
-
-.community-content {
-  flex: 1;
-  padding: 32px;
-  overflow-y: auto;
+  overflow: hidden;
 }
 
 .community-header {
@@ -658,6 +547,75 @@
   gap: 8px;
   margin-bottom: 16px;
   align-items: center;
+}
+
+.community-tabs {
+  display: flex;
+  gap: 2px;
+  background: #f8fafc;
+  padding: 8px;
+  border-radius: 12px;
+  margin-bottom: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.tab-btn {
+  background: transparent;
+  border: none;
+  color: #6b7280;
+  padding: 12px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  position: relative;
+  overflow: hidden;
+}
+
+.tab-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: -1;
+}
+
+.tab-btn:hover {
+  color: #3b82f6;
+  background: rgba(59, 130, 246, 0.1);
+  transform: translateY(-1px);
+}
+
+.tab-btn.active {
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  color: white;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+  transform: translateY(-1px);
+}
+
+.tab-btn.active::before {
+  opacity: 1;
+}
+
+.tab-btn svg {
+  transition: transform 0.3s ease;
+}
+
+.tab-btn:hover svg {
+  transform: scale(1.1);
+}
+
+.tab-btn.active svg {
+  transform: scale(1.1);
 }
 
 .view-image-btn-full {
