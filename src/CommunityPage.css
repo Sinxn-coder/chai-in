@@ -1226,6 +1226,35 @@
   border-radius: 8px;
 }
 
+.image-popup-navigation {
+  position: absolute;
+  bottom: 20px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 20px;
+}
+
+.popup-nav-btn {
+  background: rgba(0, 0, 0, 0.8);
+  border: none;
+  color: white;
+  padding: 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+}
+
+.popup-nav-btn:hover {
+  background: rgba(0, 0, 0, 0.9);
+}
+
 /* Settings Section */
 .settings-grid {
   display: grid;

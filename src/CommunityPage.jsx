@@ -1,31 +1,28 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { 
-  Users, 
-  Heart, 
-  MessageCircle, 
-  Bookmark, 
   Search, 
+  Filter, 
   Plus, 
-  MoreVertical, 
-  Eye, 
-  Flag, 
-  Trash2, 
+  Download, 
+  Upload, 
   Edit, 
-  Filter,
-  TrendingUp,
-  Clock,
-  Image as ImageIcon,
-  BarChart3,
-  Shield,
-  Settings,
-  CheckCircle,
-  X,
-  Download,
-  Upload,
+  Trash2, 
+  MoreVertical,
   ChevronLeft,
   ChevronRight,
+  Eye,
+  Heart,
+  MessageCircle,
+  Share2,
+  Shield,
+  CheckCircle,
+  Flag,
   Star,
-  Share2
+  Users,
+  BarChart3,
+  Settings,
+  ImageIcon,
+  X
 } from 'lucide-react';
 import './CommunityPage.css';
 
@@ -132,506 +129,323 @@ export default function CommunityPage() {
     ));
   };
 
-  const handleDeletePost = (postId) => {
-    setPosts(prev => prev.filter(post => post.id !== postId));
+  const handleImageNavigation = (postId, direction) => {
+    setPosts(prevPosts => 
+      prevPosts.map(post => {
+        if (post.id === postId) {
+          let newIndex;
+          if (direction === 'next') {
+            newIndex = post.currentImageIndex < post.images.length - 1 ? post.currentImageIndex + 1 : 0;
+          } else {
+            newIndex = post.currentImageIndex > 0 ? post.currentImageIndex - 1 : post.images.length - 1;
+          }
+          return { ...post, currentImageIndex: newIndex };
+        }
+        return post;
+      })
+    );
   };
-
-  const handleReportPost = (postId) => {
-    setPosts(prev => prev.map(post => 
-      post.id === postId 
-        ? { ...post, reports: post.reports + 1 }
-        : post
-    ));
-  };
-
-  const getStatusBadge = (status) => {
-    switch (status) {
-      case 'active':
-        return <span className="status-badge active">Active</span>;
-      case 'flagged':
-        return <span className="status-badge flagged">Flagged</span>;
-      case 'removed':
-        return <span className="status-badge removed">Removed</span>;
-      default:
-        return <span className="status-badge">Unknown</span>;
-    }
-  };
-
-  const filteredPosts = posts.filter(post => 
-    post.content.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    post.userName.toLowerCase().includes(searchTerm.toLowerCase())
-  );
 
   return (
     <div className="community-page">
+      {/* Header */}
       <div className="community-header">
-        <h1>Community Management</h1>
-        <p>Manage community posts, users, and engagement</p>
-      </div>
-
-      <div className="community-layout">
-        {/* Sidebar Navigation */}
-        <div className="community-sidebar">
-          <div className="sidebar-header">
-            <h3>Community</h3>
-            <p>Manage social feed</p>
+        <div className="header-content">
+          <div className="header-text">
+            <h1>Community Management</h1>
+            <p>Admin dashboard for community content and user engagement</p>
           </div>
-          <div className="nav-tabs">
-            {sections.map(section => {
-              const Icon = section.icon;
-              return (
-                <button
-                  key={section.id}
-                  className={`nav-tab ${activeSection === section.id ? 'active' : ''}`}
-                  onClick={() => setActiveSection(section.id)}
-                >
-                  <Icon size={18} />
-                  <span>{section.name}</span>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Content Area */}
-        <div className="community-content">
-          {activeSection === 'posts' && (
-            <div className="content-section">
-              <div className="section-header">
-                <h2>Posts Management</h2>
-                <p>Admin control for community posts and content moderation</p>
-              </div>
-
-              {/* Admin Actions Bar */}
-              <div className="admin-toolbar">
-                <div className="admin-actions-left">
-                  <button className="btn-primary">
-                    <Plus size={18} />
-                    Create New Post
-                  </button>
-                  <button className="btn-secondary">
-                    <Download size={18} />
-                    Export Data
-                  </button>
-                  <button className="btn-secondary">
-                    <Upload size={18} />
-                    Bulk Import
-                  </button>
-                </div>
-                <div className="admin-actions-right">
-                  <div className="filter-group">
-                    <select className="admin-select">
-                      <option>All Posts</option>
-                      <option>Pending Review</option>
-                      <option>Flagged Content</option>
-                      <option>Removed Posts</option>
-                      <option>High Priority</option>
-                    </select>
-                    <select className="admin-select">
-                      <option>All Categories</option>
-                      <option>Reviews</option>
-                      <option>Spots</option>
-                      <option>General</option>
-                      <option>Announcements</option>
-                    </select>
-                  </div>
-                  <button className="btn-danger">
-                    <Trash2 size={18} />
-                    Bulk Actions
-                  </button>
-                </div>
-              </div>
-
-              {/* Posts Management Grid */}
-              <div className="admin-posts-grid">
-                {posts.map(post => (
-                  <div key={post.id} className="admin-post-card">
-                    {/* Post Priority Badge */}
-                    {post.priority === 'featured' && (
-                      <div className="priority-badge featured">
-                        <Star size={14} />
-                        Featured
-                      </div>
-                    )}
-
-                    {/* Post Header */}
-                    <div className="admin-post-header">
-                      <div className="admin-user-info">
-                        <img src={post.userPfp} alt={post.userName} className="admin-user-avatar" />
-                        <div className="admin-user-details">
-                          <div className="admin-user-name">{post.userName}</div>
-                          <div className="admin-post-meta">
-                            <span className="admin-category">{post.category}</span>
-                            <span className="admin-time">{post.time}</span>
-                            <span className={`admin-status ${post.status}`}>{post.status}</span>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="admin-post-actions">
-                        <button className="admin-btn-icon">
-                          <Edit size={16} />
-                        </button>
-                        <button className="admin-btn-icon">
-                          <Eye size={16} />
-                        </button>
-                        <button className="admin-btn-icon">
-                          <MessageCircle size={16} />
-                        </button>
-                        <button className="admin-btn-icon danger">
-                          <Trash2 size={16} />
-                        </button>
-                      </div>
-                    </div>
-
-                    {/* Post Content */}
-                    <div className="admin-post-content">
-                      <div className="admin-post-text">
-                        <p>{post.content}</p>
-                      </div>
-                      {post.images && (
-                        <div className="admin-post-tags">
-                          {post.tags.map((tag, index) => (
-                            <span key={index} className="admin-tag">#{tag}</span>
-                          ))}
-                        </div>
-                      )}
-                      <button 
-                        className="admin-btn-small view-image-btn-full"
-                        onClick={() => {
-                          setSelectedPostId(post.id);
-                          setSelectedImage(post.images[post.currentImageIndex]);
-                        }}
-                      >
-                        <Eye size={14} />
-                        View Image
-                      </button>
-                    </div>
-
-                    {/* Post Images Admin - Hidden */}
-                    {post.images.length > 0 && (
-                      <div className="admin-post-images" style={{ display: 'none' }}>
-                        <div className="admin-image-header">
-                          <span className="admin-image-count">{post.images.length} Images</span>
-                          <div className="admin-image-actions">
-                            <button className="admin-btn-small">
-                              <Upload size={14} />
-                              Add Image
-                            </button>
-                            <button className="admin-btn-small">
-                              <Edit size={14} />
-                              Edit All
-                            </button>
-                          </div>
-                        </div>
-                        <div className="admin-image-slider">
-                          <div className="slider-container">
-                            <div className="slider-main">
-                              {post.images.map((image, index) => (
-                                <div 
-                                  key={index}
-                                  className={`slider-image ${index === post.currentImageIndex ? 'active' : ''}`}
-                                >
-                                  <img src={image} alt={`Post image ${index + 1}`} />
-                                </div>
-                              ))}
-                            </div>
-                            <div className="image-buttons">
-                              <button 
-                                className="image-nav-btn prev"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  const newIndex = post.currentImageIndex > 0 ? post.currentImageIndex - 1 : post.images.length - 1;
-                                  setPosts(prevPosts => 
-                                    prevPosts.map(p => 
-                                      p.id === post.id 
-                                        ? { ...p, currentImageIndex: newIndex }
-                                        : p
-                                    )
-                                  );
-                                }}
-                              >
-                                <ChevronLeft size={16} />
-                              </button>
-                              <button 
-                                className="image-nav-btn next"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  const newIndex = post.currentImageIndex < post.images.length - 1 ? post.currentImageIndex + 1 : 0;
-                                  setPosts(prevPosts => 
-                                    prevPosts.map(p => 
-                                      p.id === post.id 
-                                        ? { ...p, currentImageIndex: newIndex }
-                                        : p
-                                    )
-                                  );
-                                }}
-                          <div className="analytics-icon">
-                            <Eye size={16} />
-                          </div>
-                          <div className="analytics-data">
-                            <div className="analytics-number">{post.views?.toLocaleString() || '0'}</div>
-                            <div className="analytics-label">Views</div>
-                          </div>
-                        </div>
-                        <div className="analytics-item">
-                          <div className="analytics-icon">
-                            <Heart size={16} />
-                          </div>
-                          <div className="analytics-data">
-                            <div className="analytics-number">{post.likes}</div>
-                            <div className="analytics-label">Likes</div>
-                          </div>
-                        </div>
-                        <div className="analytics-item">
-                          <div className="analytics-icon">
-                            <MessageCircle size={16} />
-                          </div>
-                          <div className="analytics-data">
-                            <div className="analytics-number">{post.comments}</div>
-                            <div className="analytics-label">Comments</div>
-                          </div>
-                        </div>
-                        <div className="analytics-item">
-                          <div className="analytics-icon">
-                            <Share2 size={16} />
-                          </div>
-                          <div className="analytics-data">
-                            <div className="analytics-number">{post.shares || 0}</div>
-                            <div className="analytics-label">Shares</div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Post Moderation */}
-                    <div className="admin-post-moderation">
-                      <div className="moderation-header">
-                        <Shield size={16} />
-                        <span>Moderation Controls</span>
-                      </div>
-                      <div className="moderation-controls">
-                        <button className="moderation-btn approve">
-                          <CheckCircle size={14} />
-                          Approve
-                        </button>
-                        <button className="moderation-btn hide">
-                          <Eye size={14} />
-                          Hide
-                        </button>
-                        <button className="moderation-btn delete">
-                          <Trash2 size={14} />
-                          Delete
-                        </button>
-                        {post.reports > 0 && (
-                          <button className="review-reports-btn">
-                            <Flag size={14} />
-                            Review Reports ({post.reports})
-                          </button>
-                        )}
-                      </div>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
+          <div className="header-actions">
+            <div className="search-bar">
+              <Search size={18} />
+              <input 
+                type="text" 
+                placeholder="Search posts, users, or content..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
             </div>
-          )}
-
-          {activeSection === 'users' && (
-            <div className="content-section">
-              <div className="section-header">
-                <h2>Community Users</h2>
-                <p>Manage community members and user activity</p>
-              </div>
-
-              <div className="users-grid">
-                {['Sarah Johnson', 'Mike Chen', 'Emma Wilson', 'Alex Rodriguez'].map((user, index) => (
-                  <div key={index} className="user-card">
-                    <img 
-                      src={`https://images.unsplash.com/photo-1438761681033-${index}-6461ffad8d80?q=80&w=1000&auto=format&fit=crop`}
-                      alt={user} 
-                      className="user-avatar"
-                    />
-                    <div className="user-info">
-                      <div className="user-name">{user}</div>
-                      <div className="user-stats">
-                        <div className="stat">
-                          <TrendingUp size={14} />
-                          <span>156 posts</span>
-                        </div>
-                        <div className="stat">
-                          <Heart size={14} />
-                          <span>2.3k likes</span>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="user-actions">
-                      <button className="btn-icon">
-                        <Edit size={16} />
-                      </button>
-                      <button className="btn-icon">
-                        <Shield size={16} />
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {activeSection === 'analytics' && (
-            <div className="content-section">
-              <div className="section-header">
-                <h2>Community Analytics</h2>
-                <p>Track engagement and community growth</p>
-              </div>
-
-              <div className="analytics-grid">
-                <div className="metric-card">
-                  <div className="metric-header">
-                    <ImageIcon size={24} />
-                    <span>Total Posts</span>
-                  </div>
-                  <div className="metric-content">
-                    <div className="metric-number">{posts.length}</div>
-                    <div className="metric-label">Total Posts</div>
-                  </div>
-                </div>
-                <div className="metric-card">
-                  <div className="metric-header">
-                    <Users size={24} />
-                    <span>Active Users</span>
-                  </div>
-                  <div className="metric-content">
-                    <div className="metric-number">1,234</div>
-                    <div className="metric-label">Active Users</div>
-                  </div>
-                </div>
-                <div className="metric-card">
-                  <div className="metric-header">
-                    <Heart size={24} />
-                    <span>Total Likes</span>
-                  </div>
-                  <div className="metric-content">
-                    <div className="metric-number">{posts.reduce((sum, post) => sum + post.likes, 0)}</div>
-                    <div className="metric-label">Total Likes</div>
-                  </div>
-                </div>
-                <div className="metric-card">
-                  <div className="metric-header">
-                    <MessageCircle size={24} />
-                    <span>Total Comments</span>
-                  </div>
-                  <div className="metric-content">
-                    <div className="metric-number">{posts.reduce((sum, post) => sum + post.comments, 0)}</div>
-                    <div className="metric-label">Total Comments</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {activeSection === 'moderation' && (
-            <div className="content-section">
-              <div className="section-header">
-                <h2>Content Moderation</h2>
-                <p>Review flagged content and manage community guidelines</p>
-              </div>
-
-              <div className="moderation-queue">
-                <h3>Flagged Posts</h3>
-                <div className="flagged-posts">
-                  {posts.filter(post => post.reports > 0).map(post => (
-                    <div key={post.id} className="flagged-post">
-                      <div className="post-preview">
-                        <img src={post.userPfp} alt={post.userName} className="preview-pfp" />
-                        <div className="preview-content">
-                          <div className="preview-user">{post.userName}</div>
-                          <div className="preview-text">{post.content.substring(0, 100)}...</div>
-                        </div>
-                      </div>
-                      <div className="moderation-actions">
-                        <button className="btn-secondary">Review</button>
-                        <button className="btn-success">Approve</button>
-                        <button className="btn-danger">Remove</button>
-                      </div>
-                      <div className="report-info">
-                        <span className="report-count">{post.reports} reports</span>
-                        <button className="review-reports-btn">
-                          <Shield size={16} />
-                          Review Reports
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          )}
-
-          {activeSection === 'settings' && (
-            <div className="content-section">
-              <div className="section-header">
-                <h2>Community Settings</h2>
-                <p>Configure community behavior and features</p>
-              </div>
-
-              <div className="settings-grid">
-                <div className="setting-item">
-                  <label>Allow Image Posts</label>
-                  <select className="setting-input">
-                    <option>Enabled</option>
-                    <option>Disabled</option>
-                  </select>
-                  <small>Users can post multiple images</small>
-                </div>
-
-                <div className="setting-item">
-                  <label>Post Length Limit</label>
-                  <input 
-                    type="number" 
-                    defaultValue="500"
-                    className="setting-input" 
-                    min="100"
-                    max="2000"
-                  />
-                  <small>Maximum characters per post</small>
-                </div>
-
-                <div className="setting-item">
-                  <label>Auto-Moderation</label>
-                  <select className="setting-input">
-                    <option>Enabled</option>
-                    <option>Disabled</option>
-                  </select>
-                  <small>Automatically filter inappropriate content</small>
-                </div>
-
-                <div className="setting-item">
-                  <label>Community Theme</label>
-                  <select className="setting-input">
-                    <option>Default</option>
-                    <option>Dark</option>
-                    <option>Light</option>
-                  </select>
-                  <small>Visual theme for community</small>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Actions */}
-          <div className="community-actions">
-            <button 
-              className={`save-btn ${savedSettings ? 'saved' : ''}`}
-              onClick={() => setSavedSettings(true)}
-            >
-              <CheckCircle size={18} />
-              {savedSettings ? 'Saved!' : 'Save Changes'}
+            <button className="filter-btn">
+              <Filter size={18} />
             </button>
           </div>
         </div>
       </div>
+
+      {/* Navigation Tabs */}
+      <div className="community-tabs">
+        {sections.map(section => (
+          <button
+            key={section.id}
+            className={`tab-btn ${activeSection === section.id ? 'active' : ''}`}
+            onClick={() => setActiveSection(section.id)}
+          >
+            <section.icon size={18} />
+            {section.name}
+          </button>
+        ))}
+      </div>
+
+      {/* Content Area */}
+      <div className="community-content">
+        {activeSection === 'posts' && (
+          <div className="content-section">
+            <div className="section-header">
+              <h2>Posts Management</h2>
+              <p>Admin control for community posts and content moderation</p>
+            </div>
+
+            {/* Admin Actions Bar */}
+            <div className="admin-toolbar">
+              <div className="admin-actions-left">
+                <button className="btn-primary">
+                  <Plus size={18} />
+                  Create New Post
+                </button>
+                <button className="btn-secondary">
+                  <Download size={18} />
+                  Export Data
+                </button>
+                <button className="btn-secondary">
+                  <Upload size={18} />
+                  Bulk Import
+                </button>
+              </div>
+              <div className="admin-actions-right">
+                <div className="filter-group">
+                  <select className="admin-select">
+                    <option>All Posts</option>
+                    <option>Pending Review</option>
+                    <option>Flagged Content</option>
+                    <option>Removed Posts</option>
+                    <option>High Priority</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            {/* Posts Management Grid */}
+            <div className="admin-posts-grid">
+              {posts.map(post => (
+                <div key={post.id} className="admin-post-card">
+                  {/* Post Priority Badge */}
+                  {post.priority === 'featured' && (
+                    <div className="priority-badge featured">
+                      <Star size={14} />
+                      Featured
+                    </div>
+                  )}
+
+                  {/* Post Header */}
+                  <div className="admin-post-header">
+                    <div className="user-info">
+                      <img src={post.userPfp} alt={post.userName} className="user-avatar" />
+                      <div className="user-details">
+                        <h4>{post.userName}</h4>
+                        <span className="post-time">{post.time}</span>
+                      </div>
+                    </div>
+                    <div className="post-actions">
+                      <button className="action-btn">
+                        <MoreVertical size={16} />
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Post Content */}
+                  <div className="admin-post-content">
+                    <div className="admin-post-text">
+                      <p>{post.content}</p>
+                    </div>
+                    {post.tags && (
+                      <div className="admin-post-tags">
+                        {post.tags.map((tag, index) => (
+                          <span key={index} className="admin-tag">#{tag}</span>
+                        ))}
+                      </div>
+                    )}
+                    <button 
+                      className="admin-btn-small view-image-btn-full"
+                      onClick={() => {
+                        setSelectedPostId(post.id);
+                        setSelectedImage(post.images[post.currentImageIndex]);
+                      }}
+                    >
+                      <Eye size={14} />
+                      View Image
+                    </button>
+                  </div>
+
+                  {/* Post Analytics */}
+                  <div className="admin-post-analytics">
+                    <div className="analytics-row">
+                      <div className="analytics-item">
+                        <div className="analytics-icon">
+                          <Eye size={16} />
+                        </div>
+                        <div className="analytics-data">
+                          <div className="analytics-number">{post.views?.toLocaleString() || '0'}</div>
+                          <div className="analytics-label">Views</div>
+                        </div>
+                      </div>
+                      <div className="analytics-item">
+                        <div className="analytics-icon">
+                          <Heart size={16} />
+                        </div>
+                        <div className="analytics-data">
+                          <div className="analytics-number">{post.likes}</div>
+                          <div className="analytics-label">Likes</div>
+                        </div>
+                      </div>
+                      <div className="analytics-item">
+                        <div className="analytics-icon">
+                          <MessageCircle size={16} />
+                        </div>
+                        <div className="analytics-data">
+                          <div className="analytics-number">{post.comments}</div>
+                          <div className="analytics-label">Comments</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Post Moderation */}
+                  <div className="admin-post-moderation">
+                    <div className="moderation-header">
+                      <Shield size={16} />
+                      <span>Moderation Controls</span>
+                    </div>
+                    <div className="moderation-controls">
+                      <button className="moderation-btn approve">
+                        <CheckCircle size={14} />
+                        Approve
+                      </button>
+                      <button className="moderation-btn hide">
+                        <Eye size={14} />
+                        Hide
+                      </button>
+                      <button className="moderation-btn delete">
+                        <Trash2 size={14} />
+                        Delete
+                      </button>
+                      {post.reports > 0 && (
+                        <button className="review-reports-btn">
+                          <Flag size={14} />
+                          Review Reports ({post.reports})
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Other sections would go here */}
+        {activeSection === 'users' && (
+          <div className="content-section">
+            <div className="section-header">
+              <h2>User Management</h2>
+              <p>Manage community users and permissions</p>
+            </div>
+          </div>
+        )}
+
+        {activeSection === 'analytics' && (
+          <div className="content-section">
+            <div className="section-header">
+              <h2>Analytics Dashboard</h2>
+              <p>Community engagement and performance metrics</p>
+            </div>
+          </div>
+        )}
+
+        {activeSection === 'moderation' && (
+          <div className="content-section">
+            <div className="section-header">
+              <h2>Content Moderation</h2>
+              <p>Review and moderate community content</p>
+            </div>
+          </div>
+        )}
+
+        {activeSection === 'settings' && (
+          <div className="content-section">
+            <div className="section-header">
+              <h2>Community Settings</h2>
+              <p>Configure community preferences and policies</p>
+            </div>
+          </div>
+        )}
+
+        {/* Actions */}
+        <div className="community-actions">
+          <button 
+            className={`save-btn ${savedSettings ? 'saved' : ''}`}
+            onClick={() => setSavedSettings(true)}
+          >
+            <CheckCircle size={18} />
+            {savedSettings ? 'Saved!' : 'Save Changes'}
+          </button>
+        </div>
+      </div>
+
+      {/* Image Popup Modal */}
+      {selectedImage && (
+        <div className="image-popup-overlay" onClick={() => {
+          setSelectedImage(null);
+          setSelectedPostId(null);
+        }}>
+          <div className="image-popup" onClick={(e) => e.stopPropagation()}>
+            <div className="image-popup-header">
+              <h3>Image Viewer</h3>
+              <button 
+                className="popup-close-btn"
+                onClick={() => {
+                  setSelectedImage(null);
+                  setSelectedPostId(null);
+                }}
+              >
+                <X size={20} />
+              </button>
+            </div>
+            <div className="image-popup-content">
+              <img src={selectedImage} alt="Selected image" />
+            </div>
+            <div className="image-popup-navigation">
+              <button 
+                className="popup-nav-btn prev"
+                onClick={() => {
+                  if (selectedPostId) {
+                    handleImageNavigation(selectedPostId, 'prev');
+                    const post = posts.find(p => p.id === selectedPostId);
+                    if (post) {
+                      setSelectedImage(post.images[post.currentImageIndex]);
+                    }
+                  }
+                }}
+              >
+                <ChevronLeft size={20} />
+              </button>
+              <button 
+                className="popup-nav-btn next"
+                onClick={() => {
+                  if (selectedPostId) {
+                    handleImageNavigation(selectedPostId, 'next');
+                    const post = posts.find(p => p.id === selectedPostId);
+                    if (post) {
+                      setSelectedImage(post.images[post.currentImageIndex]);
+                    }
+                  }
+                }}
+              >
+                <ChevronRight size={20} />
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
