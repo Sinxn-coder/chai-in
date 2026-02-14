@@ -53,7 +53,6 @@ export default function CommunityPage() {
       status: 'active',
       reports: 0,
       views: 1250,
-      tags: ['food', 'pasta', 'hidden-gem'],
       category: 'review',
       priority: 'normal'
     },
@@ -75,7 +74,6 @@ export default function CommunityPage() {
       status: 'active',
       reports: 0,
       views: 890,
-      tags: ['coffee', 'cafe', 'latte'],
       category: 'review',
       priority: 'normal'
     },
@@ -99,7 +97,6 @@ export default function CommunityPage() {
       status: 'active',
       reports: 0,
       views: 2100,
-      tags: ['brunch', 'avocado', 'outdoor'],
       category: 'spot',
       priority: 'featured'
     }
@@ -266,13 +263,6 @@ export default function CommunityPage() {
                         <div className="admin-post-text">
                           <p>{post.content}</p>
                         </div>
-                        {post.tags && (
-                          <div className="admin-post-tags">
-                            {post.tags.map((tag, index) => (
-                              <span key={index} className="admin-tag">#{tag}</span>
-                            ))}
-                          </div>
-                        )}
                         <button 
                           className="admin-btn-small view-image-btn-full"
                           onClick={() => {
