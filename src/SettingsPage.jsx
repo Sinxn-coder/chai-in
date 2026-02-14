@@ -1,50 +1,19 @@
 import React, { useState } from 'react';
-import { Shield, Settings, HelpCircle, ChevronRight, AlertTriangle, Activity, FileText, Key, Lock, RefreshCw, Trash2, Shield as ShieldIcon, Server, Users, Bell, Mail } from 'lucide-react';
+import { Shield, Server, Lock, Users, Bell, HelpCircle, ChevronRight, AlertTriangle, Activity, Mail, FileText, RefreshCw, Save, Check } from 'lucide-react';
 import './SettingsPage.css';
 
 export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState('admin');
   const [savedSettings, setSavedSettings] = useState(false);
 
-  // Admin-specific settings
-  const [adminSettings, setAdminSettings] = useState({
-    systemMaintenance: false,
-    debugMode: false,
-    logLevel: 'info',
-    sessionTimeout: 30,
-    maxLoginAttempts: 5,
-    passwordPolicy: 'strong',
-    twoFactorAuth: true
-  });
-
-  const [systemConfig, setSystemConfig] = useState({
-    siteName: 'ReviewHub Admin',
-    adminEmail: 'admin@reviewhub.com',
-    timezone: 'UTC',
-    dateFormat: 'MM/DD/YYYY'
-  });
-
-  const [securitySettings, setSecuritySettings] = useState({
-    enforceSSL: true,
-    sessionEncryption: true,
-    passwordMinLength: 8,
-    auditLogging: true
-  });
-
-  const [userManagement, setUserManagement] = useState({
-    defaultUserRole: 'user',
+  // Simple state for demo
+  const [settings, setSettings] = useState({
+    maintenance: false,
+    debug: false,
+    ssl: true,
+    emailNotifications: true,
     requireEmailVerification: true,
-    allowSelfRegistration: false,
-    accountApprovalRequired: true
-  });
-
-  const [notifications, setNotifications] = useState({
-    email: true,
-    push: false,
-    sms: true,
-    desktop: true,
-    systemAlerts: true,
-    securityEvents: true
+    allowSelfRegistration: false
   });
 
   const handleSaveSettings = () => {
@@ -53,48 +22,24 @@ export default function SettingsPage() {
   };
 
   const handleResetSettings = () => {
-    setAdminSettings({
-      systemMaintenance: false,
-      debugMode: false,
-      logLevel: 'info',
-      sessionTimeout: 30,
-      maxLoginAttempts: 5,
-      passwordPolicy: 'strong',
-      twoFactorAuth: true
-    });
-    
-    setSystemConfig({
-      siteName: 'ReviewHub Admin',
-      adminEmail: 'admin@reviewhub.com',
-      timezone: 'UTC',
-      dateFormat: 'MM/DD/YYYY'
-    });
-    
-    setSecuritySettings({
-      enforceSSL: true,
-      sessionEncryption: true,
-      passwordMinLength: 8,
-      auditLogging: true
-    });
-    
-    setUserManagement({
-      defaultUserRole: 'user',
+    setSettings({
+      maintenance: false,
+      debug: false,
+      ssl: true,
+      emailNotifications: true,
       requireEmailVerification: true,
-      allowSelfRegistration: false,
-      accountApprovalRequired: true
-    });
-    
-    setNotifications({
-      email: true,
-      push: false,
-      sms: true,
-      desktop: true,
-      systemAlerts: true,
-      securityEvents: true
+      allowSelfRegistration: false
     });
   };
 
-  const settingsTabs = [
+  const handleToggle = (key) => {
+    setSettings(prev => ({
+      ...prev,
+      [key]: !prev[key]
+    }));
+  };
+
+  const tabs = [
     { id: 'admin', label: 'Admin Control', icon: Shield },
     { id: 'system', label: 'System Config', icon: Server },
     { id: 'security', label: 'Security', icon: Lock },
@@ -111,10 +56,10 @@ export default function SettingsPage() {
       </div>
 
       <div className="settings-container">
-        {/* Settings Navigation */}
+        {/* Navigation */}
         <div className="settings-nav">
           <div className="nav-tabs">
-            {settingsTabs.map(tab => {
+            {tabs.map(tab => {
               const Icon = tab.icon;
               return (
                 <button
@@ -131,73 +76,60 @@ export default function SettingsPage() {
           </div>
         </div>
 
-        {/* Settings Content */}
+        {/* Content */}
         <div className="settings-content">
-          {/* Admin Control Settings */}
           {activeTab === 'admin' && (
             <div className="settings-section">
               <div className="section-header">
                 <h2>Administrative Controls</h2>
-                <p>Manage system-wide administrative settings and permissions</p>
+                <p>Manage system-wide administrative settings</p>
               </div>
 
               <div className="settings-list">
-                <div className="setting-toggle">
-                  <div className="toggle-info">
-                    <div className="toggle-header">
+                <div className="setting-item">
+                  <div className="setting-info">
+                    <div className="setting-header">
                       <AlertTriangle size={18} />
-                      <span>System Maintenance Mode</span>
+                      <span>Maintenance Mode</span>
                     </div>
-                    <p>Put the system in maintenance mode for updates</p>
+                    <p>Put system in maintenance mode</p>
                   </div>
                   <label className="toggle-switch">
                     <input 
                       type="checkbox" 
-                      checked={adminSettings.systemMaintenance}
-                      onChange={(e) => setAdminSettings({...adminSettings, systemMaintenance: e.target.checked})}
-                    />
-                    <span className="toggle-slider"></span>
-                  </label>
-                </div>
-
-                <div className="setting-toggle">
-                  <div className="toggle-info">
-                    <div className="toggle-header">
-                      <Activity size={18} />
-                      <span>Debug Mode</span>
-                    </div>
-                    <p>Enable detailed logging and debug information</p>
-                  </div>
-                  <label className="toggle-switch">
-                    <input 
-                      type="checkbox" 
-                      checked={adminSettings.debugMode}
-                      onChange={(e) => setAdminSettings({...adminSettings, debugMode: e.target.checked})}
+                      checked={settings.maintenance}
+                      onChange={() => handleToggle('maintenance')}
                     />
                     <span className="toggle-slider"></span>
                   </label>
                 </div>
 
                 <div className="setting-item">
-                  <label>Session Timeout (minutes)</label>
-                  <input 
-                    type="number" 
-                    value={adminSettings.sessionTimeout}
-                    onChange={(e) => setAdminSettings({...adminSettings, sessionTimeout: parseInt(e.target.value)})}
-                    className="setting-input" 
-                  />
-                  <small>Automatically log out inactive admins after this period</small>
+                  <div className="setting-info">
+                    <div className="setting-header">
+                      <Activity size={18} />
+                      <span>Debug Mode</span>
+                    </div>
+                    <p>Enable debug logging</p>
+                  </div>
+                  <label className="toggle-switch">
+                    <input 
+                      type="checkbox" 
+                      checked={settings.debug}
+                      onChange={() => handleToggle('debug')}
+                    />
+                    <span className="toggle-slider"></span>
+                  </label>
                 </div>
               </div>
             </div>
           )}
 
-          {/* System Configuration Settings */}
           {activeTab === 'system' && (
             <div className="settings-section">
               <div className="section-header">
                 <h2>System Configuration</h2>
-                <p>Configure global system settings and platform preferences</p>
+                <p>Configure global system settings</p>
               </div>
 
               <div className="settings-grid">
@@ -205,126 +137,111 @@ export default function SettingsPage() {
                   <label>Site Name</label>
                   <input 
                     type="text" 
-                    value={systemConfig.siteName}
-                    onChange={(e) => setSystemConfig({...systemConfig, siteName: e.target.value})}
+                    defaultValue="ReviewHub Admin"
                     className="setting-input" 
                   />
-                  <small>Display name for the admin panel</small>
                 </div>
 
                 <div className="setting-item">
                   <label>Admin Email</label>
                   <input 
                     type="email" 
-                    value={systemConfig.adminEmail}
-                    onChange={(e) => setSystemConfig({...systemConfig, adminEmail: e.target.value})}
+                    defaultValue="admin@reviewhub.com"
                     className="setting-input" 
                   />
-                  <small>Primary contact email for system notifications</small>
+                </div>
+
+                <div className="setting-item">
+                  <label>Timezone</label>
+                  <select className="setting-input">
+                    <option value="UTC">UTC</option>
+                    <option value="EST">Eastern Time</option>
+                    <option value="PST">Pacific Time</option>
+                  </select>
                 </div>
               </div>
             </div>
           )}
 
-          {/* Security Settings */}
           {activeTab === 'security' && (
             <div className="settings-section">
               <div className="section-header">
                 <h2>Security Configuration</h2>
-                <p>Manage security policies and access controls</p>
+                <p>Manage security policies</p>
               </div>
 
               <div className="settings-list">
-                <div className="setting-toggle">
-                  <div className="toggle-info">
-                    <div className="toggle-header">
+                <div className="setting-item">
+                  <div className="setting-info">
+                    <div className="setting-header">
                       <Lock size={18} />
-                      <span>Enforce SSL</span>
+                      <span>SSL Enforcement</span>
                     </div>
-                    <p>Require HTTPS for all connections</p>
+                    <p>Require HTTPS connections</p>
                   </div>
                   <label className="toggle-switch">
                     <input 
                       type="checkbox" 
-                      checked={securitySettings.enforceSSL}
-                      onChange={(e) => setSecuritySettings({...securitySettings, enforceSSL: e.target.checked})}
-                    />
-                    <span className="toggle-slider"></span>
-                  </label>
-                </div>
-
-                <div className="setting-toggle">
-                  <div className="toggle-info">
-                    <div className="toggle-header">
-                      <ShieldIcon size={18} />
-                      <span>Session Encryption</span>
-                    </div>
-                    <p>Encrypt all session data</p>
-                  </div>
-                  <label className="toggle-switch">
-                    <input 
-                      type="checkbox" 
-                      checked={securitySettings.sessionEncryption}
-                      onChange={(e) => setSecuritySettings({...securitySettings, sessionEncryption: e.target.checked})}
+                      checked={settings.ssl}
+                      onChange={() => handleToggle('ssl')}
                     />
                     <span className="toggle-slider"></span>
                   </label>
                 </div>
 
                 <div className="setting-item">
-                  <label>Password Minimum Length</label>
+                  <label>Password Min Length</label>
                   <input 
                     type="number" 
-                    value={securitySettings.passwordMinLength}
-                    onChange={(e) => setSecuritySettings({...securitySettings, passwordMinLength: parseInt(e.target.value)})}
+                    defaultValue="8"
+                    min="6"
+                    max="20"
                     className="setting-input" 
                   />
-                  <small>Minimum characters required for passwords</small>
                 </div>
               </div>
             </div>
           )}
 
-          {/* User Management Settings */}
           {activeTab === 'users' && (
             <div className="settings-section">
               <div className="section-header">
                 <h2>User Management</h2>
-                <p>Configure user registration, roles, and permissions</p>
+                <p>Configure user registration and permissions</p>
               </div>
 
               <div className="settings-list">
-                <div className="setting-toggle">
-                  <div className="toggle-info">
-                    <div className="toggle-header">
+                <div className="setting-item">
+                  <div className="setting-info">
+                    <div className="setting-header">
                       <Mail size={18} />
-                      <span>Require Email Verification</span>
+                      <span>Email Verification</span>
                     </div>
-                    <p>New users must verify email addresses</p>
+                    <p>Require email verification</p>
                   </div>
                   <label className="toggle-switch">
                     <input 
                       type="checkbox" 
-                      checked={userManagement.requireEmailVerification}
-                      onChange={(e) => setUserManagement({...userManagement, requireEmailVerification: e.target.checked})}
+                      checked={settings.requireEmailVerification}
+                      onChange={() => handleToggle('requireEmailVerification')}
                     />
                     <span className="toggle-slider"></span>
                   </label>
                 </div>
 
-                <div className="setting-toggle">
-                  <div className="toggle-info">
-                    <div className="toggle-header">
+                <div className="setting-item">
+                  <div className="setting-info">
+                    <div className="setting-header">
                       <Users size={18} />
-                      <span>Allow Self Registration</span>
+                      <span>Self Registration</span>
                     </div>
-                    <p>Users can register without admin approval</p>
+                    <p>Allow users to register</p>
                   </div>
                   <label className="toggle-switch">
                     <input 
                       type="checkbox" 
-                      checked={userManagement.allowSelfRegistration}
-                      onChange={(e) => setUserManagement({...userManagement, allowSelfRegistration: e.target.checked})}
+                      checked={settings.allowSelfRegistration}
+                      onChange={() => handleToggle('allowSelfRegistration')}
                     />
                     <span className="toggle-slider"></span>
                   </label>
@@ -333,64 +250,27 @@ export default function SettingsPage() {
             </div>
           )}
 
-          {/* Notification Settings */}
           {activeTab === 'notifications' && (
             <div className="settings-section">
               <div className="section-header">
                 <h2>Admin Notifications</h2>
-                <p>Configure system alerts and administrative notifications</p>
+                <p>Configure system alerts</p>
               </div>
 
               <div className="settings-list">
-                <div className="setting-toggle">
-                  <div className="toggle-info">
-                    <div className="toggle-header">
+                <div className="setting-item">
+                  <div className="setting-info">
+                    <div className="setting-header">
                       <Mail size={18} />
                       <span>Email Notifications</span>
                     </div>
-                    <p>Receive admin alerts and system updates via email</p>
+                    <p>Receive admin alerts via email</p>
                   </div>
                   <label className="toggle-switch">
                     <input 
                       type="checkbox" 
-                      checked={notifications.email}
-                      onChange={(e) => setNotifications({...notifications, email: e.target.checked})}
-                    />
-                    <span className="toggle-slider"></span>
-                  </label>
-                </div>
-
-                <div className="setting-toggle">
-                  <div className="toggle-info">
-                    <div className="toggle-header">
-                      <AlertTriangle size={18} />
-                      <span>System Alerts</span>
-                    </div>
-                    <p>Get notified about critical system issues and errors</p>
-                  </div>
-                  <label className="toggle-switch">
-                    <input 
-                      type="checkbox" 
-                      checked={notifications.systemAlerts}
-                      onChange={(e) => setNotifications({...notifications, systemAlerts: e.target.checked})}
-                    />
-                    <span className="toggle-slider"></span>
-                  </label>
-                </div>
-
-                <div className="setting-toggle">
-                  <div className="toggle-info">
-                    <div className="toggle-header">
-                      <ShieldIcon size={18} />
-                      <span>Security Events</span>
-                    </div>
-                    <p>Alert on security breaches and suspicious activities</p>
-                  </div>
-                  <label className="toggle-switch">
-                    <input 
-                      type="checkbox" 
-                      checked={notifications.securityEvents}
-                      onChange={(e) => setNotifications({...notifications, securityEvents: e.target.checked})}
+                      checked={settings.emailNotifications}
+                      onChange={() => handleToggle('emailNotifications')}
                     />
                     <span className="toggle-slider"></span>
                   </label>
@@ -399,52 +279,51 @@ export default function SettingsPage() {
             </div>
           )}
 
-          {/* Help & Support */}
           {activeTab === 'help' && (
             <div className="settings-section">
               <div className="section-header">
                 <h2>Admin Help & Support</h2>
-                <p>Get help with system administration and technical support</p>
+                <p>Get help with system administration</p>
               </div>
 
               <div className="help-cards">
                 <div className="help-card">
                   <FileText size={24} />
-                  <h3>Admin Documentation</h3>
-                  <p>Browse comprehensive admin documentation and system guides</p>
+                  <h3>Documentation</h3>
+                  <p>Browse admin documentation</p>
                   <button className="help-btn">View Docs</button>
                 </div>
 
                 <div className="help-card">
                   <Mail size={24} />
-                  <h3>Technical Support</h3>
-                  <p>Get in touch with our technical support team for system issues</p>
-                  <button className="help-btn">Contact Support</button>
+                  <h3>Support</h3>
+                  <p>Contact technical support</p>
+                  <button className="help-btn">Contact</button>
                 </div>
 
                 <div className="help-card">
                   <Server size={24} />
                   <h3>System Status</h3>
-                  <p>Check real-time system status and performance metrics</p>
-                  <button className="help-btn">View Status</button>
+                  <p>Check system performance</p>
+                  <button className="help-btn">Status</button>
                 </div>
               </div>
             </div>
           )}
 
-          {/* Action Buttons */}
+          {/* Actions */}
           <div className="settings-actions">
             <button 
               className={`save-btn ${savedSettings ? 'saved' : ''}`}
               onClick={handleSaveSettings}
             >
               {savedSettings ? <Check size={18} /> : <Save size={18} />}
-              {savedSettings ? 'Settings Saved!' : 'Save Changes'}
+              {savedSettings ? 'Saved!' : 'Save Changes'}
             </button>
             
             <button className="reset-btn" onClick={handleResetSettings}>
               <RefreshCw size={18} />
-              Reset to Defaults
+              Reset
             </button>
           </div>
         </div>

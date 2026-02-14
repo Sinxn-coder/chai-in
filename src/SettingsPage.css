@@ -1,4 +1,5 @@
-/* Settings Page Styles */
+/* Settings Page - Clean Minimal Styles */
+
 .settings-page {
   min-height: 100vh;
   background: #f8fafc;
@@ -30,7 +31,7 @@
   margin: 0 auto;
 }
 
-/* Settings Navigation */
+/* Navigation */
 .settings-nav {
   background: white;
   border-radius: 12px;
@@ -83,7 +84,7 @@
   transform: rotate(90deg);
 }
 
-/* Settings Content */
+/* Content */
 .settings-content {
   background: white;
   border-radius: 12px;
@@ -137,9 +138,7 @@
   color: #374151;
 }
 
-.setting-input,
-.setting-textarea,
-.setting-select-input {
+.setting-input {
   padding: 12px 16px;
   border: 1px solid #d1d5db;
   border-radius: 8px;
@@ -149,47 +148,17 @@
   color: #374151;
 }
 
-.setting-input:focus,
-.setting-textarea:focus,
-.setting-select-input:focus {
+.setting-input:focus {
   outline: none;
   border-color: #3b82f6;
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
-.setting-textarea {
-  resize: vertical;
-  min-height: 100px;
-  font-family: inherit;
-}
-
-.setting-item small {
+.setting-input small {
   font-size: 12px;
   color: #9ca3af;
-}
-
-/* Password Input Group */
-.password-input-group {
-  position: relative;
-}
-
-.password-toggle {
-  position: absolute;
-  right: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  background: none;
-  border: none;
-  color: #6b7280;
-  cursor: pointer;
-  padding: 4px;
-  border-radius: 4px;
-  transition: all 0.2s ease;
-}
-
-.password-toggle:hover {
-  background: #f3f4f6;
-  color: #374151;
+  margin-top: 4px;
+  display: block;
 }
 
 /* Settings List */
@@ -199,8 +168,7 @@
   gap: 20px;
 }
 
-/* Toggle Switches */
-.setting-toggle {
+.setting-item {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -211,16 +179,16 @@
   transition: all 0.2s ease;
 }
 
-.setting-toggle:hover {
+.setting-item:hover {
   background: #f3f4f6;
   border-color: #d1d5db;
 }
 
-.toggle-info {
+.setting-info {
   flex: 1;
 }
 
-.toggle-header {
+.setting-header {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -229,12 +197,13 @@
   margin-bottom: 4px;
 }
 
-.toggle-info p {
+.setting-info p {
   font-size: 13px;
   color: #6b7280;
   margin: 0;
 }
 
+/* Toggle Switch */
 .toggle-switch {
   position: relative;
   width: 48px;
@@ -279,106 +248,6 @@
 
 .toggle-switch input:checked + .toggle-slider:before {
   transform: translateX(24px);
-}
-
-/* Setting Select */
-.setting-select {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 20px;
-  background: #f9fafb;
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
-  transition: all 0.2s ease;
-}
-
-.setting-select:hover {
-  background: #f3f4f6;
-  border-color: #d1d5db;
-}
-
-.select-info {
-  flex: 1;
-}
-
-.select-header {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-weight: 500;
-  color: #1f2937;
-  margin-bottom: 4px;
-}
-
-.select-info p {
-  font-size: 13px;
-  color: #6b7280;
-  margin: 0;
-}
-
-.setting-select-input {
-  min-width: 120px;
-  margin-left: 16px;
-}
-
-/* Theme Selector */
-.theme-selector {
-  display: flex;
-  gap: 8px;
-}
-
-.theme-option {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 16px;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
-  background: white;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  font-size: 14px;
-  color: #6b7280;
-}
-
-.theme-option:hover {
-  border-color: #3b82f6;
-  color: #3b82f6;
-}
-
-.theme-option.active {
-  background: #3b82f6;
-  border-color: #3b82f6;
-  color: white;
-}
-
-/* Mode Selector */
-.mode-selector {
-  display: flex;
-  gap: 8px;
-}
-
-.mode-option {
-  padding: 8px 16px;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
-  background: white;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  font-size: 14px;
-  color: #6b7280;
-}
-
-.mode-option:hover {
-  border-color: #3b82f6;
-  color: #3b82f6;
-}
-
-.mode-option.active {
-  background: #3b82f6;
-  border-color: #3b82f6;
-  color: white;
 }
 
 /* Help Cards */
@@ -438,7 +307,7 @@
   transform: translateY(-1px);
 }
 
-/* Settings Actions */
+/* Actions */
 .settings-actions {
   display: flex;
   gap: 16px;
@@ -561,7 +430,7 @@
     padding: 20px 16px;
   }
 
-  .section-header h2 {
+  .settings-header h1 {
     font-size: 20px;
   }
 
@@ -574,59 +443,11 @@
     font-size: 13px;
   }
 
-  .setting-toggle,
-  .setting-select {
+  .setting-item {
     padding: 16px;
   }
 
   .help-card {
     padding: 20px;
   }
-}
-
-/* Animations */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.settings-section {
-  animation: fadeIn 0.3s ease-out;
-}
-
-/* Focus States */
-.setting-input:focus,
-.setting-textarea:focus,
-.setting-select-input:focus,
-.theme-option:focus,
-.mode-option:focus,
-.help-btn:focus,
-.save-btn:focus,
-.reset-btn:focus {
-  outline: 2px solid #3b82f6;
-  outline-offset: 2px;
-}
-
-/* Loading States */
-.setting-input:disabled,
-.setting-textarea:disabled,
-.setting-select-input:disabled {
-  background: #f3f4f6;
-  color: #9ca3af;
-  cursor: not-allowed;
-}
-
-.toggle-switch input:disabled + .toggle-slider {
-  background: #e5e7eb;
-  cursor: not-allowed;
-}
-
-.toggle-switch input:disabled + .toggle-slider:before {
-  background: #9ca3af;
 }
