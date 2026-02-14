@@ -361,17 +361,21 @@ export default function ReviewsPage() {
   const handleViewDetails = (review) => {
     setSelectedReview(review);
     setShowDetailsModal(true);
+    setShowUserProfile(false);
+    setShowSpotDetails(false);
   };
 
   const handleViewUserProfile = (review) => {
     setSelectedReview(review);
     setShowDetailsModal(false);
     setShowUserProfile(true);
+    setShowSpotDetails(false);
   };
 
   const handleViewSpotDetails = (review) => {
     setSelectedReview(review);
     setShowDetailsModal(false);
+    setShowUserProfile(false);
     setShowSpotDetails(true);
   };
 
