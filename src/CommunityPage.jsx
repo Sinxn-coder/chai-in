@@ -347,23 +347,8 @@ export default function CommunityPage() {
                                   className={`slider-image ${index === post.currentImageIndex ? 'active' : ''}`}
                                 >
                                   <img src={image} alt={`Post image ${index + 1}`} />
-                                  <div className="slider-overlay">
-                                    <Eye size={20} />
-                                  </div>
                                 </div>
                               ))}
-                            </div>
-                            <div className="slider-indicators">
-                              {post.images.map((_, index) => (
-                                <div
-                                  key={index}
-                                  className={`indicator ${index === post.currentImageIndex ? 'active' : ''}`}
-                                />
-                              ))}
-                            </div>
-                            <div className="slider-info">
-                              <span className="current-slide">{post.currentImageIndex + 1}</span>
-                              <span className="total-slides">/ {post.images.length}</span>
                             </div>
                           </div>
                         </div>
