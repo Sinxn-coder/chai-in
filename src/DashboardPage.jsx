@@ -628,166 +628,333 @@ export default function DashboardPage() {
                 <span className="metric-period">Needs attention</span>
               </div>
             </div>
-          </div>
 
-          {/* Main Chart Area */}
-          <div className="chart-area">
-            <div className="chart-tabs">
-              <button 
-                className={`chart-tab ${activeChartTab === 'growth' ? 'active' : ''}`}
-                onClick={() => setActiveChartTab('growth')}
-              >
-                Growth Trends
-              </button>
-              <button 
-                className={`chart-tab ${activeChartTab === 'activity' ? 'active' : ''}`}
-                onClick={() => setActiveChartTab('activity')}
-              >
-                User Activity
-              </button>
-              <button 
-                className={`chart-tab ${activeChartTab === 'revenue' ? 'active' : ''}`}
-                onClick={() => setActiveChartTab('revenue')}
-              >
-                Revenue Analysis
-              </button>
-              <button 
-                className={`chart-tab ${activeChartTab === 'spots' ? 'active' : ''}`}
-                onClick={() => setActiveChartTab('spots')}
-              >
-                Spot Performance
-              </button>
-            </div>
-            
-            <div className="main-chart">
-              {activeChartTab === 'growth' && (
-                <div className="chart-content growth-chart">
-                  <div className="charts-grid">
-                    {renderLineChart(chartData.users, '#3b82f6', 'Users')}
-                    {renderAreaChart(chartData.spots, '#10b981', 'Spots')}
-                    {renderBarChart(chartData.reviews, '#f59e0b', 'Reviews')}
-                  </div>
+            <div className="metric-card-redesigned success">
+              <div className="metric-icon-large">
+                <MapPin className="w-8 h-8" />
+                <div className="nav-tabs">
+                  {['growth', 'activity', 'revenue', 'spots'].map((tab) => (
+                    <button
+                      key={tab}
+                      className={`nav-tab ${activeChartTab === tab ? 'active' : ''}`}
+                      onClick={() => handleTabClick(tab)}
+                    >
+                      <div className="tab-icon">
+                        {tab === 'growth' && <TrendingUp className="w-5 h-5" />}
+                        {tab === 'activity' && <Activity className="w-5 h-5" />}
+                        {tab === 'revenue' && <DollarSign className="w-5 h-5" />}
+                        {tab === 'spots' && <MapPin className="w-5 h-5" />}
+                      </div>
+                      <span className="tab-label">
+                        {tab === 'growth' && 'Growth Analytics'}
+                        {tab === 'activity' && 'User Activity'}
+                        {tab === 'revenue' && 'Revenue Analysis'}
+                        {tab === 'spots' && 'Spot Performance'}
+                      </span>
+                    </button>
+                  ))}
                 </div>
-              )}
+              </div>
 
-              {activeChartTab === 'activity' && (
-                <div className="chart-content activity-chart">
-                  <div className="activity-charts">
-                    <div className="chart-section">
-                      <h4>Daily Active Users</h4>
-                      {renderAreaChart(
-                        userActivityData.daily.map(d => d.active), 
-                        '#8b5cf6', 
-                        'Daily Active Users'
-                      )}
-                      <div className="activity-breakdown">
-                        <div className="breakdown-chart">
-                          {renderBarChart(
-                            userActivityData.daily.map(d => d.new),
-                            '#3b82f6',
-                            'New Users'
+              {/* Chart Content Area */}
+              <div className="chart-content-area">
+                {activeChartTab === 'growth' && (
+                  <div className="growth-analytics">
+                    <div className="chart-container-large">
+                      <div className="chart-header-section">
+                        <h4>Growth Overview</h4>
+                        <p>Track your platform's growth across multiple dimensions</p>
+                      </div>
+                      <div className="chart-legend-enhanced">
+                        <div className="legend-item">
+                          <div className="legend-color users"></div>
+                          <span>Users</span>
+                          <div className="legend-trend positive">
+                            <TrendingUp className="w-4 h-4" />
+                            <span>+18.2%</span>
+                          </div>
+                        </div>
+                        <div className="legend-item">
+                          <div className="legend-color spots"></div>
+                          <span>Spots</span>
+                          <div className="legend-trend positive">
+                            <TrendingUp className="w-4 h-4" />
+                            <span>+8.2%</span>
+                          </div>
+                        </div>
+                        <div className="legend-item">
+                          <div className="legend-color reviews"></div>
+                          <span>Reviews</span>
+                          <div className="legend-trend positive">
+                            <TrendingUp className="w-4 h-4" />
+                            <span>+15.3%</span>
+                          </div>
+                        </div>
+                        <div className="legend-item">
+                          <div className="legend-color revenue"></div>
+                          <span>Revenue</span>
+                          <div className="legend-trend positive">
+                            <TrendingUp className="w-4 h-4" />
+                            <span>+32.1%</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="chart-visualization-enhanced">
+                      {renderAreaChart(chartData.users, '#3b82f6', 'User Growth')}
+                      {renderAreaChart(chartData.spots, '#10b981', 'Spot Growth')}
+                      {renderAreaChart(chartData.reviews, '#f59e0b', 'Review Growth')}
+                    </div>
+                  </div>
+                )}
+
+                {activeChartTab === 'activity' && (
+                  <div className="activity-analytics">
+                    <div className="chart-container-large">
+                      <div className="chart-header-section">
+                        <h4>User Engagement Analytics</h4>
+                        <p>Deep dive into user behavior and engagement patterns</p>
+                      </div>
+                      <div className="dual-chart-layout">
+                        <div className="chart-half">
+                          <div className="mini-chart-header">
+                            <h5>Daily Active Users</h5>
+                            <div className="chart-subtitle">Last 7 days overview</div>
+                          </div>
+                          {renderAreaChart(
+                            userActivityData.daily.map(d => d.active),
+                            '#8b5cf6',
+                            'Daily Active Users'
                           )}
                         </div>
-                        <div className="breakdown-chart">
+                        <div className="chart-half">
+                          <div className="mini-chart-header">
+                            <h5>Hourly Activity</h5>
+                            <div className="chart-subtitle">Peak usage times</div>
+                          </div>
                           {renderBarChart(
-                            userActivityData.daily.map(d => d.returning),
+                            userActivityData.hourly.map(h => h.users),
+                            '#f59e0b',
+                            'Hourly Activity'
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="engagement-metrics">
+                      <div className="metric-row">
+                        <div className="engagement-stat">
+                          <div className="stat-icon-small">
+                            <Users className="w-5 h-5" />
+                          </div>
+                          <div className="stat-content">
+                            <div className="stat-number">8,932</div>
+                            <div className="stat-label">Active Users</div>
+                            <div className="stat-description">Currently online</div>
+                          </div>
+                        </div>
+                        <div className="engagement-stat">
+                          <div className="stat-icon-small">
+                            <Clock className="w-5 h-5" />
+                          </div>
+                          <div className="stat-content">
+                            <div className="stat-number">4.2h</div>
+                            <div className="stat-label">Avg. Session</div>
+                            <div className="stat-description">Daily average</div>
+                          </div>
+                        </div>
+                        <div className="engagement-stat">
+                          <div className="stat-icon-small">
+                            <Target className="w-5 h-5" />
+                          </div>
+                          <div className="stat-content">
+                            <div className="stat-number">68.4%</div>
+                            <div className="stat-label">Engagement Rate</div>
+                            <div className="stat-description">Monthly average</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {activeChartTab === 'revenue' && (
+                  <div className="revenue-analytics">
+                    <div className="chart-container-large">
+                      <div className="chart-header-section">
+                        <h4>Revenue Analytics</h4>
+                        <p>Comprehensive breakdown of revenue streams and financial performance</p>
+                      </div>
+                      <div className="revenue-dashboard">
+                        <div className="revenue-main-chart">
+                          <div className="chart-title-large">Monthly Revenue Trend</div>
+                          {renderAreaChart(
+                            revenueData.monthly.map(m => m.revenue),
                             '#10b981',
-                            'Returning Users'
+                            'Monthly Revenue'
                           )}
                         </div>
-                      </div>
-                    </div>
-                    <div className="chart-section">
-                      <h4>Peak Activity Hours</h4>
-                      {renderLineChart(
-                        userActivityData.hourly.map(h => h.users),
-                        '#f59e0b',
-                        'Hourly Activity'
-                      )}
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {activeChartTab === 'revenue' && (
-                <div className="chart-content revenue-chart">
-                  <div className="revenue-charts">
-                    <div className="chart-section">
-                      <h4>Monthly Revenue Breakdown</h4>
-                      {renderAreaChart(
-                        revenueData.monthly.map(m => m.revenue),
-                        '#10b981',
-                        'Monthly Revenue'
-                      )}
-                    </div>
-                    <div className="chart-section">
-                      <h4>Revenue Sources</h4>
-                      {renderPieChart([
-                        { label: 'Spot Listings', value: 45678, color: '#3b82f6' },
-                        { label: 'Premium Features', value: 12345, color: '#8b5cf6' },
-                        { label: 'Advertising', value: 8901, color: '#f59e0b' },
-                        { label: 'Partnerships', value: 3456, color: '#10b981' }
-                      ], 'Revenue Sources')}
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {activeChartTab === 'spots' && (
-                <div className="chart-content spots-chart">
-                  <div className="spot-performance-charts">
-                    <div className="chart-section">
-                      <h4>Spot Ratings Distribution</h4>
-                      {renderBarChart(
-                        spotPerformanceData.map(s => s.rating * 100),
-                        '#f59e0b',
-                        'Rating Scores'
-                      )}
-                    </div>
-                    <div className="chart-section">
-                      <h4>Revenue by Category</h4>
-                      {renderPieChart([
-                        { label: 'Restaurant', value: 31250, color: '#3b82f6' },
-                        { label: 'Fine Dining', value: 18900, color: '#8b5cf6' },
-                        { label: 'Cafe', value: 8900, color: '#10b981' },
-                        { label: 'Bar', value: 6780, color: '#f59e0b' }
-                      ], 'Revenue by Category')}
-                    </div>
-                    <div className="performance-table">
-                      <div className="table-header">
-                        <div className="header-cell">Spot Name</div>
-                        <div className="header-cell">Rating</div>
-                        <div className="header-cell">Reviews</div>
-                        <div className="header-cell">Revenue</div>
-                        <div className="header-cell">Trend</div>
-                      </div>
-                      {spotPerformanceData.map((spot, index) => (
-                        <div key={index} className="table-row" onClick={() => handleSpotClick(spot)}>
-                          <div className="cell spot-name">
-                            <h5>{spot.name}</h5>
-                            <span className="category-tag">{spot.category}</span>
+                        <div className="revenue-side-charts">
+                          <div className="side-chart">
+                            <div className="chart-title-medium">Revenue Sources</div>
+                            {renderPieChart([
+                              { label: 'Spot Listings', value: 45678, color: '#3b82f6' },
+                              { label: 'Premium Features', value: 12345, color: '#8b5cf6' },
+                              { label: 'Advertising', value: 8901, color: '#f59e0b' },
+                              { label: 'Partnerships', value: 3456, color: '#10b981' }
+                            ], 'Revenue Distribution')}
                           </div>
-                          <div className="cell rating-cell">
-                            <div className="rating-display">
-                              <Star className="w-4 h-4 text-yellow-500 fill-current" />
-                              <span>{spot.rating}</span>
+                          <div className="side-chart">
+                            <div className="chart-title-medium">Revenue by Category</div>
+                            {renderBarChart(
+                              [31250, 18900, 8900, 6780],
+                              '#8b5cf6',
+                              'Revenue by Category'
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="revenue-metrics-grid">
+                      <div className="revenue-metric-card">
+                        <div className="metric-header-small">
+                          <DollarSign className="w-5 h-5" />
+                          <span>Total Revenue</span>
+                        </div>
+                        <div className="metric-value-large">$45,678</div>
+                        <div className="metric-period">This month</div>
+                      </div>
+                      <div className="revenue-metric-card">
+                        <div className="metric-header-small">
+                          <TrendingUp className="w-5 h-5" />
+                          <span>Growth Rate</span>
+                        </div>
+                        <div className="metric-value-large">32.1%</div>
+                        <div className="metric-period">Month over month</div>
+                      </div>
+                      <div className="revenue-metric-card">
+                        <div className="metric-header-small">
+                          <Target className="w-5 h-5" />
+                          <span>Avg. Order Value</span>
+                        </div>
+                        <div className="metric-value-large">$156.70</div>
+                        <div className="metric-period">Per transaction</div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {activeChartTab === 'spots' && (
+                  <div className="spots-analytics">
+                    <div className="chart-container-large">
+                      <div className="chart-header-section">
+                        <h4>Spot Performance Analytics</h4>
+                        <p>Detailed analysis of spot performance and user engagement</p>
+                      </div>
+                      <div className="spots-dashboard">
+                        <div className="spots-overview">
+                          <div className="overview-stats">
+                            <div className="stat-card-compact">
+                              <div className="stat-number">342</div>
+                              <div className="stat-label">Total Spots</div>
                             </div>
-                          </div>
-                          <div className="cell">{spot.reviews}</div>
-                          <div className="cell revenue-cell">${spot.revenue.toLocaleString()}</div>
-                          <div className="cell trend-cell">
-                            <div className={`trend-indicator ${spot.trend}`}>
-                              {spot.trend === 'up' && <TrendingUp className="w-4 h-4 text-green-500" />}
-                              {spot.trend === 'down' && <TrendingDown className="w-4 h-4 text-red-500" />}
-                              {spot.trend === 'stable' && <Activity className="w-4 h-4 text-blue-500" />}
+                            <div className="stat-card-compact">
+                              <div className="stat-number">4.8</div>
+                              <div className="stat-label">Avg. Rating</div>
+                            </div>
+                            <div className="stat-card-compact">
+                              <div className="stat-number">8,756</div>
+                              <div className="stat-label">Total Reviews</div>
                             </div>
                           </div>
                         </div>
-                      ))}
+                        <div className="spots-performance-charts">
+                          <div className="performance-chart-large">
+                            <div className="chart-title-medium">Rating Distribution</div>
+                            {renderBarChart(
+                              spotPerformanceData.map(s => s.rating * 100),
+                              '#f59e0b',
+                              'Rating Scores'
+                            )}
+                          </div>
+                          <div className="performance-chart-large">
+                            <div className="chart-title-medium">Top Performing Categories</div>
+                            {renderPieChart([
+                              { label: 'Restaurant', value: 65, color: '#3b82f6' },
+                              { label: 'Fine Dining', value: 28, color: '#8b5cf6' },
+                              { label: 'Cafe', value: 42, color: '#10b981' },
+                              { label: 'Bar', value: 18, color: '#f59e0b' }
+                            ], 'Spot Categories')}
+                          </div>
+                        </div>
+                      </div>
+                      <div className="spots-table-enhanced">
+                        <div className="table-header-enhanced">
+                          <div className="header-title">Top Performing Spots</div>
+                          <div className="header-actions">
+                            <button className="table-action-btn">
+                              <Filter className="w-4 h-4" />
+                              Filter
+                            </button>
+                            <button className="table-action-btn">
+                              <Download className="w-4 h-4" />
+                              Export
+                            </button>
+                          </div>
+                        </div>
+                        <div className="table-grid-enhanced">
+                          <div className="table-header-row">
+                            <div className="header-cell">Spot Name</div>
+                            <div className="header-cell">Category</div>
+                            <div className="header-cell">Rating</div>
+                            <div className="header-cell">Reviews</div>
+                            <div className="header-cell">Revenue</div>
+                            <div className="header-cell">Performance</div>
+                          </div>
+                          {spotPerformanceData.slice(0, 5).map((spot, index) => (
+                            <div key={index} className="table-row-enhanced" onClick={() => handleSpotClick(spot)}>
+                              <div className="cell-enhanced spot-name-cell">
+                                <div className="spot-avatar">
+                                  <img src={`https://picsum.photos/seed/${spot.name}/40/40`} alt={spot.name} />
+                                </div>
+                                <div className="spot-details">
+                                  <h5>{spot.name}</h5>
+                                  <span className="category-badge">{spot.category}</span>
+                                </div>
+                              </div>
+                              <div className="cell-enhanced">
+                                <div className="rating-display-enhanced">
+                                  <Star className="w-4 h-4 text-yellow-500 fill-current" />
+                                  <span>{spot.rating}</span>
+                                </div>
+                              </div>
+                              <div className="cell-enhanced">
+                                <span>{spot.reviews}</span>
+                                <div className="cell-label">Reviews</div>
+                              </div>
+                              <div className="cell-enhanced revenue-cell">
+                                <span>${spot.revenue.toLocaleString()}</span>
+                                <div className="cell-label">Revenue</div>
+                              </div>
+                              <div className="cell-enhanced trend-cell">
+                                <div className={`trend-indicator-enhanced ${spot.trend}`}>
+                                  {spot.trend === 'up' && <TrendingUp className="w-4 h-4 text-green-500" />}
+                                  {spot.trend === 'down' && <TrendingDown className="w-4 h-4 text-red-500" />}
+                                  {spot.trend === 'stable' && <Activity className="w-4 h-4 text-blue-500" />}
+                                </div>
+                                <div className="trend-label">
+                                  {spot.trend === 'up' && 'Top Performer'}
+                                  {spot.trend === 'down' && 'Declining'}
+                                  {spot.trend === 'stable' && 'Stable'}
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </div>
-              )}
+                )}
+              </div>
             </div>
           </div>
 
