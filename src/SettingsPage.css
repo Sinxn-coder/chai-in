@@ -115,6 +115,34 @@
   margin: 0;
 }
 
+/* Subsections */
+.settings-subsection {
+  margin-bottom: 32px;
+  padding: 24px;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+}
+
+.subsection-header {
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.subsection-header h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #374151;
+  margin: 0 0 4px 0;
+}
+
+.subsection-header p {
+  font-size: 13px;
+  color: #6b7280;
+  margin: 0;
+}
+
 /* Settings Grid */
 .settings-grid {
   display: grid;
@@ -173,14 +201,14 @@
   align-items: center;
   justify-content: space-between;
   padding: 20px;
-  background: #f9fafb;
+  background: white;
   border: 1px solid #e5e7eb;
   border-radius: 8px;
   transition: all 0.2s ease;
 }
 
 .setting-item:hover {
-  background: #f3f4f6;
+  background: #f9fafb;
   border-color: #d1d5db;
 }
 
@@ -407,6 +435,10 @@
     grid-template-columns: 1fr;
   }
 
+  .settings-subsection {
+    padding: 20px;
+  }
+
   .help-cards {
     grid-template-columns: 1fr;
   }
@@ -432,6 +464,10 @@
 
   .settings-header h1 {
     font-size: 20px;
+  }
+
+  .settings-subsection {
+    padding: 16px;
   }
 
   .nav-tabs {
