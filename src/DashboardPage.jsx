@@ -290,11 +290,6 @@ const DashboardPage = () => {
               </div>
               <div className="analytics-value">+23.5%</div>
               <div className="analytics-description">Compared to last month</div>
-              <div className="analytics-sparkline">
-                {[20, 35, 30, 45, 50, 40, 55, 60, 52, 65, 70, 68].map((value, index) => (
-                  <div key={index} className="sparkline-bar analytics" style={{ height: `${value * 1.5}px` }}></div>
-                ))}
-              </div>
             </div>
 
             <div className="analytics-card">
@@ -304,11 +299,6 @@ const DashboardPage = () => {
               </div>
               <div className="analytics-value">+18.2%</div>
               <div className="analytics-description">Monthly revenue increase</div>
-              <div className="analytics-sparkline">
-                {[30, 40, 35, 50, 55, 45, 60, 65, 58, 70, 75, 72].map((value, index) => (
-                  <div key={index} className="sparkline-bar analytics" style={{ height: `${value * 1.8}px` }}></div>
-                ))}
-              </div>
             </div>
 
             <div className="analytics-card">
@@ -318,11 +308,6 @@ const DashboardPage = () => {
               </div>
               <div className="analytics-value">+12.8%</div>
               <div className="analytics-description">User interaction improvement</div>
-              <div className="analytics-sparkline">
-                {[25, 30, 28, 35, 40, 35, 45, 50, 42, 55, 58, 54].map((value, index) => (
-                  <div key={index} className="sparkline-bar analytics" style={{ height: `${value * 2.0}px` }}></div>
-                ))}
-              </div>
             </div>
           </div>
         </div>

@@ -677,24 +677,5 @@
 .analytics-description {
   font-size: 14px;
   color: #6b7280;
-  margin-bottom: 20px;
-}
-
-.analytics-sparkline {
-  display: flex;
-  align-items: flex-end;
-  gap: 3px;
-  height: 40px;
-  justify-content: center;
-}
-
-.sparkline-bar.analytics {
-  background: linear-gradient(135deg, #10b981, #059669);
-  border-radius: 2px;
-  transition: all 0.3s ease;
-}
-
-.sparkline-bar.analytics:hover {
-  transform: scaleY(1.2);
-  filter: brightness(1.1);
+  margin-bottom: 0;
 }
