@@ -18,6 +18,7 @@ import {
   CheckCircle,
   Flag,
   Star,
+  Users,
   BarChart3,
   Settings,
   ImageIcon,
