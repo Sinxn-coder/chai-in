@@ -320,42 +320,42 @@ export default function CommunityPage() {
                                   className={`slider-image ${index === post.currentImageIndex ? 'active' : ''}`}
                                 >
                                   <img src={image} alt={`Post image ${index + 1}`} />
-                                  <div className="image-buttons">
-                                    <button 
-                                      className="image-nav-btn prev"
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        const newIndex = post.currentImageIndex > 0 ? post.currentImageIndex - 1 : post.images.length - 1;
-                                        setPosts(prevPosts => 
-                                          prevPosts.map(p => 
-                                            p.id === post.id 
-                                              ? { ...p, currentImageIndex: newIndex }
-                                              : p
-                                          )
-                                        );
-                                      }}
-                                    >
-                                      <ChevronLeft size={16} />
-                                    </button>
-                                    <button 
-                                      className="image-nav-btn next"
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        const newIndex = post.currentImageIndex < post.images.length - 1 ? post.currentImageIndex + 1 : 0;
-                                        setPosts(prevPosts => 
-                                          prevPosts.map(p => 
-                                            p.id === post.id 
-                                              ? { ...p, currentImageIndex: newIndex }
-                                              : p
-                                          )
-                                        );
-                                      }}
-                                    >
-                                      <ChevronRight size={16} />
-                                    </button>
-                                  </div>
                                 </div>
                               ))}
+                            </div>
+                            <div className="image-buttons">
+                              <button 
+                                className="image-nav-btn prev"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  const newIndex = post.currentImageIndex > 0 ? post.currentImageIndex - 1 : post.images.length - 1;
+                                  setPosts(prevPosts => 
+                                    prevPosts.map(p => 
+                                      p.id === post.id 
+                                        ? { ...p, currentImageIndex: newIndex }
+                                        : p
+                                    )
+                                  );
+                                }}
+                              >
+                                <ChevronLeft size={16} />
+                              </button>
+                              <button 
+                                className="image-nav-btn next"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  const newIndex = post.currentImageIndex < post.images.length - 1 ? post.currentImageIndex + 1 : 0;
+                                  setPosts(prevPosts => 
+                                    prevPosts.map(p => 
+                                      p.id === post.id 
+                                        ? { ...p, currentImageIndex: newIndex }
+                                        : p
+                                    )
+                                  );
+                                }}
+                              >
+                                <ChevronRight size={16} />
+                              </button>
                             </div>
                           </div>
                         </div>

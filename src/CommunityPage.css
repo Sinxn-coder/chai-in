@@ -664,12 +664,9 @@
   align-items: center;
   width: 100%;
   padding: 0 20px;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.slider-image:hover .image-buttons {
   opacity: 1;
+  transition: opacity 0.3s ease;
+  z-index: 10;
 }
 
 .image-nav-btn {
@@ -685,6 +682,7 @@
   justify-content: center;
   width: 32px;
   height: 32px;
+  z-index: 20;
 }
 
 .image-nav-btn:hover {
