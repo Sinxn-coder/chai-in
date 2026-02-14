@@ -34,33 +34,6 @@ export default function CommunityPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [savedSettings, setSavedSettings] = useState(false);
 
-  // Auto-change image interval
-  const [autoChangeIntervals, setAutoChangeIntervals] = useState({});
-
-  useEffect(() => {
-    // Set up auto-change intervals for posts with multiple images
-    const intervals = {};
-    posts.forEach(post => {
-      if (post.images.length > 1) {
-        intervals[post.id] = setInterval(() => {
-          setPosts(prevPosts => 
-            prevPosts.map(p => 
-              p.id === post.id 
-                ? { ...p, currentImageIndex: (p.currentImageIndex + 1) % p.images.length }
-                : p
-            )
-          );
-        }, 3000); // Change every 3 seconds
-      }
-    });
-    setAutoChangeIntervals(intervals);
-
-    // Cleanup intervals on unmount
-    return () => {
-      Object.values(intervals).forEach(interval => clearInterval(interval));
-    };
-  }, [posts.length]);
-
   // Mock posts data with enhanced structure
   const [posts, setPosts] = useState([
     {
@@ -132,6 +105,33 @@ export default function CommunityPage() {
       priority: 'featured'
     }
   ]);
+
+  // Auto-change image interval
+  const [autoChangeIntervals, setAutoChangeIntervals] = useState({});
+
+  useEffect(() => {
+    // Set up auto-change intervals for posts with multiple images
+    const intervals = {};
+    posts.forEach(post => {
+      if (post.images.length > 1) {
+        intervals[post.id] = setInterval(() => {
+          setPosts(prevPosts => 
+            prevPosts.map(p => 
+              p.id === post.id 
+                ? { ...p, currentImageIndex: (p.currentImageIndex + 1) % p.images.length }
+                : p
+            )
+          );
+        }, 3000); // Change every 3 seconds
+      }
+    });
+    setAutoChangeIntervals(intervals);
+
+    // Cleanup intervals on unmount
+    return () => {
+      Object.values(intervals).forEach(interval => clearInterval(interval));
+    };
+  }, []); // Empty dependency array to run only once
 
   const sections = [
     { id: 'posts', name: 'Posts', icon: ImageIcon },
