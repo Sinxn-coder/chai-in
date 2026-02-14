@@ -21,7 +21,9 @@ import {
   CheckCircle,
   X,
   Download,
-  Upload
+  Upload,
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react';
 import './CommunityPage.css';
 
@@ -30,7 +32,7 @@ export default function CommunityPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [savedSettings, setSavedSettings] = useState(false);
 
-  // Mock posts data matching Flutter app structure
+  // Mock posts data with enhanced structure
   const [posts, setPosts] = useState([
     {
       id: 1,
@@ -48,7 +50,11 @@ export default function CommunityPage() {
       isLiked: false,
       isSaved: false,
       status: 'active',
-      reports: 0
+      reports: 0,
+      views: 1250,
+      tags: ['food', 'pasta', 'hidden-gem'],
+      category: 'review',
+      priority: 'normal'
     },
     {
       id: 2,
@@ -66,7 +72,11 @@ export default function CommunityPage() {
       isLiked: false,
       isSaved: false,
       status: 'active',
-      reports: 0
+      reports: 0,
+      views: 890,
+      tags: ['coffee', 'cafe', 'latte'],
+      category: 'review',
+      priority: 'normal'
     },
     {
       id: 3,
@@ -86,7 +96,11 @@ export default function CommunityPage() {
       isLiked: false,
       isSaved: false,
       status: 'active',
-      reports: 0
+      reports: 0,
+      views: 2100,
+      tags: ['brunch', 'avocado', 'outdoor'],
+      category: 'spot',
+      priority: 'featured'
     }
   ]);
 
@@ -180,123 +194,217 @@ export default function CommunityPage() {
           {activeSection === 'posts' && (
             <div className="content-section">
               <div className="section-header">
-                <h2>Community Posts</h2>
-                <p>Manage user-generated content and interactions</p>
+                <h2>Posts Management</h2>
+                <p>Admin control for community posts and content moderation</p>
               </div>
 
-              {/* Search and Filter Bar */}
-              <div className="posts-toolbar">
-                <div className="search-box">
-                  <Search size={18} />
-                  <input 
-                    type="text" 
-                    placeholder="Search posts..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                  />
+              {/* Admin Actions Bar */}
+              <div className="admin-toolbar">
+                <div className="admin-actions-left">
+                  <button className="btn-primary">
+                    <Plus size={18} />
+                    Create New Post
+                  </button>
+                  <button className="btn-secondary">
+                    <Download size={18} />
+                    Export Data
+                  </button>
+                  <button className="btn-secondary">
+                    <Upload size={18} />
+                    Bulk Import
+                  </button>
                 </div>
-                <div className="filter-dropdown">
-                  <Filter size={18} />
-                  <select>
-                    <option>All Posts</option>
-                    <option>Most Liked</option>
-                    <option>Most Commented</option>
-                    <option>Recent</option>
-                  </select>
+                <div className="admin-actions-right">
+                  <div className="filter-group">
+                    <select className="admin-select">
+                      <option>All Posts</option>
+                      <option>Pending Review</option>
+                      <option>Flagged Content</option>
+                      <option>Removed Posts</option>
+                      <option>High Priority</option>
+                    </select>
+                    <select className="admin-select">
+                      <option>All Categories</option>
+                      <option>Reviews</option>
+                      <option>Spots</option>
+                      <option>General</option>
+                      <option>Announcements</option>
+                    </select>
+                  </div>
+                  <button className="btn-danger">
+                    <Trash2 size={18} />
+                    Bulk Actions
+                  </button>
                 </div>
-                <button className="btn-primary">
-                  <Plus size={18} />
-                  Create Post
-                </button>
               </div>
 
-              {/* Posts Feed */}
-              <div className="posts-feed">
-                {filteredPosts.map(post => (
-                  <div key={post.id} className="post-card">
-                    {/* Post Header */}
-                    <div className="post-header">
-                      <div className="user-info">
-                        <img src={post.userPfp} alt={post.userName} className="user-pfp" />
-                        <div className="user-details">
-                          <div className="user-name">{post.userName}</div>
-                          <div className="post-time">{post.time}</div>
-                        </div>
-                      </div>
-                      <div className="post-actions">
-                        <button className="btn-icon">
-                          <MoreVertical size={16} />
-                        </button>
-                      </div>
-                    </div>
-
-                    {/* Post Content */}
-                    <div className="post-content">
-                      <p>{post.content}</p>
-                    </div>
-
-                    {/* Post Images */}
-                    {post.images.length > 0 && (
-                      <div className="post-images">
-                        <div className="image-carousel">
-                          <img 
-                            src={post.images[post.currentImageIndex]} 
-                            alt="Post image" 
-                            className="main-image"
-                          />
-                          {post.images.length > 1 && (
-                            <div className="image-indicator">
-                              {post.currentImageIndex + 1}/{post.images.length}
-                            </div>
-                          )}
-                        </div>
+              {/* Posts Management Grid */}
+              <div className="admin-posts-grid">
+                {posts.map(post => (
+                  <div key={post.id} className="admin-post-card">
+                    {/* Post Priority Badge */}
+                    {post.priority === 'featured' && (
+                      <div className="priority-badge featured">
+                        <Star size={14} />
+                        Featured
                       </div>
                     )}
 
-                    {/* Engagement Bar */}
-                    <div className="engagement-bar">
-                      <div className="engagement-left">
-                        <button 
-                          className={`engagement-btn ${post.isLiked ? 'liked' : ''}`}
-                          onClick={() => handleToggleLike(post.id)}
-                        >
-                          <Heart size={16} fill={post.isLiked ? 'currentColor' : 'none'} />
-                          <span>{post.likes}</span>
-                        </button>
-                        <button className="engagement-btn">
-                          <MessageCircle size={16} />
-                          <span>{post.comments}</span>
-                        </button>
+                    {/* Post Header */}
+                    <div className="admin-post-header">
+                      <div className="admin-user-info">
+                        <img src={post.userPfp} alt={post.userName} className="admin-user-avatar" />
+                        <div className="admin-user-details">
+                          <div className="admin-user-name">{post.userName}</div>
+                          <div className="admin-post-meta">
+                            <span className="admin-category">{post.category}</span>
+                            <span className="admin-time">{post.time}</span>
+                            <span className={`admin-status ${post.status}`}>{post.status}</span>
+                          </div>
+                        </div>
                       </div>
-                      <div className="engagement-right">
-                        <button 
-                          className={`engagement-btn ${post.isSaved ? 'saved' : ''}`}
-                          onClick={() => handleToggleSave(post.id)}
-                        >
-                          <Bookmark size={16} fill={post.isSaved ? 'currentColor' : 'none'} />
+                      <div className="admin-post-actions">
+                        <button className="admin-btn-icon">
+                          <Edit size={16} />
                         </button>
-                        <button className="engagement-btn">
+                        <button className="admin-btn-icon">
                           <Eye size={16} />
                         </button>
-                        <button className="engagement-btn">
-                          <Flag size={16} />
+                        <button className="admin-btn-icon">
+                          <MessageCircle size={16} />
                         </button>
-                        <button 
-                          className="engagement-btn danger"
-                          onClick={() => handleDeletePost(post.id)}
-                        >
+                        <button className="admin-btn-icon danger">
                           <Trash2 size={16} />
                         </button>
                       </div>
                     </div>
 
-                    {/* Post Status */}
-                    {post.reports > 0 && (
-                      <div className="post-status">
-                        {getStatusBadge(post.status)}
-                        <span className="report-count">{post.reports} reports</span>
+                    {/* Post Content */}
+                    <div className="admin-post-content">
+                      <div className="admin-post-text">
+                        <p>{post.content}</p>
+                      </div>
+                      {post.tags && (
+                        <div className="admin-post-tags">
+                          {post.tags.map((tag, index) => (
+                            <span key={index} className="admin-tag">#{tag}</span>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Post Images Admin */}
+                    {post.images.length > 0 && (
+                      <div className="admin-post-images">
+                        <div className="admin-image-header">
+                          <span className="admin-image-count">{post.images.length} Images</span>
+                          <div className="admin-image-actions">
+                            <button className="admin-btn-small">
+                              <Upload size={14} />
+                              Add Image
+                            </button>
+                            <button className="admin-btn-small">
+                              <Edit size={14} />
+                              Edit All
+                            </button>
+                          </div>
+                        </div>
+                        <div className="admin-image-grid">
+                          {post.images.map((image, index) => (
+                            <div key={index} className="admin-image-item">
+                              <img src={image} alt={`Post image ${index + 1}`} className="admin-image" />
+                              <div className="admin-image-overlay">
+                                <button className="admin-image-btn">
+                                  <Eye size={14} />
+                                </button>
+                                <button className="admin-image-btn danger">
+                                  <X size={14} />
+                                </button>
+                              </div>
+                              <div className="admin-image-indicator">
+                                {index + 1}/{post.images.length}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
                       </div>
                     )}
+
+                    {/* Post Analytics */}
+                    <div className="admin-post-analytics">
+                      <div className="analytics-row">
+                        <div className="analytics-item">
+                          <div className="analytics-icon">
+                            <Eye size={16} />
+                          </div>
+                          <div className="analytics-data">
+                            <div className="analytics-number">{post.views?.toLocaleString() || '0'}</div>
+                            <div className="analytics-label">Views</div>
+                          </div>
+                        </div>
+                        <div className="analytics-item">
+                          <div className="analytics-icon">
+                            <Heart size={16} />
+                          </div>
+                          <div className="analytics-data">
+                            <div className="analytics-number">{post.likes}</div>
+                            <div className="analytics-label">Likes</div>
+                          </div>
+                        </div>
+                        <div className="analytics-item">
+                          <div className="analytics-icon">
+                            <MessageCircle size={16} />
+                          </div>
+                          <div className="analytics-data">
+                            <div className="analytics-number">{post.comments}</div>
+                            <div className="analytics-label">Comments</div>
+                          </div>
+                        </div>
+                        <div className="analytics-item">
+                          <div className="analytics-icon">
+                            <Share2 size={16} />
+                          </div>
+                          <div className="analytics-data">
+                            <div className="analytics-number">{post.shares || 0}</div>
+                            <div className="analytics-label">Shares</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Post Status & Moderation */}
+                    <div className="admin-post-moderation">
+                      <div className="moderation-header">
+                        <h4>Moderation Actions</h4>
+                      </div>
+                      <div className="moderation-controls">
+                        <button className={`moderation-btn ${post.status === 'active' ? 'active' : ''}`}>
+                          <CheckCircle size={16} />
+                          Approve
+                        </button>
+                        <button className={`moderation-btn ${post.status === 'flagged' ? 'active' : ''}`}>
+                          <Flag size={16} />
+                          Flag Content
+                        </button>
+                        <button className={`moderation-btn ${post.status === 'removed' ? 'active' : ''}`}>
+                          <X size={16} />
+                          Remove Post
+                        </button>
+                        <button className="moderation-btn danger">
+                          <Trash2 size={16} />
+                          Delete Permanently
+                        </button>
+                      </div>
+                      {post.reports > 0 && (
+                        <div className="report-info">
+                          <span className="report-count">{post.reports} user reports</span>
+                          <button className="review-reports-btn">
+                            <Shield size={16} />
+                            Review Reports
+                          </button>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 ))}
               </div>
