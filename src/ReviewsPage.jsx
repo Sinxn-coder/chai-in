@@ -1066,14 +1066,21 @@ export default function ReviewsPage() {
                   
               <div className="modal-actions">
                 <button 
-                  className="action-button primary"
+                  className={`action-button ${showDetailsModal ? 'primary' : 'secondary'}`}
+                  onClick={() => handleViewDetails(selectedReview)}
+                >
+                  <Eye size={16} />
+                  View Details
+                </button>
+                <button 
+                  className={`action-button ${showUserProfile ? 'primary' : 'secondary'}`}
                   onClick={() => handleViewUserProfile(selectedReview)}
                 >
                   <Users size={16} />
                   View User Profile
                 </button>
                 <button 
-                  className="action-button secondary"
+                  className={`action-button ${showSpotDetails ? 'primary' : 'secondary'}`}
                   onClick={() => handleViewSpotDetails(selectedReview)}
                 >
                   <MapPin size={16} />
@@ -1174,6 +1181,30 @@ export default function ReviewsPage() {
                   </div>
                 </div>
               </div>
+            </div>
+            
+            <div className="modal-actions">
+              <button 
+                className={`action-button ${showDetailsModal ? 'primary' : 'secondary'}`}
+                onClick={() => handleViewDetails(selectedReview)}
+              >
+                <Eye size={16} />
+                View Details
+              </button>
+              <button 
+                className={`action-button ${showUserProfile ? 'primary' : 'secondary'}`}
+                onClick={() => handleViewUserProfile(selectedReview)}
+              >
+                <Users size={16} />
+                View User Profile
+              </button>
+              <button 
+                className={`action-button ${showSpotDetails ? 'primary' : 'secondary'}`}
+                onClick={() => handleViewSpotDetails(selectedReview)}
+              >
+                <MapPin size={16} />
+                View Spot Details
+              </button>
             </div>
           </div>
         </div>
@@ -1290,14 +1321,21 @@ export default function ReviewsPage() {
             
             <div className="modal-actions">
               <button 
-                className="action-button primary"
+                className={`action-button ${showDetailsModal ? 'primary' : 'secondary'}`}
+                onClick={() => handleViewDetails(selectedReview)}
+              >
+                <Eye size={16} />
+                View Details
+              </button>
+              <button 
+                className={`action-button ${showUserProfile ? 'primary' : 'secondary'}`}
                 onClick={() => handleViewUserProfile(selectedReview)}
               >
                 <Users size={16} />
                 View User Profile
               </button>
               <button 
-                className="action-button secondary"
+                className={`action-button ${showSpotDetails ? 'primary' : 'secondary'}`}
                 onClick={() => handleViewSpotDetails(selectedReview)}
               >
                 <MapPin size={16} />
