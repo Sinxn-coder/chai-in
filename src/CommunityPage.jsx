@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Users, 
   Heart, 
@@ -33,6 +33,33 @@ export default function CommunityPage() {
   const [activeSection, setActiveSection] = useState('posts');
   const [searchTerm, setSearchTerm] = useState('');
   const [savedSettings, setSavedSettings] = useState(false);
+
+  // Auto-change image interval
+  const [autoChangeIntervals, setAutoChangeIntervals] = useState({});
+
+  useEffect(() => {
+    // Set up auto-change intervals for posts with multiple images
+    const intervals = {};
+    posts.forEach(post => {
+      if (post.images.length > 1) {
+        intervals[post.id] = setInterval(() => {
+          setPosts(prevPosts => 
+            prevPosts.map(p => 
+              p.id === post.id 
+                ? { ...p, currentImageIndex: (p.currentImageIndex + 1) % p.images.length }
+                : p
+            )
+          );
+        }, 3000); // Change every 3 seconds
+      }
+    });
+    setAutoChangeIntervals(intervals);
+
+    // Cleanup intervals on unmount
+    return () => {
+      Object.values(intervals).forEach(interval => clearInterval(interval));
+    };
+  }, [posts.length]);
 
   // Mock posts data with enhanced structure
   const [posts, setPosts] = useState([
@@ -313,33 +340,11 @@ export default function CommunityPage() {
                         </div>
                         <div className="admin-image-slider">
                           <div className="slider-container">
-                            <button 
-                              className="slider-btn prev"
-                              onClick={() => {
-                                const newIndex = post.currentImageIndex > 0 ? post.currentImageIndex - 1 : post.images.length - 1;
-                                const updatedPosts = posts.map(p => 
-                                  p.id === post.id 
-                                    ? { ...p, currentImageIndex: newIndex }
-                                    : p
-                                );
-                                setPosts(updatedPosts);
-                              }}
-                            >
-                              <ChevronLeft size={20} />
-                            </button>
                             <div className="slider-main">
                               {post.images.map((image, index) => (
                                 <div 
                                   key={index}
                                   className={`slider-image ${index === post.currentImageIndex ? 'active' : ''}`}
-                                  onClick={() => {
-                                    const updatedPosts = posts.map(p => 
-                                      p.id === post.id 
-                                        ? { ...p, currentImageIndex: index }
-                                        : p
-                                    );
-                                    setPosts(updatedPosts);
-                                  }}
                                 >
                                   <img src={image} alt={`Post image ${index + 1}`} />
                                   <div className="slider-overlay">
@@ -348,40 +353,18 @@ export default function CommunityPage() {
                                 </div>
                               ))}
                             </div>
-                            <button 
-                              className="slider-btn next"
-                              onClick={() => {
-                                const newIndex = post.currentImageIndex < post.images.length - 1 ? post.currentImageIndex + 1 : 0;
-                                const updatedPosts = posts.map(p => 
-                                  p.id === post.id 
-                                    ? { ...p, currentImageIndex: newIndex }
-                                    : p
-                                );
-                                setPosts(updatedPosts);
-                              }}
-                            >
-                              <ChevronRight size={20} />
-                            </button>
-                          </div>
-                          <div className="slider-indicators">
-                            {post.images.map((_, index) => (
-                              <button
-                                key={index}
-                                className={`indicator ${index === post.currentImageIndex ? 'active' : ''}`}
-                                onClick={() => {
-                                  const updatedPosts = posts.map(p => 
-                                    p.id === post.id 
-                                      ? { ...p, currentImageIndex: index }
-                                      : p
-                                  );
-                                  setPosts(updatedPosts);
-                                }}
-                              />
-                            ))}
-                          </div>
-                          <div className="slider-info">
-                            <span className="current-slide">{post.currentImageIndex + 1}</span>
-                            <span className="total-slides">/ {post.images.length}</span>
+                            <div className="slider-indicators">
+                              {post.images.map((_, index) => (
+                                <div
+                                  key={index}
+                                  className={`indicator ${index === post.currentImageIndex ? 'active' : ''}`}
+                                />
+                              ))}
+                            </div>
+                            <div className="slider-info">
+                              <span className="current-slide">{post.currentImageIndex + 1}</span>
+                              <span className="total-slides">/ {post.images.length}</span>
+                            </div>
                           </div>
                         </div>
                       </div>
