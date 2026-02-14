@@ -5,6 +5,7 @@ const DashboardPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [showAnalytics, setShowAnalytics] = useState(false);
+  const [showReport, setShowReport] = useState(false);
 
   // Mock data for stats
   const stats = {
@@ -46,7 +47,8 @@ const DashboardPage = () => {
         setShowAnalytics(!showAnalytics);
         break;
       case 'report':
-        console.log('Generating report...');
+        console.log('Generating report section...');
+        setShowReport(!showReport);
         break;
       case 'settings':
         console.log('Opening system settings...');
@@ -308,6 +310,60 @@ const DashboardPage = () => {
               </div>
               <div className="analytics-value">+12.8%</div>
               <div className="analytics-description">User interaction improvement</div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Report Section */}
+      {showReport && (
+        <div className="report-section">
+          <div className="section-header">
+            <h2>Generate Report</h2>
+            <p>Create and download platform activity reports</p>
+          </div>
+          
+          <div className="report-grid">
+            <div className="report-card">
+              <div className="report-header">
+                <FileText className="w-6 h-6 text-orange-500" />
+                <h3>Monthly Summary</h3>
+              </div>
+              <div className="report-description">
+                Complete overview of platform performance for the current month including user growth, revenue, and engagement metrics.
+              </div>
+              <div className="report-actions">
+                <button className="report-btn primary">Generate PDF</button>
+                <button className="report-btn secondary">Generate Excel</button>
+              </div>
+            </div>
+
+            <div className="report-card">
+              <div className="report-header">
+                <BarChart className="w-6 h-6 text-green-500" />
+                <h3>Analytics Report</h3>
+              </div>
+              <div className="report-description">
+                Detailed analytics with charts and insights covering user behavior, popular spots, and revenue trends.
+              </div>
+              <div className="report-actions">
+                <button className="report-btn primary">Generate PDF</button>
+                <button className="report-btn secondary">Generate Excel</button>
+              </div>
+            </div>
+
+            <div className="report-card">
+              <div className="report-header">
+                <Users className="w-6 h-6 text-blue-500" />
+                <h3>User Activity</h3>
+              </div>
+              <div className="report-description">
+                Comprehensive user activity report including registrations, logins, reviews, and engagement statistics.
+              </div>
+              <div className="report-actions">
+                <button className="report-btn primary">Generate PDF</button>
+                <button className="report-btn secondary">Generate Excel</button>
+              </div>
             </div>
           </div>
         </div>
