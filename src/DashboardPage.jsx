@@ -6,6 +6,7 @@ const DashboardPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showAnalytics, setShowAnalytics] = useState(false);
   const [showReport, setShowReport] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
 
   // Mock data for stats
   const stats = {
@@ -52,6 +53,7 @@ const DashboardPage = () => {
         break;
       case 'settings':
         console.log('Opening system settings...');
+        setShowSettings(!showSettings);
         break;
       case 'import':
         console.log('Opening data import...');
@@ -363,6 +365,110 @@ const DashboardPage = () => {
               <div className="report-actions">
                 <button className="report-btn primary">Generate PDF</button>
                 <button className="report-btn secondary">Generate Excel</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Settings Section */}
+      {showSettings && (
+        <div className="settings-section">
+          <div className="section-header">
+            <h2>System Settings</h2>
+            <p>Configure platform preferences and administrative options</p>
+          </div>
+          
+          <div className="settings-grid">
+            <div className="settings-card">
+              <div className="settings-header">
+                <SettingsIcon className="w-6 h-6 text-gray-500" />
+                <h3>General Settings</h3>
+              </div>
+              <div className="settings-content">
+                <div className="setting-item">
+                  <label>Platform Name</label>
+                  <input type="text" defaultValue="FoodSpot Platform" />
+                </div>
+                <div className="setting-item">
+                  <label>Time Zone</label>
+                  <select defaultValue="UTC">
+                    <option>UTC</option>
+                    <option>EST</option>
+                    <option>PST</option>
+                    <option>CET</option>
+                  </select>
+                </div>
+                <div className="setting-item">
+                  <label>Language</label>
+                  <select defaultValue="English">
+                    <option>English</option>
+                    <option>Spanish</option>
+                    <option>French</option>
+                    <option>German</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div className="settings-card">
+              <div className="settings-header">
+                <Bell className="w-6 h-6 text-blue-500" />
+                <h3>Notifications</h3>
+              </div>
+              <div className="settings-content">
+                <div className="setting-item">
+                  <label>Email Notifications</label>
+                  <div className="toggle-switch">
+                    <input type="checkbox" defaultChecked />
+                    <span className="toggle-slider"></span>
+                  </div>
+                </div>
+                <div className="setting-item">
+                  <label>Push Notifications</label>
+                  <div className="toggle-switch">
+                    <input type="checkbox" defaultChecked />
+                    <span className="toggle-slider"></span>
+                  </div>
+                </div>
+                <div className="setting-item">
+                  <label>Weekly Reports</label>
+                  <div className="toggle-switch">
+                    <input type="checkbox" defaultChecked />
+                    <span className="toggle-slider"></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="settings-card">
+              <div className="settings-header">
+                <Users className="w-6 h-6 text-purple-500" />
+                <h3>User Management</h3>
+              </div>
+              <div className="settings-content">
+                <div className="setting-item">
+                  <label>Default User Role</label>
+                  <select defaultValue="User">
+                    <option>User</option>
+                    <option>Moderator</option>
+                    <option>Admin</option>
+                  </select>
+                </div>
+                <div className="setting-item">
+                  <label>Require Email Verification</label>
+                  <div className="toggle-switch">
+                    <input type="checkbox" defaultChecked />
+                    <span className="toggle-slider"></span>
+                  </div>
+                </div>
+                <div className="setting-item">
+                  <label>Allow User Registration</label>
+                  <div className="toggle-switch">
+                    <input type="checkbox" defaultChecked />
+                    <span className="toggle-slider"></span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
