@@ -335,6 +335,241 @@ export default function CommunityPage() {
                   <h2>Analytics Dashboard</h2>
                   <p>Community engagement and performance metrics</p>
                 </div>
+
+                {/* Analytics Overview Cards */}
+                <div className="analytics-overview">
+                  <div className="analytics-card">
+                    <div className="analytics-card-header">
+                      <div className="analytics-icon-container primary">
+                        <Users size={20} />
+                      </div>
+                      <div className="analytics-card-info">
+                        <h3>Total Users</h3>
+                        <p>Active community members</p>
+                      </div>
+                    </div>
+                    <div className="analytics-card-value">
+                      <span className="value">12,543</span>
+                      <span className="change positive">+12.5%</span>
+                    </div>
+                  </div>
+
+                  <div className="analytics-card">
+                    <div className="analytics-card-header">
+                      <div className="analytics-icon-container success">
+                        <MessageCircle size={20} />
+                      </div>
+                      <div className="analytics-card-info">
+                        <h3>Total Posts</h3>
+                        <p>Community content</p>
+                      </div>
+                    </div>
+                    <div className="analytics-card-value">
+                      <span className="value">3,847</span>
+                      <span className="change positive">+8.2%</span>
+                    </div>
+                  </div>
+
+                  <div className="analytics-card">
+                    <div className="analytics-card-header">
+                      <div className="analytics-icon-container warning">
+                        <Heart size={20} />
+                      </div>
+                      <div className="analytics-card-info">
+                        <h3>Engagement Rate</h3>
+                        <p>Likes & interactions</p>
+                      </div>
+                    </div>
+                    <div className="analytics-card-value">
+                      <span className="value">68.4%</span>
+                      <span className="change positive">+5.1%</span>
+                    </div>
+                  </div>
+
+                  <div className="analytics-card">
+                    <div className="analytics-card-header">
+                      <div className="analytics-icon-container info">
+                        <Eye size={20} />
+                      </div>
+                      <div className="analytics-card-info">
+                        <h3>Total Views</h3>
+                        <p>Content impressions</p>
+                      </div>
+                    </div>
+                    <div className="analytics-card-value">
+                      <span className="value">89.2K</span>
+                      <span className="change positive">+18.7%</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Charts Section */}
+                <div className="analytics-charts">
+                  <div className="chart-container">
+                    <div className="chart-header">
+                      <h3>Post Activity Trend</h3>
+                      <div className="chart-controls">
+                        <select className="chart-select">
+                          <option>Last 7 days</option>
+                          <option>Last 30 days</option>
+                          <option>Last 3 months</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div className="chart-content">
+                      <div className="mock-chart">
+                        <div className="chart-bars">
+                          <div className="chart-bar" style={{height: '60%'}}></div>
+                          <div className="chart-bar" style={{height: '80%'}}></div>
+                          <div className="chart-bar" style={{height: '45%'}}></div>
+                          <div className="chart-bar" style={{height: '90%'}}></div>
+                          <div className="chart-bar" style={{height: '70%'}}></div>
+                          <div className="chart-bar" style={{height: '85%'}}></div>
+                          <div className="chart-bar" style={{height: '75%'}}></div>
+                        </div>
+                        <div className="chart-labels">
+                          <span>Mon</span>
+                          <span>Tue</span>
+                          <span>Wed</span>
+                          <span>Thu</span>
+                          <span>Fri</span>
+                          <span>Sat</span>
+                          <span>Sun</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="chart-container">
+                    <div className="chart-header">
+                      <h3>Content Categories</h3>
+                      <div className="chart-controls">
+                        <button className="chart-btn">Export</button>
+                      </div>
+                    </div>
+                    <div className="chart-content">
+                      <div className="category-breakdown">
+                        <div className="category-item">
+                          <div className="category-info">
+                            <span className="category-name">Reviews</span>
+                            <span className="category-count">1,234</span>
+                          </div>
+                          <div className="category-progress">
+                            <div className="progress-bar" style={{width: '65%'}}></div>
+                          </div>
+                        </div>
+                        <div className="category-item">
+                          <div className="category-info">
+                            <span className="category-name">Spots</span>
+                            <span className="category-count">892</span>
+                          </div>
+                          <div className="category-progress">
+                            <div className="progress-bar" style={{width: '47%'}}></div>
+                          </div>
+                        </div>
+                        <div className="category-item">
+                          <div className="category-info">
+                            <span className="category-name">Events</span>
+                            <span className="category-count">567</span>
+                          </div>
+                          <div className="category-progress">
+                            <div className="progress-bar" style={{width: '30%'}}></div>
+                          </div>
+                        </div>
+                        <div className="category-item">
+                          <div className="category-info">
+                            <span className="category-name">Discussion</span>
+                            <span className="category-count">445</span>
+                          </div>
+                          <div className="category-progress">
+                            <div className="progress-bar" style={{width: '23%'}}></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Top Performers */}
+                <div className="top-performers">
+                  <div className="performers-header">
+                    <h3>Top Performing Posts</h3>
+                    <button className="view-all-btn">View All</button>
+                  </div>
+                  <div className="performers-list">
+                    <div className="performer-item">
+                      <div className="performer-content">
+                        <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=100&auto=format&fit=crop" alt="User" className="performer-avatar" />
+                        <div className="performer-info">
+                          <h4>Sarah Johnson</h4>
+                          <p>Best brunch spot I've found this month...</p>
+                        </div>
+                      </div>
+                      <div className="performer-stats">
+                        <div className="stat-item">
+                          <Eye size={14} />
+                          <span>2.1K</span>
+                        </div>
+                        <div className="stat-item">
+                          <Heart size={14} />
+                          <span>342</span>
+                        </div>
+                        <div className="stat-item">
+                          <MessageCircle size={14} />
+                          <span>89</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="performer-item">
+                      <div className="performer-content">
+                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=100&auto=format&fit=crop" alt="User" className="performer-avatar" />
+                        <div className="performer-info">
+                          <h4>Mike Chen</h4>
+                          <p>Coffee lovers, you need to try this new cafe...</p>
+                        </div>
+                      </div>
+                      <div className="performer-stats">
+                        <div className="stat-item">
+                          <Eye size={14} />
+                          <span>1.8K</span>
+                        </div>
+                        <div className="stat-item">
+                          <Heart size={14} />
+                          <span>256</span>
+                        </div>
+                        <div className="stat-item">
+                          <MessageCircle size={14} />
+                          <span>67</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="performer-item">
+                      <div className="performer-content">
+                        <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=100&auto=format&fit=crop" alt="User" className="performer-avatar" />
+                        <div className="performer-info">
+                          <h4>Emma Wilson</h4>
+                          <p>Just discovered this amazing hidden gem...</p>
+                        </div>
+                      </div>
+                      <div className="performer-stats">
+                        <div className="stat-item">
+                          <Eye size={14} />
+                          <span>1.5K</span>
+                        </div>
+                        <div className="stat-item">
+                          <Heart size={14} />
+                          <span>198</span>
+                        </div>
+                        <div className="stat-item">
+                          <MessageCircle size={14} />
+                          <span>45</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             )}
 
