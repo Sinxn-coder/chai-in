@@ -3,50 +3,54 @@ import ReviewsPage from './ReviewsPage';
 import SettingsPage from './SettingsPage';
 import CommunityPage from './CommunityPage';
 import DashboardPage from './DashboardPage';
-import MobilePage from './MobilePage';
+import MobileIntro from './MobileIntro';
 import './DashboardPage.css';
-import { 
-  Layout, 
-  Users, 
-  Star, 
-  BarChart3, 
-  Settings, 
-  TrendingUp, 
-  AlertCircle, 
-  CheckCircle, 
-  Clock, 
-  Search, 
-  Filter, 
-  Download, 
-  Ban, 
-  Shield, 
-  UserCheck, 
-  MoreVertical, 
-  Edit, 
-  Eye, 
-  MessageSquare, 
-  Trash2, 
-  X, 
-  Camera, 
-  Phone, 
-  Mail, 
-  Globe, 
-  MapPin, 
-  Star as StarIcon, 
-  Save, 
-  Upload, 
-  Image, 
-  RotateCw, 
-  Crop, 
-  Sun, 
-  Sliders, 
+import {
+  Layout,
+  Users,
+  Star,
+  BarChart3,
+  Settings,
+  TrendingUp,
+  AlertCircle,
+  CheckCircle,
+  Clock,
+  Search,
+  Filter,
+  Download,
+  Ban,
+  Shield,
+  UserCheck,
+  MoreVertical,
+  Edit,
+  Eye,
+  MessageSquare,
+  Trash2,
+  X,
+  Camera,
+  Phone,
+  Mail,
+  Globe,
+  MapPin,
+  Star as StarIcon,
+  Save,
+  Upload,
+  Image,
+  RotateCw,
+  Crop,
+  Sun,
+  Sliders,
   ChevronDown,
+  ArrowLeft,
   Users as Community
 } from 'lucide-react';
 import './index.css';
 
 export default function App() {
+  const [activeTab, setActiveTab] = useState('dashboard');
   const [isMobile, setIsMobile] = useState(false);
+  const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
+  const [mobileAdminTab, setMobileAdminTab] = useState('spots');
 
   // Mobile detection effect
   useEffect(() => {
@@ -56,16 +60,17 @@ export default function App() {
 
     checkMobile();
     window.addEventListener('resize', checkMobile);
-    
+
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  // If mobile, show mobile page
-  if (isMobile) {
-    return <MobilePage />;
-  }
+  const handleMobileLogin = () => {
+    setIsAdminLoggedIn(true);
+  };
 
-  const [activeTab, setActiveTab] = useState('dashboard');
+  const handleMobileLogout = () => {
+    setIsAdminLoggedIn(false);
+  };
 
   const navItems = [
     { id: 'dashboard', name: 'Dashboard', icon: Layout },
@@ -99,7 +104,7 @@ export default function App() {
       id: 1,
       name: 'Central Perk Cafe',
       address: '123 Main St',
-      city: 'New York', 
+      city: 'New York',
       state: 'NY',
       category: 'Cafe',
       status: 'verified',
@@ -259,7 +264,7 @@ export default function App() {
   const [uploadedPhotos, setUploadedPhotos] = useState([]);
   const [photoUploadExpanded, setPhotoUploadExpanded] = useState(false);
   const fileInputRef = useRef(null);
-  
+
   // New Image Editor State
   const [imageEditorOpen, setImageEditorOpen] = useState(false);
   const [editingImage, setEditingImage] = useState(null);
@@ -269,11 +274,11 @@ export default function App() {
   const [imageSaturation, setImageSaturation] = useState(100);
   const [cropRatio, setCropRatio] = useState('original');
   const editorCanvasRef = useRef(null);
-  
+
   // Drag & Drop State
   const [isDragging, setIsDragging] = useState(false);
   const [dragCounter, setDragCounter] = useState(0);
-  
+
   // Photo Reordering State
   const [draggedPhoto, setDraggedPhoto] = useState(null);
   const [dragOverPhoto, setDragOverPhoto] = useState(null);
@@ -286,14 +291,14 @@ export default function App() {
       const currentPhotoCount = uploadedPhotos.length;
       const remainingSlots = 5 - currentPhotoCount;
       const maxPhotos = Math.min(files.length, remainingSlots);
-      
+
       if (maxPhotos > 0) {
         const newPhotos = [];
-        
+
         for (let i = 0; i < maxPhotos; i++) {
           const file = files[i];
           const reader = new FileReader();
-          
+
           reader.onload = (e) => {
             const newPhoto = {
               id: Date.now() + i,
@@ -302,15 +307,15 @@ export default function App() {
               url: e.target.result,
               file: file
             };
-            
+
             setUploadedPhotos(prev => [...prev, newPhoto]);
           };
-          
+
           reader.readAsDataURL(file);
         }
       }
     }
-    
+
     // Reset file input
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
@@ -339,7 +344,7 @@ export default function App() {
   const handlePhotoDrop = (e, dropPhoto, dropIndex) => {
     e.preventDefault();
     e.stopPropagation();
-    
+
     if (!draggedPhoto || draggedPhoto.id === dropPhoto.id) {
       setDragOverPhoto(null);
       return;
@@ -348,24 +353,24 @@ export default function App() {
     try {
       const newPhotos = [...uploadedPhotos];
       const draggedPhotoIndex = newPhotos.findIndex(p => p.id === draggedPhoto.id);
-      
+
       if (draggedPhotoIndex !== -1) {
         // Remove from original position
         newPhotos.splice(draggedPhotoIndex, 1);
-        
+
         // Find new drop index (it may have changed after splice)
         const newDropIndex = newPhotos.findIndex(p => p.id === dropPhoto.id);
-        
+
         // Insert at new position
         newPhotos.splice(newDropIndex + 1, 0, draggedPhoto);
-        
+
         setUploadedPhotos(newPhotos);
         console.log('Reordered photos:', newPhotos.map(p => p.name));
       }
     } catch (error) {
       console.error('Error reordering photos:', error);
     }
-    
+
     setDraggedPhoto(null);
     setDraggedIndex(null);
     setDragOverPhoto(null);
@@ -421,7 +426,7 @@ export default function App() {
       const currentPhotoCount = uploadedPhotos.length;
       const remainingSlots = 5 - currentPhotoCount;
       const maxPhotos = Math.min(files.length, remainingSlots);
-      
+
       if (maxPhotos === 0) {
         console.log('Maximum photos reached');
         return;
@@ -432,7 +437,7 @@ export default function App() {
 
       for (let i = 0; i < maxPhotos; i++) {
         const file = files[i];
-        
+
         // Validate file type
         if (!file.type.startsWith('image/')) {
           console.log('Skipping non-image file:', file.name);
@@ -446,7 +451,7 @@ export default function App() {
         }
 
         const reader = new FileReader();
-        
+
         reader.onload = (event) => {
           const photo = {
             id: Date.now() + i,
@@ -455,10 +460,10 @@ export default function App() {
             size: file.size,
             type: file.type
           };
-          
+
           newPhotos.push(photo);
           processedCount++;
-          
+
           // Add photos when all are processed
           if (processedCount === maxPhotos) {
             setUploadedPhotos(prev => [...prev, ...newPhotos]);
@@ -469,7 +474,7 @@ export default function App() {
         reader.onerror = () => {
           console.error('Error reading file:', file.name);
           processedCount++;
-          
+
           if (processedCount === maxPhotos) {
             setUploadedPhotos(prev => [...prev, ...newPhotos]);
           }
@@ -505,24 +510,24 @@ export default function App() {
       console.log('Missing editingImage or canvas ref');
       return;
     }
-    
+
     const canvas = editorCanvasRef.current;
     const ctx = canvas.getContext('2d');
-    
+
     // Create image using document.createElement for better compatibility
     const img = document.createElement('img');
     img.crossOrigin = 'anonymous';
-    
+
     img.onload = () => {
       console.log('Image loaded, dimensions:', img.width, 'x', img.height);
       console.log('Editing image URL:', editingImage.url);
-      
+
       // Calculate crop dimensions
       let cropWidth = img.width;
       let cropHeight = img.height;
       let cropX = 0;
       let cropY = 0;
-      
+
       if (cropRatio === '1:1') {
         cropWidth = cropHeight = Math.min(img.width, img.height);
         cropX = (img.width - cropWidth) / 2;
@@ -532,35 +537,35 @@ export default function App() {
         cropX = 0;
         cropY = (img.height - cropHeight) / 2;
       }
-      
+
       // Set canvas dimensions
       canvas.width = cropWidth;
       canvas.height = cropHeight;
-      
+
       console.log('Canvas dimensions:', canvas.width, 'x', canvas.height);
-      
+
       // Clear canvas
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      
+
       // Apply filters
       ctx.filter = `brightness(${imageBrightness}%) contrast(${imageContrast}%) saturate(${imageSaturation}%)`;
-      
+
       // Apply rotation
       ctx.save();
       ctx.translate(canvas.width / 2, canvas.height / 2);
       ctx.rotate((imageRotation * Math.PI) / 180);
-      
+
       // Draw the image
       ctx.drawImage(img, cropX - img.width / 2, cropY - img.height / 2, cropWidth, cropHeight);
       ctx.restore();
-      
+
       console.log('Image drawn on canvas');
     };
-    
+
     img.onerror = (error) => {
       console.error('Failed to load image:', editingImage.url, error);
     };
-    
+
     // Set the source after setting up event handlers
     img.src = editingImage.url;
   };
@@ -587,19 +592,19 @@ export default function App() {
       console.log('Cannot save - missing image or canvas');
       return;
     }
-    
+
     const canvas = editorCanvasRef.current;
-    
+
     try {
       const editedUrl = canvas.toDataURL('image/jpeg', 0.9);
       console.log('Image saved successfully');
-      
-      const updatedPhotos = uploadedPhotos.map(photo => 
-        photo.id === editingImage.id 
+
+      const updatedPhotos = uploadedPhotos.map(photo =>
+        photo.id === editingImage.id
           ? { ...photo, url: editedUrl }
           : photo
       );
-      
+
       setUploadedPhotos(updatedPhotos);
       closeImageEditor();
     } catch (error) {
@@ -654,7 +659,7 @@ export default function App() {
             <div className="image-editor-container">
               {/* Canvas Display */}
               <div className="canvas-container">
-                <canvas 
+                <canvas
                   ref={editorCanvasRef}
                   width={400}
                   height={300}
@@ -702,10 +707,10 @@ export default function App() {
                   <div className="slider-group">
                     <div className="slider-control">
                       <label>Brightness</label>
-                      <input 
-                        type="range" 
-                        min="0" 
-                        max="200" 
+                      <input
+                        type="range"
+                        min="0"
+                        max="200"
                         value={imageBrightness}
                         onChange={(e) => setImageBrightness(Number(e.target.value))}
                       />
@@ -713,10 +718,10 @@ export default function App() {
                     </div>
                     <div className="slider-control">
                       <label>Contrast</label>
-                      <input 
-                        type="range" 
-                        min="0" 
-                        max="200" 
+                      <input
+                        type="range"
+                        min="0"
+                        max="200"
                         value={imageContrast}
                         onChange={(e) => setImageContrast(Number(e.target.value))}
                       />
@@ -724,10 +729,10 @@ export default function App() {
                     </div>
                     <div className="slider-control">
                       <label>Saturation</label>
-                      <input 
-                        type="range" 
-                        min="0" 
-                        max="200" 
+                      <input
+                        type="range"
+                        min="0"
+                        max="200"
                         value={imageSaturation}
                         onChange={(e) => setImageSaturation(Number(e.target.value))}
                       />
@@ -743,21 +748,21 @@ export default function App() {
                     Crop
                   </h4>
                   <div className="button-group">
-                    <button 
+                    <button
                       className={`control-btn ${cropRatio === 'original' ? 'primary' : ''}`}
                       onClick={() => applyCrop('original')}
                     >
                       <Crop size={14} />
                       Original
                     </button>
-                    <button 
+                    <button
                       className={`control-btn ${cropRatio === '1:1' ? 'primary' : ''}`}
                       onClick={() => applyCrop('1:1')}
                     >
                       <Crop size={14} />
                       1:1
                     </button>
-                    <button 
+                    <button
                       className={`control-btn ${cropRatio === '16:9' ? 'primary' : ''}`}
                       onClick={() => applyCrop('16:9')}
                     >
@@ -811,7 +816,7 @@ export default function App() {
   const filteredUsers = useMemo(() => {
     return users.filter(user => {
       const matchesSearch = user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           user.email.toLowerCase().includes(searchTerm.toLowerCase());
+        user.email.toLowerCase().includes(searchTerm.toLowerCase());
       const matchesStatus = statusFilter === 'all' || user.status === statusFilter;
       return matchesSearch && matchesStatus;
     });
@@ -821,8 +826,8 @@ export default function App() {
   const filteredSpots = useMemo(() => {
     let filtered = spots.filter(spot => {
       const matchesSearch = spot.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           spot.address.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           spot.category.toLowerCase().includes(searchTerm.toLowerCase());
+        spot.address.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        spot.category.toLowerCase().includes(searchTerm.toLowerCase());
       const matchesStatus = statusFilter === 'all' || spot.status === statusFilter;
       return matchesSearch && matchesStatus;
     });
@@ -873,7 +878,7 @@ export default function App() {
   const handleSpotAction = (action, spot) => {
     console.log(`${action} spot:`, spot.name);
     setActiveSpotDropdown(null);
-    
+
     if (action === 'edit') {
       setEditingSpotData(spot);
       setEditModalOpen(true);
@@ -897,8 +902,8 @@ export default function App() {
   }, [spots]);
 
   const handleSelectSpot = (spotId) => {
-    setSelectedSpots(prev => 
-      prev.includes(spotId) 
+    setSelectedSpots(prev =>
+      prev.includes(spotId)
         ? prev.filter(id => id !== spotId)
         : [...prev, spotId]
     );
@@ -923,8 +928,8 @@ export default function App() {
   };
 
   const handleSelectUser = (userId) => {
-    setSelectedUsers(prev => 
-      prev.includes(userId) 
+    setSelectedUsers(prev =>
+      prev.includes(userId)
         ? prev.filter(id => id !== userId)
         : [...prev, userId]
     );
@@ -993,8 +998,8 @@ export default function App() {
             </div>
             <div className="filter-dropdown">
               <Filter size={20} className="filter-icon" />
-              <select 
-                value={statusFilter} 
+              <select
+                value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
                 className="filter-select"
               >
@@ -1072,30 +1077,30 @@ export default function App() {
                   <td>{user.reviews}</td>
                   <td>
                     <div className="dropdown-container">
-                      <button 
+                      <button
                         className="btn-icon"
                         onClick={() => toggleDropdown(user.id)}
                       >
                         <MoreVertical size={16} />
                       </button>
-                      
+
                       {activeDropdown === user.id && (
                         <div className="dropdown-menu">
-                          <button 
+                          <button
                             className="dropdown-item"
                             onClick={() => handleAction('edit', user)}
                           >
                             <Edit size={14} />
                             Edit User
                           </button>
-                          <button 
+                          <button
                             className="dropdown-item"
                             onClick={() => handleAction('view', user)}
                           >
                             <Eye size={14} />
                             View Details
                           </button>
-                          <button 
+                          <button
                             className="dropdown-item"
                             onClick={() => handleAction('message', user)}
                           >
@@ -1103,14 +1108,14 @@ export default function App() {
                             Send Message
                           </button>
                           <div className="dropdown-divider"></div>
-                          <button 
+                          <button
                             className="dropdown-item danger"
                             onClick={() => handleAction(user.status === 'banned' ? 'unban' : 'ban', user)}
                           >
                             <Ban size={14} />
                             {user.status === 'banned' ? 'Unban User' : 'Ban User'}
                           </button>
-                          <button 
+                          <button
                             className="dropdown-item danger"
                             onClick={() => handleAction('delete', user)}
                           >
@@ -1153,7 +1158,7 @@ export default function App() {
               <X size={20} />
             </button>
           </div>
-          
+
           <div className="modal-body">
             <div className="spot-details">
               <div className="detail-section">
@@ -1241,7 +1246,7 @@ export default function App() {
               </div>
             </div>
           </div>
-          
+
           <div className="modal-footer">
             <button className="btn btn-secondary" onClick={closeSpotModal}>
               Close
@@ -1294,8 +1299,8 @@ export default function App() {
                   </h3>
                   <div className="form-group">
                     <label className="modern-label">Spot Name</label>
-                    <input 
-                      type="text" 
+                    <input
+                      type="text"
                       defaultValue={editingSpotData.name}
                       className="modern-input"
                       placeholder="Enter spot name"
@@ -1304,7 +1309,7 @@ export default function App() {
                   <div className="form-group">
                     <label className="modern-label">Category</label>
                     <div className="modern-select-wrapper">
-                      <select 
+                      <select
                         defaultValue={editingSpotData.category}
                         className="modern-select"
                       >
@@ -1316,23 +1321,23 @@ export default function App() {
                   <div className="form-group">
                     <label className="modern-label">Status</label>
                     <div className="status-pills">
-                      <button 
+                      <button
                         className={`status-pill ${editingSpotData.status === 'verified' ? 'active' : ''}`}
-                        onClick={() => {/* Could add status change logic */}}
+                        onClick={() => {/* Could add status change logic */ }}
                       >
                         <CheckCircle size={14} />
                         Verified
                       </button>
-                      <button 
+                      <button
                         className={`status-pill ${editingSpotData.status === 'pending' ? 'active' : ''}`}
-                        onClick={() => {/* Could add status change logic */}}
+                        onClick={() => {/* Could add status change logic */ }}
                       >
                         <Clock size={14} />
                         Pending
                       </button>
-                      <button 
+                      <button
                         className={`status-pill ${editingSpotData.status === 'flagged' ? 'active' : ''}`}
-                        onClick={() => {/* Could add status change logic */}}
+                        onClick={() => {/* Could add status change logic */ }}
                       >
                         <AlertCircle size={14} />
                         Flagged
@@ -1350,8 +1355,8 @@ export default function App() {
                   </h3>
                   <div className="form-group">
                     <label className="modern-label">Street Address</label>
-                    <input 
-                      type="text" 
+                    <input
+                      type="text"
                       defaultValue={editingSpotData.address}
                       className="modern-input"
                       placeholder="Enter street address"
@@ -1360,8 +1365,8 @@ export default function App() {
                   <div className="form-row">
                     <div className="form-group half-width">
                       <label className="modern-label">City</label>
-                      <input 
-                        type="text" 
+                      <input
+                        type="text"
                         defaultValue={editingSpotData.city}
                         className="modern-input"
                         placeholder="Enter city"
@@ -1369,8 +1374,8 @@ export default function App() {
                     </div>
                     <div className="form-group half-width">
                       <label className="modern-label">State</label>
-                      <input 
-                        type="text" 
+                      <input
+                        type="text"
                         defaultValue={editingSpotData.state}
                         className="modern-input"
                         placeholder="Enter state"
@@ -1395,9 +1400,9 @@ export default function App() {
                       <div className="metric-label">Average Rating</div>
                       <div className="metric-stars">
                         {[1, 2, 3, 4, 5].map(star => (
-                          <Star 
-                            key={star} 
-                            size={12} 
+                          <Star
+                            key={star}
+                            size={12}
                             className={star <= (editingSpotData.rating || 0) ? 'metric-star-filled' : 'metric-star-empty'}
                           />
                         ))}
@@ -1447,10 +1452,10 @@ export default function App() {
                     </div>
                     Photo Upload ({uploadedPhotos.length}/5)
                   </h3>
-                  
+
                   <div className="photo-upload-area">
                     {uploadedPhotos.length < 5 && (
-                      <div 
+                      <div
                         className={`upload-zone ${isDragging ? 'dragging' : ''}`}
                         onClick={() => fileInputRef.current?.click()}
                         onDragEnter={handleDragEnter}
@@ -1462,16 +1467,16 @@ export default function App() {
                           <Upload size={48} className="upload-icon" />
                           <h3>Upload Photos</h3>
                           <p>
-                            {isDragging 
-                              ? 'Drop files here...' 
+                            {isDragging
+                              ? 'Drop files here...'
                               : 'Drag & drop photos here or click to browse'
                             }
                           </p>
                           <p className="upload-limit">
                             Select up to {5 - uploadedPhotos.length} more photos
                           </p>
-                          <button 
-                            type="button" 
+                          <button
+                            type="button"
                             className="modern-btn primary"
                             onClick={(e) => {
                               e.stopPropagation();
@@ -1498,8 +1503,8 @@ export default function App() {
                         <h4>Uploaded Photos ({uploadedPhotos.length}/5)</h4>
                         <div className="photo-grid">
                           {uploadedPhotos.map((photo, index) => (
-                            <div 
-                              key={photo.id} 
+                            <div
+                              key={photo.id}
                               className={`photo-item ${draggedPhoto?.id === photo.id ? 'dragging' : ''} ${dragOverPhoto?.id === photo.id ? 'drag-over' : ''}`}
                               draggable
                               onDragStart={(e) => handlePhotoDragStart(e, photo, index)}
@@ -1521,15 +1526,15 @@ export default function App() {
                                 )}
                               </div>
                               <div className="photo-actions">
-                                <button 
-                                  className="photo-edit" 
+                                <button
+                                  className="photo-edit"
                                   onClick={() => openImageEditor(photo)}
                                   title="Edit Photo"
                                 >
                                   <Edit size={14} />
                                 </button>
-                                <button 
-                                  className="photo-remove" 
+                                <button
+                                  className="photo-remove"
                                   onClick={() => {
                                     setUploadedPhotos(uploadedPhotos.filter(p => p.id !== photo.id));
                                   }}
@@ -1693,9 +1698,9 @@ export default function App() {
                       <div className="metric-label">Average Rating</div>
                       <div className="metric-stars">
                         {[1, 2, 3, 4, 5].map(star => (
-                          <Star 
-                            key={star} 
-                            size={12} 
+                          <Star
+                            key={star}
+                            size={12}
                             className={star <= (viewingSpotData.rating || 0) ? 'metric-star-filled' : 'metric-star-empty'}
                           />
                         ))}
@@ -1774,8 +1779,8 @@ export default function App() {
               </div>
               <div className="filter-dropdown">
                 <Filter size={20} className="filter-icon" />
-                <select 
-                  value={statusFilter} 
+                <select
+                  value={statusFilter}
                   onChange={(e) => setStatusFilter(e.target.value)}
                   className="filter-select"
                 >
@@ -1786,8 +1791,8 @@ export default function App() {
                 </select>
               </div>
               <div className="sort-dropdown">
-                <select 
-                  value={sortBy} 
+                <select
+                  value={sortBy}
                   onChange={(e) => setSortBy(e.target.value)}
                   className="sort-select"
                 >
@@ -1798,8 +1803,8 @@ export default function App() {
                 </select>
               </div>
               <div className="items-per-page-dropdown">
-                <select 
-                  value={itemsPerPage} 
+                <select
+                  value={itemsPerPage}
                   onChange={(e) => handleItemsPerPageChange(e.target.value)}
                   className="items-per-page-select"
                 >
@@ -1937,23 +1942,23 @@ export default function App() {
                     <td>{spot.added}</td>
                     <td>
                       <div className="dropdown-container">
-                        <button 
+                        <button
                           className="btn-icon"
                           onClick={() => toggleSpotDropdown(spot.id)}
                         >
                           <MoreVertical size={16} />
                         </button>
-                        
+
                         {activeSpotDropdown === spot.id && (
                           <div className="dropdown-menu">
-                            <button 
+                            <button
                               className="dropdown-item"
                               onClick={() => handleSpotAction('edit', spot)}
                             >
                               <Edit size={14} />
                               Edit Spot
                             </button>
-                            <button 
+                            <button
                               className="dropdown-item"
                               onClick={() => {
                                 setViewingSpotData(spot);
@@ -1963,7 +1968,7 @@ export default function App() {
                               <Eye size={14} />
                               View Details
                             </button>
-                            <button 
+                            <button
                               className="dropdown-item"
                               onClick={() => handleSpotAction('message', spot)}
                             >
@@ -1971,21 +1976,21 @@ export default function App() {
                               Contact Owner
                             </button>
                             <div className="dropdown-divider"></div>
-                            <button 
+                            <button
                               className="dropdown-item warning"
                               onClick={() => handleSpotAction(spot.status === 'flagged' ? 'unflag' : 'flag', spot)}
                             >
                               <AlertCircle size={14} />
                               {spot.status === 'flagged' ? 'Unflag Spot' : 'Flag Spot'}
                             </button>
-                            <button 
+                            <button
                               className="dropdown-item success"
                               onClick={() => handleSpotAction(spot.status === 'verified' ? 'unverify' : 'verify', spot)}
                             >
                               <CheckCircle size={14} />
                               {spot.status === 'verified' ? 'Unverify Spot' : 'Verify Spot'}
                             </button>
-                            <button 
+                            <button
                               className="dropdown-item danger"
                               onClick={() => handleSpotAction('delete', spot)}
                             >
@@ -2007,16 +2012,16 @@ export default function App() {
               Showing {paginatedSpots.length} of {spots.length} spots
             </div>
             <div className="pagination">
-              <button 
-                className="btn btn-secondary" 
+              <button
+                className="btn btn-secondary"
                 onClick={handlePreviousPage}
                 disabled={currentPage === 1}
               >
                 Previous
               </button>
               <span className="page-info">Page {currentPage} of {totalPages}</span>
-              <button 
-                className="btn btn-secondary" 
+              <button
+                className="btn btn-secondary"
                 onClick={handleNextPage}
                 disabled={currentPage === totalPages}
               >
@@ -2025,7 +2030,7 @@ export default function App() {
             </div>
           </div>
         </div>
-        
+
         {renderSpotModal()}
         {renderModernEditModal()}
         {renderViewDetailsModal()}
@@ -2059,50 +2064,174 @@ export default function App() {
     }
   };
 
-  return (
-    <div className="app">
-      {/* Mobile Page */}
-      {isMobile ? (
-        <MobilePage />
-      ) : (
-        <>
-          {/* Navigation - Hide specific pages on mobile */}
-          <nav className="sidebar">
-            <div className="nav-header">
-              <h2>FoodSpot Platform</h2>
-            </div>
-            <ul className="nav-list">
-              {navItems.filter(item => 
-                (item.id !== 'users' && 
-                item.id !== 'spots' && 
-                item.id !== 'reviews' && 
-                item.id !== 'community' && 
-                item.id !== 'settings')
-              ).map((item) => (
-                <li
-                  key={item.id}
-                  className={`nav-item ${activeTab === item.id ? 'active' : ''}`}
-                  onClick={() => setActiveTab(item.id)}
-                >
-                  <item.icon size={20} className="nav-icon" />
-                  <span>{item.name}</span>
-                </li>
-              ))}
-            </ul>
-          </nav>
-          <header>
-            <div className="app-bar-brand">
-              <div className="appIcon">🍵</div>
-              <h1>BytSpot</h1>
-            </div>
-            <div className="header-center">{getActiveTabName()}</div>
-            <div className="header-right">Admin Panel</div>
+  if (isMobile) {
+    if (isAdminLoggedIn) {
+      return (
+        <div className="mobile-admin-dashboard ultra-simplified">
+          <header className="mobile-admin-header">
+            <button className="back-btn-logout" onClick={handleMobileLogout}>
+              <ArrowLeft size={24} />
+            </button>
+            <h1>Admin Panel</h1>
+            <div style={{ width: 24 }}></div> {/* Spacer for centering title */}
           </header>
-          <main>
-            {renderContent()}
-          </main>
-        </>
-      )}
-    </div>
+
+          <div className="mobile-admin-search-section">
+            <div className="search-box-mobile">
+              <Search size={18} className="search-icon-mobile" />
+              <input
+                type="text"
+                placeholder="Search spots..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="search-input-mobile"
+              />
+              {searchTerm && (
+                <button className="clear-search-btn" onClick={() => setSearchTerm('')}>
+                  <X size={14} />
+                </button>
+              )}
+            </div>
+
+            <div className="status-filter-scroll">
+              {['all', 'verified', 'pending', 'flagged'].map(status => (
+                <button
+                  key={status}
+                  className={`status-chip-mobile ${statusFilter === status ? 'active' : ''}`}
+                  onClick={() => setStatusFilter(status)}
+                >
+                  {status === 'all' ? 'All' : status.charAt(0).toUpperCase() + status.slice(1)}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="mobile-admin-content-area">
+            {mobileAdminTab === 'spots' ? (
+              <div className="mobile-spots-list">
+                {filteredSpots.length > 0 ? (
+                  filteredSpots.map(spot => (
+                    <div key={spot.id} className="mobile-spot-card" onClick={() => openSpotModal(spot)}>
+                      <div className="card-main">
+                        <div className="card-info">
+                          <div className="card-title-row dropdown-container">
+                            <h3 className="spot-name-text">{spot.name}</h3>
+                            <button
+                              className="spot-options-btn"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                toggleSpotDropdown(spot.id);
+                              }}
+                            >
+                              <MoreVertical size={18} />
+                            </button>
+                            {activeSpotDropdown === spot.id && (
+                              <div className="mobile-dropdown-menu">
+                                <button className="dropdown-item" onClick={(e) => { e.stopPropagation(); handleSpotAction('verify', spot); }}>
+                                  <CheckCircle size={16} />
+                                  <span>Approve</span>
+                                </button>
+                                <button className="dropdown-item" onClick={(e) => { e.stopPropagation(); handleSpotAction('flag', spot); }}>
+                                  <AlertCircle size={16} />
+                                  <span>Flag</span>
+                                </button>
+                                <button className="dropdown-item delete" onClick={(e) => { e.stopPropagation(); handleSpotAction('delete', spot); }}>
+                                  <Trash2 size={16} />
+                                  <span>Delete</span>
+                                </button>
+                              </div>
+                            )}
+                          </div>
+                          <div className="spot-meta-row">
+                            <span className="spot-category-tag">{spot.category}</span>
+                            <div className="spot-rating-pill">
+                              <Star size={12} fill="#FFD700" color="#FFD700" />
+                              <span>{spot.rating}</span>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="card-status-area">
+                          {getStatusBadge(spot.status)}
+                        </div>
+                      </div>
+                      <div className="card-footer">
+                        <div className="spot-location-text">
+                          <MapPin size={14} />
+                          <span>{spot.city}, {spot.state}</span>
+                        </div>
+                        <div className="spot-id-tag">#{spot.id}</div>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="mobile-admin-empty-content">
+                    <div className="empty-state-label">No Spots Found</div>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="mobile-admin-empty-content">
+                <div className="empty-state-label">Settings View</div>
+              </div>
+            )}
+          </div>
+
+          <nav className="mobile-admin-bottom-nav">
+            <button
+              className={`nav-item ${mobileAdminTab === 'spots' ? 'active' : ''}`}
+              onClick={() => setMobileAdminTab('spots')}
+            >
+              <MapPin size={24} />
+              <span>Spots</span>
+            </button>
+            <button
+              className={`nav-item ${mobileAdminTab === 'settings' ? 'active' : ''}`}
+              onClick={() => setMobileAdminTab('settings')}
+            >
+              <Settings size={24} />
+              <span>Settings</span>
+            </button>
+          </nav>
+        </div>
+      );
+    }
+    return <MobileIntro onLogin={handleMobileLogin} />;
+  }
+
+  return (
+    <>
+      <header>
+        <div className="app-bar-brand">
+          <div className="appIcon">🍵</div>
+          <h1>BytSpot</h1>
+        </div>
+        <div className="header-center">{getActiveTabName()}</div>
+        <div className="header-right">Admin Panel</div>
+      </header>
+
+      <nav className="sidebar">
+        <ul className="nav-list">
+          {navItems.map((item) => {
+            const Icon = item.icon;
+            return (
+              <li
+                key={item.id}
+                className={`nav-item ${activeTab === item.id ? 'active' : ''}`}
+                onClick={() => setActiveTab(item.id)}
+              >
+                <div className="nav-icon">
+                  <Icon size={24} />
+                </div>
+                <span className="nav-text">{item.name}</span>
+              </li>
+            );
+          })}
+        </ul>
+      </nav>
+
+      <main>
+        {renderContent()}
+      </main>
+    </>
   );
 }

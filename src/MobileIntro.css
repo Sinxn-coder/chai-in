@@ -1,0 +1,355 @@
+.mobile-intro-container {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #FF0000 0%, #D32F2F 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: clamp(20px, 5vh, 60px) 24px;
+    color: white;
+    text-align: center;
+    font-family: 'Segoe UI', Roboto, sans-serif;
+    overflow: hidden;
+    position: relative;
+}
+
+.mobile-intro-content {
+    z-index: 2;
+    animation: fadeInUp 1s cubic-bezier(0.22, 1, 0.36, 1);
+    width: 100%;
+    max-width: 450px;
+}
+
+.mobile-logo {
+    font-size: clamp(48px, 10vw, 64px);
+    background: white;
+    width: clamp(80px, 20vw, 110px);
+    height: clamp(80px, 20vw, 110px);
+    border-radius: clamp(16px, 4vw, 24px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto clamp(24px, 5vh, 40px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
+    animation: float 4s ease-in-out infinite;
+}
+
+.mobile-intro-container h1 {
+    font-size: clamp(32px, 8vw, 48px);
+    font-weight: 800;
+    margin-bottom: 8px;
+    letter-spacing: -1.5px;
+    line-height: 1.1;
+}
+
+.mobile-intro-container .slogan {
+    font-size: clamp(14px, 4vw, 18px);
+    opacity: 0.9;
+    margin-bottom: clamp(32px, 6vh, 48px);
+    font-weight: 500;
+    max-width: 280px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.features-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+    width: 100%;
+    margin-bottom: clamp(32px, 6vh, 48px);
+}
+
+.feature-item {
+    background: rgba(255, 255, 255, 0.12);
+    padding: 18px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    text-align: left;
+    transition: transform 0.3s ease;
+}
+
+.feature-item:active {
+    transform: scale(0.98);
+}
+
+.feature-icon {
+    width: 44px;
+    height: 44px;
+    background: white;
+    color: #FF0000;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.feature-text h3 {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 2px;
+}
+
+.feature-text p {
+    font-size: 13px;
+    opacity: 0.85;
+    margin: 0;
+    line-height: 1.4;
+}
+
+.desktop-note {
+    background: white;
+    color: #FF0000;
+    padding: 14px 28px;
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: 14px;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    margin-top: 10px;
+}
+
+.bg-blobs {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1;
+}
+
+.blob {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.15);
+    filter: blur(80px);
+    border-radius: 50%;
+    animation: blobFloat 10s infinite alternate ease-in-out;
+}
+
+.blob-1 {
+    width: clamp(200px, 60vw, 400px);
+    height: clamp(200px, 60vw, 400px);
+    top: -10%;
+    right: -10%;
+    animation-delay: 0s;
+}
+
+.blob-2 {
+    width: clamp(150px, 50vw, 300px);
+    height: clamp(150px, 50vw, 300px);
+    bottom: -5%;
+    left: -10%;
+    animation-delay: -5s;
+}
+
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+@keyframes blobFloat {
+    0% {
+        transform: translate(0, 0) scale(1);
+    }
+
+    100% {
+        transform: translate(10%, 10%) scale(1.1);
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Landscape orientation optimization */
+@media (max-height: 500px) {
+    .mobile-intro-container {
+        flex-direction: row;
+        justify-content: center;
+        gap: 40px;
+        padding: 20px;
+    }
+
+    .mobile-logo {
+        margin: 0;
+    }
+
+    .features-grid {
+        display: none;
+        /* Hide features in tight landscape to save space */
+    }
+
+    .mobile-intro-container .slogan {
+        margin-bottom: 24px;
+    }
+}
+
+/* Admin Login Styles */
+.admin-login-container {
+    min-height: 100vh;
+    background: #000;
+    display: flex;
+    flex-direction: column;
+    padding: 24px;
+    color: white;
+    font-family: 'Segoe UI', Roboto, sans-serif;
+    position: relative;
+    overflow: hidden;
+    animation: fadeIn 0.5s ease-out;
+}
+
+.back-btn {
+    position: absolute;
+    top: 24px;
+    left: 24px;
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: white;
+    width: 44px;
+    height: 44px;
+    border-radius: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(10px);
+    z-index: 10;
+}
+
+.login-card {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    z-index: 2;
+}
+
+.lock-icon {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, #FF0000 0%, #B71C1C 100%);
+    border-radius: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 32px;
+    box-shadow: 0 10px 40px rgba(255, 0, 0, 0.3);
+}
+
+.login-card h2 {
+    font-size: 32px;
+    font-weight: 800;
+    margin-bottom: 12px;
+}
+
+.login-card p {
+    font-size: 16px;
+    opacity: 0.7;
+    margin-bottom: 48px;
+    max-width: 280px;
+    line-height: 1.5;
+}
+
+.google-signin-btn {
+    width: 100%;
+    max-width: 320px;
+    background: white;
+    color: #333;
+    border: none;
+    padding: 16px;
+    border-radius: 50px;
+    font-size: 16px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 24px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s;
+}
+
+.google-signin-btn:active {
+    transform: scale(0.98);
+}
+
+.google-signin-btn img {
+    width: 24px;
+    height: 24px;
+}
+
+.divider {
+    width: 100%;
+    max-width: 320px;
+    display: flex;
+    align-items: center;
+    margin: 24px 0;
+}
+
+.divider::before,
+.divider::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.divider span {
+    padding: 0 16px;
+    font-size: 14px;
+    opacity: 0.4;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.guest-btn {
+    background: transparent;
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 14px 40px;
+    border-radius: 50px;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.login-footer {
+    padding: 24px;
+    text-align: center;
+    font-size: 12px;
+    opacity: 0.4;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
