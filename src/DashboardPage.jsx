@@ -42,7 +42,12 @@ const DashboardPage = () => {
     setTimeout(() => setIsLoading(false), 1000);
   };
 
-  const handleQuickAction = (action) => {
+  const handleDashboardClick = () => {
+    handleRefresh();
+  };
+
+  const handleQuickAction = (action, e) => {
+    e.stopPropagation(); // Prevent dashboard refresh
     console.log(`Quick action clicked: ${action}`);
     // Handle different actions based on action type
     switch (action) {
@@ -67,7 +72,7 @@ const DashboardPage = () => {
   };
 
   return (
-    <div className="dashboard-page">
+    <div className="dashboard-page" onClick={handleDashboardClick}>
       <>
         {/* Header Section */}
         <div className="dashboard-header">
@@ -83,16 +88,17 @@ const DashboardPage = () => {
                   type="text"
                   placeholder="Search..."
                   value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onChange={(e) => { e.stopPropagation(); setSearchQuery(e.target.value); }}
+                  onClick={(e) => e.stopPropagation()}
                 />
               </div>
-              <button className="icon-btn" onClick={handleRefresh}>
+              <button className="icon-btn" onClick={(e) => { e.stopPropagation(); handleRefresh(); }}>
                 <RefreshCw className={`w-5 h-5 ${isLoading ? 'animate-spin' : ''}`} />
               </button>
-              <button className="icon-btn">
+              <button className="icon-btn" onClick={(e) => e.stopPropagation()}>
                 <Bell className="w-5 h-5" />
               </button>
-              <button className="icon-btn">
+              <button className="icon-btn" onClick={(e) => e.stopPropagation()}>
                 <Settings className="w-5 h-5" />
               </button>
             </div>
@@ -245,7 +251,7 @@ const DashboardPage = () => {
               <button
                 key={action.id}
                 className={`action-card ${action.color}`}
-                onClick={() => handleQuickAction(action.action)}
+                onClick={(e) => handleQuickAction(action.action, e)}
               >
                 <div className="action-icon">
                   <action.icon className="w-8 h-8" />
