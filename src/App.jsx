@@ -887,6 +887,9 @@ export default function App() {
     } else if (action === 'suspend') {
       console.log('Suspending spot:', spot.name);
       // Add suspend logic here
+    } else if (action === 'unflag') {
+      console.log('Unflagging spot:', spot.name);
+      // Add unflag logic here
     }
   };
 
@@ -2184,6 +2187,17 @@ export default function App() {
                                     <button className="dropdown-item" onClick={(e) => { e.stopPropagation(); handleSpotAction('flag', spot); }}>
                                       <AlertCircle size={16} />
                                       <span>Flag</span>
+                                    </button>
+                                    <button className="dropdown-item delete" onClick={(e) => { e.stopPropagation(); handleSpotAction('delete', spot); }}>
+                                      <Trash2 size={16} />
+                                      <span>Delete</span>
+                                    </button>
+                                  </>
+                                ) : spot.status === 'flagged' ? (
+                                  <>
+                                    <button className="dropdown-item" onClick={(e) => { e.stopPropagation(); handleSpotAction('unflag', spot); }}>
+                                      <CheckCircle size={16} />
+                                      <span>Unflag</span>
                                     </button>
                                     <button className="dropdown-item delete" onClick={(e) => { e.stopPropagation(); handleSpotAction('delete', spot); }}>
                                       <Trash2 size={16} />
