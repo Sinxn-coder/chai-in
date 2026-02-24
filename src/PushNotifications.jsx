@@ -7,25 +7,81 @@ const PushNotifications = () => {
     {
       id: 1,
       type: 'urgent',
-      title: 'High Activity Alert',
-      message: 'Unusual spike in user registrations detected in the last hour',
+      title: 'Security Alert',
+      message: 'Your account was accessed from a new device. Please verify if this was you.',
       time: '2 min ago',
       read: false
     },
     {
       id: 2,
       type: 'info',
-      title: 'System Update Available',
-      message: 'New version 2.1.0 is ready for deployment with security patches',
+      title: 'New Feature Available',
+      message: 'Check out our new spot recommendation engine that helps you discover better places!',
       time: '15 min ago',
       read: false
     },
     {
       id: 3,
       type: 'success',
-      title: 'Bulk Operations Complete',
-      message: '47 spots have been successfully verified and published',
+      title: 'Spot Verified Successfully',
+      message: 'Your submitted spot "Sunset Restaurant" has been approved and is now live!',
       time: '1 hour ago',
+      read: true
+    },
+    {
+      id: 4,
+      type: 'warning',
+      title: 'Account Activity Warning',
+      message: 'Unusual login pattern detected. Please review your recent activity.',
+      time: '2 hours ago',
+      read: true
+    },
+    {
+      id: 5,
+      type: 'message',
+      title: 'New Message from Admin',
+      message: 'Thank you for being an active community member! Here\'s a special reward for you.',
+      time: '3 hours ago',
+      read: false
+    },
+    {
+      id: 6,
+      type: 'system',
+      title: 'Scheduled Maintenance',
+      message: 'System will be down for maintenance tonight from 11 PM to 2 AM.',
+      time: '5 hours ago',
+      read: true
+    },
+    {
+      id: 7,
+      type: 'urgent',
+      title: 'Payment Failed',
+      message: 'Your recent payment could not be processed. Please update your payment method.',
+      time: '6 hours ago',
+      read: false
+    },
+    {
+      id: 8,
+      type: 'info',
+      title: 'Weekly Summary',
+      message: 'You visited 12 spots and left 8 reviews this week. Keep up the great work!',
+      time: '1 day ago',
+      read: true
+    },
+    {
+      id: 9,
+      type: 'success',
+      title: 'Achievement Unlocked',
+      message: 'Congratulations! You\'ve earned the "Explorer" badge for visiting 50 unique spots!',
+      time: '2 days ago',
+      read: true
+    },
+    {
+      id: 10,
+      type: 'message',
+      title: 'Community Update',
+      message: '5 new spots have been added in your area. Check them out now!',
+      time: '3 days ago',
       read: true
     }
   ]);
@@ -80,7 +136,7 @@ const PushNotifications = () => {
       {/* Header */}
       <div className="notifications-header">
         <div className="header-left">
-          <h2>Push Notifications</h2>
+          <h2>User Notifications</h2>
           {notifications.filter(n => !n.read).length > 0 && (
             <span className="unread-badge">{notifications.filter(n => !n.read).length}</span>
           )}
