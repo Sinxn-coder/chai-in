@@ -2114,26 +2114,28 @@ export default function App() {
             <div style={{ width: 24 }}></div> {/* Spacer for centering title */}
           </header>
 
-          <div className="mobile-admin-search-section">
-            <div className="search-box-mobile">
-              <Search size={18} className="search-icon-mobile" />
-              <input
-                type="text"
-                placeholder="Search spots..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="search-input-mobile"
-              />
-              {searchTerm && (
-                <button className="clear-search-btn" onClick={() => setSearchTerm('')}>
-                  <X size={14} />
+          {mobileAdminTab === 'spots' && (
+            <div className="mobile-admin-search-section">
+              <div className="search-box-mobile">
+                <Search size={18} className="search-icon-mobile" />
+                <input
+                  type="text"
+                  placeholder="Search spots..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="search-input-mobile"
+                />
+                {searchTerm && (
+                  <button className="clear-search-btn" onClick={() => setSearchTerm('')}>
+                    <X size={14} />
+                  </button>
+                )}
+                <button className="filter-btn-mobile" onClick={() => setShowFilterModal(!showFilterModal)}>
+                  <Filter size={18} />
                 </button>
-              )}
-              <button className="filter-btn-mobile" onClick={() => setShowFilterModal(!showFilterModal)}>
-                <Filter size={18} />
-              </button>
+              </div>
             </div>
-          </div>
+          )}
 
           {showFilterModal && (
             <div className="filter-modal-overlay" onClick={() => setShowFilterModal(false)}>
