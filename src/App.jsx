@@ -5,6 +5,7 @@ import CommunityPage from './CommunityPage';
 import DashboardPage from './DashboardPage';
 import MobileIntro from './MobileIntro';
 import './DashboardPage.css';
+import './mobile.css';
 import {
   Layout,
   Users,
