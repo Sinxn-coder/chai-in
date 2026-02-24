@@ -887,7 +887,26 @@ export default function App() {
   };
 
   const toggleSpotDropdown = (spotId) => {
-    setActiveSpotDropdown(activeSpotDropdown === spotId ? null : spotId);
+    if (activeSpotDropdown === spotId) {
+      setActiveSpotDropdown(null);
+      // Remove dropdown-open class from all cards
+      document.querySelectorAll('.mobile-spot-card').forEach(card => {
+        card.classList.remove('dropdown-open');
+      });
+    } else {
+      setActiveSpotDropdown(spotId);
+      // Remove dropdown-open class from all cards first
+      document.querySelectorAll('.mobile-spot-card').forEach(card => {
+        card.classList.remove('dropdown-open');
+      });
+      // Add dropdown-open class to the current card
+      setTimeout(() => {
+        const currentCard = document.querySelector(`.mobile-spot-card:has(.mobile-dropdown-menu)`);
+        if (currentCard) {
+          currentCard.classList.add('dropdown-open');
+        }
+      }, 0);
+    }
   };
 
   // Calculate statistics
@@ -975,6 +994,10 @@ export default function App() {
       if (!event.target.closest('.dropdown-container')) {
         setActiveDropdown(null);
         setActiveSpotDropdown(null);
+        // Remove dropdown-open class from all cards
+        document.querySelectorAll('.mobile-spot-card').forEach(card => {
+          card.classList.remove('dropdown-open');
+        });
       }
     };
 
@@ -2126,6 +2149,22 @@ export default function App() {
                             >
                               <MoreVertical size={18} />
                             </button>
+                            {activeSpotDropdown === spot.id && (
+                              <div className="mobile-dropdown-menu">
+                                <button className="dropdown-item" onClick={(e) => { e.stopPropagation(); handleSpotAction('verify', spot); }}>
+                                  <CheckCircle size={16} />
+                                  <span>Approve</span>
+                                </button>
+                                <button className="dropdown-item" onClick={(e) => { e.stopPropagation(); handleSpotAction('flag', spot); }}>
+                                  <AlertCircle size={16} />
+                                  <span>Flag</span>
+                                </button>
+                                <button className="dropdown-item delete" onClick={(e) => { e.stopPropagation(); handleSpotAction('delete', spot); }}>
+                                  <Trash2 size={16} />
+                                  <span>Delete</span>
+                                </button>
+                              </div>
+                            )}
                           </div>
                           <div className="spot-meta-row">
                             <span className="spot-category-tag">{spot.category}</span>
@@ -2146,22 +2185,6 @@ export default function App() {
                         </div>
                         <div className="spot-id-tag">#{spot.id}</div>
                       </div>
-                      {activeSpotDropdown === spot.id && (
-                        <div className="mobile-dropdown-menu">
-                          <button className="dropdown-item" onClick={(e) => { e.stopPropagation(); handleSpotAction('verify', spot); }}>
-                            <CheckCircle size={16} />
-                            <span>Approve</span>
-                          </button>
-                          <button className="dropdown-item" onClick={(e) => { e.stopPropagation(); handleSpotAction('flag', spot); }}>
-                            <AlertCircle size={16} />
-                            <span>Flag</span>
-                          </button>
-                          <button className="dropdown-item delete" onClick={(e) => { e.stopPropagation(); handleSpotAction('delete', spot); }}>
-                            <Trash2 size={16} />
-                            <span>Delete</span>
-                          </button>
-                        </div>
-                      )}
                     </div>
                   ))
                 ) : (

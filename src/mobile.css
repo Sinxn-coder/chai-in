@@ -182,7 +182,12 @@
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   will-change: transform;
   position: relative;
-  z-index: 10;
+  z-index: 1;
+}
+
+.mobile-spot-card.dropdown-open {
+  margin-bottom: 120px; /* Create space for dropdown */
+  transition: margin-bottom 0.3s ease;
 }
 
 .mobile-spot-card:active {
@@ -247,7 +252,7 @@
 /* Mobile Dropdown Menu - FIXED */
 .mobile-dropdown-menu {
   position: absolute;
-  top: 0;
+  top: 35px;
   right: 0;
   background: white;
   border-radius: 16px;
@@ -257,7 +262,6 @@
   width: 150px;
   padding: 6px;
   animation: menuAppear 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  transform: translateY(-100%) translateY(-8px);
 }
 
 @keyframes menuAppear {
