@@ -81,9 +81,10 @@ export default function App() {
     { id: 'dashboard', name: 'Dashboard', icon: Layout },
     { id: 'users', name: 'Users', icon: Users },
     { id: 'spots', name: 'Spots', icon: MapPin },
-    { id: 'reviews', name: 'Reviews', icon: Star },
-    { id: 'community', name: 'Community', icon: Community },
-    { id: 'settings', name: 'Settings', icon: Settings }
+    { id: 'notifications', name: 'Notifications', icon: Bell },
+    { id: 'settings', name: 'Settings', icon: Settings },
+    { id: 'community', name: 'Community', icon: Users },
+    { id: 'analytics', name: 'Analytics', icon: BarChart3 }
   ];
 
   const getActiveTabName = () => {
@@ -2090,15 +2091,15 @@ export default function App() {
       case 'users':
         return renderUsers();
       case 'spots':
-        return renderSpots();
-      case 'reviews':
-        return <ReviewsPage />;
+        return <div className="content-placeholder">Spots Management - View, approve, and manage user-submitted spots with verification workflow.</div>;
+      case 'notifications':
+        return <PushNotifications />;
+      case 'settings':
+        return <SettingsPage />;
       case 'community':
         return <CommunityPage />;
       case 'analytics':
         return <div className="content-placeholder">Analytics Dashboard - Track user engagement, popular spots, revenue metrics, and growth trends.</div>;
-      case 'settings':
-        return <SettingsPage />;
       default:
         return <div className="content-placeholder">Welcome to the BytSpot Admin Dashboard.</div>;
     }
