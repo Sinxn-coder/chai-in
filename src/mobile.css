@@ -274,6 +274,157 @@
   box-shadow: 0 4px 12px rgba(255, 0, 0, 0.2);
 }
 
+/* Mobile Settings */
+.mobile-settings-content {
+  padding: 16px;
+  background: #f4f6f8;
+  min-height: calc(100vh - 172px - 90px);
+}
+
+.mobile-settings-section {
+  background: white;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(0, 0, 0, 0.02);
+}
+
+.mobile-settings-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1a202c;
+  margin: 0 0 20px 0;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.mobile-setting-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 0;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.mobile-setting-item:last-child {
+  border-bottom: none;
+}
+
+.setting-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+}
+
+.setting-icon {
+  color: #FF0000;
+  background: rgba(255, 0, 0, 0.1);
+  padding: 8px;
+  border-radius: 8px;
+}
+
+.setting-details h4 {
+  margin: 0 0 4px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #1a202c;
+}
+
+.setting-details p {
+  margin: 0;
+  font-size: 14px;
+  color: #6b7280;
+  line-height: 1.4;
+}
+
+/* Toggle Switch */
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 48px;
+  height: 24px;
+}
+
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggle-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #cbd5e1;
+  transition: 0.3s;
+  border-radius: 24px;
+}
+
+.toggle-slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: 0.3s;
+  border-radius: 50%;
+}
+
+.toggle-switch input:checked + .toggle-slider {
+  background-color: #FF0000;
+}
+
+.toggle-switch input:checked + .toggle-slider:before {
+  transform: translateX(24px);
+}
+
+/* Emergency Contact Input */
+.emergency-contact-input {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 14px;
+  color: #1a202c;
+  width: 140px;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.emergency-contact-input:focus {
+  border-color: #FF0000;
+  background: white;
+}
+
+/* Emergency Button */
+.emergency-btn {
+  background: #dc2626;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.emergency-btn:hover {
+  background: #b91c1c;
+  transform: translateY(-1px);
+}
+
+.emergency-btn:active {
+  background: #991b1b;
+  transform: translateY(0);
+}
+
 .mobile-admin-content-area {
   position: fixed;
   top: 132px;

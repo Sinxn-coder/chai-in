@@ -44,7 +44,9 @@ import {
   Sliders,
   ChevronDown,
   ArrowLeft,
-  Users as Community
+  Users as Community,
+  Wrench,
+  AlertTriangle
 } from 'lucide-react';
 import './index.css';
 
@@ -266,6 +268,8 @@ export default function App() {
   const [uploadedPhotos, setUploadedPhotos] = useState([]);
   const [photoUploadExpanded, setPhotoUploadExpanded] = useState(false);
   const [showFilterModal, setShowFilterModal] = useState(false);
+  const [maintenanceMode, setMaintenanceMode] = useState(false);
+  const [emergencyContact, setEmergencyContact] = useState('+1-800-HELP-NOW');
   const fileInputRef = useRef(null);
 
   // New Image Editor State
@@ -894,14 +898,6 @@ export default function App() {
     } else if (action === 'reject') {
       console.log('Rejecting spot:', spot.name);
       // Add reject logic here
-    } else if (action === 'verify') {
-      console.log('Approving spot:', spot.name);
-      // Change spot status from pending to verified
-      setSpots(prevSpots => 
-        prevSpots.map(s => 
-          s.id === spot.id ? { ...s, status: 'verified' } : s
-        )
-      );
     }
   };
 
@@ -2274,8 +2270,58 @@ export default function App() {
                 )}
               </div>
             ) : (
-              <div className="mobile-admin-empty-content">
-                <div className="empty-state-label">Settings View</div>
+              <div className="mobile-settings-content">
+                <div className="mobile-settings-section">
+                  <h3 className="mobile-settings-title">System Settings</h3>
+                  
+                  <div className="mobile-setting-item">
+                    <div className="setting-info">
+                      <Wrench size={20} className="setting-icon" />
+                      <div className="setting-details">
+                        <h4>Maintenance Mode</h4>
+                        <p>Temporarily disable user access</p>
+                      </div>
+                    </div>
+                    <label className="toggle-switch">
+                      <input
+                        type="checkbox"
+                        checked={maintenanceMode}
+                        onChange={(e) => setMaintenanceMode(e.target.checked)}
+                      />
+                      <span className="toggle-slider"></span>
+                    </label>
+                  </div>
+
+                  <div className="mobile-setting-item">
+                    <div className="setting-info">
+                      <Phone size={20} className="setting-icon" />
+                      <div className="setting-details">
+                        <h4>Emergency Contact</h4>
+                        <p>Contact number for emergencies</p>
+                      </div>
+                    </div>
+                    <input
+                      type="tel"
+                      value={emergencyContact}
+                      onChange={(e) => setEmergencyContact(e.target.value)}
+                      className="emergency-contact-input"
+                      placeholder="+1-800-HELP-NOW"
+                    />
+                  </div>
+
+                  <div className="mobile-setting-item">
+                    <div className="setting-info">
+                      <AlertTriangle size={20} className="setting-icon" />
+                      <div className="setting-details">
+                        <h4>Emergency Mode</h4>
+                        <p>Activate emergency protocols</p>
+                      </div>
+                    </div>
+                    <button className="emergency-btn">
+                      Activate
+                    </button>
+                  </div>
+                </div>
               </div>
             )}
           </div>
