@@ -2115,7 +2115,7 @@ export default function App() {
                     <div key={spot.id} className="mobile-spot-card" onClick={() => openSpotModal(spot)}>
                       <div className="card-main">
                         <div className="card-info">
-                          <div className="card-title-row dropdown-container">
+                          <div className="card-title-row">
                             <h3 className="spot-name-text">{spot.name}</h3>
                             <button
                               className="spot-options-btn"
@@ -2126,22 +2126,6 @@ export default function App() {
                             >
                               <MoreVertical size={18} />
                             </button>
-                            {activeSpotDropdown === spot.id && (
-                              <div className="mobile-dropdown-menu">
-                                <button className="dropdown-item" onClick={(e) => { e.stopPropagation(); handleSpotAction('verify', spot); }}>
-                                  <CheckCircle size={16} />
-                                  <span>Approve</span>
-                                </button>
-                                <button className="dropdown-item" onClick={(e) => { e.stopPropagation(); handleSpotAction('flag', spot); }}>
-                                  <AlertCircle size={16} />
-                                  <span>Flag</span>
-                                </button>
-                                <button className="dropdown-item delete" onClick={(e) => { e.stopPropagation(); handleSpotAction('delete', spot); }}>
-                                  <Trash2 size={16} />
-                                  <span>Delete</span>
-                                </button>
-                              </div>
-                            )}
                           </div>
                           <div className="spot-meta-row">
                             <span className="spot-category-tag">{spot.category}</span>
@@ -2162,6 +2146,22 @@ export default function App() {
                         </div>
                         <div className="spot-id-tag">#{spot.id}</div>
                       </div>
+                      {activeSpotDropdown === spot.id && (
+                        <div className="mobile-dropdown-menu">
+                          <button className="dropdown-item" onClick={(e) => { e.stopPropagation(); handleSpotAction('verify', spot); }}>
+                            <CheckCircle size={16} />
+                            <span>Approve</span>
+                          </button>
+                          <button className="dropdown-item" onClick={(e) => { e.stopPropagation(); handleSpotAction('flag', spot); }}>
+                            <AlertCircle size={16} />
+                            <span>Flag</span>
+                          </button>
+                          <button className="dropdown-item delete" onClick={(e) => { e.stopPropagation(); handleSpotAction('delete', spot); }}>
+                            <Trash2 size={16} />
+                            <span>Delete</span>
+                          </button>
+                        </div>
+                      )}
                     </div>
                   ))
                 ) : (
