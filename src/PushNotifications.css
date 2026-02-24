@@ -380,22 +380,22 @@
 
 .notification-dropdown {
   position: absolute;
-  top: 100%;
+  bottom: 100%;
   right: 0;
   background: white;
   border-radius: 8px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
   border: 1px solid #e2e8f0;
   z-index: 1000;
   min-width: 160px;
-  margin-top: 8px;
-  animation: dropdownSlide 0.2s ease-out;
+  margin-bottom: 8px;
+  animation: dropdownSlideUp 0.2s ease-out;
 }
 
-@keyframes dropdownSlide {
+@keyframes dropdownSlideUp {
   from {
     opacity: 0;
-    transform: translateY(-10px);
+    transform: translateY(10px);
   }
   to {
     opacity: 1;
