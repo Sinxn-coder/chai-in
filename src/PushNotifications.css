@@ -277,6 +277,7 @@
   border-radius: 12px;
   padding: 16px;
   transition: all 0.2s ease;
+  position: relative;
 }
 
 .notification-item:hover {
@@ -387,6 +388,7 @@
   border: 1px solid #e2e8f0;
   z-index: 1000;
   min-width: 160px;
+  margin-top: 8px;
   animation: dropdownSlide 0.2s ease-out;
 }
 
