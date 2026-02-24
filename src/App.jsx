@@ -884,6 +884,9 @@ export default function App() {
     if (action === 'edit') {
       setEditingSpotData(spot);
       setEditModalOpen(true);
+    } else if (action === 'suspend') {
+      console.log('Suspending spot:', spot.name);
+      // Add suspend logic here
     }
   };
 
@@ -2172,18 +2175,37 @@ export default function App() {
                             </button>
                             {activeSpotDropdown === spot.id && (
                               <div className="mobile-dropdown-menu">
-                                <button className="dropdown-item" onClick={(e) => { e.stopPropagation(); handleSpotAction('verify', spot); }}>
-                                  <CheckCircle size={16} />
-                                  <span>Approve</span>
-                                </button>
-                                <button className="dropdown-item" onClick={(e) => { e.stopPropagation(); handleSpotAction('flag', spot); }}>
-                                  <AlertCircle size={16} />
-                                  <span>Flag</span>
-                                </button>
-                                <button className="dropdown-item delete" onClick={(e) => { e.stopPropagation(); handleSpotAction('delete', spot); }}>
-                                  <Trash2 size={16} />
-                                  <span>Delete</span>
-                                </button>
+                                {spot.status === 'verified' ? (
+                                  <>
+                                    <button className="dropdown-item" onClick={(e) => { e.stopPropagation(); handleSpotAction('suspend', spot); }}>
+                                      <Ban size={16} />
+                                      <span>Suspend</span>
+                                    </button>
+                                    <button className="dropdown-item" onClick={(e) => { e.stopPropagation(); handleSpotAction('flag', spot); }}>
+                                      <AlertCircle size={16} />
+                                      <span>Flag</span>
+                                    </button>
+                                    <button className="dropdown-item delete" onClick={(e) => { e.stopPropagation(); handleSpotAction('delete', spot); }}>
+                                      <Trash2 size={16} />
+                                      <span>Delete</span>
+                                    </button>
+                                  </>
+                                ) : (
+                                  <>
+                                    <button className="dropdown-item" onClick={(e) => { e.stopPropagation(); handleSpotAction('verify', spot); }}>
+                                      <CheckCircle size={16} />
+                                      <span>Approve</span>
+                                    </button>
+                                    <button className="dropdown-item" onClick={(e) => { e.stopPropagation(); handleSpotAction('flag', spot); }}>
+                                      <AlertCircle size={16} />
+                                      <span>Flag</span>
+                                    </button>
+                                    <button className="dropdown-item delete" onClick={(e) => { e.stopPropagation(); handleSpotAction('delete', spot); }}>
+                                      <Trash2 size={16} />
+                                      <span>Delete</span>
+                                    </button>
+                                  </>
+                                )}
                               </div>
                             )}
                           </div>
