@@ -2116,18 +2116,6 @@ export default function App() {
                 </button>
               )}
             </div>
-
-            <div className="status-filter-scroll">
-              {['all', 'verified', 'pending', 'flagged'].map(status => (
-                <button
-                  key={status}
-                  className={`status-chip-mobile ${statusFilter === status ? 'active' : ''}`}
-                  onClick={() => setStatusFilter(status)}
-                >
-                  {status === 'all' ? 'All' : status.charAt(0).toUpperCase() + status.slice(1)}
-                </button>
-              ))}
-            </div>
           </div>
 
           <div className="mobile-admin-content-area">
