@@ -122,11 +122,6 @@ const DashboardPage = () => {
                     <span className="detail-label">Active this week</span>
                     <span className="detail-value">892</span>
                   </div>
-                  <div className="stat-sparkline">
-                    {[45, 52, 48, 58, 62, 55, 68].map((value, index) => (
-                      <div key={index} className="sparkline-bar" style={{ height: `${value * 1.5}px` }}></div>
-                    ))}
-                  </div>
                 </div>
               </div>
             </div>
@@ -150,11 +145,6 @@ const DashboardPage = () => {
                   <div className="stat-detail">
                     <span className="detail-label">New this week</span>
                     <span className="detail-value">23</span>
-                  </div>
-                  <div className="stat-sparkline">
-                    {[28, 32, 30, 35, 38, 34, 42].map((value, index) => (
-                      <div key={index} className="sparkline-bar success" style={{ height: `${value * 1.8}px` }}></div>
-                    ))}
                   </div>
                 </div>
               </div>
@@ -180,11 +170,6 @@ const DashboardPage = () => {
                     <span className="detail-label">Average rating</span>
                     <span className="detail-value">4.6</span>
                   </div>
-                  <div className="stat-sparkline">
-                    {[52, 58, 55, 62, 68, 64, 72].map((value, index) => (
-                      <div key={index} className="sparkline-bar warning" style={{ height: `${value * 1.2}px` }}></div>
-                    ))}
-                  </div>
                 </div>
               </div>
             </div>
@@ -208,11 +193,6 @@ const DashboardPage = () => {
                   <div className="stat-detail">
                     <span className="detail-label">This month</span>
                     <span className="detail-value">$45.6K</span>
-                  </div>
-                  <div className="stat-sparkline">
-                    {[28, 35, 32, 42, 48, 45, 52].map((value, index) => (
-                      <div key={index} className="sparkline-bar info" style={{ height: `${value * 2.0}px` }}></div>
-                    ))}
                   </div>
                 </div>
               </div>
