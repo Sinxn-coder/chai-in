@@ -45,7 +45,8 @@ import {
   ChevronDown,
   ArrowLeft,
   Users as Community,
-  Wrench
+  Wrench,
+  Bell
 } from 'lucide-react';
 import './index.css';
 
@@ -269,6 +270,32 @@ export default function App() {
   const [showFilterModal, setShowFilterModal] = useState(false);
   const [maintenanceMode, setMaintenanceMode] = useState(false);
   const [emergencyContact, setEmergencyContact] = useState('+1-800-HELP-NOW');
+  const [notifications, setNotifications] = useState([
+    {
+      id: 1,
+      type: 'flagged',
+      title: 'New Flagged Spot',
+      message: 'Central Park Playground was flagged for review',
+      time: '2 mins ago',
+      read: false
+    },
+    {
+      id: 2,
+      type: 'pending',
+      title: 'Pending Review',
+      message: '3 new spots awaiting approval',
+      time: '15 mins ago',
+      read: false
+    },
+    {
+      id: 3,
+      type: 'emergency',
+      title: 'Emergency Report',
+      message: 'User reported safety issue at Downtown Plaza',
+      time: '1 hour ago',
+      read: true
+    }
+  ]);
   const fileInputRef = useRef(null);
 
   // New Image Editor State
@@ -2270,6 +2297,52 @@ export default function App() {
                   </div>
                 )}
               </div>
+            ) : mobileAdminTab === 'notifications' ? (
+              <div className="mobile-notifications-content">
+                <div className="mobile-notifications-section">
+                  <h3 className="mobile-notifications-title">Push Notifications</h3>
+                  
+                  <div className="notifications-list">
+                    {notifications.map(notification => (
+                      <div key={notification.id} className={`notification-item ${notification.read ? 'read' : 'unread'}`}>
+                        <div className="notification-icon">
+                          {notification.type === 'flagged' && <AlertTriangle size={20} className="notification-flagged" />}
+                          {notification.type === 'pending' && <Clock size={20} className="notification-pending" />}
+                          {notification.type === 'emergency' && <Bell size={20} className="notification-emergency" />}
+                        </div>
+                        <div className="notification-content">
+                          <h4 className="notification-title">{notification.title}</h4>
+                          <p className="notification-message">{notification.message}</p>
+                          <span className="notification-time">{notification.time}</span>
+                        </div>
+                        <div className="notification-actions">
+                          {!notification.read && (
+                            <button 
+                              className="mark-read-btn"
+                              onClick={() => {
+                                setNotifications(notifications.map(n => 
+                                  n.id === notification.id ? {...n, read: true} : n
+                                ));
+                              }}
+                            >
+                              <CheckCircle size={16} />
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="notifications-actions">
+                    <button className="clear-all-btn">
+                      Clear All Read
+                    </button>
+                    <button className="settings-btn">
+                      Notification Settings
+                    </button>
+                  </div>
+                </div>
+              </div>
             ) : (
               <div className="mobile-settings-content">
                 <div className="mobile-settings-section">
@@ -2321,6 +2394,13 @@ export default function App() {
             >
               <MapPin size={24} />
               <span>Spots</span>
+            </button>
+            <button
+              className={`nav-item ${mobileAdminTab === 'notifications' ? 'active' : ''}`}
+              onClick={() => setMobileAdminTab('notifications')}
+            >
+              <Bell size={24} />
+              <span>Alerts</span>
             </button>
             <button
               className={`nav-item ${mobileAdminTab === 'settings' ? 'active' : ''}`}
