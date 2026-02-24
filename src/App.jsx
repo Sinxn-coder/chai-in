@@ -15,6 +15,7 @@ import {
   TrendingUp,
   AlertCircle,
   CheckCircle,
+  XCircle,
   Clock,
   Search,
   Filter,
@@ -890,6 +891,9 @@ export default function App() {
     } else if (action === 'unflag') {
       console.log('Unflagging spot:', spot.name);
       // Add unflag logic here
+    } else if (action === 'reject') {
+      console.log('Rejecting spot:', spot.name);
+      // Add reject logic here
     }
   };
 
@@ -2202,6 +2206,17 @@ export default function App() {
                                     <button className="dropdown-item delete" onClick={(e) => { e.stopPropagation(); handleSpotAction('delete', spot); }}>
                                       <Trash2 size={16} />
                                       <span>Delete</span>
+                                    </button>
+                                  </>
+                                ) : spot.status === 'pending' ? (
+                                  <>
+                                    <button className="dropdown-item" onClick={(e) => { e.stopPropagation(); handleSpotAction('verify', spot); }}>
+                                      <CheckCircle size={16} />
+                                      <span>Approve</span>
+                                    </button>
+                                    <button className="dropdown-item" onClick={(e) => { e.stopPropagation(); handleSpotAction('reject', spot); }}>
+                                      <XCircle size={16} />
+                                      <span>Reject</span>
                                     </button>
                                   </>
                                 ) : (
