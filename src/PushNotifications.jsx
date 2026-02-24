@@ -1,40 +1,8 @@
-import React, { useState, Component } from 'react';
+import React, { useState } from 'react';
 import { Bell, Send, AlertTriangle, Info, CheckCircle, AlertCircle, MessageSquare, Zap, MoreVertical } from 'lucide-react';
 import './PushNotifications.css';
 
-// Error Boundary Component
-class ErrorBoundary extends Component {
-  constructor(props) {
-    super(props);
-    this.state = { hasError: false, error: null };
-  }
-
-  static getDerivedStateFromError(error) {
-    return { hasError: true, error };
-  }
-
-  componentDidCatch(error, errorInfo) {
-    console.error('ErrorBoundary caught an error:', error, errorInfo);
-  }
-
-  render() {
-    if (this.state.hasError) {
-      return (
-        <div style={{ padding: '20px', textAlign: 'center' }}>
-          <h3>Something went wrong</h3>
-          <p>Please refresh the page and try again.</p>
-          <button onClick={() => this.setState({ hasError: false, error: null })}>
-            Try Again
-          </button>
-        </div>
-      );
-    }
-
-    return this.props.children;
-  }
-}
-
-const PushNotificationsComponent = () => {
+const PushNotifications = () => {
   const [notifications, setNotifications] = useState([
     {
       id: 1,
@@ -125,42 +93,33 @@ const PushNotificationsComponent = () => {
   });
   const [activeDropdown, setActiveDropdown] = useState(null);
 
+  const toggleSendForm = () => {
+    try {
+      setShowSendForm(!showSendForm);
+    } catch (error) {
+      console.error('Error toggling send form:', error);
+    }
+  };
+
   const sendNotification = () => {
     try {
-      console.log('sendNotification called', newNotification);
-      
-      if (!newNotification.title || !newNotification.message) {
-        console.log('Validation failed - missing title or message');
-        return;
+      if (newNotification.title && newNotification.message) {
+        const notification = {
+          id: Date.now(),
+          type: newNotification.type,
+          title: newNotification.title,
+          message: newNotification.message,
+          time: 'Just now',
+          read: false
+        };
+        
+        setNotifications([notification, ...notifications]);
+        setNewNotification({ type: 'info', title: '', message: '' });
+        setShowSendForm(false);
       }
-
-      const notification = {
-        id: Date.now(),
-        type: newNotification.type || 'info',
-        title: newNotification.title.trim(),
-        message: newNotification.message.trim(),
-        time: 'Just now',
-        read: false
-      };
-      
-      console.log('Creating notification:', notification);
-      
-      // Update state safely
-      setNotifications(prevNotifications => {
-        console.log('Previous notifications:', prevNotifications);
-        const updated = [notification, ...prevNotifications];
-        console.log('Updated notifications:', updated);
-        return updated;
-      });
-      
-      // Reset form state
-      setNewNotification({ type: 'info', title: '', message: '' });
-      setShowSendForm(false);
-      
-      console.log('Notification sent successfully');
     } catch (error) {
-      console.error('Error in sendNotification:', error);
-      // Don't crash the app
+      console.error('Error sending notification:', error);
+      // Prevent white screen by keeping current state
     }
   };
 
@@ -203,7 +162,11 @@ const PushNotificationsComponent = () => {
         </div>
         <button 
           className="send-notification-btn"
-          onClick={() => setShowSendForm(!showSendForm)}
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            toggleSendForm();
+          }}
         >
           <Send size={16} />
           Send
@@ -355,8 +318,4 @@ const PushNotificationsComponent = () => {
   );
 };
 
-export default () => (
-  <ErrorBoundary>
-    <PushNotificationsComponent />
-  </ErrorBoundary>
-);
+export default PushNotifications;
