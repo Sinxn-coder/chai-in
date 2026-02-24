@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Bell, Send, AlertTriangle, Info, CheckCircle, AlertCircle, MessageSquare, Zap, MoreVertical } from 'lucide-react';
+import { Bell, Send, X, AlertTriangle, Info, CheckCircle, AlertCircle, MessageSquare, Zap, MoreVertical } from 'lucide-react';
 import './PushNotifications.css';
 
 const PushNotifications = () => {
