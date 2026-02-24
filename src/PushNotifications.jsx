@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Bell, Send, AlertTriangle, Info, CheckCircle, AlertCircle, MessageSquare, Zap } from 'lucide-react';
+import { Bell, Send, AlertTriangle, Info, CheckCircle, AlertCircle, MessageSquare, Zap, MoreVertical } from 'lucide-react';
 import './PushNotifications.css';
 
 const PushNotifications = () => {
@@ -91,6 +91,7 @@ const PushNotifications = () => {
     title: '',
     message: ''
   });
+  const [activeDropdown, setActiveDropdown] = useState(null);
 
   const sendNotification = () => {
     if (newNotification.title && newNotification.message) {
@@ -107,6 +108,22 @@ const PushNotifications = () => {
       setNewNotification({ type: 'info', title: '', message: '' });
       setShowSendForm(false);
     }
+  };
+
+  const toggleDropdown = (id) => {
+    setActiveDropdown(activeDropdown === id ? null : id);
+  };
+
+  const markAsRead = (id) => {
+    setNotifications(notifications.map(n => 
+      n.id === id ? { ...n, read: true } : n
+    ));
+    setActiveDropdown(null);
+  };
+
+  const deleteNotification = (id) => {
+    setNotifications(notifications.filter(n => n.id !== id));
+    setActiveDropdown(null);
   };
 
   const getNotificationIcon = (type) => {
@@ -231,6 +248,41 @@ const PushNotifications = () => {
                       <p>{notification.message}</p>
                       <span className="notification-time">{notification.time}</span>
                     </div>
+                  </div>
+                  <div className="notification-actions">
+                    <button 
+                      className="notification-options-btn"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleDropdown(notification.id);
+                      }}
+                    >
+                      <MoreVertical size={16} />
+                    </button>
+                    {activeDropdown === notification.id && (
+                      <div className="notification-dropdown">
+                        <button 
+                          className="dropdown-item"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            markAsRead(notification.id);
+                          }}
+                        >
+                          <CheckCircle size={16} />
+                          <span>Mark as Read</span>
+                        </button>
+                        <button 
+                          className="dropdown-item delete"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            deleteNotification(notification.id);
+                          }}
+                        >
+                          <AlertTriangle size={16} />
+                          <span>Delete</span>
+                        </button>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
