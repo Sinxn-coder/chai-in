@@ -114,13 +114,6 @@ const PushNotifications = () => {
     setActiveDropdown(activeDropdown === id ? null : id);
   };
 
-  const markAsRead = (id) => {
-    setNotifications(notifications.map(n => 
-      n.id === id ? { ...n, read: true } : n
-    ));
-    setActiveDropdown(null);
-  };
-
   const deleteNotification = (id) => {
     setNotifications(notifications.filter(n => n.id !== id));
     setActiveDropdown(null);
@@ -260,16 +253,26 @@ const PushNotifications = () => {
                       <MoreVertical size={16} />
                     </button>
                     {activeDropdown === notification.id && (
-                      <div className="notification-dropdown">
+                      <div className={`notification-dropdown ${notification.type}`}>
                         <button 
                           className="dropdown-item"
                           onClick={(e) => {
                             e.stopPropagation();
-                            markAsRead(notification.id);
+                            // Resend notification logic
+                            const resendNotification = {
+                              id: Date.now(),
+                              type: notification.type,
+                              title: notification.title,
+                              message: notification.message,
+                              time: 'Just now',
+                              read: false
+                            };
+                            setNotifications([resendNotification, ...notifications]);
+                            setActiveDropdown(null);
                           }}
                         >
-                          <CheckCircle size={16} />
-                          <span>Mark as Read</span>
+                          <Send size={16} />
+                          <span>Send again</span>
                         </button>
                         <button 
                           className="dropdown-item delete"
