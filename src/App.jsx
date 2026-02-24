@@ -2112,11 +2112,17 @@ export default function App() {
             <button className="back-btn-logout" onClick={handleMobileLogout}>
               <ArrowLeft size={24} />
             </button>
-            <h1>
-              {mobileAdminTab === 'notifications' ? 'Push Notifications' : 'Admin Panel'}
-            </h1>
+            <h1>Admin Panel</h1>
             <div style={{ width: 24 }}></div> {/* Spacer for centering title */}
           </header>
+
+          {mobileAdminTab === 'notifications' && (
+            <div className="mobile-admin-search-section" style={{ justifyContent: 'center' }}>
+              <div style={{ textAlign: 'center', color: '#1a202c', fontSize: '16px', fontWeight: '600' }}>
+                Push Notifications
+              </div>
+            </div>
+          )}
 
           {mobileAdminTab === 'spots' && (
             <div className="mobile-admin-search-section">
