@@ -94,19 +94,24 @@ const PushNotifications = () => {
   const [activeDropdown, setActiveDropdown] = useState(null);
 
   const sendNotification = () => {
-    if (newNotification.title && newNotification.message) {
-      const notification = {
-        id: Date.now(),
-        type: newNotification.type,
-        title: newNotification.title,
-        message: newNotification.message,
-        time: 'Just now',
-        read: false
-      };
-      
-      setNotifications([notification, ...notifications]);
-      setNewNotification({ type: 'info', title: '', message: '' });
-      setShowSendForm(false);
+    try {
+      if (newNotification.title && newNotification.message) {
+        const notification = {
+          id: Date.now(),
+          type: newNotification.type,
+          title: newNotification.title,
+          message: newNotification.message,
+          time: 'Just now',
+          read: false
+        };
+        
+        setNotifications([notification, ...notifications]);
+        setNewNotification({ type: 'info', title: '', message: '' });
+        setShowSendForm(false);
+      }
+    } catch (error) {
+      console.error('Error sending notification:', error);
+      // Prevent white screen by keeping current state
     }
   };
 
@@ -210,7 +215,11 @@ const PushNotifications = () => {
             
             <button 
               className="submit-btn"
-              onClick={sendNotification}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                sendNotification();
+              }}
               disabled={!newNotification.title || !newNotification.message}
             >
               <Send size={16} />
