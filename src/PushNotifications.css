@@ -1,15 +1,16 @@
 /* Push Notifications Mobile Styles */
 .push-notifications {
-  position: fixed;
-  top: 64px;
-  left: 0;
-  right: 0;
-  bottom: 90px;
-  overflow-y: auto;
+  position: fixed !important;
+  top: 64px !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 90px !important;
+  overflow-y: auto !important;
   padding: 16px;
   background: #f4f6f8;
   -webkit-overflow-scrolling: touch;
   scroll-behavior: smooth;
+  z-index: 100;
 }
 
 /* Header */
