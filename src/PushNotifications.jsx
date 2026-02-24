@@ -115,12 +115,12 @@ const PushNotifications = () => {
                 onChange={(e) => setNewNotification({...newNotification, type: e.target.value})}
                 className="type-select"
               >
-                <option value="info">ℹ️ Info</option>
-                <option value="urgent">🚨 Urgent</option>
-                <option value="success">✅ Success</option>
-                <option value="warning">⚠️ Warning</option>
-                <option value="message">💬 Message</option>
-                <option value="system">⚡ System</option>
+                <option value="info">Info</option>
+                <option value="urgent">Urgent</option>
+                <option value="success">Success</option>
+                <option value="warning">Warning</option>
+                <option value="message">Message</option>
+                <option value="system">System</option>
               </select>
             </div>
             
