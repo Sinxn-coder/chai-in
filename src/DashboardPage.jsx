@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Bell, Settings, RefreshCw, Users, MapPin, Star, DollarSign, TrendingUp, Activity, Clock, MessageSquare, AlertCircle, Plus, BarChart, FileText, UserPlus, Settings as SettingsIcon } from 'lucide-react';
+import { Search, Bell, Settings, RefreshCw, Users, MapPin, Star, DollarSign, TrendingUp, Activity, Clock, MessageSquare, AlertCircle, Plus, BarChart, FileText, UserPlus, Settings as SettingsIcon, CheckCircle } from 'lucide-react';
 
 const DashboardPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -7,6 +7,7 @@ const DashboardPage = () => {
   const [showAnalytics, setShowAnalytics] = useState(false);
   const [showReport, setShowReport] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
+  const [showRefreshAnimation, setShowRefreshAnimation] = useState(false);
 
 
   // Mock data for stats
@@ -39,7 +40,11 @@ const DashboardPage = () => {
 
   const handleRefresh = () => {
     setIsLoading(true);
-    setTimeout(() => setIsLoading(false), 1000);
+    setTimeout(() => {
+      setIsLoading(false);
+      setShowRefreshAnimation(true);
+      setTimeout(() => setShowRefreshAnimation(false), 2000);
+    }, 1000);
   };
 
   const handleDashboardClick = () => {
@@ -73,6 +78,31 @@ const DashboardPage = () => {
 
   return (
     <div className="dashboard-page" onClick={handleDashboardClick}>
+      {/* Refresh Animation Overlay */}
+      {showRefreshAnimation && (
+        <div className="refresh-animation-overlay">
+          <div className="refresh-animation-content">
+            <div className="refresh-icon-large">
+              <RefreshCw className="w-16 h-16 animate-spin" />
+            </div>
+            <div className="refresh-text">
+              <h3>Dashboard Updated!</h3>
+              <p>All data has been refreshed successfully</p>
+            </div>
+            <div className="refresh-checkmarks">
+              <div className="checkmark">
+                <CheckCircle className="w-8 h-8 text-green-500" />
+              </div>
+              <div className="checkmark">
+                <CheckCircle className="w-8 h-8 text-green-500" />
+              </div>
+              <div className="checkmark">
+                <CheckCircle className="w-8 h-8 text-green-500" />
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
       <>
         {/* Header Section */}
         <div className="dashboard-header">
