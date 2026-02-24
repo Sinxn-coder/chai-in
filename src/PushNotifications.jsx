@@ -1,9 +1,34 @@
 import React, { useState } from 'react';
-import { Bell, Send, X, AlertTriangle, Info, CheckCircle } from 'lucide-react';
+import { Bell, Send, X, AlertTriangle, Info, CheckCircle, AlertCircle, MessageSquare, Zap } from 'lucide-react';
 import './PushNotifications.css';
 
 const PushNotifications = () => {
-  const [notifications, setNotifications] = useState([]);
+  const [notifications, setNotifications] = useState([
+    {
+      id: 1,
+      type: 'urgent',
+      title: 'High Activity Alert',
+      message: 'Unusual spike in user registrations detected in the last hour',
+      time: '2 min ago',
+      read: false
+    },
+    {
+      id: 2,
+      type: 'info',
+      title: 'System Update Available',
+      message: 'New version 2.1.0 is ready for deployment with security patches',
+      time: '15 min ago',
+      read: false
+    },
+    {
+      id: 3,
+      type: 'success',
+      title: 'Bulk Operations Complete',
+      message: '47 spots have been successfully verified and published',
+      time: '1 hour ago',
+      read: true
+    }
+  ]);
   const [showSendForm, setShowSendForm] = useState(false);
   const [newNotification, setNewNotification] = useState({
     type: 'info',
@@ -38,6 +63,12 @@ const PushNotifications = () => {
         return <AlertTriangle size={16} className="notification-icon urgent" />;
       case 'success':
         return <CheckCircle size={16} className="notification-icon success" />;
+      case 'warning':
+        return <AlertCircle size={16} className="notification-icon warning" />;
+      case 'message':
+        return <MessageSquare size={16} className="notification-icon message" />;
+      case 'system':
+        return <Zap size={16} className="notification-icon system" />;
       case 'info':
       default:
         return <Info size={16} className="notification-icon info" />;
@@ -84,9 +115,12 @@ const PushNotifications = () => {
                 onChange={(e) => setNewNotification({...newNotification, type: e.target.value})}
                 className="type-select"
               >
-                <option value="info">Info</option>
-                <option value="urgent">Urgent</option>
-                <option value="success">Success</option>
+                <option value="info">ℹ️ Info</option>
+                <option value="urgent">🚨 Urgent</option>
+                <option value="success">✅ Success</option>
+                <option value="warning">⚠️ Warning</option>
+                <option value="message">💬 Message</option>
+                <option value="system">⚡ System</option>
               </select>
             </div>
             
@@ -136,7 +170,7 @@ const PushNotifications = () => {
         ) : (
           <div className="notifications-container">
             {notifications.map(notification => (
-              <div key={notification.id} className="notification-item">
+              <div key={notification.id} className={`notification-item ${notification.read ? 'read' : 'unread'}`}>
                 <div className="notification-content">
                   <div className="notification-left">
                     {getNotificationIcon(notification.type)}
