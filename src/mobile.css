@@ -118,6 +118,127 @@
   cursor: pointer;
 }
 
+.filter-btn-mobile {
+  background: #FF0000;
+  border: none;
+  color: white;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-left: 8px;
+}
+
+.filter-btn-mobile:active {
+  background: #cc0000;
+  transform: scale(0.95);
+}
+
+/* Filter Modal */
+.filter-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 99999;
+  padding: 20px;
+}
+
+.filter-modal-content {
+  background: white;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 320px;
+  max-height: 400px;
+  overflow: hidden;
+  animation: modalSlideUp 0.3s ease-out;
+}
+
+@keyframes modalSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.filter-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.filter-modal-header h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: #1a202c;
+}
+
+.filter-modal-close {
+  background: none;
+  border: none;
+  color: #6b7280;
+  padding: 4px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.filter-modal-close:hover {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+.filter-modal-body {
+  padding: 20px;
+}
+
+.filter-options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.filter-option {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 16px;
+  text-align: left;
+  font-size: 16px;
+  font-weight: 600;
+  color: #475569;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.filter-option:hover {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+  color: #334155;
+}
+
+.filter-option.active {
+  background: #FF0000;
+  border-color: #FF0000;
+  color: white;
+}
+
 .status-filter-scroll {
   display: flex;
   gap: 8px;

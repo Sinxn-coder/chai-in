@@ -264,6 +264,7 @@ export default function App() {
   const [viewingSpotData, setViewingSpotData] = useState(null);
   const [uploadedPhotos, setUploadedPhotos] = useState([]);
   const [photoUploadExpanded, setPhotoUploadExpanded] = useState(false);
+  const [showFilterModal, setShowFilterModal] = useState(false);
   const fileInputRef = useRef(null);
 
   // New Image Editor State
@@ -2115,8 +2116,40 @@ export default function App() {
                   <X size={14} />
                 </button>
               )}
+              <button className="filter-btn-mobile" onClick={() => setShowFilterModal(!showFilterModal)}>
+                <Filter size={18} />
+              </button>
             </div>
           </div>
+
+          {showFilterModal && (
+            <div className="filter-modal-overlay" onClick={() => setShowFilterModal(false)}>
+              <div className="filter-modal-content" onClick={(e) => e.stopPropagation()}>
+                <div className="filter-modal-header">
+                  <h3>Filter Spots</h3>
+                  <button className="filter-modal-close" onClick={() => setShowFilterModal(false)}>
+                    <X size={20} />
+                  </button>
+                </div>
+                <div className="filter-modal-body">
+                  <div className="filter-options">
+                    {['all', 'verified', 'pending', 'flagged'].map(status => (
+                      <button
+                        key={status}
+                        className={`filter-option ${statusFilter === status ? 'active' : ''}`}
+                        onClick={() => {
+                          setStatusFilter(status);
+                          setShowFilterModal(false);
+                        }}
+                      >
+                        {status === 'all' ? 'All Spots' : status.charAt(0).toUpperCase() + status.slice(1)}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
 
           <div className="mobile-admin-content-area">
             {mobileAdminTab === 'spots' ? (
