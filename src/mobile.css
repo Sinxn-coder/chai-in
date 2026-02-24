@@ -402,29 +402,6 @@
   background: white;
 }
 
-/* Emergency Button */
-.emergency-btn {
-  background: #dc2626;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  padding: 8px 16px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.emergency-btn:hover {
-  background: #b91c1c;
-  transform: translateY(-1px);
-}
-
-.emergency-btn:active {
-  background: #991b1b;
-  transform: translateY(0);
-}
-
 .mobile-admin-content-area {
   position: fixed;
   top: 132px;

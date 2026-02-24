@@ -45,8 +45,7 @@ import {
   ChevronDown,
   ArrowLeft,
   Users as Community,
-  Wrench,
-  AlertTriangle
+  Wrench
 } from 'lucide-react';
 import './index.css';
 
@@ -2307,19 +2306,6 @@ export default function App() {
                       className="emergency-contact-input"
                       placeholder="+1-800-HELP-NOW"
                     />
-                  </div>
-
-                  <div className="mobile-setting-item">
-                    <div className="setting-info">
-                      <AlertTriangle size={20} className="setting-icon" />
-                      <div className="setting-details">
-                        <h4>Emergency Mode</h4>
-                        <p>Activate emergency protocols</p>
-                      </div>
-                    </div>
-                    <button className="emergency-btn">
-                      Activate
-                    </button>
                   </div>
                 </div>
               </div>
