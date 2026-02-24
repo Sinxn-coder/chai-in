@@ -2836,6 +2836,7 @@ main {
 .dropdown-container {
   position: relative;
   display: inline-block;
+  z-index: 12000;
 }
 
 .dropdown-menu {
@@ -3145,7 +3146,7 @@ main {
   border-radius: 16px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
   border: 1px solid rgba(0, 0, 0, 0.05);
-  z-index: 11000;
+  z-index: 13000;
   width: 150px;
   padding: 6px;
   animation: menuAppear 0.2s cubic-bezier(0.4, 0, 0.2, 1);
