@@ -2193,7 +2193,7 @@ export default function App() {
             </div>
           )}
 
-          <div className="mobile-admin-content-area">
+          <div className={`mobile-admin-content-area ${mobileAdminTab === 'spots' ? 'spots-active' : ''}`}>
             {mobileAdminTab === 'spots' ? (
               <div className="mobile-spots-list">
                 {filteredSpots.length > 0 ? (
@@ -2298,7 +2298,7 @@ export default function App() {
                 )}
               </div>
             ) : mobileAdminTab === 'notifications' ? (
-              <div className="mobile-notifications-content">
+              <div className="mobile-notifications-content notifications-active">
                 <div className="mobile-notifications-section">
                   <h3 className="mobile-notifications-title">Push Notifications</h3>
                   
@@ -2344,7 +2344,7 @@ export default function App() {
                 </div>
               </div>
             ) : (
-              <div className="mobile-settings-content">
+              <div className="mobile-settings-content settings-active">
                 <div className="mobile-settings-section">
                   <h3 className="mobile-settings-title">System Settings</h3>
                   
