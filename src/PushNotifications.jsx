@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Bell, Send, X, AlertTriangle, Info, CheckCircle, AlertCircle, MessageSquare, Zap } from 'lucide-react';
+import { Bell, Send, AlertTriangle, Info, CheckCircle, AlertCircle, MessageSquare, Zap } from 'lucide-react';
 import './PushNotifications.css';
 
 const PushNotifications = () => {
@@ -107,10 +107,6 @@ const PushNotifications = () => {
       setNewNotification({ type: 'info', title: '', message: '' });
       setShowSendForm(false);
     }
-  };
-
-  const deleteNotification = (id) => {
-    setNotifications(notifications.filter(n => n.id !== id));
   };
 
   const getNotificationIcon = (type) => {
@@ -235,14 +231,6 @@ const PushNotifications = () => {
                       <p>{notification.message}</p>
                       <span className="notification-time">{notification.time}</span>
                     </div>
-                  </div>
-                  <div className="notification-actions">
-                    <button 
-                      className="delete-btn"
-                      onClick={() => deleteNotification(notification.id)}
-                    >
-                      <X size={16} />
-                    </button>
                   </div>
                 </div>
               </div>
