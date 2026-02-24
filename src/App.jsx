@@ -894,6 +894,14 @@ export default function App() {
     } else if (action === 'reject') {
       console.log('Rejecting spot:', spot.name);
       // Add reject logic here
+    } else if (action === 'verify') {
+      console.log('Approving spot:', spot.name);
+      // Change spot status from pending to verified
+      setSpots(prevSpots => 
+        prevSpots.map(s => 
+          s.id === spot.id ? { ...s, status: 'verified' } : s
+        )
+      );
     }
   };
 
