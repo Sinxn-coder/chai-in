@@ -33,20 +33,14 @@
 /* Header */
 .notifications-header {
   display: flex;
-  justify-content: flex-start;
+  justify-content: space-between;
   align-items: center;
-  background: transparent;
-  border-radius: 0;
-  padding: 0;
-  margin-bottom: 24px;
-  box-shadow: none;
-}
-
-.notifications-header h2 {
-  font-size: 24px;
-  font-weight: 700;
-  color: #1a202c;
-  margin: 0;
+  background: white;
+  border-radius: 16px;
+  padding: 16px 20px;
+  margin-bottom: 16px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(0, 0, 0, 0.02);
 }
 
 .header-left {
