@@ -29,7 +29,6 @@ const PushNotifications = () => {
       <div className="notifications-header">
         <div className="header-left">
           <h2>Send Notification</h2>
-          <p>Create and send notifications to users</p>
         </div>
         <button 
           className="send-notification-btn"
