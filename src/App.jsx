@@ -2120,128 +2120,104 @@ export default function App() {
     if (!contactModalOpen || !contactSpotData) return null;
 
     return (
-      <div className="modern-modal-overlay" onClick={() => setContactModalOpen(false)}>
-        <div className="modern-modal-container" onClick={(e) => e.stopPropagation()}>
-          {/* Modal Header */}
-          <div className="modern-modal-header">
-            <div className="header-content">
-              <div className="spot-info">
-                <div className="spot-avatar">
-                  <MessageSquare size={24} />
+      <div className="contact-modal-overlay" onClick={() => setContactModalOpen(false)}>
+        <div className="contact-modal-wrapper" onClick={(e) => e.stopPropagation()}>
+          {/* Close Button */}
+          <button className="contact-close-btn" onClick={() => setContactModalOpen(false)}>
+            <X size={24} />
+          </button>
+
+          {/* Modal Content */}
+          <div className="contact-modal-inner">
+            {/* Header */}
+            <div className="contact-modal-header">
+              <div className="spot-avatar-large">
+                <MapPin size={32} />
+              </div>
+              <div className="spot-info-text">
+                <h2 className="spot-title-main">{contactSpotData.name}</h2>
+                <p className="spot-location-text">{contactSpotData.city}, {contactSpotData.state}</p>
+              </div>
+            </div>
+
+            {/* Contact Methods */}
+            <div className="contact-methods-section">
+              <h3 className="section-heading">Contact Methods</h3>
+              
+              <div className="contact-methods-grid">
+                {/* Call Method */}
+                <div 
+                  className="contact-method-item"
+                  onClick={() => window.open(`tel:${contactSpotData.phone}`, '_blank')}
+                >
+                  <div className="method-icon-circle phone">
+                    <Phone size={20} />
+                  </div>
+                  <div className="method-content">
+                    <h4 className="method-name">Phone Call</h4>
+                    <p className="method-detail">{contactSpotData.phone}</p>
+                  </div>
+                  <div className="method-action">
+                    <div className="action-arrow">→</div>
+                  </div>
                 </div>
-                <div className="spot-details">
-                  <h2 className="spot-name">{contactSpotData.name}</h2>
-                  <p className="spot-category">{contactSpotData.city}, {contactSpotData.state}</p>
+
+                {/* WhatsApp Method */}
+                <div 
+                  className="contact-method-item"
+                  onClick={() => window.open(`https://wa.me/${contactSpotData.phone.replace(/[^0-9]/g, '')}`, '_blank')}
+                >
+                  <div className="method-icon-circle whatsapp">
+                    <MessageSquare size={20} />
+                  </div>
+                  <div className="method-content">
+                    <h4 className="method-name">WhatsApp</h4>
+                    <p className="method-detail">Send Message</p>
+                  </div>
+                  <div className="method-action">
+                    <div className="action-arrow">→</div>
+                  </div>
+                </div>
+
+                {/* Instagram Method */}
+                <div 
+                  className="contact-method-item"
+                  onClick={() => window.open(`https://instagram.com/${contactSpotData.instagram || 'bytspot_official'}`, '_blank')}
+                >
+                  <div className="method-icon-circle instagram">
+                    <Camera size={20} />
+                  </div>
+                  <div className="method-content">
+                    <h4 className="method-name">Instagram</h4>
+                    <p className="method-detail">@{contactSpotData.instagram || 'bytspot_official'}</p>
+                  </div>
+                  <div className="method-action">
+                    <div className="action-arrow">→</div>
+                  </div>
                 </div>
               </div>
             </div>
-            <button className="modern-close-btn" onClick={() => setContactModalOpen(false)}>
-              <X size={20} />
-            </button>
-          </div>
 
-          {/* Modal Body */}
-          <div className="modern-modal-body">
-            <div className="contact-modal-content">
-              {/* Contact Title */}
-              <div className="contact-header">
-                <div className="contact-icon-large">
-                  <Phone size={32} />
+            {/* Location Section */}
+            <div className="location-section">
+              <h3 className="section-heading">Location Details</h3>
+              
+              <div className="location-info-card">
+                <div className="location-header-info">
+                  <div className="location-icon-small">
+                    <MapPin size={16} />
+                  </div>
+                  <h4 className="location-name">{contactSpotData.name}</h4>
                 </div>
-                <h3 className="contact-title">Get in Touch</h3>
-                <p className="contact-subtitle">Connect with the spot owner through your preferred channel</p>
-              </div>
-
-              {/* Contact Cards */}
-              <div className="contact-cards-container">
-                {/* Call Card */}
-                <div 
-                  className="contact-card call-card" 
-                  onClick={() => {
-                    window.open(`tel:${contactSpotData.phone}`, '_blank');
-                  }}
-                >
-                  <div className="card-background">
-                    <div className="card-icon">
-                      <Phone size={28} />
-                    </div>
-                    <div className="card-shine"></div>
-                  </div>
-                  <div className="card-content">
-                    <h4 className="card-title">Phone Call</h4>
-                    <p className="card-description">Direct voice conversation</p>
-                    <div className="card-action">
-                      <span className="card-value">{contactSpotData.phone}</span>
-                      <div className="card-arrow">→</div>
-                    </div>
-                  </div>
+                
+                <div className="location-address-info">
+                  <p className="address-line">{contactSpotData.address}</p>
+                  <p className="city-line">{contactSpotData.city}, {contactSpotData.state}</p>
                 </div>
-
-                {/* WhatsApp Card */}
-                <div 
-                  className="contact-card whatsapp-card" 
-                  onClick={() => {
-                    window.open(`https://wa.me/${contactSpotData.phone.replace(/[^0-9]/g, '')}`, '_blank');
-                  }}
-                >
-                  <div className="card-background">
-                    <div className="card-icon">
-                      <MessageSquare size={28} />
-                    </div>
-                    <div className="card-shine"></div>
-                  </div>
-                  <div className="card-content">
-                    <h4 className="card-title">WhatsApp</h4>
-                    <p className="card-description">Instant messaging</p>
-                    <div className="card-action">
-                      <span className="card-value">Send Message</span>
-                      <div className="card-arrow">→</div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Instagram Card */}
-                <div 
-                  className="contact-card instagram-card" 
-                  onClick={() => {
-                    window.open(`https://instagram.com/${contactSpotData.instagram || 'bytspot_official'}`, '_blank');
-                  }}
-                >
-                  <div className="card-background">
-                    <div className="card-icon">
-                      <Camera size={28} />
-                    </div>
-                    <div className="card-shine"></div>
-                  </div>
-                  <div className="card-content">
-                    <h4 className="card-title">Instagram</h4>
-                    <p className="card-description">Visual updates & stories</p>
-                    <div className="card-action">
-                      <span className="card-value">@{contactSpotData.instagram || 'bytspot_official'}</span>
-                      <div className="card-arrow">→</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Location Info */}
-              <div className="location-section">
-                <div className="location-header">
-                  <div className="location-icon">
-                    <MapPin size={20} />
-                  </div>
-                  <h4 className="location-title">Spot Location</h4>
-                </div>
-                <div className="location-card">
-                  <div className="location-details">
-                    <div className="location-name">{contactSpotData.name}</div>
-                    <div className="location-address">{contactSpotData.address}</div>
-                    <div className="location-city">{contactSpotData.city}, {contactSpotData.state}</div>
-                  </div>
-                  <div className="location-map">
-                    <div className="map-placeholder">
-                      <MapPin size={24} />
-                    </div>
+                
+                <div className="location-map-preview">
+                  <div className="map-icon-large">
+                    <MapPin size={24} />
                   </div>
                 </div>
               </div>
