@@ -2142,51 +2142,73 @@ export default function App() {
 
           {/* Modal Body */}
           <div className="modern-modal-body">
-            <div className="edit-form-container">
-              {/* Left Column - Contact Information */}
-              <div className="form-column">
-                <div className="modern-section">
-                  <h3 className="section-title">
-                    <div className="title-icon">
-                      <Phone size={16} />
-                    </div>
-                    Contact Options
-                  </h3>
-                  
-                  <div className="contact-options">
-                    <button className="contact-option" onClick={() => {
-                      window.open(`tel:${contactSpotData.phone}`, '_blank');
-                    }}>
-                      <Phone size={20} />
-                      <div className="contact-info">
-                        <div className="contact-label">Call</div>
-                        <div className="contact-value">{contactSpotData.phone}</div>
-                      </div>
-                    </button>
-                    
-                    <button className="contact-option" onClick={() => {
-                      window.open(`https://wa.me/${contactSpotData.phone.replace(/[^0-9]/g, '')}`, '_blank');
-                    }}>
-                      <div className="contact-icon whatsapp">
-                        <MessageSquare size={20} />
-                      </div>
-                      <div className="contact-info">
-                        <div className="contact-label">WhatsApp</div>
-                        <div className="contact-value">Send Message</div>
-                      </div>
-                    </button>
-                    
-                    <button className="contact-option" onClick={() => {
-                      window.open(`https://instagram.com/${contactSpotData.instagram || 'bytspot_official'}`, '_blank');
-                    }}>
-                      <div className="contact-icon instagram">
-                        <Camera size={20} />
-                      </div>
-                      <div className="contact-info">
-                        <div className="contact-label">Instagram</div>
-                        <div className="contact-value">@{contactSpotData.instagram || 'bytspot_official'}</div>
-                      </div>
-                    </button>
+            <div className="contact-modal-content">
+              {/* Contact Title */}
+              <div className="contact-header">
+                <h3 className="contact-title">Contact Owner</h3>
+                <p className="contact-subtitle">Choose how you'd like to reach out to the spot owner</p>
+              </div>
+
+              {/* Contact Buttons Grid */}
+              <div className="contact-buttons-grid">
+                {/* Call Button */}
+                <button 
+                  className="contact-button call-button" 
+                  onClick={() => {
+                    window.open(`tel:${contactSpotData.phone}`, '_blank');
+                  }}
+                >
+                  <div className="contact-button-icon">
+                    <Phone size={24} />
+                  </div>
+                  <div className="contact-button-content">
+                    <div className="contact-button-title">Call</div>
+                    <div className="contact-button-subtitle">{contactSpotData.phone}</div>
+                  </div>
+                </button>
+
+                {/* WhatsApp Button */}
+                <button 
+                  className="contact-button whatsapp-button" 
+                  onClick={() => {
+                    window.open(`https://wa.me/${contactSpotData.phone.replace(/[^0-9]/g, '')}`, '_blank');
+                  }}
+                >
+                  <div className="contact-button-icon">
+                    <MessageSquare size={24} />
+                  </div>
+                  <div className="contact-button-content">
+                    <div className="contact-button-title">WhatsApp</div>
+                    <div className="contact-button-subtitle">Send Message</div>
+                  </div>
+                </button>
+
+                {/* Instagram Button */}
+                <button 
+                  className="contact-button instagram-button" 
+                  onClick={() => {
+                    window.open(`https://instagram.com/${contactSpotData.instagram || 'bytspot_official'}`, '_blank');
+                  }}
+                >
+                  <div className="contact-button-icon">
+                    <Camera size={24} />
+                  </div>
+                  <div className="contact-button-content">
+                    <div className="contact-button-title">Instagram</div>
+                    <div className="contact-button-subtitle">@{contactSpotData.instagram || 'bytspot_official'}</div>
+                  </div>
+                </button>
+              </div>
+
+              {/* Additional Info */}
+              <div className="contact-additional-info">
+                <div className="info-card">
+                  <div className="info-icon">
+                    <MapPin size={16} />
+                  </div>
+                  <div className="info-text">
+                    <div className="info-label">Location</div>
+                    <div className="info-value">{contactSpotData.address}, {contactSpotData.city}, {contactSpotData.state}</div>
                   </div>
                 </div>
               </div>
