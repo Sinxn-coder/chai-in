@@ -695,6 +695,219 @@ main {
   box-shadow: 0 0 0 3px rgba(255, 0, 0, 0.1);
 }
 
+/* Modern Export Button Styles */
+.modern-export-button {
+  position: relative;
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  border: none;
+  border-radius: 16px;
+  padding: 16px 24px;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 16px rgba(59, 130, 246, 0.2);
+  overflow: hidden;
+  min-width: 180px;
+}
+
+.modern-export-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transition: left 0.8s ease;
+}
+
+.modern-export-button:hover::before {
+  left: 100%;
+}
+
+.modern-export-button:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 8px 32px rgba(59, 130, 246, 0.3);
+  background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+}
+
+.modern-export-button:active {
+  transform: translateY(-1px) scale(0.98);
+  box-shadow: 0 4px 16px rgba(59, 130, 246, 0.4);
+}
+
+.export-button-content {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  position: relative;
+  z-index: 2;
+}
+
+.export-icon-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  color: white;
+  transition: all 0.3s ease;
+}
+
+.modern-export-button:hover .export-icon-wrapper {
+  background: rgba(255, 255, 255, 0.25);
+  transform: scale(1.1) rotate(5deg);
+}
+
+.export-text-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  flex: 1;
+}
+
+.export-main-text {
+  font-size: 1rem;
+  font-weight: 700;
+  color: white;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+}
+
+.export-sub-text {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.8);
+  font-weight: 500;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+}
+
+.modern-export-button:hover .export-main-text {
+  color: white;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.modern-export-button:hover .export-sub-text {
+  color: rgba(255, 255, 255, 0.9);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.export-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.arrow-icon {
+  font-size: 1.25rem;
+  color: white;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.modern-export-button:hover .export-arrow {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateX(4px);
+}
+
+.modern-export-button:hover .arrow-icon {
+  transform: translateX(2px);
+}
+
+.export-button-shine {
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    45deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.1) 50%,
+    transparent 70%
+  );
+  transition: left 1s ease;
+  z-index: 1;
+}
+
+.modern-export-button:hover .export-button-shine {
+  left: 100%;
+}
+
+/* Responsive Design for Export Button */
+@media (max-width: 768px) {
+  .modern-export-button {
+    padding: 12px 20px;
+    min-width: 160px;
+  }
+  
+  .export-button-content {
+    gap: 12px;
+  }
+  
+  .export-icon-wrapper {
+    width: 36px;
+    height: 36px;
+  }
+  
+  .export-main-text {
+    font-size: 0.875rem;
+  }
+  
+  .export-sub-text {
+    font-size: 0.6875rem;
+  }
+  
+  .export-arrow {
+    width: 28px;
+    height: 28px;
+  }
+  
+  .arrow-icon {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .modern-export-button {
+    padding: 10px 16px;
+    min-width: 140px;
+  }
+  
+  .export-button-content {
+    gap: 8px;
+  }
+  
+  .export-icon-wrapper {
+    width: 32px;
+    height: 32px;
+  }
+  
+  .export-main-text {
+    font-size: 0.8rem;
+  }
+  
+  .export-sub-text {
+    font-size: 0.625rem;
+  }
+  
+  .export-arrow {
+    width: 24px;
+    height: 24px;
+  }
+  
+  .arrow-icon {
+    font-size: 0.875rem;
+  }
+}
+
 /* Modern Items Per Page Dropdown Styles */
 .modern-items-per-page-dropdown {
   position: relative;

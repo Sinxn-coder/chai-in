@@ -914,9 +914,38 @@ export default function App() {
     }
   };
 
-  const handleItemsPerPageChange = (newItemsPerPage) => {
-    setItemsPerPage(Number(newItemsPerPage));
+  const handleItemsPerPageChange = (value) => {
+    setItemsPerPage(parseInt(value));
     setCurrentPage(1); // Reset to first page when changing items per page
+  };
+
+  const handleExport = () => {
+    // Create CSV content
+    const headers = ['Name', 'Category', 'City', 'State', 'Rating', 'Reviews', 'Status', 'Added Date'];
+    const csvContent = [
+      headers.join(','),
+      ...filteredSpots.map(spot => [
+        `"${spot.name}"`,
+        `"${spot.category}"`,
+        `"${spot.city}"`,
+        `"${spot.state}"`,
+        spot.rating || '0',
+        spot.reviews || '0',
+        `"${spot.status}"`,
+        `"${spot.added}"`
+      ].join(','))
+    ].join('\n');
+
+    // Create blob and download
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', `spots_export_${new Date().toISOString().split('T')[0]}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   const handleSpotAction = (action, spot) => {
@@ -1985,10 +2014,21 @@ export default function App() {
               </div>
             </div>
             <div className="spots-actions">
-              <button className="btn btn-secondary">
-                <Download size={16} />
-                Export
-              </button>
+              <div className="modern-export-button" onClick={handleExport}>
+                <div className="export-button-content">
+                  <div className="export-icon-wrapper">
+                    <Download size={18} />
+                  </div>
+                  <div className="export-text-content">
+                    <span className="export-main-text">Export</span>
+                    <span className="export-sub-text">Download data</span>
+                  </div>
+                  <div className="export-arrow">
+                    <div className="arrow-icon">→</div>
+                  </div>
+                </div>
+                <div className="export-button-shine"></div>
+              </div>
               {selectedSpots.length > 0 && (
                 <>
                   <button className="btn btn-warning">
