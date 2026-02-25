@@ -287,7 +287,6 @@ export default function App() {
   const [showStatusDropdown, setShowStatusDropdown] = useState(false);
   const [showSortDropdown, setShowSortDropdown] = useState(false);
   const [showItemsPerPageDropdown, setShowItemsPerPageDropdown] = useState(false);
-  const [allSpotsSelected, setAllSpotsSelected] = useState(false);
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [activeDropdown, setActiveDropdown] = useState(null);
   const [selectedSpots, setSelectedSpots] = useState([]);
@@ -949,6 +948,26 @@ export default function App() {
     document.body.removeChild(link);
   };
 
+  const handleFlagSelected = () => {
+    console.log(`Flagging ${selectedSpots.length} selected spots`);
+    // Add flag logic here
+    setSelectedSpots([]);
+  };
+
+  const handleVerifySelected = () => {
+    console.log(`Verifying ${selectedSpots.length} selected spots`);
+    // Add verify logic here
+    setSelectedSpots([]);
+  };
+
+  const handleDeleteSelected = () => {
+    if (window.confirm(`Are you sure you want to delete ${selectedSpots.length} selected spots?`)) {
+      console.log(`Deleting ${selectedSpots.length} selected spots`);
+      // Add delete logic here
+      setSelectedSpots([]);
+    }
+  };
+
   const handleSpotAction = (action, spot) => {
     console.log(`${action} spot:`, spot.name);
     setActiveSpotDropdown(null);
@@ -1012,16 +1031,13 @@ export default function App() {
         ? prev.filter(id => id !== spotId)
         : [...prev, spotId]
     );
-    setAllSpotsSelected(false);
   };
 
   const handleSelectAllSpots = () => {
     if (selectedSpots.length === filteredSpots.length) {
       setSelectedSpots([]);
-      setAllSpotsSelected(false);
     } else {
       setSelectedSpots(filteredSpots.map(spot => spot.id));
-      setAllSpotsSelected(true);
     }
   };
 
@@ -1878,7 +1894,7 @@ export default function App() {
       <>
         <div className="spots-management">
           <div className="spots-header">
-            <div className={`spots-controls ${allSpotsSelected ? 'all-selected' : ''}`}>
+            <div className="spots-controls">
               <div className="search-box">
                 <Search size={20} className="search-icon" />
                 <input
@@ -1889,7 +1905,7 @@ export default function App() {
                   className="search-input"
                 />
               </div>
-              <div className={`modern-status-dropdown ${allSpotsSelected ? 'hidden' : ''}`}>
+              <div className="modern-status-dropdown">
                 <div className="status-dropdown-trigger" onClick={() => setShowStatusDropdown(!showStatusDropdown)}>
                   <Filter size={16} />
                   <span className="status-dropdown-label">
@@ -1929,7 +1945,7 @@ export default function App() {
                   </div>
                 )}
               </div>
-              <div className={`modern-sort-dropdown ${allSpotsSelected ? 'hidden' : ''}`}>
+              <div className="modern-sort-dropdown">
                 <div className="sort-dropdown-trigger" onClick={() => setShowSortDropdown(!showSortDropdown)}>
                   <TrendingUp size={16} />
                   <span className="sort-dropdown-label">
@@ -1973,7 +1989,7 @@ export default function App() {
                   </div>
                 )}
               </div>
-              <div className={`modern-items-per-page-dropdown ${allSpotsSelected ? 'hidden' : ''}`}>
+              <div className="modern-items-per-page-dropdown">
                 <div className="items-per-page-trigger" onClick={() => setShowItemsPerPageDropdown(!showItemsPerPageDropdown)}>
                   <Users size={16} />
                   <span className="items-per-page-label">
@@ -2018,7 +2034,7 @@ export default function App() {
               </div>
             </div>
             <div className="spots-actions">
-              <div className={`modern-export-button ${allSpotsSelected ? 'hidden' : ''}`} onClick={handleExport}>
+              <div className="modern-export-button" onClick={handleExport}>
                 <div className="export-button-content">
                   <div className="export-icon-wrapper">
                     <Download size={18} />
@@ -2033,22 +2049,36 @@ export default function App() {
                 </div>
                 <div className="export-button-shine"></div>
               </div>
-              {selectedSpots.length > 0 && (
-                <>
-                  <button className="btn btn-warning">
-                    <AlertCircle size={16} />
-                    Flag Selected
-                  </button>
-                  <button className="btn btn-success">
-                    <CheckCircle size={16} />
-                    Verify Selected
-                  </button>
-                  <button className="btn btn-danger">
-                    <Trash2 size={16} />
-                    Delete Selected
-                  </button>
-                </>
-              )}
+            </div>
+          </div>
+
+          {/* Selected Spots Action Bar */}
+          <div className={`selected-spots-action-bar ${selectedSpots.length > 0 ? 'visible' : ''}`}>
+            <div className="action-bar-content">
+              <div className="selection-info">
+                <div className="selection-count">
+                  <CheckSquare size={20} />
+                  <span>{selectedSpots.length} {selectedSpots.length === 1 ? 'spot' : 'spots'} selected</span>
+                </div>
+              </div>
+              <div className="action-buttons-group">
+                <button className="action-btn flag-btn" onClick={() => handleFlagSelected()}>
+                  <Flag size={16} />
+                  <span>Flag Selected</span>
+                </button>
+                <button className="action-btn verify-btn" onClick={() => handleVerifySelected()}>
+                  <CheckCircle size={16} />
+                  <span>Verify Selected</span>
+                </button>
+                <button className="action-btn delete-btn" onClick={() => handleDeleteSelected()}>
+                  <Trash2 size={16} />
+                  <span>Delete Selected</span>
+                </button>
+                <button className="action-btn cancel-btn" onClick={() => setSelectedSpots([])}>
+                  <X size={16} />
+                  <span>Cancel</span>
+                </button>
+              </div>
             </div>
           </div>
 
