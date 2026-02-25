@@ -27,7 +27,10 @@ const PushNotifications = () => {
   return (
     <div className="push-notifications">
       <div className="notifications-header">
-        <h2>Send Notification</h2>
+        <div className="header-left">
+          <h2>Send Notification</h2>
+          <p>Create and send notifications to users</p>
+        </div>
         <button 
           className="send-notification-btn"
           onClick={(e) => {
