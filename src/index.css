@@ -675,7 +675,7 @@ main {
 .search-box {
   position: relative;
   flex: 1;
-  max-width: 500px;
+  max-width: 600px;
   margin: 0 auto;
 }
 
