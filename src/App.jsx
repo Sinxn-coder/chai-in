@@ -285,6 +285,7 @@ export default function App() {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [showStatusDropdown, setShowStatusDropdown] = useState(false);
+  const [showSortDropdown, setShowSortDropdown] = useState(false);
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [activeDropdown, setActiveDropdown] = useState(null);
   const [selectedSpots, setSelectedSpots] = useState([]);
@@ -1894,17 +1895,49 @@ export default function App() {
                   </div>
                 )}
               </div>
-              <div className="sort-dropdown">
-                <select
-                  value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value)}
-                  className="sort-select"
-                >
-                  <option value="name">Sort by Name</option>
-                  <option value="rating">Sort by Rating</option>
-                  <option value="date">Sort by Date</option>
-                  <option value="reviews">Sort by Reviews</option>
-                </select>
+              <div className="modern-sort-dropdown">
+                <div className="sort-dropdown-trigger" onClick={() => setShowSortDropdown(!showSortDropdown)}>
+                  <TrendingUp size={16} />
+                  <span className="sort-dropdown-label">
+                    {sortBy === 'name' ? 'Sort by Name' : 
+                     sortBy === 'rating' ? 'Sort by Rating' :
+                     sortBy === 'date' ? 'Sort by Date' : 'Sort by Reviews'}
+                  </span>
+                  <ChevronDown 
+                    size={16} 
+                    className={`dropdown-arrow ${showSortDropdown ? 'open' : ''}`}
+                  />
+                </div>
+                {showSortDropdown && (
+                  <div className="sort-dropdown-menu">
+                    {[
+                      { value: 'name', label: 'Sort by Name', icon: '🔤', description: 'Alphabetical order' },
+                      { value: 'rating', label: 'Sort by Rating', icon: '⭐', description: 'Highest rated first' },
+                      { value: 'date', label: 'Sort by Date', icon: '📅', description: 'Newest first' },
+                      { value: 'reviews', label: 'Sort by Reviews', icon: '💬', description: 'Most reviewed first' }
+                    ].map(sort => (
+                      <div
+                        key={sort.value}
+                        className={`sort-dropdown-item ${sortBy === sort.value ? 'active' : ''}`}
+                        onClick={() => {
+                          setSortBy(sort.value);
+                          setShowSortDropdown(false);
+                        }}
+                      >
+                        <div className="sort-item-content">
+                          <div className="sort-item-main">
+                            <span className="sort-icon">{sort.icon}</span>
+                            <span className="sort-text">{sort.label}</span>
+                            {sortBy === sort.value && (
+                              <div className="sort-checkmark">✓</div>
+                            )}
+                          </div>
+                          <div className="sort-description">{sort.description}</div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
               <div className="items-per-page-dropdown">
                 <select
