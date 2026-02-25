@@ -1030,6 +1030,110 @@ main {
   box-shadow: 0 4px 12px rgba(255, 255, 255, 0.3);
 }
 
+/* Delete Confirmation Popup Styles */
+.delete-confirm-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  animation: fadeIn 0.3s ease;
+}
+
+.delete-confirm-popup {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  border-radius: 16px;
+  padding: 32px;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: 0 20px 60px rgba(239, 68, 68, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  animation: slideInUp 0.3s ease;
+}
+
+.delete-confirm-content {
+  text-align: center;
+  color: white;
+}
+
+.delete-confirm-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 50%;
+  margin: 0 auto 20px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.delete-confirm-content h3 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0 0 12px;
+  color: white;
+}
+
+.delete-confirm-content p {
+  font-size: 0.95rem;
+  line-height: 1.5;
+  margin: 0 0 24px;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.delete-confirm-buttons {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.delete-confirm-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 12px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  min-width: fit-content;
+}
+
+.delete-confirm-btn.cancel {
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.delete-confirm-btn.cancel:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.delete-confirm-btn.confirm {
+  background: rgba(255, 255, 255, 0.9);
+  color: #ef4444;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.delete-confirm-btn.confirm:hover {
+  background: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.3);
+}
+
 /* Responsive Design for Action Bar */
 @media (max-width: 1024px) {
   .selected-spots-action-bar {

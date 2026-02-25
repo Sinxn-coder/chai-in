@@ -294,6 +294,7 @@ export default function App() {
   const [selectedSpots, setSelectedSpots] = useState([]);
   const [showFlagConfirm, setShowFlagConfirm] = useState(false);
   const [showVerifyConfirm, setShowVerifyConfirm] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [spotModalOpen, setSpotModalOpen] = useState(false);
   const [selectedSpot, setSelectedSpot] = useState(null);
   const [sortBy, setSortBy] = useState('name');
@@ -983,11 +984,18 @@ export default function App() {
   };
 
   const handleDeleteSelected = () => {
-    if (window.confirm(`Are you sure you want to delete ${selectedSpots.length} selected spots?`)) {
-      console.log(`Deleting ${selectedSpots.length} selected spots`);
-      // Add delete logic here
-      setSelectedSpots([]);
-    }
+    setShowDeleteConfirm(true);
+  };
+
+  const handleConfirmDelete = () => {
+    console.log(`Deleting ${selectedSpots.length} selected spots`);
+    // Add delete logic here
+    setSelectedSpots([]);
+    setShowDeleteConfirm(false);
+  };
+
+  const handleCancelDelete = () => {
+    setShowDeleteConfirm(false);
   };
 
   const handleSpotAction = (action, spot) => {
@@ -2147,6 +2155,31 @@ export default function App() {
                     <button className="verify-confirm-btn confirm" onClick={handleConfirmVerify}>
                       <CheckCircle size={16} />
                       <span>Verify {selectedSpots.length === 1 ? 'Spot' : 'Spots'}</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Delete Confirmation Popup */}
+          {showDeleteConfirm && (
+            <div className="delete-confirm-overlay">
+              <div className="delete-confirm-popup">
+                <div className="delete-confirm-content">
+                  <div className="delete-confirm-icon">
+                    <Trash2 size={48} />
+                  </div>
+                  <h3>Delete Selected Spots</h3>
+                  <p>Are you sure you want to delete {selectedSpots.length} {selectedSpots.length === 1 ? 'spot' : 'spots'}? This action cannot be undone.</p>
+                  <div className="delete-confirm-buttons">
+                    <button className="delete-confirm-btn cancel" onClick={handleCancelDelete}>
+                      <X size={16} />
+                      <span>Cancel</span>
+                    </button>
+                    <button className="delete-confirm-btn confirm" onClick={handleConfirmDelete}>
+                      <Trash2 size={16} />
+                      <span>Delete {selectedSpots.length === 1 ? 'Spot' : 'Spots'}</span>
                     </button>
                   </div>
                 </div>
