@@ -518,6 +518,13 @@ main {
   margin-bottom: 32px;
 }
 
+.spots-stats {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
 .stat-card {
   background: #ffffff;
   border-radius: 12px;

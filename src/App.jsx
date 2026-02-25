@@ -2197,13 +2197,6 @@ export default function App() {
               </div>
             </div>
             <div className="stat-card">
-              <div className="stat-icon">🟢</div>
-              <div className="stat-info">
-                <div className="stat-number">{spotStats.published}</div>
-                <div className="stat-label">Published</div>
-              </div>
-            </div>
-            <div className="stat-card">
               <div className="stat-icon">🔵</div>
               <div className="stat-info">
                 <div className="stat-number">{spotStats.verified}</div>
