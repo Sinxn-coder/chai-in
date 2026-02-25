@@ -1113,15 +1113,17 @@ main {
 
 .contact-modal-wrapper {
   background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
-  border-radius: 28px;
-  box-shadow: 0 32px 80px rgba(0, 0, 0, 0.4);
-  max-width: 700px;
-  width: 95vw;
+  border-radius: 32px;
+  box-shadow: 0 40px 100px rgba(0, 0, 0, 0.4);
+  max-width: 900px;
+  width: 98vw;
   max-height: 90vh;
   overflow: hidden;
   position: relative;
   animation: modalSlideIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
   border: 1px solid rgba(255, 255, 255, 0.2);
+  will-change: transform;
+  contain: layout style paint;
 }
 
 .contact-close-btn {
@@ -1153,7 +1155,17 @@ main {
   padding: 40px;
   max-height: calc(90vh - 56px);
   overflow-y: auto;
+  overflow-x: hidden;
   position: relative;
+  transform: translateZ(0);
+  will-change: transform;
+  contain: layout style paint;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  -ms-overflow-style: none;
+  -ms-overflow-x: hidden;
+  -ms-overflow-y: hidden;
+  overscroll-behavior: contain;
 }
 
 .contact-modal-header {
