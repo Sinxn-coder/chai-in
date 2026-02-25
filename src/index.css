@@ -4988,6 +4988,45 @@ main {
   text-align: left;
   cursor: pointer;
   transition: all 0.2s ease;
+  opacity: 0;
+  transform: translateX(-10px);
+  animation: dropdownItemSlide 0.3s ease-out forwards;
+}
+
+.dropdown-item:nth-child(1) {
+  animation-delay: 0.05s;
+}
+
+.dropdown-item:nth-child(2) {
+  animation-delay: 0.1s;
+}
+
+.dropdown-item:nth-child(3) {
+  animation-delay: 0.15s;
+}
+
+.dropdown-item:nth-child(4) {
+  animation-delay: 0.2s;
+}
+
+.dropdown-item:nth-child(5) {
+  animation-delay: 0.25s;
+}
+
+.dropdown-item:nth-child(6) {
+  animation-delay: 0.3s;
+}
+
+@keyframes dropdownItemSlide {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 .dropdown-item:hover {
@@ -5008,4 +5047,17 @@ main {
   height: 1px;
   background: #e5e7eb;
   margin: 4px 0;
+  opacity: 0;
+  animation: dividerFade 0.3s ease-out forwards;
+  animation-delay: 0.35s;
+}
+
+@keyframes dividerFade {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
