@@ -1,6 +1,7 @@
 .mobile-intro-container {
     min-height: 100vh;
-    height: 100dvh; /* Dynamic viewport height for mobile browsers */
+    height: 100dvh;
+    width: 100vw;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -17,7 +18,6 @@
     right: 0;
     bottom: 0;
     z-index: 9999;
-    /* Ensure it extends under status bar */
     -webkit-appearance: none;
     appearance: none;
 }
@@ -25,11 +25,13 @@
 /* Add pseudo-element for background that extends under status bar */
 .mobile-intro-container::before {
     content: '';
-    position: absolute;
-    top: -100px; /* Extend beyond viewport top */
-    left: -100px;
-    right: -100px;
-    bottom: -100px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100vw;
+    height: 100vh;
     background: linear-gradient(135deg, #FF0000 0%, #D32F2F 100%);
     z-index: -1;
 }
