@@ -53,7 +53,9 @@ import {
   User,
   Shield,
   Ban,
-  Camera
+  Camera,
+  Flag,
+  CheckSquare
 } from 'lucide-react';
 import './index.css';
 
