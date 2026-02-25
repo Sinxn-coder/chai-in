@@ -801,12 +801,13 @@ main {
 
 /* Flag Button */
 .flag-btn {
-  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+  background: rgba(255, 255, 255, 0.15);
   color: white;
-  box-shadow: 0 4px 16px rgba(220, 38, 38, 0.4);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
   position: relative;
   overflow: hidden;
+  backdrop-filter: blur(8px);
 }
 
 .flag-btn::before {
@@ -825,25 +826,26 @@ main {
 }
 
 .flag-btn:hover {
-  background: linear-gradient(135deg, #b91c1c 0%, #991b1b 100%);
-  box-shadow: 0 6px 24px rgba(220, 38, 38, 0.5);
+  background: rgba(255, 255, 255, 0.25);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
   transform: translateY(-2px) scale(1.05);
-  border-color: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.5);
 }
 
 .flag-btn:active {
   transform: translateY(-1px) scale(0.98);
-  box-shadow: 0 2px 8px rgba(220, 38, 38, 0.6);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
 /* Verify Button */
 .verify-btn {
-  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+  background: rgba(255, 255, 255, 0.15);
   color: white;
-  box-shadow: 0 4px 16px rgba(220, 38, 38, 0.4);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
   position: relative;
   overflow: hidden;
+  backdrop-filter: blur(8px);
 }
 
 .verify-btn::before {
@@ -862,25 +864,26 @@ main {
 }
 
 .verify-btn:hover {
-  background: linear-gradient(135deg, #b91c1c 0%, #991b1b 100%);
-  box-shadow: 0 6px 24px rgba(220, 38, 38, 0.5);
+  background: rgba(255, 255, 255, 0.25);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
   transform: translateY(-2px) scale(1.05);
-  border-color: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.5);
 }
 
 .verify-btn:active {
   transform: translateY(-1px) scale(0.98);
-  box-shadow: 0 2px 8px rgba(220, 38, 38, 0.6);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
 /* Delete Button */
 .delete-btn {
-  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+  background: rgba(255, 255, 255, 0.15);
   color: white;
-  box-shadow: 0 4px 16px rgba(220, 38, 38, 0.4);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
   position: relative;
   overflow: hidden;
+  backdrop-filter: blur(8px);
 }
 
 .delete-btn::before {
@@ -899,25 +902,26 @@ main {
 }
 
 .delete-btn:hover {
-  background: linear-gradient(135deg, #b91c1c 0%, #991b1b 100%);
-  box-shadow: 0 6px 24px rgba(220, 38, 38, 0.5);
+  background: rgba(255, 255, 255, 0.25);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
   transform: translateY(-2px) scale(1.05);
-  border-color: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.5);
 }
 
 .delete-btn:active {
   transform: translateY(-1px) scale(0.98);
-  box-shadow: 0 2px 8px rgba(220, 38, 38, 0.6);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
 /* Cancel Button */
 .cancel-btn {
-  background: linear-gradient(135deg, #374151 0%, #1f2937 100%);
+  background: rgba(255, 255, 255, 0.15);
   color: white;
-  box-shadow: 0 4px 16px rgba(55, 65, 81, 0.3);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
   position: relative;
   overflow: hidden;
+  backdrop-filter: blur(8px);
 }
 
 .cancel-btn::before {
@@ -927,7 +931,7 @@ main {
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
   transition: left 0.6s ease;
 }
 
@@ -936,15 +940,15 @@ main {
 }
 
 .cancel-btn:hover {
-  background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
-  box-shadow: 0 6px 24px rgba(55, 65, 81, 0.4);
+  background: rgba(255, 255, 255, 0.25);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
   transform: translateY(-2px) scale(1.05);
-  border-color: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.5);
 }
 
 .cancel-btn:active {
   transform: translateY(-1px) scale(0.98);
-  box-shadow: 0 2px 8px rgba(55, 65, 81, 0.5);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
 /* Responsive Design for Action Bar */
