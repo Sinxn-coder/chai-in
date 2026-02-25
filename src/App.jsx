@@ -284,6 +284,7 @@ export default function App() {
 
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
+  const [showStatusDropdown, setShowStatusDropdown] = useState(false);
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [activeDropdown, setActiveDropdown] = useState(null);
   const [selectedSpots, setSelectedSpots] = useState([]);
@@ -1853,33 +1854,45 @@ export default function App() {
                   className="search-input"
                 />
               </div>
-              <div className="modern-status-filter">
-                <div className="status-filter-label">
+              <div className="modern-status-dropdown">
+                <div className="status-dropdown-trigger" onClick={() => setShowStatusDropdown(!showStatusDropdown)}>
                   <Filter size={16} />
-                  Status
+                  <span className="status-dropdown-label">
+                    {statusFilter === 'all' ? 'All Status' : 
+                     statusFilter === 'verified' ? 'Verified' :
+                     statusFilter === 'pending' ? 'Pending' : 'Flagged'}
+                  </span>
+                  <ChevronDown 
+                    size={16} 
+                    className={`dropdown-arrow ${showStatusDropdown ? 'open' : ''}`}
+                  />
                 </div>
-                <div className="status-pills-container">
-                  {[
-                    { value: 'all', label: 'All', color: '#6b7280' },
-                    { value: 'verified', label: 'Verified', color: '#10b981' },
-                    { value: 'pending', label: 'Pending', color: '#f59e0b' },
-                    { value: 'flagged', label: 'Flagged', color: '#ef4444' }
-                  ].map(status => (
-                    <button
-                      key={status.value}
-                      className={`status-pill ${statusFilter === status.value ? 'active' : ''}`}
-                      onClick={() => setStatusFilter(status.value)}
-                      style={{
-                        '--status-color': status.color
-                      }}
-                    >
-                      {status.label}
-                      {statusFilter === status.value && (
-                        <div className="pill-indicator" />
-                      )}
-                    </button>
-                  ))}
-                </div>
+                {showStatusDropdown && (
+                  <div className="status-dropdown-menu">
+                    {[
+                      { value: 'all', label: 'All Status', color: '#6b7280', icon: '📊' },
+                      { value: 'verified', label: 'Verified', color: '#10b981', icon: '✅' },
+                      { value: 'pending', label: 'Pending', color: '#f59e0b', icon: '⏳' },
+                      { value: 'flagged', label: 'Flagged', color: '#ef4444', icon: '🚩' }
+                    ].map(status => (
+                      <div
+                        key={status.value}
+                        className={`status-dropdown-item ${statusFilter === status.value ? 'active' : ''}`}
+                        onClick={() => {
+                          setStatusFilter(status.value);
+                          setShowStatusDropdown(false);
+                        }}
+                        style={{ '--status-color': status.color }}
+                      >
+                        <span className="status-icon">{status.icon}</span>
+                        <span className="status-text">{status.label}</span>
+                        {statusFilter === status.value && (
+                          <div className="status-checkmark">✓</div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
               <div className="sort-dropdown">
                 <select
