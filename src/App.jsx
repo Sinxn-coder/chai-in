@@ -1158,7 +1158,7 @@ export default function App() {
                           </button>
                           <button
                             className="dropdown-item"
-                            onClick={() => handleAction('message', user)}
+                            onClick={() => handleUserAction('message', user)}
                           >
                             <MessageSquare size={14} />
                             Send Message
