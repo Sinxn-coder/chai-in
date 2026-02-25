@@ -292,6 +292,7 @@ export default function App() {
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [activeDropdown, setActiveDropdown] = useState(null);
   const [selectedSpots, setSelectedSpots] = useState([]);
+  const [showFlagConfirm, setShowFlagConfirm] = useState(false);
   const [spotModalOpen, setSpotModalOpen] = useState(false);
   const [selectedSpot, setSelectedSpot] = useState(null);
   const [sortBy, setSortBy] = useState('name');
@@ -307,7 +308,6 @@ export default function App() {
   const [showFilterModal, setShowFilterModal] = useState(false);
   const [maintenanceMode, setMaintenanceMode] = useState(false);
   const [emergencyContact, setEmergencyContact] = useState('+1-800-HELP-NOW');
-  const [showFlagPopup, setShowFlagPopup] = useState(false);
   const [contactModalOpen, setContactModalOpen] = useState(false);
   const [contactSpotData, setContactSpotData] = useState(null);
   const fileInputRef = useRef(null);
@@ -952,8 +952,18 @@ export default function App() {
   };
 
   const handleFlagSelected = () => {
+    setShowFlagConfirm(true);
+  };
+
+  const handleConfirmFlag = () => {
     console.log(`Flagging ${selectedSpots.length} selected spots`);
-    setShowFlagPopup(true);
+    // Add flag logic here
+    setSelectedSpots([]);
+    setShowFlagConfirm(false);
+  };
+
+  const handleCancelFlag = () => {
+    setShowFlagConfirm(false);
   };
 
   const handleVerifySelected = () => {
@@ -2084,6 +2094,31 @@ export default function App() {
             </div>
           </div>
 
+          {/* Flag Confirmation Popup */}
+          {showFlagConfirm && (
+            <div className="flag-confirm-overlay">
+              <div className="flag-confirm-popup">
+                <div className="flag-confirm-content">
+                  <div className="flag-confirm-icon">
+                    <Flag size={48} />
+                  </div>
+                  <h3>Flag Selected Spots</h3>
+                  <p>Are you sure you want to flag {selectedSpots.length} {selectedSpots.length === 1 ? 'spot' : 'spots'}? This action will mark them for review.</p>
+                  <div className="flag-confirm-buttons">
+                    <button className="flag-confirm-btn cancel" onClick={handleCancelFlag}>
+                      <X size={16} />
+                      <span>Cancel</span>
+                    </button>
+                    <button className="flag-confirm-btn confirm" onClick={handleConfirmFlag}>
+                      <Flag size={16} />
+                      <span>Flag {selectedSpots.length === 1 ? 'Spot' : 'Spots'}</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Statistics Section */}
           <div className="spots-stats">
             <div className="stat-card">
@@ -2280,7 +2315,6 @@ export default function App() {
         {renderViewDetailsModal()}
         {renderImageEditorModal()}
         {renderContactModal()}
-        {renderFlagPopup()}
       </>
     );
   };
@@ -2391,66 +2425,6 @@ export default function App() {
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-      </div>
-    );
-  };
-
-  const renderFlagPopup = () => {
-    if (!showFlagPopup) return null;
-
-    return (
-      <div className="flag-popup-overlay" onClick={() => setShowFlagPopup(false)}>
-        <div className="flag-popup-container" onClick={(e) => e.stopPropagation()}>
-          <div className="flag-popup-header">
-            <div className="flag-popup-icon">
-              <Flag size={24} />
-            </div>
-            <div className="flag-popup-title">
-              <h3>Flag Selected Spots</h3>
-              <p>Confirm flagging {selectedSpots.length} spot{selectedSpots.length > 1 ? 's' : ''}</p>
-            </div>
-            <button className="flag-popup-close" onClick={() => setShowFlagPopup(false)}>
-              <X size={20} />
-            </button>
-          </div>
-
-          <div className="flag-popup-body">
-            <div className="flag-info-section">
-              <div className="flag-warning">
-                <AlertCircle size={20} />
-                <span>This action will flag the selected spot{selectedSpots.length > 1 ? 's' : ''} for review.</span>
-              </div>
-              
-              <div className="selected-spots-list">
-                <h4>Selected Spots:</h4>
-                <div className="spots-list">
-                  {selectedSpots.map((spot, index) => (
-                    <div key={index} className="spot-item">
-                      <div className="spot-info">
-                        <span className="spot-name">{spot.name}</span>
-                        <span className="spot-category">{spot.category}</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="flag-popup-footer">
-            <button className="flag-btn-cancel" onClick={() => setShowFlagPopup(false)}>
-              Cancel
-            </button>
-            <button className="flag-btn-confirm" onClick={() => {
-              console.log(`Flagged ${selectedSpots.length} selected spots`);
-              setSelectedSpots([]);
-              setShowFlagPopup(false);
-            }}>
-              <Flag size={16} />
-              Flag Selected
-            </button>
           </div>
         </div>
       </div>
