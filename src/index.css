@@ -922,28 +922,6 @@ main {
   transform: translateY(-50%) scale(1.1) rotate(5deg);
 }
 
-.search-shortcut {
-  position: absolute;
-  right: 16px;
-  top: 50%;
-  transform: translateY(-50%);
-  background: linear-gradient(135deg, #FF0000, #cc0000);
-  color: white;
-  font-size: 0.75rem;
-  font-weight: 600;
-  padding: 4px 8px;
-  border-radius: 8px;
-  pointer-events: none;
-  opacity: 0.8;
-  transition: all 0.3s ease;
-  letter-spacing: 0.5px;
-}
-
-.search-input-wrapper:hover .search-shortcut {
-  opacity: 1;
-  transform: translateY(-50%) scale(1.05);
-}
-
 /* Search pulse animation */
 .search-input-wrapper::before {
   content: '';
