@@ -1145,14 +1145,18 @@ export default function App() {
         <div className="users-header">
           <div className="users-controls">
             <div className="search-box">
-              <Search size={20} className="search-icon" />
-              <input
-                type="text"
-                placeholder="Search users by name or email..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="search-input"
-              />
+              <div className="search-container">
+                <Search size={20} className="search-icon" />
+                <input
+                  type="text"
+                  placeholder="Search users by name or email..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="search-input"
+                />
+                <div className="search-results-counter">0</div>
+                <div className="search-loading"></div>
+              </div>
             </div>
             <div className="filter-dropdown">
               <Filter size={20} className="filter-icon" />
@@ -1926,14 +1930,18 @@ export default function App() {
           <div className="spots-header">
             <div className="spots-controls">
               <div className="search-box">
-                <Search size={20} className="search-icon" />
-                <input
-                  type="text"
-                  placeholder="Search spots by name, location, or cuisine..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="search-input"
-                />
+                <div className="search-container">
+                  <Search size={20} className="search-icon" />
+                  <input
+                    type="text"
+                    placeholder="Search spots by name, location, or cuisine..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="search-input"
+                  />
+                  <div className="search-results-counter">0</div>
+                  <div className="search-loading"></div>
+                </div>
               </div>
               <div className="modern-status-dropdown">
                 <div className="status-dropdown-trigger" onClick={() => setShowStatusDropdown(!showStatusDropdown)}>
