@@ -2714,6 +2714,7 @@ export default function App() {
       <div className={`flag-popup ${showFlagPopup ? 'active' : ''}`} onClick={() => setShowFlagPopup(false)}>
         <div className="flag-popup-content" onClick={(e) => e.stopPropagation()}>
           <div className="flying-flag">🚩</div>
+          <div className="red-flag">🚩</div>
           <h2 className="flag-popup-title">Spots Flagged Successfully!</h2>
           <p className="flag-popup-message">
             {selectedSpots.length} {selectedSpots.length === 1 ? 'spot has' : 'spots have'} been flagged for review.
