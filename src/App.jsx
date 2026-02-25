@@ -2091,7 +2091,7 @@ export default function App() {
       case 'users':
         return renderUsers();
       case 'spots':
-        return <div className="content-placeholder">Spots Management - View, approve, and manage user-submitted spots with verification workflow.</div>;
+        return renderSpots();
       case 'notifications':
         return <PushNotifications />;
       case 'settings':
