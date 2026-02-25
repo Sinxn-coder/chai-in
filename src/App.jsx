@@ -18,24 +18,10 @@ import {
   CheckCircle,
   XCircle,
   Clock,
-  Search,
-  Filter,
-  Download,
-  Ban,
-  Shield,
-  UserCheck,
-  MoreVertical,
-  Edit,
-  Eye,
-  MessageSquare,
-  Trash2,
-  X,
-  Camera,
   Phone,
-  Mail,
-  Globe,
+  MessageSquare,
   MapPin,
-  Star as StarIcon,
+  StarIcon,
   Save,
   Upload,
   Image,
@@ -117,6 +103,8 @@ export default function App() {
       rating: 4.5,
       reviews: 127,
       added: '2024-01-15',
+      phone: '+1-212-555-1234',
+      instagram: 'centralperk_cafe'
     },
     {
       id: 2,
@@ -129,6 +117,8 @@ export default function App() {
       rating: 4.2,
       reviews: 89,
       added: '2024-01-20',
+      phone: '+1-310-555-6789',
+      instagram: 'sunset_restaurant_la'
     },
     {
       id: 3,
@@ -141,6 +131,8 @@ export default function App() {
       rating: 4.8,
       reviews: 234,
       added: '2024-01-25',
+      phone: '+1-303-555-0123',
+      instagram: 'mountainview_grill'
     },
     {
       id: 4,
@@ -153,6 +145,8 @@ export default function App() {
       rating: 3.9,
       reviews: 156,
       added: '2024-02-01',
+      phone: '+1-305-555-9876',
+      instagram: 'beachside_coffee'
     },
     {
       id: 5,
@@ -165,6 +159,8 @@ export default function App() {
       rating: 4.6,
       reviews: 198,
       added: '2024-02-05',
+      phone: '+1-773-555-4321',
+      instagram: 'downtown_bistro_chi'
     },
     {
       id: 6,
@@ -177,6 +173,8 @@ export default function App() {
       rating: 4.1,
       reviews: 87,
       added: '2024-02-10',
+      phone: '+1-206-555-7890',
+      instagram: 'riverside_cafe_sea'
     },
     {
       id: 7,
@@ -189,6 +187,8 @@ export default function App() {
       rating: 4.7,
       reviews: 312,
       added: '2024-02-15',
+      phone: '+1-617-555-3456',
+      instagram: 'hilltop_restaurant'
     },
     {
       id: 8,
@@ -201,6 +201,8 @@ export default function App() {
       rating: 3.8,
       reviews: 94,
       added: '2024-02-20',
+      phone: '+1-503-555-2345',
+      instagram: 'lakeside_coffee_pdx'
     },
     {
       id: 9,
@@ -213,6 +215,8 @@ export default function App() {
       rating: 4.3,
       reviews: 167,
       added: '2024-02-25',
+      phone: '+1-512-555-6789',
+      instagram: 'urban_eatery_atx'
     },
     {
       id: 10,
@@ -225,6 +229,8 @@ export default function App() {
       rating: 4.4,
       reviews: 201,
       added: '2024-03-01',
+      phone: '+1-415-555-8901',
+      instagram: 'parkside_cafe_sf'
     },
     {
       id: 11,
@@ -237,6 +243,8 @@ export default function App() {
       rating: 3.7,
       reviews: 123,
       added: '2024-03-05',
+      phone: '+1-602-555-3456',
+      instagram: 'mountainpeak_diner_phx'
     },
     {
       id: 12,
@@ -249,6 +257,8 @@ export default function App() {
       rating: 4.0,
       reviews: 145,
       added: '2024-03-10',
+      phone: '+1-615-555-7890',
+      instagram: 'sunrise_coffee_nash'
     }
   ]);
 
@@ -272,6 +282,8 @@ export default function App() {
   const [showFilterModal, setShowFilterModal] = useState(false);
   const [maintenanceMode, setMaintenanceMode] = useState(false);
   const [emergencyContact, setEmergencyContact] = useState('+1-800-HELP-NOW');
+  const [contactModalOpen, setContactModalOpen] = useState(false);
+  const [contactSpotData, setContactSpotData] = useState(null);
   const fileInputRef = useRef(null);
 
   // New Image Editor State
@@ -891,6 +903,9 @@ export default function App() {
     if (action === 'edit') {
       setEditingSpotData(spot);
       setEditModalOpen(true);
+    } else if (action === 'message') {
+      setContactSpotData(spot);
+      setContactModalOpen(true);
     } else if (action === 'suspend') {
       console.log('Suspending spot:', spot.name);
       // Add suspend logic here
@@ -2076,7 +2091,89 @@ export default function App() {
         {renderModernEditModal()}
         {renderViewDetailsModal()}
         {renderImageEditorModal()}
+        {renderContactModal()}
       </>
+    );
+  };
+
+  const renderContactModal = () => {
+    if (!contactModalOpen || !contactSpotData) return null;
+
+    return (
+      <div className="modern-modal-overlay" onClick={() => setContactModalOpen(false)}>
+        <div className="modern-modal-container" onClick={(e) => e.stopPropagation()}>
+          {/* Modal Header */}
+          <div className="modern-modal-header">
+            <div className="header-content">
+              <div className="spot-info">
+                <div className="spot-avatar">
+                  <MessageSquare size={24} />
+                </div>
+                <div className="spot-details">
+                  <h2 className="spot-name">{contactSpotData.name}</h2>
+                  <p className="spot-category">{contactSpotData.city}, {contactSpotData.state}</p>
+                </div>
+              </div>
+            </div>
+            <button className="modern-close-btn" onClick={() => setContactModalOpen(false)}>
+              <X size={20} />
+            </button>
+          </div>
+
+          {/* Modal Body */}
+          <div className="modern-modal-body">
+            <div className="edit-form-container">
+              {/* Left Column - Contact Information */}
+              <div className="form-column">
+                <div className="modern-section">
+                  <h3 className="section-title">
+                    <div className="title-icon">
+                      <Phone size={16} />
+                    </div>
+                    Contact Options
+                  </h3>
+                  
+                  <div className="contact-options">
+                    <button className="contact-option" onClick={() => {
+                      window.open(`tel:${contactSpotData.phone}`, '_blank');
+                    }}>
+                      <Phone size={20} />
+                      <div className="contact-info">
+                        <div className="contact-label">Call</div>
+                        <div className="contact-value">{contactSpotData.phone}</div>
+                      </div>
+                    </button>
+                    
+                    <button className="contact-option" onClick={() => {
+                      window.open(`https://wa.me/${contactSpotData.phone.replace(/[^0-9]/g, '')}`, '_blank');
+                    }}>
+                      <div className="contact-icon whatsapp">
+                        <MessageSquare size={20} />
+                      </div>
+                      <div className="contact-info">
+                        <div className="contact-label">WhatsApp</div>
+                        <div className="contact-value">Send Message</div>
+                      </div>
+                    </button>
+                    
+                    <button className="contact-option" onClick={() => {
+                      window.open(`https://instagram.com/${contactSpotData.instagram || 'bytspot_official'}`, '_blank');
+                    }}>
+                      <div className="contact-icon instagram">
+                        <Camera size={20} />
+                      </div>
+                      <div className="contact-info">
+                        <div className="contact-label">Instagram</div>
+                        <div className="contact-value">@{contactSpotData.instagram || 'bytspot_official'}</div>
+                      </div>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     );
   };
 
