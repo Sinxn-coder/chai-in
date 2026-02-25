@@ -2145,70 +2145,103 @@ export default function App() {
             <div className="contact-modal-content">
               {/* Contact Title */}
               <div className="contact-header">
-                <h3 className="contact-title">Contact Owner</h3>
-                <p className="contact-subtitle">Choose how you'd like to reach out to the spot owner</p>
+                <div className="contact-icon-large">
+                  <Phone size={32} />
+                </div>
+                <h3 className="contact-title">Get in Touch</h3>
+                <p className="contact-subtitle">Connect with the spot owner through your preferred channel</p>
               </div>
 
-              {/* Contact Buttons Grid */}
-              <div className="contact-buttons-grid">
-                {/* Call Button */}
-                <button 
-                  className="contact-button call-button" 
+              {/* Contact Cards */}
+              <div className="contact-cards-container">
+                {/* Call Card */}
+                <div 
+                  className="contact-card call-card" 
                   onClick={() => {
                     window.open(`tel:${contactSpotData.phone}`, '_blank');
                   }}
                 >
-                  <div className="contact-button-icon">
-                    <Phone size={24} />
+                  <div className="card-background">
+                    <div className="card-icon">
+                      <Phone size={28} />
+                    </div>
+                    <div className="card-shine"></div>
                   </div>
-                  <div className="contact-button-content">
-                    <div className="contact-button-title">Call</div>
-                    <div className="contact-button-subtitle">{contactSpotData.phone}</div>
+                  <div className="card-content">
+                    <h4 className="card-title">Phone Call</h4>
+                    <p className="card-description">Direct voice conversation</p>
+                    <div className="card-action">
+                      <span className="card-value">{contactSpotData.phone}</span>
+                      <div className="card-arrow">→</div>
+                    </div>
                   </div>
-                </button>
+                </div>
 
-                {/* WhatsApp Button */}
-                <button 
-                  className="contact-button whatsapp-button" 
+                {/* WhatsApp Card */}
+                <div 
+                  className="contact-card whatsapp-card" 
                   onClick={() => {
                     window.open(`https://wa.me/${contactSpotData.phone.replace(/[^0-9]/g, '')}`, '_blank');
                   }}
                 >
-                  <div className="contact-button-icon">
-                    <MessageSquare size={24} />
+                  <div className="card-background">
+                    <div className="card-icon">
+                      <MessageSquare size={28} />
+                    </div>
+                    <div className="card-shine"></div>
                   </div>
-                  <div className="contact-button-content">
-                    <div className="contact-button-title">WhatsApp</div>
-                    <div className="contact-button-subtitle">Send Message</div>
+                  <div className="card-content">
+                    <h4 className="card-title">WhatsApp</h4>
+                    <p className="card-description">Instant messaging</p>
+                    <div className="card-action">
+                      <span className="card-value">Send Message</span>
+                      <div className="card-arrow">→</div>
+                    </div>
                   </div>
-                </button>
+                </div>
 
-                {/* Instagram Button */}
-                <button 
-                  className="contact-button instagram-button" 
+                {/* Instagram Card */}
+                <div 
+                  className="contact-card instagram-card" 
                   onClick={() => {
                     window.open(`https://instagram.com/${contactSpotData.instagram || 'bytspot_official'}`, '_blank');
                   }}
                 >
-                  <div className="contact-button-icon">
-                    <Camera size={24} />
+                  <div className="card-background">
+                    <div className="card-icon">
+                      <Camera size={28} />
+                    </div>
+                    <div className="card-shine"></div>
                   </div>
-                  <div className="contact-button-content">
-                    <div className="contact-button-title">Instagram</div>
-                    <div className="contact-button-subtitle">@{contactSpotData.instagram || 'bytspot_official'}</div>
+                  <div className="card-content">
+                    <h4 className="card-title">Instagram</h4>
+                    <p className="card-description">Visual updates & stories</p>
+                    <div className="card-action">
+                      <span className="card-value">@{contactSpotData.instagram || 'bytspot_official'}</span>
+                      <div className="card-arrow">→</div>
+                    </div>
                   </div>
-                </button>
+                </div>
               </div>
 
-              {/* Additional Info */}
-              <div className="contact-additional-info">
-                <div className="info-card">
-                  <div className="info-icon">
-                    <MapPin size={16} />
+              {/* Location Info */}
+              <div className="location-section">
+                <div className="location-header">
+                  <div className="location-icon">
+                    <MapPin size={20} />
                   </div>
-                  <div className="info-text">
-                    <div className="info-label">Location</div>
-                    <div className="info-value">{contactSpotData.address}, {contactSpotData.city}, {contactSpotData.state}</div>
+                  <h4 className="location-title">Spot Location</h4>
+                </div>
+                <div className="location-card">
+                  <div className="location-details">
+                    <div className="location-name">{contactSpotData.name}</div>
+                    <div className="location-address">{contactSpotData.address}</div>
+                    <div className="location-city">{contactSpotData.city}, {contactSpotData.state}</div>
+                  </div>
+                  <div className="location-map">
+                    <div className="map-placeholder">
+                      <MapPin size={24} />
+                    </div>
                   </div>
                 </div>
               </div>
