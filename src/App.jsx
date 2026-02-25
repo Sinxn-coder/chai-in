@@ -1154,8 +1154,6 @@ export default function App() {
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="search-input"
                 />
-                <div className="search-results-counter">0</div>
-                <div className="search-loading"></div>
               </div>
             </div>
             <div className="filter-dropdown">
@@ -1939,8 +1937,6 @@ export default function App() {
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="search-input"
                   />
-                  <div className="search-results-counter">0</div>
-                  <div className="search-loading"></div>
                 </div>
               </div>
               <div className="modern-status-dropdown">
