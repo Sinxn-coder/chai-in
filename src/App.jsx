@@ -292,7 +292,6 @@ export default function App() {
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [activeDropdown, setActiveDropdown] = useState(null);
   const [selectedSpots, setSelectedSpots] = useState([]);
-  const [showFlagPopup, setShowFlagPopup] = useState(false);
   const [spotModalOpen, setSpotModalOpen] = useState(false);
   const [selectedSpot, setSelectedSpot] = useState(null);
   const [sortBy, setSortBy] = useState('name');
@@ -951,12 +950,15 @@ export default function App() {
     document.body.removeChild(link);
   };
 
+  const [showFlagPopup, setShowFlagPopup] = useState(false);
+
   const handleFlagSelected = () => {
     console.log(`Flagging ${selectedSpots.length} selected spots`);
-    // Show popup with flying flag animation
     setShowFlagPopup(true);
-    // Add flag logic here
-    setSelectedSpots([]);
+    setTimeout(() => {
+      setShowFlagPopup(false);
+      setSelectedSpots([]);
+    }, 3000);
   };
 
   const handleVerifySelected = () => {
@@ -2087,6 +2089,23 @@ export default function App() {
             </div>
           </div>
 
+          {/* Flag Popup */}
+          {showFlagPopup && (
+            <div className="flag-popup-overlay">
+              <div className="flag-popup">
+                <div className="flag-popup-content">
+                  <div className="flag-animation-container">
+                    <img src="/flag.svg" alt="Flag" className="flag-svg-animated" />
+                  </div>
+                  <div className="flag-popup-text">
+                    <h3>Spots Flagged Successfully!</h3>
+                    <p>{selectedSpots.length} {selectedSpots.length === 1 ? 'spot' : 'spots'} have been flagged for review.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Statistics Section */}
           <div className="spots-stats">
             <div className="stat-card">
@@ -2709,27 +2728,6 @@ export default function App() {
       <main>
         {renderContent()}
       </main>
-
-      {/* Flag Popup */}
-      <div className={`flag-popup ${showFlagPopup ? 'active' : ''}`} onClick={() => setShowFlagPopup(false)}>
-        <div className="flag-popup-content" onClick={(e) => e.stopPropagation()}>
-          <div className="svg-flag-container">
-            <svg className="svg-flag" width="120" height="120" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <g id="Navigation / Flag">
-                <path id="Vector" d="M4 21V15.6871M4 15.6871C9.81818 11.1377 14.1818 20.2363 20 15.6869V4.31347C14.1818 8.86284 9.81818 -0.236103 4 4.31327V15.6871Z" 
-                      stroke="#FF0000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              </g>
-            </svg>
-          </div>
-          <h2 className="flag-popup-title">Spots Flagged Successfully!</h2>
-          <p className="flag-popup-message">
-            {selectedSpots.length} {selectedSpots.length === 1 ? 'spot has' : 'spots have'} been flagged for review.
-          </p>
-          <button className="flag-popup-close" onClick={() => setShowFlagPopup(false)}>
-            Close
-          </button>
-        </div>
-      </div>
     </>
   );
 }

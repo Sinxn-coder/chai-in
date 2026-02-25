@@ -891,150 +891,179 @@ main {
 }
 
 /* Flag Popup Styles */
-.flag-popup {
+.flag-popup-overlay {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.8);
-  backdrop-filter: blur(10px);
-  z-index: 2000;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(8px);
   display: flex;
   align-items: center;
   justify-content: center;
-  opacity: 0;
-  visibility: hidden;
-  transition: all 0.3s ease;
+  z-index: 2000;
+  animation: fadeIn 0.3s ease-out;
 }
 
-.flag-popup.active {
-  opacity: 1;
-  visibility: visible;
+.flag-popup {
+  background: linear-gradient(135deg, #FF0000 0%, #E60000 100%);
+  border-radius: 20px;
+  padding: 40px;
+  box-shadow: 0 20px 60px rgba(255, 0, 0, 0.3);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(12px);
+  max-width: 400px;
+  width: 90%;
+  animation: slideUp 0.4s ease-out, pulse 2s ease-in-out infinite;
 }
 
 .flag-popup-content {
-  background: linear-gradient(135deg, #FF0000 0%, #E60000 100%);
-  border: 1px solid #CC0000;
-  border-radius: 16px;
-  padding: 32px;
-  box-shadow: 0 20px 60px rgba(255, 0, 0, 0.3);
-  position: relative;
-  overflow: hidden;
-  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
   text-align: center;
-  transform: scale(0.8) translateY(20px);
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.flag-popup.active .flag-popup-content {
-  transform: scale(1) translateY(0);
+.flag-animation-container {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.svg-flag-container {
-  position: absolute;
-  top: -100px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 10;
+.flag-svg-animated {
+  width: 100px;
+  height: 100px;
+  filter: drop-shadow(0 4px 12px rgba(255, 255, 255, 0.3));
+  animation: waveFlag 1.5s ease-in-out infinite, rotateFlag 3s ease-in-out infinite;
+  transform-origin: bottom center;
 }
 
-.svg-flag {
-  animation: svgFlagFly 2s ease-in-out forwards;
-  filter: drop-shadow(0 0 20px rgba(255, 0, 0, 0.6));
-}
-
-@keyframes svgFlagFly {
-  0% {
-    top: -100px;
-    transform: translateX(-50%) rotate(-25deg) scale(0.3);
-    opacity: 0;
-    filter: drop-shadow(0 0 5px rgba(255, 0, 0, 0.2));
-  }
-  20% {
-    opacity: 1;
-    transform: translateX(-50%) rotate(-15deg) scale(0.6);
-    filter: drop-shadow(0 0 15px rgba(255, 0, 0, 0.4));
-  }
-  40% {
-    top: 40%;
-    transform: translateX(-50%) rotate(-5deg) scale(1.1);
-    filter: drop-shadow(0 0 25px rgba(255, 0, 0, 0.7));
-  }
-  60% {
-    top: 20%;
-    transform: translateX(-50%) rotate(5deg) scale(1.2);
-    filter: drop-shadow(0 0 30px rgba(255, 0, 0, 0.9));
-  }
-  80% {
-    top: 15px;
-    transform: translateX(-50%) rotate(-3deg) scale(1.1);
-    filter: drop-shadow(0 0 20px rgba(255, 0, 0, 0.8));
-  }
-  100% {
-    top: 15px;
-    transform: translateX(-50%) rotate(0deg) scale(1);
-    opacity: 1;
-    filter: drop-shadow(0 0 15px rgba(255, 0, 0, 0.7));
-  }
-}
-
-/* Flag wave animation after landing */
-.svg-flag-container.active .svg-flag {
-  animation: svgFlagFly 2s ease-in-out forwards, svgFlagWave 3s ease-in-out infinite 2s;
-}
-
-@keyframes svgFlagWave {
-  0% {
-    transform: translateX(-50%) rotate(0deg) scale(1);
-  }
-  25% {
-    transform: translateX(-50%) rotate(8deg) scale(1.05);
-  }
-  50% {
-    transform: translateX(-50%) rotate(-5deg) scale(0.95);
-  }
-  75% {
-    transform: translateX(-50%) rotate(3deg) scale(1.02);
-  }
-  100% {
-    transform: translateX(-50%) rotate(0deg) scale(1);
-  }
-}
-
-.flag-popup-title {
+.flag-popup-text h3 {
   color: white;
   font-size: 1.5rem;
   font-weight: 700;
-  margin-bottom: 16px;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  margin: 0 0 8px 0;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
-.flag-popup-message {
+.flag-popup-text p {
   color: rgba(255, 255, 255, 0.9);
   font-size: 1rem;
-  margin-bottom: 24px;
-  line-height: 1.5;
+  font-weight: 500;
+  margin: 0;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
 }
 
-.flag-popup-close {
-  background: rgba(255, 255, 255, 0.15);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 12px;
-  padding: 12px 24px;
-  color: white;
-  font-size: 0.875rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  backdrop-filter: blur(8px);
+/* Flag Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
-.flag-popup-close:hover {
-  background: rgba(255, 255, 255, 0.25);
-  border-color: rgba(255, 255, 255, 0.5);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+@keyframes slideUp {
+  from {
+    transform: translateY(50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 20px 60px rgba(255, 0, 0, 0.3);
+  }
+  50% {
+    transform: scale(1.02);
+    box-shadow: 0 25px 70px rgba(255, 0, 0, 0.4);
+  }
+}
+
+@keyframes waveFlag {
+  0%, 100% {
+    transform: skewX(0deg) scaleY(1);
+  }
+  25% {
+    transform: skewX(-2deg) scaleY(1.05);
+  }
+  50% {
+    transform: skewX(0deg) scaleY(1);
+  }
+  75% {
+    transform: skewX(2deg) scaleY(1.05);
+  }
+}
+
+@keyframes rotateFlag {
+  0%, 100% {
+    transform: rotate(-5deg);
+  }
+  50% {
+    transform: rotate(5deg);
+  }
+}
+
+/* Responsive Design for Flag Popup */
+@media (max-width: 768px) {
+  .flag-popup {
+    padding: 30px 20px;
+    margin: 20px;
+  }
+  
+  .flag-animation-container {
+    width: 100px;
+    height: 100px;
+  }
+  
+  .flag-svg-animated {
+    width: 80px;
+    height: 80px;
+  }
+  
+  .flag-popup-text h3 {
+    font-size: 1.25rem;
+  }
+  
+  .flag-popup-text p {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .flag-popup {
+    padding: 25px 15px;
+    margin: 15px;
+  }
+  
+  .flag-animation-container {
+    width: 80px;
+    height: 80px;
+  }
+  
+  .flag-svg-animated {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .flag-popup-text h3 {
+    font-size: 1.1rem;
+  }
+  
+  .flag-popup-text p {
+    font-size: 0.85rem;
+  }
 }
 
 /* Modern Export Button Styles */
