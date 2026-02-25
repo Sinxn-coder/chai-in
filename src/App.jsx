@@ -292,6 +292,7 @@ export default function App() {
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [activeDropdown, setActiveDropdown] = useState(null);
   const [selectedSpots, setSelectedSpots] = useState([]);
+  const [showFlagPopup, setShowFlagPopup] = useState(false);
   const [spotModalOpen, setSpotModalOpen] = useState(false);
   const [selectedSpot, setSelectedSpot] = useState(null);
   const [sortBy, setSortBy] = useState('name');
@@ -952,6 +953,8 @@ export default function App() {
 
   const handleFlagSelected = () => {
     console.log(`Flagging ${selectedSpots.length} selected spots`);
+    // Show popup with flying flag animation
+    setShowFlagPopup(true);
     // Add flag logic here
     setSelectedSpots([]);
   };
@@ -2706,6 +2709,20 @@ export default function App() {
       <main>
         {renderContent()}
       </main>
+
+      {/* Flag Popup */}
+      <div className={`flag-popup ${showFlagPopup ? 'active' : ''}`} onClick={() => setShowFlagPopup(false)}>
+        <div className="flag-popup-content" onClick={(e) => e.stopPropagation()}>
+          <div className="flying-flag">🚩</div>
+          <h2 className="flag-popup-title">Spots Flagged Successfully!</h2>
+          <p className="flag-popup-message">
+            {selectedSpots.length} {selectedSpots.length === 1 ? 'spot has' : 'spots have'} been flagged for review.
+          </p>
+          <button className="flag-popup-close" onClick={() => setShowFlagPopup(false)}>
+            Close
+          </button>
+        </div>
+      </div>
     </>
   );
 }
