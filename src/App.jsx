@@ -1154,7 +1154,6 @@ export default function App() {
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="search-input"
                 />
-                <div className="search-shortcut">⌘K</div>
               </div>
             </div>
             <div className="filter-dropdown">
@@ -1938,7 +1937,6 @@ export default function App() {
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="search-input"
                   />
-                  <div className="search-shortcut">⌘K</div>
                 </div>
               </div>
               <div className="modern-status-dropdown">
