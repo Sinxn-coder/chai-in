@@ -287,6 +287,7 @@ export default function App() {
   const [showStatusDropdown, setShowStatusDropdown] = useState(false);
   const [showSortDropdown, setShowSortDropdown] = useState(false);
   const [showItemsPerPageDropdown, setShowItemsPerPageDropdown] = useState(false);
+  const [allSpotsSelected, setAllSpotsSelected] = useState(false);
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [activeDropdown, setActiveDropdown] = useState(null);
   const [selectedSpots, setSelectedSpots] = useState([]);
@@ -1011,13 +1012,16 @@ export default function App() {
         ? prev.filter(id => id !== spotId)
         : [...prev, spotId]
     );
+    setAllSpotsSelected(false);
   };
 
   const handleSelectAllSpots = () => {
     if (selectedSpots.length === filteredSpots.length) {
       setSelectedSpots([]);
+      setAllSpotsSelected(false);
     } else {
       setSelectedSpots(filteredSpots.map(spot => spot.id));
+      setAllSpotsSelected(true);
     }
   };
 
@@ -1874,7 +1878,7 @@ export default function App() {
       <>
         <div className="spots-management">
           <div className="spots-header">
-            <div className="spots-controls">
+            <div className={`spots-controls ${allSpotsSelected ? 'all-selected' : ''}`}>
               <div className="search-box">
                 <Search size={20} className="search-icon" />
                 <input
@@ -1885,7 +1889,7 @@ export default function App() {
                   className="search-input"
                 />
               </div>
-              <div className="modern-status-dropdown">
+              <div className={`modern-status-dropdown ${allSpotsSelected ? 'hidden' : ''}`}>
                 <div className="status-dropdown-trigger" onClick={() => setShowStatusDropdown(!showStatusDropdown)}>
                   <Filter size={16} />
                   <span className="status-dropdown-label">
@@ -1925,7 +1929,7 @@ export default function App() {
                   </div>
                 )}
               </div>
-              <div className="modern-sort-dropdown">
+              <div className={`modern-sort-dropdown ${allSpotsSelected ? 'hidden' : ''}`}>
                 <div className="sort-dropdown-trigger" onClick={() => setShowSortDropdown(!showSortDropdown)}>
                   <TrendingUp size={16} />
                   <span className="sort-dropdown-label">
@@ -1969,7 +1973,7 @@ export default function App() {
                   </div>
                 )}
               </div>
-              <div className="modern-items-per-page-dropdown">
+              <div className={`modern-items-per-page-dropdown ${allSpotsSelected ? 'hidden' : ''}`}>
                 <div className="items-per-page-trigger" onClick={() => setShowItemsPerPageDropdown(!showItemsPerPageDropdown)}>
                   <Users size={16} />
                   <span className="items-per-page-label">
@@ -2014,7 +2018,7 @@ export default function App() {
               </div>
             </div>
             <div className="spots-actions">
-              <div className="modern-export-button" onClick={handleExport}>
+              <div className={`modern-export-button ${allSpotsSelected ? 'hidden' : ''}`} onClick={handleExport}>
                 <div className="export-button-content">
                   <div className="export-icon-wrapper">
                     <Download size={18} />

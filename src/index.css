@@ -841,6 +841,73 @@ main {
   left: 100%;
 }
 
+/* Spots Controls Hidden State Styles */
+.spots-controls.all-selected {
+  opacity: 0.3;
+  pointer-events: none;
+  filter: blur(1px);
+  transition: all 0.3s ease;
+}
+
+.spots-controls.all-selected .search-box {
+  background: #f9fafb;
+}
+
+.spots-controls.all-selected .search-input {
+  background: #f3f4f6;
+  color: #9ca3af;
+  cursor: not-allowed;
+}
+
+.spots-controls.all-selected .search-icon {
+  color: #9ca3af;
+}
+
+.modern-status-dropdown.hidden,
+.modern-sort-dropdown.hidden,
+.modern-items-per-page-dropdown.hidden,
+.modern-export-button.hidden {
+  opacity: 0.3;
+  pointer-events: none;
+  filter: blur(1px);
+  transform: scale(0.95);
+  transition: all 0.3s ease;
+}
+
+.modern-status-dropdown.hidden .status-dropdown-trigger,
+.modern-sort-dropdown.hidden .sort-dropdown-trigger,
+.modern-items-per-page-dropdown.hidden .items-per-page-trigger,
+.modern-export-button.hidden .export-button-content {
+  background: #f9fafb;
+  color: #9ca3af;
+  cursor: not-allowed;
+}
+
+.modern-status-dropdown.hidden .status-dropdown-label,
+.modern-sort-dropdown.hidden .sort-dropdown-label,
+.modern-items-per-page-dropdown.hidden .items-per-page-label,
+.modern-export-button.hidden .export-main-text {
+  color: #9ca3af;
+}
+
+.modern-status-dropdown.hidden .dropdown-arrow,
+.modern-sort-dropdown.hidden .dropdown-arrow,
+.modern-items-per-page-dropdown.hidden .dropdown-arrow,
+.modern-export-button.hidden .export-arrow {
+  color: #9ca3af;
+}
+
+.modern-status-dropdown.hidden .export-icon-wrapper,
+.modern-sort-dropdown.hidden .export-icon-wrapper,
+.modern-items-per-page-dropdown.hidden .export-icon-wrapper,
+.modern-export-button.hidden .export-icon-wrapper {
+  background: rgba(156, 163, 175, 0.1);
+}
+
+.modern-export-button.hidden .export-sub-text {
+  color: #9ca3af;
+}
+
 /* Responsive Design for Export Button */
 @media (max-width: 768px) {
   .modern-export-button {
