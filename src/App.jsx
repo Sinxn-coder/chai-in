@@ -2713,8 +2713,14 @@ export default function App() {
       {/* Flag Popup */}
       <div className={`flag-popup ${showFlagPopup ? 'active' : ''}`} onClick={() => setShowFlagPopup(false)}>
         <div className="flag-popup-content" onClick={(e) => e.stopPropagation()}>
-          <div className="flying-flag">🚩</div>
-          <div className="red-flag">🚩</div>
+          <div className="svg-flag-container">
+            <svg className="svg-flag" width="120" height="120" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <g id="Navigation / Flag">
+                <path id="Vector" d="M4 21V15.6871M4 15.6871C9.81818 11.1377 14.1818 20.2363 20 15.6869V4.31347C14.1818 8.86284 9.81818 -0.236103 4 4.31327V15.6871Z" 
+                      stroke="#FF0000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </g>
+            </svg>
+          </div>
           <h2 className="flag-popup-title">Spots Flagged Successfully!</h2>
           <p className="flag-popup-message">
             {selectedSpots.length} {selectedSpots.length === 1 ? 'spot has' : 'spots have'} been flagged for review.
