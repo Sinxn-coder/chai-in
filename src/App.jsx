@@ -1853,18 +1853,33 @@ export default function App() {
                   className="search-input"
                 />
               </div>
-              <div className="filter-dropdown">
-                <Filter size={20} className="filter-icon" />
-                <select
-                  value={statusFilter}
-                  onChange={(e) => setStatusFilter(e.target.value)}
-                  className="filter-select"
-                >
-                  <option value="all">All Status</option>
-                  <option value="verified">Verified</option>
-                  <option value="pending">Pending</option>
-                  <option value="flagged">Flagged</option>
-                </select>
+              <div className="modern-status-filter">
+                <div className="status-filter-label">
+                  <Filter size={16} />
+                  Status
+                </div>
+                <div className="status-pills-container">
+                  {[
+                    { value: 'all', label: 'All', color: '#6b7280' },
+                    { value: 'verified', label: 'Verified', color: '#10b981' },
+                    { value: 'pending', label: 'Pending', color: '#f59e0b' },
+                    { value: 'flagged', label: 'Flagged', color: '#ef4444' }
+                  ].map(status => (
+                    <button
+                      key={status.value}
+                      className={`status-pill ${statusFilter === status.value ? 'active' : ''}`}
+                      onClick={() => setStatusFilter(status.value)}
+                      style={{
+                        '--status-color': status.color
+                      }}
+                    >
+                      {status.label}
+                      {statusFilter === status.value && (
+                        <div className="pill-indicator" />
+                      )}
+                    </button>
+                  ))}
+                </div>
               </div>
               <div className="sort-dropdown">
                 <select
