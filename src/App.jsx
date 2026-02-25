@@ -286,6 +286,7 @@ export default function App() {
   const [statusFilter, setStatusFilter] = useState('all');
   const [showStatusDropdown, setShowStatusDropdown] = useState(false);
   const [showSortDropdown, setShowSortDropdown] = useState(false);
+  const [showItemsPerPageDropdown, setShowItemsPerPageDropdown] = useState(false);
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [activeDropdown, setActiveDropdown] = useState(null);
   const [selectedSpots, setSelectedSpots] = useState([]);
@@ -1939,18 +1940,48 @@ export default function App() {
                   </div>
                 )}
               </div>
-              <div className="items-per-page-dropdown">
-                <select
-                  value={itemsPerPage}
-                  onChange={(e) => handleItemsPerPageChange(e.target.value)}
-                  className="items-per-page-select"
-                >
-                  <option value="2">2 per page</option>
-                  <option value="5">5 per page</option>
-                  <option value="10">10 per page</option>
-                  <option value="20">20 per page</option>
-                  <option value="50">50 per page</option>
-                </select>
+              <div className="modern-items-per-page-dropdown">
+                <div className="items-per-page-trigger" onClick={() => setShowItemsPerPageDropdown(!showItemsPerPageDropdown)}>
+                  <Users size={16} />
+                  <span className="items-per-page-label">
+                    {itemsPerPage} per page
+                  </span>
+                  <ChevronDown 
+                    size={16} 
+                    className={`dropdown-arrow ${showItemsPerPageDropdown ? 'open' : ''}`}
+                  />
+                </div>
+                {showItemsPerPageDropdown && (
+                  <div className="items-per-page-menu">
+                    {[
+                      { value: 2, label: '2 per page', icon: '📄', description: 'Minimal view' },
+                      { value: 5, label: '5 per page', icon: '📋', description: 'Compact view' },
+                      { value: 10, label: '10 per page', icon: '📝', description: 'Standard view' },
+                      { value: 20, label: '20 per page', icon: '📊', description: 'Extended view' },
+                      { value: 50, label: '50 per page', icon: '📚', description: 'Maximum view' }
+                    ].map(option => (
+                      <div
+                        key={option.value}
+                        className={`items-per-page-item ${itemsPerPage === option.value ? 'active' : ''}`}
+                        onClick={() => {
+                          handleItemsPerPageChange(option.value);
+                          setShowItemsPerPageDropdown(false);
+                        }}
+                      >
+                        <div className="items-per-page-content">
+                          <div className="items-per-page-main">
+                            <span className="items-per-page-icon">{option.icon}</span>
+                            <span className="items-per-page-text">{option.label}</span>
+                            {itemsPerPage === option.value && (
+                              <div className="items-per-page-checkmark">✓</div>
+                            )}
+                          </div>
+                          <div className="items-per-page-description">{option.description}</div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
             <div className="spots-actions">
