@@ -1,7 +1,6 @@
 .mobile-intro-container {
     min-height: 100vh;
     height: 100dvh; /* Dynamic viewport height for mobile browsers */
-    background: linear-gradient(135deg, #FF0000 0%, #D32F2F 100%);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -21,7 +20,18 @@
     /* Ensure it extends under status bar */
     -webkit-appearance: none;
     appearance: none;
-    /* Remove safe area insets to extend under status bar */
+}
+
+/* Add pseudo-element for background that extends under status bar */
+.mobile-intro-container::before {
+    content: '';
+    position: absolute;
+    top: -100px; /* Extend beyond viewport top */
+    left: -100px;
+    right: -100px;
+    bottom: -100px;
+    background: linear-gradient(135deg, #FF0000 0%, #D32F2F 100%);
+    z-index: -1;
 }
 
 .mobile-intro-content {
