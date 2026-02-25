@@ -293,6 +293,7 @@ export default function App() {
   const [activeDropdown, setActiveDropdown] = useState(null);
   const [selectedSpots, setSelectedSpots] = useState([]);
   const [showFlagConfirm, setShowFlagConfirm] = useState(false);
+  const [showVerifyConfirm, setShowVerifyConfirm] = useState(false);
   const [spotModalOpen, setSpotModalOpen] = useState(false);
   const [selectedSpot, setSelectedSpot] = useState(null);
   const [sortBy, setSortBy] = useState('name');
@@ -967,9 +968,18 @@ export default function App() {
   };
 
   const handleVerifySelected = () => {
+    setShowVerifyConfirm(true);
+  };
+
+  const handleConfirmVerify = () => {
     console.log(`Verifying ${selectedSpots.length} selected spots`);
     // Add verify logic here
     setSelectedSpots([]);
+    setShowVerifyConfirm(false);
+  };
+
+  const handleCancelVerify = () => {
+    setShowVerifyConfirm(false);
   };
 
   const handleDeleteSelected = () => {
@@ -2112,6 +2122,31 @@ export default function App() {
                     <button className="flag-confirm-btn confirm" onClick={handleConfirmFlag}>
                       <Flag size={16} />
                       <span>Flag {selectedSpots.length === 1 ? 'Spot' : 'Spots'}</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Verify Confirmation Popup */}
+          {showVerifyConfirm && (
+            <div className="verify-confirm-overlay">
+              <div className="verify-confirm-popup">
+                <div className="verify-confirm-content">
+                  <div className="verify-confirm-icon">
+                    <CheckCircle size={48} />
+                  </div>
+                  <h3>Verify Selected Spots</h3>
+                  <p>Are you sure you want to verify {selectedSpots.length} {selectedSpots.length === 1 ? 'spot' : 'spots'}? This action will mark them as verified.</p>
+                  <div className="verify-confirm-buttons">
+                    <button className="verify-confirm-btn cancel" onClick={handleCancelVerify}>
+                      <X size={16} />
+                      <span>Cancel</span>
+                    </button>
+                    <button className="verify-confirm-btn confirm" onClick={handleConfirmVerify}>
+                      <CheckCircle size={16} />
+                      <span>Verify {selectedSpots.length === 1 ? 'Spot' : 'Spots'}</span>
                     </button>
                   </div>
                 </div>
