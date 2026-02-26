@@ -35,7 +35,6 @@ import {
   Wrench,
   Bell,
   Search,
-  Filter,
   Download,
   Trash2,
   MoreVertical,
@@ -285,7 +284,6 @@ export default function App() {
   ]);
 
   const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState('all');
   const [showStatusDropdown, setShowStatusDropdown] = useState(false);
   const [showSortDropdown, setShowSortDropdown] = useState(false);
   const [showItemsPerPageDropdown, setShowItemsPerPageDropdown] = useState(false);
@@ -866,10 +864,9 @@ export default function App() {
     return users.filter(user => {
       const matchesSearch = user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         user.email.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchesStatus = statusFilter === 'all' || user.status === statusFilter;
-      return matchesSearch && matchesStatus;
+      return matchesSearch;
     });
-  }, [users, searchTerm, statusFilter]);
+  }, [users, searchTerm]);
 
   // Filter and search spots
   const filteredSpots = useMemo(() => {
@@ -1155,18 +1152,6 @@ export default function App() {
                   className="search-input"
                 />
               </div>
-            </div>
-            <div className="filter-dropdown">
-              <Filter size={20} className="filter-icon" />
-              <select
-                value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value)}
-                className="filter-select"
-              >
-                <option value="all">All Status</option>
-                <option value="active">Active</option>
-                <option value="banned">Banned</option>
-              </select>
             </div>
           </div>
           <div className="users-actions">
