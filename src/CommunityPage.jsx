@@ -217,7 +217,7 @@ export default function CommunityPage() {
                 onClick={() => setActiveSection(section.id)}
               >
                 <section.icon size={18} />
-                {section.name}
+                <span>{section.name}</span>
               </button>
             ))}
           </div>
