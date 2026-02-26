@@ -507,24 +507,6 @@ export default function SettingsPage() {
                     </div>
                   </div>
                 </div>
-                
-                <div className="database-operations">
-                  <h5>Quick Operations</h5>
-                  <div className="operations-grid">
-                    <button className="operation-btn primary">
-                      <Database size={16} />
-                      Backup Database
-                    </button>
-                    <button className="operation-btn secondary">
-                      <Settings size={16} />
-                      Optimize Tables
-                    </button>
-                    <button className="operation-btn secondary">
-                      <Shield size={16} />
-                      Run Diagnostics
-                    </button>
-                  </div>
-                </div>
               </div>
             </div>
 
