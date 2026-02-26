@@ -451,39 +451,79 @@ export default function SettingsPage() {
                   <h4>Database Settings</h4>
                 </div>
                 
-                <div className="database-status">
-                  <div className="status-card active">
-                    <div className="status-icon">
-                      <Database size={20} />
+                <div className="database-overview">
+                  <div className="overview-card">
+                    <div className="overview-icon">
+                      <Database size={24} />
                     </div>
-                    <div className="status-details">
-                      <h5>Database Status</h5>
-                      <p>Connected and operational</p>
+                    <div className="overview-info">
+                      <div className="overview-title">Primary Database</div>
+                      <div className="overview-status">
+                        <div className="status-indicator online"></div>
+                        <span>Connected</span>
+                      </div>
                     </div>
-                    <div className="status-indicator">
-                      <div className="status-dot online"></div>
+                    <div className="overview-actions">
+                      <button className="overview-btn">Configure</button>
                     </div>
                   </div>
                 </div>
                 
-                <div className="database-metrics">
-                  <div className="metric-item">
-                    <div className="metric-value">98.5%</div>
-                    <div className="metric-label">Uptime</div>
+                <div className="database-performance">
+                  <div className="performance-header">
+                    <h5>Performance Metrics</h5>
+                    <button className="refresh-btn">Refresh</button>
                   </div>
-                  <div className="metric-item">
-                    <div className="metric-value">2.4GB</div>
-                    <div className="metric-label">Storage Used</div>
-                  </div>
-                  <div className="metric-item">
-                    <div className="metric-value">1,247</div>
-                    <div className="metric-label">Records</div>
+                  
+                  <div className="metrics-grid">
+                    <div className="metric-card">
+                      <div className="metric-icon">
+                        <Server size={16} />
+                      </div>
+                      <div className="metric-data">
+                        <div className="metric-value">99.8%</div>
+                        <div className="metric-label">Uptime</div>
+                      </div>
+                    </div>
+                    
+                    <div className="metric-card">
+                      <div className="metric-icon">
+                        <Clock size={16} />
+                      </div>
+                      <div className="metric-data">
+                        <div className="metric-value">12ms</div>
+                        <div className="metric-label">Response Time</div>
+                      </div>
+                    </div>
+                    
+                    <div className="metric-card">
+                      <div className="metric-icon">
+                        <Database size={16} />
+                      </div>
+                      <div className="metric-data">
+                        <div className="metric-value">1.2GB</div>
+                        <div className="metric-label">Storage Used</div>
+                      </div>
+                    </div>
                   </div>
                 </div>
                 
-                <div className="database-actions">
-                  <button className="action-btn primary">Optimize Database</button>
-                  <button className="action-btn secondary">Clear Cache</button>
+                <div className="database-operations">
+                  <h5>Quick Operations</h5>
+                  <div className="operations-grid">
+                    <button className="operation-btn primary">
+                      <Database size={16} />
+                      Backup Database
+                    </button>
+                    <button className="operation-btn secondary">
+                      <Settings size={16} />
+                      Optimize Tables
+                    </button>
+                    <button className="operation-btn secondary">
+                      <Shield size={16} />
+                      Run Diagnostics
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
