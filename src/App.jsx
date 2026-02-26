@@ -2542,7 +2542,7 @@ export default function App() {
   };
 
   const renderDashboard = () => {
-    return <DashboardPage />;
+    return <DashboardPage setActiveTab={setActiveTab} />;
   };
 
   const renderContent = () => {

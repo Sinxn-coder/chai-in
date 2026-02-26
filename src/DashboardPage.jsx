@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Bell, Settings, RefreshCw, Users, MapPin, Star, DollarSign, TrendingUp, Activity, Clock, MessageSquare, AlertCircle, Plus, BarChart, FileText, UserPlus, Settings as SettingsIcon, CheckCircle } from 'lucide-react';
 
-const DashboardPage = () => {
+const DashboardPage = ({ setActiveTab }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [showAnalytics, setShowAnalytics] = useState(false);
   const [showReport, setShowReport] = useState(false);
@@ -114,7 +114,7 @@ const DashboardPage = () => {
               <button className="icon-btn" onClick={(e) => { e.stopPropagation(); handleRefresh(); }}>
                 <RefreshCw className={`w-5 h-5 ${isLoading ? 'animate-spin' : ''}`} />
               </button>
-              <button className="icon-btn" onClick={(e) => e.stopPropagation()}>
+              <button className="icon-btn" onClick={(e) => { e.stopPropagation(); setActiveTab('notifications'); }}>
                 <Bell className="w-5 h-5" />
               </button>
               <button className="icon-btn" onClick={(e) => e.stopPropagation()}>
