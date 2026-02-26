@@ -126,19 +126,9 @@ export default function SettingsPage() {
                   
                   <div className="form-group">
                     <label>Admin Role</label>
-                    <div className="role-selector">
-                      <div className="role-option active">
-                        <Crown size={16} />
-                        <span>Super Admin</span>
-                      </div>
-                      <div className="role-option">
-                        <Shield size={16} />
-                        <span>System Admin</span>
-                      </div>
-                      <div className="role-option">
-                        <Lock size={16} />
-                        <span>Security Admin</span>
-                      </div>
+                    <div className="role-display">
+                      <Crown size={16} />
+                      <span>Super Administrator</span>
                     </div>
                   </div>
                   
