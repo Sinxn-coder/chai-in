@@ -5,8 +5,10 @@ import CommunityPage from './CommunityPage';
 import DashboardPage from './DashboardPage';
 import MobileIntro from './MobileIntro';
 import PushNotifications from './PushNotifications';
+import AnalyticsPage from './AnalyticsPage';
 import './DashboardPage.css';
 import './mobile.css';
+import './index.css';
 import {
   Layout,
   Users,
@@ -2560,7 +2562,7 @@ export default function App() {
       case 'community':
         return <CommunityPage />;
       case 'analytics':
-        return <div className="content-placeholder">Analytics Dashboard - Track user engagement, popular spots, revenue metrics, and growth trends.</div>;
+        return <AnalyticsPage />;
       default:
         return <div className="content-placeholder">Welcome to the BytSpot Admin Dashboard.</div>;
     }
