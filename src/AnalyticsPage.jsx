@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { BarChart3, TrendingUp, Users, DollarSign, Eye, Heart, MessageSquare, Calendar, Download, Filter, ChevronDown, Activity, MapPin, Clock, Star, ArrowUp, ArrowDown, Minus } from 'lucide-react';
+import { BarChart3, TrendingUp, Users, DollarSign, Eye, Heart, MessageSquare, Calendar, Download, Filter, ChevronDown, Activity, MapPin, Clock, Star, ArrowUp, ArrowDown, Minus, FileText, Hash, TrendingUp as TrendingIcon, WordCloud } from 'lucide-react';
+import './AnalyticsPage.css';
 
 const AnalyticsPage = () => {
   const [selectedPeriod, setSelectedPeriod] = useState('7d');
@@ -47,6 +48,38 @@ const AnalyticsPage = () => {
       shares: 2341,
       avgEngagementRate: 78.5,
       bounceRate: 21.5
+    },
+    textAnalytics: {
+      totalTexts: 15678,
+      avgTextLength: 145,
+      mostUsedWords: [
+        { word: 'amazing', count: 1234, sentiment: 'positive' },
+        { word: 'location', count: 987, sentiment: 'neutral' },
+        { word: 'beautiful', count: 876, sentiment: 'positive' },
+        { word: 'service', count: 765, sentiment: 'neutral' },
+        { word: 'recommend', count: 654, sentiment: 'positive' },
+        { word: 'expensive', count: 432, sentiment: 'negative' },
+        { word: 'crowded', count: 321, sentiment: 'negative' },
+        { word: 'peaceful', count: 298, sentiment: 'positive' }
+      ],
+      sentimentAnalysis: {
+        positive: 65.2,
+        neutral: 25.8,
+        negative: 9.0
+      },
+      languageDistribution: {
+        english: 78.5,
+        spanish: 12.3,
+        french: 5.2,
+        german: 2.8,
+        other: 1.2
+      },
+      textCategories: {
+        reviews: 45.6,
+        comments: 32.1,
+        descriptions: 15.3,
+        messages: 7.0
+      }
     }
   });
 
@@ -387,6 +420,108 @@ const AnalyticsPage = () => {
             <div className="detail-item">
               <div className="detail-label">Bounce Rate</div>
               <div className="detail-value">{analyticsData.engagementMetrics.bounceRate}%</div>
+            </div>
+          </div>
+        </div>
+
+        <div className="detail-section">
+          <h3><FileText size={18} /> Text Analytics</h3>
+          <div className="text-analytics-grid">
+            <div className="text-overview">
+              <div className="text-stat-card">
+                <div className="text-stat-icon">
+                  <MessageSquare size={20} />
+                </div>
+                <div className="text-stat-content">
+                  <div className="text-stat-value">{analyticsData.textAnalytics.totalTexts.toLocaleString()}</div>
+                  <div className="text-stat-label">Total Texts</div>
+                </div>
+              </div>
+              
+              <div className="text-stat-card">
+                <div className="text-stat-icon">
+                  <FileText size={20} />
+                </div>
+                <div className="text-stat-content">
+                  <div className="text-stat-value">{analyticsData.textAnalytics.avgTextLength}</div>
+                  <div className="text-stat-label">Avg Text Length</div>
+                </div>
+              </div>
+            </div>
+
+            <div className="sentiment-analysis">
+              <h4>Sentiment Analysis</h4>
+              <div className="sentiment-bars">
+                <div className="sentiment-item">
+                  <div className="sentiment-label">Positive</div>
+                  <div className="sentiment-bar">
+                    <div className="sentiment-fill positive" style={{width: `${analyticsData.textAnalytics.sentimentAnalysis.positive}%`}}></div>
+                  </div>
+                  <div className="sentiment-value">{analyticsData.textAnalytics.sentimentAnalysis.positive}%</div>
+                </div>
+                <div className="sentiment-item">
+                  <div className="sentiment-label">Neutral</div>
+                  <div className="sentiment-bar">
+                    <div className="sentiment-fill neutral" style={{width: `${analyticsData.textAnalytics.sentimentAnalysis.neutral}%`}}></div>
+                  </div>
+                  <div className="sentiment-value">{analyticsData.textAnalytics.sentimentAnalysis.neutral}%</div>
+                </div>
+                <div className="sentiment-item">
+                  <div className="sentiment-label">Negative</div>
+                  <div className="sentiment-bar">
+                    <div className="sentiment-fill negative" style={{width: `${analyticsData.textAnalytics.sentimentAnalysis.negative}%`}}></div>
+                  </div>
+                  <div className="sentiment-value">{analyticsData.textAnalytics.sentimentAnalysis.negative}%</div>
+                </div>
+              </div>
+            </div>
+
+            <div className="most-used-words">
+              <h4>Most Used Words</h4>
+              <div className="words-grid">
+                {analyticsData.textAnalytics.mostUsedWords.map((wordData, index) => (
+                  <div key={index} className={`word-card ${wordData.sentiment}`}>
+                    <div className="word-text">{wordData.word}</div>
+                    <div className="word-count">{wordData.count}</div>
+                    <div className="word-sentiment">{wordData.sentiment}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="language-distribution">
+              <h4>Language Distribution</h4>
+              <div className="language-bars">
+                {Object.entries(analyticsData.textAnalytics.languageDistribution).map(([lang, percentage]) => (
+                  <div key={lang} className="language-item">
+                    <div className="language-label">{lang.charAt(0).toUpperCase() + lang.slice(1)}</div>
+                    <div className="language-bar">
+                      <div className="language-fill" style={{width: `${percentage}%`}}></div>
+                    </div>
+                    <div className="language-value">{percentage}%</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="text-categories">
+              <h4>Text Categories</h4>
+              <div className="categories-grid">
+                {Object.entries(analyticsData.textAnalytics.textCategories).map(([category, percentage]) => (
+                  <div key={category} className="category-card">
+                    <div className="category-icon">
+                      {category === 'reviews' && <Star size={16} />}
+                      {category === 'comments' && <MessageSquare size={16} />}
+                      {category === 'descriptions' && <FileText size={16} />}
+                      {category === 'messages' && <MessageSquare size={16} />}
+                    </div>
+                    <div className="category-content">
+                      <div className="category-name">{category.charAt(0).toUpperCase() + category.slice(1)}</div>
+                      <div className="category-percentage">{percentage}%</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
