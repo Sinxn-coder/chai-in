@@ -121,7 +121,6 @@ export default function SettingsPage() {
                     <div className="department-display">
                       <Building size={16} />
                       <span>System Administration</span>
-                      <div className="admin-badge">Fixed</div>
                     </div>
                   </div>
                   
