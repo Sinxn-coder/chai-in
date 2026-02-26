@@ -316,18 +316,6 @@ export default function SettingsPage() {
                     </div>
                   </div>
                 </div>
-                
-                <div className="backup-codes">
-                  <h5>Backup Codes</h5>
-                  <p>Save these backup codes in a secure location</p>
-                  <div className="codes-grid">
-                    <div className="backup-code">1234-5678</div>
-                    <div className="backup-code">9012-3456</div>
-                    <div className="backup-code">7890-1234</div>
-                    <div className="backup-code">5678-9012</div>
-                  </div>
-                  <button className="generate-btn">Generate New Codes</button>
-                </div>
               </div>
             </div>
 
