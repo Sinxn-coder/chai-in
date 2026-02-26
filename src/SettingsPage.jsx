@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { User, Shield, Bell, Database, Crown, Lock, Building, Mail, MapPin, Phone, Key, Server, Users, Settings, Check, X, CreditCard, FileText, Award, Save, Eye, Clock } from 'lucide-react';
+import { User, Shield, Database, Crown, Lock, Building, Mail, MapPin, Phone, Key, Server, Users, Settings, Check, X, CreditCard, FileText, Award, Save, Eye, Clock } from 'lucide-react';
 import './SettingsPage.css';
 
 export default function SettingsPage() {
@@ -8,7 +8,6 @@ export default function SettingsPage() {
   const tabs = [
     { id: 'profile', label: 'Profile', icon: User },
     { id: 'security', label: 'Security', icon: Shield },
-    { id: 'notifications', label: 'Notifications', icon: Bell },
     { id: 'system', label: 'System', icon: Database }
   ];
 
@@ -418,13 +417,6 @@ export default function SettingsPage() {
                 Cancel
               </button>
             </div>
-          </div>
-        )}
-        
-        {activeTab === 'notifications' && (
-          <div className="content-section">
-            <h2>Notification Settings</h2>
-            <p>Configure how you receive notifications</p>
           </div>
         )}
         
