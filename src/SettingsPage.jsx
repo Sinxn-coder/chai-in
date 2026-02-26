@@ -444,32 +444,6 @@ export default function SettingsPage() {
                       </select>
                     </div>
                   </div>
-                  
-                  <div className="system-item">
-                    <div className="system-info">
-                      <h5>Auto Backup</h5>
-                      <p>Automatic system backups</p>
-                    </div>
-                    <div className="system-control">
-                      <label className="switch">
-                        <input type="checkbox" defaultChecked />
-                        <span className="slider"></span>
-                      </label>
-                    </div>
-                  </div>
-                  
-                  <div className="system-item">
-                    <div className="system-info">
-                      <h5>System Logging</h5>
-                      <p>Enable detailed system logs</p>
-                    </div>
-                    <div className="system-control">
-                      <label className="switch">
-                        <input type="checkbox" defaultChecked />
-                        <span className="slider"></span>
-                      </label>
-                    </div>
-                  </div>
                 </div>
               </div>
 
