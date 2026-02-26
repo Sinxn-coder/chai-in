@@ -437,9 +437,7 @@ export default function SettingsPage() {
                     </div>
                     <div className="system-control">
                       <select className="form-input modern">
-                        <option>Production</option>
-                        <option>Development</option>
-                        <option>Staging</option>
+                        <option>Successfully Running</option>
                         <option>Maintenance</option>
                       </select>
                     </div>
