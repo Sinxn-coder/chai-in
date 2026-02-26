@@ -567,45 +567,6 @@ export default function SettingsPage() {
                   </div>
                 </div>
                 
-                <div className="user-activity">
-                  <div className="activity-header">
-                    <h5>Recent Activity</h5>
-                    <button className="view-all-btn">View All</button>
-                  </div>
-                  
-                  <div className="activity-list">
-                    <div className="activity-item">
-                      <div className="activity-avatar">JD</div>
-                      <div className="activity-details">
-                        <div className="activity-user">John Doe</div>
-                        <div className="activity-action">Logged in from New York</div>
-                        <div className="activity-time">2 minutes ago</div>
-                      </div>
-                      <div className="activity-status online"></div>
-                    </div>
-                    
-                    <div className="activity-item">
-                      <div className="activity-avatar">AS</div>
-                      <div className="activity-details">
-                        <div className="activity-user">Alice Smith</div>
-                        <div className="activity-action">Updated profile settings</div>
-                        <div className="activity-time">15 minutes ago</div>
-                      </div>
-                      <div className="activity-status offline"></div>
-                    </div>
-                    
-                    <div className="activity-item">
-                      <div className="activity-avatar">BJ</div>
-                      <div className="activity-details">
-                        <div className="activity-user">Bob Johnson</div>
-                        <div className="activity-action">Created new project</div>
-                        <div className="activity-time">1 hour ago</div>
-                      </div>
-                      <div className="activity-status online"></div>
-                    </div>
-                  </div>
-                </div>
-                
                 <div className="user-management-actions">
                   <h5>Quick Actions</h5>
                   <div className="actions-grid">
