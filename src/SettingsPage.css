@@ -1823,11 +1823,38 @@ input:checked + .slider:before {
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
-.refresh-btn:hover {
+.refresh-btn:hover:not(:disabled) {
   background: #e5e7eb;
   color: #374151;
+}
+
+.refresh-btn.refreshing {
+  background: #3b82f6;
+  color: white;
+  cursor: not-allowed;
+}
+
+.refresh-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.refresh-btn .spinning {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .metrics-grid {

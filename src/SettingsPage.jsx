@@ -4,6 +4,15 @@ import './SettingsPage.css';
 
 export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState('profile');
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  const handleRefresh = () => {
+    setIsRefreshing(true);
+    // Simulate refresh animation for 2 seconds
+    setTimeout(() => {
+      setIsRefreshing(false);
+    }, 2000);
+  };
 
   const tabs = [
     { id: 'profile', label: 'Profile', icon: User },
@@ -472,7 +481,14 @@ export default function SettingsPage() {
                 <div className="database-performance">
                   <div className="performance-header">
                     <h5>Performance Metrics</h5>
-                    <button className="refresh-btn">Refresh</button>
+                    <button 
+                      className={`refresh-btn ${isRefreshing ? 'refreshing' : ''}`}
+                      onClick={handleRefresh}
+                      disabled={isRefreshing}
+                    >
+                      <Clock size={14} className={isRefreshing ? 'spinning' : ''} />
+                      {isRefreshing ? 'Refreshing...' : 'Refresh'}
+                    </button>
                   </div>
                   
                   <div className="metrics-grid">
