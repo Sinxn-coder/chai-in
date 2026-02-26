@@ -237,36 +237,6 @@ export default function SettingsPage() {
                 </div>
               </div>
 
-              <div className="certifications-section">
-                <div className="section-header">
-                  <Award size={18} />
-                  <h4>Professional Certifications</h4>
-                </div>
-                <div className="certification-list">
-                  <div className="cert-item">
-                    <div className="cert-icon">🏆</div>
-                    <div className="cert-details">
-                      <h5>AWS Certified Solutions Architect</h5>
-                      <p>Amazon Web Services • 2023</p>
-                    </div>
-                  </div>
-                  <div className="cert-item">
-                    <div className="cert-icon">🛡️</div>
-                    <div className="cert-details">
-                      <h5>CISSP - Certified Information Systems Security Professional</h5>
-                      <p>(ISC)² • 2022</p>
-                    </div>
-                  </div>
-                  <div className="cert-item">
-                    <div className="cert-icon">☁️</div>
-                    <div className="cert-details">
-                      <h5>Microsoft Certified: Azure Administrator</h5>
-                      <p>Microsoft • 2021</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
               <div className="form-actions">
                 <button className="save-btn modern">
                   <Save size={16} />
