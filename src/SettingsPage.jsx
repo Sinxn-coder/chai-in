@@ -451,39 +451,123 @@ export default function SettingsPage() {
                   <h4>Database Settings</h4>
                 </div>
                 
-                <div className="database-status">
-                  <div className="status-card active">
-                    <div className="status-icon">
-                      <Database size={20} />
+                <div className="database-overview">
+                  <div className="overview-header">
+                    <div className="overview-title">
+                      <h5>Database Overview</h5>
+                      <div className="status-badge online">Connected</div>
                     </div>
-                    <div className="status-details">
-                      <h5>Database Status</h5>
-                      <p>Connected and operational</p>
+                    <div className="overview-actions">
+                      <button className="overview-btn primary">Refresh</button>
+                      <button className="overview-btn secondary">Details</button>
                     </div>
-                    <div className="status-indicator">
-                      <div className="status-dot online"></div>
+                  </div>
+                  
+                  <div className="database-stats">
+                    <div className="stat-row">
+                      <div className="stat-box">
+                        <div className="stat-icon database">
+                          <Database size={16} />
+                        </div>
+                        <div className="stat-content">
+                          <div className="stat-number">MySQL 8.0</div>
+                          <div className="stat-text">Database Type</div>
+                        </div>
+                      </div>
+                      
+                      <div className="stat-box">
+                        <div className="stat-icon storage">
+                          <Server size={16} />
+                        </div>
+                        <div className="stat-content">
+                          <div className="stat-number">2.4GB</div>
+                          <div className="stat-text">Storage Used</div>
+                        </div>
+                      </div>
+                      
+                      <div className="stat-box">
+                        <div className="stat-icon records">
+                          <FileText size={16} />
+                        </div>
+                        <div className="stat-content">
+                          <div className="stat-number">1,247</div>
+                          <div className="stat-text">Total Records</div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
                 
-                <div className="database-metrics">
-                  <div className="metric-item">
-                    <div className="metric-value">98.5%</div>
-                    <div className="metric-label">Uptime</div>
+                <div className="database-controls">
+                  <div className="control-section">
+                    <h6>Database Operations</h6>
+                    <div className="control-buttons">
+                      <button className="control-btn optimize">
+                        <Settings size={14} />
+                        Optimize Database
+                      </button>
+                      <button className="control-btn backup">
+                        <Save size={14} />
+                        Create Backup
+                      </button>
+                      <button className="control-btn restore">
+                        <Database size={14} />
+                        Restore Backup
+                      </button>
+                    </div>
                   </div>
-                  <div className="metric-item">
-                    <div className="metric-value">2.4GB</div>
-                    <div className="metric-label">Storage Used</div>
-                  </div>
-                  <div className="metric-item">
-                    <div className="metric-value">1,247</div>
-                    <div className="metric-label">Records</div>
+                  
+                  <div className="control-section">
+                    <h6>Cache Management</h6>
+                    <div className="cache-status">
+                      <div className="cache-info">
+                        <div className="cache-label">Cache Status</div>
+                        <div className="cache-value">
+                          <span className="status-badge online">Active</span>
+                        </div>
+                      </div>
+                      <button className="cache-btn">Clear Cache</button>
+                    </div>
                   </div>
                 </div>
                 
-                <div className="database-actions">
-                  <button className="action-btn primary">Optimize Database</button>
-                  <button className="action-btn secondary">Clear Cache</button>
+                <div className="database-performance">
+                  <div className="performance-header">
+                    <h6>Performance Metrics</h6>
+                    <div className="performance-time">Last updated: 2 min ago</div>
+                  </div>
+                  
+                  <div className="metrics-grid">
+                    <div className="metric-card">
+                      <div className="metric-header">
+                        <span className="metric-label">Uptime</span>
+                        <span className="metric-value">98.5%</span>
+                      </div>
+                      <div className="metric-bar">
+                        <div className="metric-fill success" style="width: 98.5%"></div>
+                      </div>
+                    </div>
+                    
+                    <div className="metric-card">
+                      <div className="metric-header">
+                        <span className="metric-label">Query Response</span>
+                        <span className="metric-value">45ms</span>
+                      </div>
+                      <div className="metric-bar">
+                        <div className="metric-fill success" style="width: 85%"></div>
+                      </div>
+                    </div>
+                    
+                    <div className="metric-card">
+                      <div className="metric-header">
+                        <span className="metric-label">Connection Pool</span>
+                        <span className="metric-value">67%</span>
+                      </div>
+                      <div className="metric-bar">
+                        <div className="metric-fill warning" style="width: 67%"></div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
