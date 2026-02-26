@@ -533,41 +533,95 @@ export default function SettingsPage() {
                   <h4>User Management</h4>
                 </div>
                 
-                <div className="user-stats">
-                  <div className="stat-card">
-                    <div className="stat-icon">
-                      <User size={20} />
+                <div className="user-overview">
+                  <div className="overview-stats">
+                    <div className="stat-card primary">
+                      <div className="stat-icon">
+                        <Users size={20} />
+                      </div>
+                      <div className="stat-info">
+                        <div className="stat-number">523</div>
+                        <div className="stat-label">Total Users</div>
+                      </div>
                     </div>
-                    <div className="stat-info">
-                      <div className="stat-number">523</div>
-                      <div className="stat-label">Total Users</div>
+                    
+                    <div className="stat-card success">
+                      <div className="stat-icon">
+                        <Shield size={20} />
+                      </div>
+                      <div className="stat-info">
+                        <div className="stat-number">12</div>
+                        <div className="stat-label">Admin Users</div>
+                      </div>
                     </div>
-                  </div>
-                  
-                  <div className="stat-card">
-                    <div className="stat-icon">
-                      <Shield size={20} />
-                    </div>
-                    <div className="stat-info">
-                      <div className="stat-number">12</div>
-                      <div className="stat-label">Admin Users</div>
-                    </div>
-                  </div>
-                  
-                  <div className="stat-card">
-                    <div className="stat-icon">
-                      <Users size={20} />
-                    </div>
-                    <div className="stat-info">
-                      <div className="stat-number">89</div>
-                      <div className="stat-label">Active Now</div>
+                    
+                    <div className="stat-card info">
+                      <div className="stat-icon">
+                        <User size={20} />
+                      </div>
+                      <div className="stat-info">
+                        <div className="stat-number">89</div>
+                        <div className="stat-label">Active Now</div>
+                      </div>
                     </div>
                   </div>
                 </div>
                 
-                <div className="user-actions">
-                  <button className="action-btn primary">Manage Users</button>
-                  <button className="action-btn secondary">Export User Data</button>
+                <div className="user-activity">
+                  <div className="activity-header">
+                    <h5>Recent Activity</h5>
+                    <button className="view-all-btn">View All</button>
+                  </div>
+                  
+                  <div className="activity-list">
+                    <div className="activity-item">
+                      <div className="activity-avatar">JD</div>
+                      <div className="activity-details">
+                        <div className="activity-user">John Doe</div>
+                        <div className="activity-action">Logged in from New York</div>
+                        <div className="activity-time">2 minutes ago</div>
+                      </div>
+                      <div className="activity-status online"></div>
+                    </div>
+                    
+                    <div className="activity-item">
+                      <div className="activity-avatar">AS</div>
+                      <div className="activity-details">
+                        <div className="activity-user">Alice Smith</div>
+                        <div className="activity-action">Updated profile settings</div>
+                        <div className="activity-time">15 minutes ago</div>
+                      </div>
+                      <div className="activity-status offline"></div>
+                    </div>
+                    
+                    <div className="activity-item">
+                      <div className="activity-avatar">BJ</div>
+                      <div className="activity-details">
+                        <div className="activity-user">Bob Johnson</div>
+                        <div className="activity-action">Created new project</div>
+                        <div className="activity-time">1 hour ago</div>
+                      </div>
+                      <div className="activity-status online"></div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="user-management-actions">
+                  <h5>Quick Actions</h5>
+                  <div className="actions-grid">
+                    <button className="action-card primary">
+                      <Users size={16} />
+                      <span>Manage Users</span>
+                    </button>
+                    <button className="action-card secondary">
+                      <Shield size={16} />
+                      <span>Permissions</span>
+                    </button>
+                    <button className="action-card secondary">
+                      <Database size={16} />
+                      <span>Export Data</span>
+                    </button>
+                  </div>
                 </div>
               </div>
 
