@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { User, Shield, Bell, Database, Crown, Lock, Building, Mail, MapPin, Phone, Key, Server, Users, Settings, Check, X, CreditCard, FileText, Award, Save } from 'lucide-react';
+import { User, Shield, Bell, Database, Crown, Lock, Building, Mail, MapPin, Phone, Key, Server, Users, Settings, Check, X, CreditCard, FileText, Award, Save, Eye, Clock } from 'lucide-react';
 import './SettingsPage.css';
 
 export default function SettingsPage() {
@@ -253,8 +253,183 @@ export default function SettingsPage() {
         
         {activeTab === 'security' && (
           <div className="content-section">
-            <h2>Security Settings</h2>
-            <p>Manage your security and privacy settings</p>
+            <div className="security-grid">
+              <div className="security-section">
+                <div className="section-header">
+                  <Lock size={18} />
+                  <h4>Password Security</h4>
+                </div>
+                
+                <div className="form-group">
+                  <label>Current Password</label>
+                  <div className="input-with-icon">
+                    <Lock size={16} />
+                    <input type="password" className="form-input modern" placeholder="Enter current password" />
+                  </div>
+                </div>
+                
+                <div className="form-group">
+                  <label>New Password</label>
+                  <div className="input-with-icon">
+                    <Key size={16} />
+                    <input type="password" className="form-input modern" placeholder="Enter new password" />
+                  </div>
+                </div>
+                
+                <div className="form-group">
+                  <label>Confirm New Password</label>
+                  <div className="input-with-icon">
+                    <Lock size={16} />
+                    <input type="password" className="form-input modern" placeholder="Confirm new password" />
+                  </div>
+                </div>
+                
+                <div className="password-strength">
+                  <div className="strength-label">Password Strength:</div>
+                  <div className="strength-bar">
+                    <div className="strength-fill strong"></div>
+                  </div>
+                  <span className="strength-text">Strong</span>
+                </div>
+              </div>
+
+              <div className="security-section">
+                <div className="section-header">
+                  <Shield size={18} />
+                  <h4>Two-Factor Authentication</h4>
+                </div>
+                
+                <div className="two-factor-status">
+                  <div className="status-card enabled">
+                    <div className="status-icon">
+                      <Check size={20} />
+                    </div>
+                    <div className="status-details">
+                      <h5>2FA Enabled</h5>
+                      <p>Authenticator app configured</p>
+                    </div>
+                    <div className="status-toggle">
+                      <label className="switch">
+                        <input type="checkbox" defaultChecked />
+                        <span className="slider"></span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="backup-codes">
+                  <h5>Backup Codes</h5>
+                  <p>Save these backup codes in a secure location</p>
+                  <div className="codes-grid">
+                    <div className="backup-code">1234-5678</div>
+                    <div className="backup-code">9012-3456</div>
+                    <div className="backup-code">7890-1234</div>
+                    <div className="backup-code">5678-9012</div>
+                  </div>
+                  <button className="generate-btn">Generate New Codes</button>
+                </div>
+              </div>
+            </div>
+
+            <div className="security-grid">
+              <div className="security-section">
+                <div className="section-header">
+                  <Eye size={18} />
+                  <h4>Privacy Settings</h4>
+                </div>
+                
+                <div className="privacy-options">
+                  <div className="privacy-item">
+                    <div className="privacy-info">
+                      <h5>Profile Visibility</h5>
+                      <p>Control who can see your profile</p>
+                    </div>
+                    <div className="privacy-control">
+                      <select className="form-input modern">
+                        <option>Admin Only</option>
+                        <option>System Users</option>
+                        <option>Public</option>
+                      </select>
+                    </div>
+                  </div>
+                  
+                  <div className="privacy-item">
+                    <div className="privacy-info">
+                      <h5>Activity Status</h5>
+                      <p>Show when you're online</p>
+                    </div>
+                    <div className="privacy-control">
+                      <label className="switch">
+                        <input type="checkbox" defaultChecked />
+                        <span className="slider"></span>
+                      </label>
+                    </div>
+                  </div>
+                  
+                  <div className="privacy-item">
+                    <div className="privacy-info">
+                      <h5>Login Alerts</h5>
+                      <p>Get notified of new login attempts</p>
+                    </div>
+                    <div className="privacy-control">
+                      <label className="switch">
+                        <input type="checkbox" defaultChecked />
+                        <span className="slider"></span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="security-section">
+                <div className="section-header">
+                  <Clock size={18} />
+                  <h4>Session Management</h4>
+                </div>
+                
+                <div className="active-sessions">
+                  <h5>Active Sessions</h5>
+                  <div className="session-list">
+                    <div className="session-item current">
+                      <div className="session-info">
+                        <div className="session-device">Current Device</div>
+                        <div className="session-details">
+                          Chrome on Windows • Last active: Now
+                        </div>
+                      </div>
+                      <div className="session-status">
+                        <div className="status-badge online">Current</div>
+                      </div>
+                    </div>
+                    
+                    <div className="session-item">
+                      <div className="session-info">
+                        <div className="session-device">Mobile Device</div>
+                        <div className="session-details">
+                          Safari on iPhone • Last active: 2 hours ago
+                        </div>
+                      </div>
+                      <div className="session-actions">
+                        <button className="terminate-btn">Terminate</button>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <button className="terminate-all-btn">Terminate All Other Sessions</button>
+                </div>
+              </div>
+            </div>
+
+            <div className="security-actions">
+              <button className="save-btn modern">
+                <Save size={16} />
+                Save Security Settings
+              </button>
+              <button className="cancel-btn modern">
+                <X size={16} />
+                Cancel
+              </button>
+            </div>
           </div>
         )}
         
