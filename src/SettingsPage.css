@@ -772,6 +772,37 @@ small {
   padding-left: 2.75rem;
 }
 
+.department-display {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.department-display svg {
+  position: absolute;
+  left: 1rem;
+  color: #6b7280;
+  z-index: 1;
+}
+
+.department-display .form-input.modern {
+  padding-left: 2.75rem;
+}
+
+.department-display .form-input.modern:disabled {
+  background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+  color: #1f2937;
+  font-weight: 500;
+  border-color: #e2e8f0;
+  cursor: not-allowed;
+}
+
+.department-display small {
+  margin-top: 0.5rem;
+  color: #64748b;
+  font-style: italic;
+}
+
 .select-wrapper {
   position: relative;
 }

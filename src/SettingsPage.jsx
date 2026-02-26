@@ -118,14 +118,10 @@ export default function SettingsPage() {
                   
                   <div className="form-group">
                     <label>Department</label>
-                    <div className="select-wrapper">
-                      <select className="form-input modern">
-                        <option>System Administration</option>
-                        <option>IT Operations</option>
-                        <option>Security Team</option>
-                        <option>Development</option>
-                        <option>Management</option>
-                      </select>
+                    <div className="department-display">
+                      <Building size={16} />
+                      <input type="text" className="form-input modern" value="Main" disabled />
+                      <small>Administrator department - Main system administration</small>
                     </div>
                   </div>
                   
