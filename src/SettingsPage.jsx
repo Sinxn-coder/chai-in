@@ -237,14 +237,6 @@ export default function SettingsPage() {
                 </div>
               </div>
 
-              <div className="bio-section">
-                <div className="section-header">
-                  <FileText size={18} />
-                  <h4>Admin Bio</h4>
-                </div>
-                <textarea className="bio-textarea" placeholder="Describe your administrative responsibilities, expertise, and experience..."></textarea>
-              </div>
-
               <div className="certifications-section">
                 <div className="section-header">
                   <Award size={18} />
