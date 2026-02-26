@@ -422,8 +422,227 @@ export default function SettingsPage() {
         
         {activeTab === 'system' && (
           <div className="content-section">
-            <h2>System Settings</h2>
-            <p>Manage system-wide configurations</p>
+            <div className="system-grid">
+              <div className="system-section">
+                <div className="section-header">
+                  <Server size={18} />
+                  <h4>System Configuration</h4>
+                </div>
+                
+                <div className="system-options">
+                  <div className="system-item">
+                    <div className="system-info">
+                      <h5>System Mode</h5>
+                      <p>Current operational mode</p>
+                    </div>
+                    <div className="system-control">
+                      <select className="form-input modern">
+                        <option>Production</option>
+                        <option>Development</option>
+                        <option>Staging</option>
+                        <option>Maintenance</option>
+                      </select>
+                    </div>
+                  </div>
+                  
+                  <div className="system-item">
+                    <div className="system-info">
+                      <h5>Auto Backup</h5>
+                      <p>Automatic system backups</p>
+                    </div>
+                    <div className="system-control">
+                      <label className="switch">
+                        <input type="checkbox" defaultChecked />
+                        <span className="slider"></span>
+                      </label>
+                    </div>
+                  </div>
+                  
+                  <div className="system-item">
+                    <div className="system-info">
+                      <h5>System Logging</h5>
+                      <p>Enable detailed system logs</p>
+                    </div>
+                    <div className="system-control">
+                      <label className="switch">
+                        <input type="checkbox" defaultChecked />
+                        <span className="slider"></span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="system-section">
+                <div className="section-header">
+                  <Database size={18} />
+                  <h4>Database Settings</h4>
+                </div>
+                
+                <div className="database-status">
+                  <div className="status-card active">
+                    <div className="status-icon">
+                      <Database size={20} />
+                    </div>
+                    <div className="status-details">
+                      <h5>Database Status</h5>
+                      <p>Connected and operational</p>
+                    </div>
+                    <div className="status-indicator">
+                      <div className="status-dot online"></div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="database-metrics">
+                  <div className="metric-item">
+                    <div className="metric-value">98.5%</div>
+                    <div className="metric-label">Uptime</div>
+                  </div>
+                  <div className="metric-item">
+                    <div className="metric-value">2.4GB</div>
+                    <div className="metric-label">Storage Used</div>
+                  </div>
+                  <div className="metric-item">
+                    <div className="metric-value">1,247</div>
+                    <div className="metric-label">Records</div>
+                  </div>
+                </div>
+                
+                <div className="database-actions">
+                  <button className="action-btn primary">Optimize Database</button>
+                  <button className="action-btn secondary">Clear Cache</button>
+                </div>
+              </div>
+            </div>
+
+            <div className="system-grid">
+              <div className="system-section">
+                <div className="section-header">
+                  <Users size={18} />
+                  <h4>User Management</h4>
+                </div>
+                
+                <div className="user-stats">
+                  <div className="stat-card">
+                    <div className="stat-icon">
+                      <User size={20} />
+                    </div>
+                    <div className="stat-info">
+                      <div className="stat-number">523</div>
+                      <div className="stat-label">Total Users</div>
+                    </div>
+                  </div>
+                  
+                  <div className="stat-card">
+                    <div className="stat-icon">
+                      <Shield size={20} />
+                    </div>
+                    <div className="stat-info">
+                      <div className="stat-number">12</div>
+                      <div className="stat-label">Admin Users</div>
+                    </div>
+                  </div>
+                  
+                  <div className="stat-card">
+                    <div className="stat-icon">
+                      <Users size={20} />
+                    </div>
+                    <div className="stat-info">
+                      <div className="stat-number">89</div>
+                      <div className="stat-label">Active Now</div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="user-actions">
+                  <button className="action-btn primary">Manage Users</button>
+                  <button className="action-btn secondary">Export User Data</button>
+                </div>
+              </div>
+
+              <div className="system-section">
+                <div className="section-header">
+                  <Settings size={18} />
+                  <h4>System Maintenance</h4>
+                </div>
+                
+                <div className="maintenance-options">
+                  <div className="maintenance-item">
+                    <div className="maintenance-info">
+                      <h5>Cleanup Temporary Files</h5>
+                      <p>Remove unnecessary temporary data</p>
+                    </div>
+                    <button className="maintenance-btn">Run Cleanup</button>
+                  </div>
+                  
+                  <div className="maintenance-item">
+                    <div className="maintenance-info">
+                      <h5>System Health Check</h5>
+                      <p>Perform comprehensive system diagnostics</p>
+                    </div>
+                    <button className="maintenance-btn">Run Check</button>
+                  </div>
+                  
+                  <div className="maintenance-item">
+                    <div className="maintenance-info">
+                      <h5>Update System</h5>
+                      <p>Check and apply system updates</p>
+                    </div>
+                    <button className="maintenance-btn">Check Updates</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="system-section full-width">
+              <div className="section-header">
+                <Clock size={18} />
+                <h4>System Information</h4>
+              </div>
+              
+              <div className="system-info-grid">
+                <div className="info-item">
+                  <div className="info-label">System Version</div>
+                  <div className="info-value">v2.4.1</div>
+                </div>
+                <div className="info-item">
+                  <div className="info-label">Last Updated</div>
+                  <div className="info-value">2 days ago</div>
+                </div>
+                <div className="info-item">
+                  <div className="info-label">Server Status</div>
+                  <div className="info-value">
+                    <span className="status-badge online">Operational</span>
+                  </div>
+                </div>
+                <div className="info-item">
+                  <div className="info-label">API Version</div>
+                  <div className="info-value">v1.3.0</div>
+                </div>
+                <div className="info-item">
+                  <div className="info-label">Database Version</div>
+                  <div className="info-value">MySQL 8.0</div>
+                </div>
+                <div className="info-item">
+                  <div className="info-label">Cache Status</div>
+                  <div className="info-value">
+                    <span className="status-badge online">Active</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="system-actions">
+              <button className="save-btn modern">
+                <Save size={16} />
+                Save System Settings
+              </button>
+              <button className="cancel-btn modern">
+                <X size={16} />
+                Cancel
+              </button>
+            </div>
           </div>
         )}
       </div>
