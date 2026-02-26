@@ -826,10 +826,10 @@ export default function CommunityPage() {
                         <p>Automatically remove posts containing excessive promotional language or links</p>
                       </div>
                       <div className="rule-status active">
-                        <button className="modern-switch active" onClick={() => {}}>
-                          <span className="switch-indicator"></span>
-                          <span className="switch-text">ON</span>
-                        </button>
+                        <label className="toggle-switch">
+                          <input type="checkbox" defaultChecked />
+                          <span className="toggle-slider"></span>
+                        </label>
                       </div>
                     </div>
                     <div className="rule-item">
@@ -838,10 +838,10 @@ export default function CommunityPage() {
                         <p>Flag posts containing profanity or inappropriate language for manual review</p>
                       </div>
                       <div className="rule-status active">
-                        <button className="modern-switch active" onClick={() => {}}>
-                          <span className="switch-indicator"></span>
-                          <span className="switch-text">ON</span>
-                        </button>
+                        <label className="toggle-switch">
+                          <input type="checkbox" defaultChecked />
+                          <span className="toggle-slider"></span>
+                        </label>
                       </div>
                     </div>
                     <div className="rule-item">
@@ -850,10 +850,10 @@ export default function CommunityPage() {
                         <p>Identify and flag potentially duplicate or copied content</p>
                       </div>
                       <div className="rule-status inactive">
-                        <button className="modern-switch" onClick={() => {}}>
-                          <span className="switch-indicator"></span>
-                          <span className="switch-text">OFF</span>
-                        </button>
+                        <label className="toggle-switch">
+                          <input type="checkbox" />
+                          <span className="toggle-slider"></span>
+                        </label>
                       </div>
                     </div>
                   </div>
@@ -964,20 +964,20 @@ export default function CommunityPage() {
                         Allow External Links
                         <small>Users can include links in posts</small>
                       </label>
-                      <button className="modern-switch active" onClick={() => {}}>
-                        <span className="switch-indicator"></span>
-                        <span className="switch-text">ON</span>
-                      </button>
+                      <label className="toggle-switch">
+                        <input type="checkbox" defaultChecked />
+                        <span className="toggle-slider"></span>
+                      </label>
                     </div>
                     <div className="setting-item">
                       <label className="setting-label">
                         Require Post Approval
                         <small>All posts need moderator approval</small>
                       </label>
-                      <button className="modern-switch" onClick={() => {}}>
-                        <span className="switch-indicator"></span>
-                        <span className="switch-text">OFF</span>
-                      </button>
+                      <label className="toggle-switch">
+                        <input type="checkbox" />
+                        <span className="toggle-slider"></span>
+                      </label>
                     </div>
                   </div>
                 </div>
@@ -994,10 +994,10 @@ export default function CommunityPage() {
                         Auto-Moderation
                         <small>Automatically detect and flag inappropriate content</small>
                       </label>
-                      <button className="modern-switch active" onClick={() => {}}>
-                        <span className="switch-indicator"></span>
-                        <span className="switch-text">ON</span>
-                      </button>
+                      <label className="toggle-switch">
+                        <input type="checkbox" defaultChecked />
+                        <span className="toggle-slider"></span>
+                      </label>
                     </div>
                     <div className="setting-item">
                       <label className="setting-label">
@@ -1052,40 +1052,40 @@ export default function CommunityPage() {
                         New Post Notifications
                         <small>Notify moderators of new posts</small>
                       </label>
-                      <button className="modern-switch active" onClick={() => {}}>
-                        <span className="switch-indicator"></span>
-                        <span className="switch-text">ON</span>
-                      </button>
+                      <label className="toggle-switch">
+                        <input type="checkbox" defaultChecked />
+                        <span className="toggle-slider"></span>
+                      </label>
                     </div>
                     <div className="setting-item">
                       <label className="setting-label">
                         Report Notifications
                         <small>Notify when content is reported</small>
                       </label>
-                      <button className="modern-switch active" onClick={() => {}}>
-                        <span className="switch-indicator"></span>
-                        <span className="switch-text">ON</span>
-                      </button>
+                      <label className="toggle-switch">
+                        <input type="checkbox" defaultChecked />
+                        <span className="toggle-slider"></span>
+                      </label>
                     </div>
                     <div className="setting-item">
                       <label className="setting-label">
                         User Join Notifications
                         <small>Notify when new users join</small>
                       </label>
-                      <button className="modern-switch" onClick={() => {}}>
-                        <span className="switch-indicator"></span>
-                        <span className="switch-text">OFF</span>
-                      </button>
+                      <label className="toggle-switch">
+                        <input type="checkbox" />
+                        <span className="toggle-slider"></span>
+                      </label>
                     </div>
                     <div className="setting-item">
                       <label className="setting-label">
                         Email Notifications
                         <small>Send notifications via email</small>
                       </label>
-                      <button className="modern-switch active" onClick={() => {}}>
-                        <span className="switch-indicator"></span>
-                        <span className="switch-text">ON</span>
-                      </button>
+                      <label className="toggle-switch">
+                        <input type="checkbox" defaultChecked />
+                        <span className="toggle-slider"></span>
+                      </label>
                     </div>
                   </div>
                 </div>

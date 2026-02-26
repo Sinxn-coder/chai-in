@@ -1411,144 +1411,89 @@
   margin: 0;
 }
 
-.modern-switch {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 16px;
-  border: 2px solid #e5e7eb;
-  border-radius: 24px;
-  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-  color: #6b7280;
-  font-size: 12px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+.toggle-switch {
   position: relative;
-  overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  display: inline-block;
+  width: 56px;
+  height: 28px;
 }
 
-.modern-switch::before {
-  content: '';
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggle-slider {
   position: absolute;
+  cursor: pointer;
   top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 0, 0, 0.1), transparent);
-  transition: left 0.5s ease;
-  z-index: 1;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #cbd5e1;
+  transition: .4s;
+  border-radius: 28px;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.modern-switch:hover::before {
-  left: 100%;
-}
-
-.modern-switch:hover {
-  transform: translateY(-2px) scale(1.05);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
-  border-color: #d1d5db;
-}
-
-.modern-switch.active {
-  background: linear-gradient(135deg, #FF0000 0%, #cc0000 100%);
-  border-color: #FF0000;
-  color: white;
-  box-shadow: 0 4px 16px rgba(255, 0, 0, 0.3);
-}
-
-.modern-switch.active:hover {
-  background: linear-gradient(135deg, #ff1a1a 0%, #e60000 100%);
-  box-shadow: 0 8px 24px rgba(255, 0, 0, 0.4);
-  transform: translateY(-2px) scale(1.05);
-}
-
-.switch-indicator {
-  width: 8px;
-  height: 8px;
+.toggle-slider:before {
+  position: absolute;
+  content: "";
+  height: 20px;
+  width: 20px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  transition: .4s;
   border-radius: 50%;
-  background: #9ca3af;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
-  z-index: 2;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-.modern-switch.active .switch-indicator {
-  background: white;
-  box-shadow: 0 2px 8px rgba(255, 255, 255, 0.5);
-  animation: pulse-indicator 2s infinite;
+input:checked + .toggle-slider {
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-@keyframes pulse-indicator {
-  0% {
-    box-shadow: 0 2px 8px rgba(255, 255, 255, 0.5);
-  }
-  50% {
-    box-shadow: 0 2px 12px rgba(255, 255, 255, 0.8);
-  }
-  100% {
-    box-shadow: 0 2px 8px rgba(255, 255, 255, 0.5);
-  }
-}
-
-.switch-text {
-  font-size: 11px;
-  font-weight: 700;
-  position: relative;
-  z-index: 2;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.modern-switch:hover .switch-text {
-  font-weight: 800;
+input:checked + .toggle-slider:before {
+  transform: translateX(28px);
 }
 
 /* Settings specific styling */
-.setting-item:has(.modern-switch) {
+.setting-item:has(.toggle-switch) {
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding: 20px 24px;
-  border: 1px solid #e5e7eb;
+  padding: 20px;
+  background: #f8fafc;
+  border: 2px solid #e5e7eb;
   border-radius: 16px;
-  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease;
 }
 
-.setting-item:has(.modern-switch):hover {
-  background: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%);
+.setting-item:has(.toggle-switch):hover {
+  background: #f3f4f6;
   border-color: #d1d5db;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-  transform: translateY(-2px);
 }
 
-.setting-item:has(.modern-switch) .setting-label {
+.setting-item:has(.toggle-switch) .setting-label {
   flex: 1;
   margin: 0;
 }
 
-.rule-status:has(.modern-switch) {
-  align-self: center;
-}
-
+/* Responsive design for settings */
 @media (max-width: 768px) {
-  .modern-switch {
-    padding: 6px 12px;
-    font-size: 10px;
+  .settings-grid {
+    grid-template-columns: 1fr;
   }
   
-  .setting-item:has(.modern-switch) {
+  .setting-item:has(.toggle-switch) {
     flex-direction: column;
     align-items: flex-start;
     gap: 12px;
   }
   
-  .setting-item:has(.modern-switch) .modern-switch {
+  .setting-item:has(.toggle-switch) .toggle-switch {
     align-self: flex-end;
   }
 }
