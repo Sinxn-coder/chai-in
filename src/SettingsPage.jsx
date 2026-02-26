@@ -120,8 +120,8 @@ export default function SettingsPage() {
                     <label>Department</label>
                     <div className="department-display">
                       <Building size={16} />
-                      <input type="text" className="form-input modern" value="Main" disabled />
-                      <small>Administrator department - Main system administration</small>
+                      <span>System Administration</span>
+                      <div className="admin-badge">Fixed</div>
                     </div>
                   </div>
                   

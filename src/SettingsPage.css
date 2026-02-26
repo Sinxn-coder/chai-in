@@ -773,34 +773,32 @@ small {
 }
 
 .department-display {
-  position: relative;
   display: flex;
   align-items: center;
+  gap: 0.75rem;
+  padding: 0.875rem;
+  background: #f8fafc;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  color: #374151;
+  font-weight: 500;
 }
 
 .department-display svg {
-  position: absolute;
-  left: 1rem;
-  color: #6b7280;
-  z-index: 1;
+  color: #3b82f6;
+  flex-shrink: 0;
 }
 
-.department-display .form-input.modern {
-  padding-left: 2.75rem;
-}
-
-.department-display .form-input.modern:disabled {
-  background: linear-gradient(135deg, #f8fafc, #f1f5f9);
-  color: #1f2937;
-  font-weight: 500;
-  border-color: #e2e8f0;
-  cursor: not-allowed;
-}
-
-.department-display small {
-  margin-top: 0.5rem;
-  color: #64748b;
-  font-style: italic;
+.admin-badge {
+  margin-left: auto;
+  padding: 0.25rem 0.5rem;
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  color: white;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .select-wrapper {
