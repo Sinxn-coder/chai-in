@@ -35,6 +35,7 @@ import {
   Wrench,
   Bell,
   Search,
+  Filter,
   Download,
   Trash2,
   MoreVertical,
@@ -284,6 +285,7 @@ export default function App() {
   ]);
 
   const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
   const [showStatusDropdown, setShowStatusDropdown] = useState(false);
   const [showSortDropdown, setShowSortDropdown] = useState(false);
   const [showItemsPerPageDropdown, setShowItemsPerPageDropdown] = useState(false);
@@ -864,9 +866,10 @@ export default function App() {
     return users.filter(user => {
       const matchesSearch = user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         user.email.toLowerCase().includes(searchTerm.toLowerCase());
-      return matchesSearch;
+      const matchesStatus = statusFilter === 'all' || user.status === statusFilter;
+      return matchesSearch && matchesStatus;
     });
-  }, [users, searchTerm]);
+  }, [users, searchTerm, statusFilter]);
 
   // Filter and search spots
   const filteredSpots = useMemo(() => {
