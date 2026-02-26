@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { BarChart3, TrendingUp, Users, DollarSign, Eye, Heart, MessageSquare, Calendar, Download, Filter, ChevronDown, Activity, MapPin, Clock, Star, ArrowUp, ArrowDown, Minus } from 'lucide-react';
-import './AnalyticsPage.css';
 
 const AnalyticsPage = () => {
   const [selectedPeriod, setSelectedPeriod] = useState('7d');

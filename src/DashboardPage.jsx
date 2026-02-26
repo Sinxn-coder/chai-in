@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Bell, Settings, RefreshCw, Users, MapPin, Star, DollarSign, TrendingUp, Activity, Clock, MessageSquare, AlertCircle, Plus, BarChart, FileText, UserPlus, Settings as SettingsIcon, CheckCircle } from 'lucide-react';
+import { Bell, Settings, RefreshCw, Users, MapPin, Star, DollarSign, TrendingUp, Activity, Clock, MessageSquare, AlertCircle, Plus, BarChart, FileText, UserPlus, Settings as SettingsIcon, CheckCircle } from 'lucide-react';
 
 const DashboardPage = () => {
-  const [searchQuery, setSearchQuery] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [showAnalytics, setShowAnalytics] = useState(false);
   const [showReport, setShowReport] = useState(false);
@@ -112,16 +111,6 @@ const DashboardPage = () => {
               <p className="dashboard-subtitle">Monitor your platform performance and key metrics</p>
             </div>
             <div className="header-actions">
-              <div className="search-box">
-                <Search className="w-5 h-5 text-gray-400" />
-                <input
-                  type="text"
-                  placeholder="Search..."
-                  value={searchQuery}
-                  onChange={(e) => { e.stopPropagation(); setSearchQuery(e.target.value); }}
-                  onClick={(e) => e.stopPropagation()}
-                />
-              </div>
               <button className="icon-btn" onClick={(e) => { e.stopPropagation(); handleRefresh(); }}>
                 <RefreshCw className={`w-5 h-5 ${isLoading ? 'animate-spin' : ''}`} />
               </button>
