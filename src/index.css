@@ -133,31 +133,6 @@ header {
   box-shadow: 0 4px 16px rgba(255, 0, 0, 0.3);
 }
 
-.nav-item.active::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  right: 16px;
-  width: 6px;
-  height: 6px;
-  background: white;
-  border-radius: 50%;
-  transform: translateY(-50%);
-  animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-  0% {
-    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7);
-  }
-  70% {
-    box-shadow: 0 0 0 10px rgba(255, 255, 255, 0);
-  }
-  100% {
-    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
-  }
-}
-
 .nav-icon {
   display: flex;
   align-items: center;
