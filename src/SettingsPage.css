@@ -2,6 +2,9 @@
   padding: 2rem;
   background: #f8fafc;
   min-height: 100vh;
+  width: 100%;
+  max-width: none;
+  margin: 0;
 }
 
 .settings-tabs {
@@ -94,6 +97,8 @@
 
 .content-section {
   animation: fadeIn 0.5s ease;
+  width: 100%;
+  max-width: none;
 }
 
 @keyframes fadeIn {
@@ -550,6 +555,8 @@ small {
   background: linear-gradient(135deg, #f8fafc 0%, #e0e7ff 100%);
   border-radius: 1rem;
   border: 1px solid #e5e7eb;
+  width: 100%;
+  max-width: none;
 }
 
 .profile-avatar-section {
@@ -708,6 +715,8 @@ small {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 2rem;
+  width: 100%;
+  max-width: none;
 }
 
 .form-section {
@@ -879,6 +888,8 @@ small {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 1rem;
+  width: 100%;
+  max-width: none;
 }
 
 .permission-card {
