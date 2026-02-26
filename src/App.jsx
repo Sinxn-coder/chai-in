@@ -286,6 +286,7 @@ export default function App() {
 
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
+  const [showFilterDropdown, setShowFilterDropdown] = useState(false);
   const [showStatusDropdown, setShowStatusDropdown] = useState(false);
   const [showSortDropdown, setShowSortDropdown] = useState(false);
   const [showItemsPerPageDropdown, setShowItemsPerPageDropdown] = useState(false);
@@ -1157,40 +1158,60 @@ export default function App() {
               </div>
             </div>
             <div className="modern-filter-button">
-              <div className="filter-button-content">
+              <div className="filter-button-content" onClick={() => setShowFilterDropdown(!showFilterDropdown)}>
                 <Filter size={18} className="filter-button-icon" />
                 <span className="filter-button-text">Filter</span>
                 <ChevronDown size={16} className="filter-button-arrow" />
               </div>
-              <div className="filter-dropdown-menu">
-                <div className="filter-option" data-value="all">
-                  <div className="filter-option-content">
-                    <div className="filter-option-icon">👥</div>
-                    <div className="filter-option-text">
-                      <div className="filter-option-title">All Users</div>
-                      <div className="filter-option-description">Show all users</div>
+              {showFilterDropdown && (
+                <div className={`filter-dropdown-menu ${showFilterDropdown ? 'show' : ''}`}>
+                  <div 
+                    className={`filter-option ${statusFilter === 'all' ? 'active' : ''}`}
+                    onClick={() => {
+                      setStatusFilter('all');
+                      setShowFilterDropdown(false);
+                    }}
+                  >
+                    <div className="filter-option-content">
+                      <div className="filter-option-icon">👥</div>
+                      <div className="filter-option-text">
+                        <div className="filter-option-title">All Users</div>
+                        <div className="filter-option-description">Show all users</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div 
+                    className={`filter-option ${statusFilter === 'active' ? 'active' : ''}`}
+                    onClick={() => {
+                      setStatusFilter('active');
+                      setShowFilterDropdown(false);
+                    }}
+                  >
+                    <div className="filter-option-content">
+                      <div className="filter-option-icon">✅</div>
+                      <div className="filter-option-text">
+                        <div className="filter-option-title">Active</div>
+                        <div className="filter-option-description">Active users only</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div 
+                    className={`filter-option ${statusFilter === 'banned' ? 'active' : ''}`}
+                    onClick={() => {
+                      setStatusFilter('banned');
+                      setShowFilterDropdown(false);
+                    }}
+                  >
+                    <div className="filter-option-content">
+                      <div className="filter-option-icon">🚫</div>
+                      <div className="filter-option-text">
+                        <div className="filter-option-title">Banned</div>
+                        <div className="filter-option-description">Banned users only</div>
+                      </div>
                     </div>
                   </div>
                 </div>
-                <div className="filter-option" data-value="active">
-                  <div className="filter-option-content">
-                    <div className="filter-option-icon">✅</div>
-                    <div className="filter-option-text">
-                      <div className="filter-option-title">Active</div>
-                      <div className="filter-option-description">Active users only</div>
-                    </div>
-                  </div>
-                </div>
-                <div className="filter-option" data-value="banned">
-                  <div className="filter-option-content">
-                    <div className="filter-option-icon">🚫</div>
-                    <div className="filter-option-text">
-                      <div className="filter-option-title">Banned</div>
-                      <div className="filter-option-description">Banned users only</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              )}
             </div>
           </div>
           <div className="users-actions">

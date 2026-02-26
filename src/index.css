@@ -2896,8 +2896,7 @@ main {
   overflow: hidden;
 }
 
-.modern-filter-button:hover .filter-dropdown-menu,
-.modern-filter-button:focus-within .filter-dropdown-menu {
+.filter-dropdown-menu.show {
   opacity: 1;
   visibility: visible;
   transform: translateY(0) scale(1);
