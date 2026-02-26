@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { User, Shield, Bell, Database } from 'lucide-react';
+import { User, Shield, Bell, Database, Crown, Lock, Building, Mail, MapPin, Phone, Key, Server, Users, Settings, Check, X, CreditCard, FileText, Award, Save } from 'lucide-react';
 import './SettingsPage.css';
 
 export default function SettingsPage() {
@@ -33,162 +33,272 @@ export default function SettingsPage() {
       <div className="tab-content">
         {activeTab === 'profile' && (
           <div className="content-section">
-            <h2>Admin Profile Settings</h2>
-            <p>Manage your administrator profile and system access settings</p>
-            
-            <div className="settings-form">
-              <div className="form-group">
-                <label>Admin Profile Picture</label>
-                <div className="profile-picture-section">
-                  <div className="avatar-preview">
-                    <div className="avatar-placeholder">�‍💼</div>
+            <div className="profile-header">
+              <div className="profile-avatar-section">
+                <div className="avatar-large">
+                  <div className="avatar-icon">👨‍💼</div>
+                  <div className="avatar-overlay">
+                    <button className="camera-btn">📷</button>
                   </div>
-                  <button className="upload-btn">Upload Photo</button>
-                  <button className="remove-btn">Remove</button>
+                </div>
+                <div className="profile-status">
+                  <h3>Super Administrator</h3>
+                  <div className="status-badge online">Online</div>
+                </div>
+              </div>
+              
+              <div className="profile-summary">
+                <div className="admin-id-card">
+                  <div className="id-header">
+                    <Shield size={20} />
+                    <span>Administrator ID</span>
+                  </div>
+                  <div className="id-value">ADM-001</div>
+                  <div className="id-status">System Generated</div>
+                </div>
+                
+                <div className="quick-stats">
+                  <div className="stat-item">
+                    <div className="stat-value">Full</div>
+                    <div className="stat-label">Access Level</div>
+                  </div>
+                  <div className="stat-item">
+                    <div className="stat-value">5</div>
+                    <div className="stat-label">Years Active</div>
+                  </div>
+                  <div className="stat-item">
+                    <div className="stat-value">98%</div>
+                    <div className="stat-label">Security Score</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="profile-content">
+              <div className="content-grid">
+                <div className="form-section">
+                  <div className="section-header">
+                    <User size={18} />
+                    <h4>Personal Information</h4>
+                  </div>
+                  
+                  <div className="form-grid">
+                    <div className="form-group">
+                      <label>First Name</label>
+                      <input type="text" className="form-input modern" placeholder="John" />
+                    </div>
+                    <div className="form-group">
+                      <label>Last Name</label>
+                      <input type="text" className="form-input modern" placeholder="Doe" />
+                    </div>
+                  </div>
+                  
+                  <div className="form-group">
+                    <label>Admin Email</label>
+                    <div className="input-with-icon">
+                      <Mail size={16} />
+                      <input type="email" className="form-input modern" placeholder="admin@company.com" />
+                    </div>
+                  </div>
+                  
+                  <div className="form-group">
+                    <label>Username</label>
+                    <div className="input-with-icon">
+                      <User size={16} />
+                      <input type="text" className="form-input modern" placeholder="admin_user" />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="form-section">
+                  <div className="section-header">
+                    <Building size={18} />
+                    <h4>Professional Details</h4>
+                  </div>
+                  
+                  <div className="form-group">
+                    <label>Department</label>
+                    <div className="select-wrapper">
+                      <select className="form-input modern">
+                        <option>System Administration</option>
+                        <option>IT Operations</option>
+                        <option>Security Team</option>
+                        <option>Development</option>
+                        <option>Management</option>
+                      </select>
+                    </div>
+                  </div>
+                  
+                  <div className="form-group">
+                    <label>Admin Role</label>
+                    <div className="role-selector">
+                      <div className="role-option active">
+                        <Crown size={16} />
+                        <span>Super Admin</span>
+                      </div>
+                      <div className="role-option">
+                        <Shield size={16} />
+                        <span>System Admin</span>
+                      </div>
+                      <div className="role-option">
+                        <Lock size={16} />
+                        <span>Security Admin</span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="form-group">
+                    <label>Office Location</label>
+                    <div className="input-with-icon">
+                      <MapPin size={16} />
+                      <input type="text" className="form-input modern" placeholder="Building A, Floor 3" />
+                    </div>
+                  </div>
+                  
+                  <div className="form-group">
+                    <label>Extension</label>
+                    <div className="input-with-icon">
+                      <Phone size={16} />
+                      <input type="tel" className="form-input modern" placeholder="x1234" />
+                    </div>
+                  </div>
                 </div>
               </div>
 
-              <div className="form-row">
-                <div className="form-group">
-                  <label>Admin First Name</label>
-                  <input type="text" className="form-input" placeholder="Admin" />
+              <div className="permissions-section">
+                <div className="section-header">
+                  <Key size={18} />
+                  <h4>System Access Permissions</h4>
                 </div>
-                <div className="form-group">
-                  <label>Admin Last Name</label>
-                  <input type="text" className="form-input" placeholder="User" />
-                </div>
-              </div>
-
-              <div className="form-group">
-                <label>Admin Email Address</label>
-                <input type="email" className="form-input" placeholder="admin@company.com" />
-              </div>
-
-              <div className="form-group">
-                <label>Admin Username</label>
-                <input type="text" className="form-input" placeholder="admin_user" />
-              </div>
-
-              <div className="form-group">
-                <label>Admin ID</label>
-                <input type="text" className="form-input" placeholder="ADM-001" disabled />
-                <small>System-generated administrator ID</small>
-              </div>
-
-              <div className="form-group">
-                <label>Department</label>
-                <select className="form-input">
-                  <option>System Administration</option>
-                  <option>IT Operations</option>
-                  <option>Security Team</option>
-                  <option>Development</option>
-                  <option>Management</option>
-                </select>
-              </div>
-
-              <div className="form-group">
-                <label>Admin Role</label>
-                <select className="form-input">
-                  <option>Super Administrator</option>
-                  <option>System Administrator</option>
-                  <option>Security Administrator</option>
-                  <option>Database Administrator</option>
-                  <option>Network Administrator</option>
-                </select>
-              </div>
-
-              <div className="form-group">
-                <label>Access Level</label>
-                <div className="access-level-display">
-                  <div className="level-badge super-admin">Super Admin</div>
-                  <small>Full system access and control</small>
-                </div>
-              </div>
-
-              <div className="form-group">
-                <label>Admin Bio</label>
-                <textarea className="form-textarea" placeholder="Describe your administrative responsibilities and expertise..." rows="4"></textarea>
-              </div>
-
-              <div className="form-group">
-                <label>Office Location</label>
-                <input type="text" className="form-input" placeholder="Building A, Floor 3, Server Room" />
-              </div>
-
-              <div className="form-group">
-                <label>Extension</label>
-                <input type="tel" className="form-input" placeholder="x1234" />
-              </div>
-
-              <div className="form-group">
-                <label>Emergency Contact</label>
-                <input type="tel" className="form-input" placeholder="+1-555-0123" />
-              </div>
-
-              <div className="form-group">
-                <label>System Access</label>
-                <div className="checkbox-group">
-                  <label className="checkbox-label">
-                    <input type="checkbox" defaultChecked />
-                    <span>Server management access</span>
-                  </label>
-                  <label className="checkbox-label">
-                    <input type="checkbox" defaultChecked />
-                    <span>User account management</span>
-                  </label>
-                  <label className="checkbox-label">
-                    <input type="checkbox" defaultChecked />
-                    <span>System configuration</span>
-                  </label>
-                  <label className="checkbox-label">
-                    <input type="checkbox" defaultChecked />
-                    <span>Security settings</span>
-                  </label>
-                  <label className="checkbox-label">
-                    <input type="checkbox" defaultChecked />
-                    <span>Database administration</span>
-                  </label>
-                  <label className="checkbox-label">
-                    <input type="checkbox" />
-                    <span>Billing and payments</span>
-                  </label>
+                
+                <div className="permissions-grid">
+                  <div className="permission-card granted">
+                    <div className="permission-icon">
+                      <Server size={20} />
+                    </div>
+                    <div className="permission-details">
+                      <h5>Server Management</h5>
+                      <p>Full server access and control</p>
+                    </div>
+                    <div className="permission-status">
+                      <Check size={16} />
+                    </div>
+                  </div>
+                  
+                  <div className="permission-card granted">
+                    <div className="permission-icon">
+                      <Users size={20} />
+                    </div>
+                    <div className="permission-details">
+                      <h5>User Administration</h5>
+                      <p>Manage all user accounts</p>
+                    </div>
+                    <div className="permission-status">
+                      <Check size={16} />
+                    </div>
+                  </div>
+                  
+                  <div className="permission-card granted">
+                    <div className="permission-icon">
+                      <Settings size={20} />
+                    </div>
+                    <div className="permission-details">
+                      <h5>System Configuration</h5>
+                      <p>Modify system settings</p>
+                    </div>
+                    <div className="permission-status">
+                      <Check size={16} />
+                    </div>
+                  </div>
+                  
+                  <div className="permission-card granted">
+                    <div className="permission-icon">
+                      <Shield size={20} />
+                    </div>
+                    <div className="permission-details">
+                      <h5>Security Settings</h5>
+                      <p>Access to security controls</p>
+                    </div>
+                    <div className="permission-status">
+                      <Check size={16} />
+                    </div>
+                  </div>
+                  
+                  <div className="permission-card granted">
+                    <div className="permission-icon">
+                      <Database size={20} />
+                    </div>
+                    <div className="permission-details">
+                      <h5>Database Access</h5>
+                      <p>Full database administration</p>
+                    </div>
+                    <div className="permission-status">
+                      <Check size={16} />
+                    </div>
+                  </div>
+                  
+                  <div className="permission-card denied">
+                    <div className="permission-icon">
+                      <CreditCard size={20} />
+                    </div>
+                    <div className="permission-details">
+                      <h5>Billing & Payments</h5>
+                      <p>Financial system access</p>
+                    </div>
+                    <div className="permission-status">
+                      <X size={16} />
+                    </div>
+                  </div>
                 </div>
               </div>
 
-              <div className="form-group">
-                <label>Admin Preferences</label>
-                <div className="checkbox-group">
-                  <label className="checkbox-label">
-                    <input type="checkbox" defaultChecked />
-                    <span>Show admin status to users</span>
-                  </label>
-                  <label className="checkbox-label">
-                    <input type="checkbox" defaultChecked />
-                    <span>Receive system alerts</span>
-                  </label>
-                  <label className="checkbox-label">
-                    <input type="checkbox" defaultChecked />
-                    <span>Show online availability</span>
-                  </label>
-                  <label className="checkbox-label">
-                    <input type="checkbox" />
-                    <span>Enable two-factor authentication</span>
-                  </label>
+              <div className="bio-section">
+                <div className="section-header">
+                  <FileText size={18} />
+                  <h4>Admin Bio</h4>
                 </div>
+                <textarea className="bio-textarea" placeholder="Describe your administrative responsibilities, expertise, and experience..."></textarea>
               </div>
 
-              <div className="form-group">
-                <label>Admin Certifications</label>
+              <div className="certifications-section">
+                <div className="section-header">
+                  <Award size={18} />
+                  <h4>Professional Certifications</h4>
+                </div>
                 <div className="certification-list">
-                  <input type="text" className="form-input" placeholder="e.g., AWS Certified Solutions Architect" />
-                  <input type="text" className="form-input" placeholder="e.g., Certified Information Systems Security Professional (CISSP)" />
-                  <input type="text" className="form-input" placeholder="e.g., Microsoft Certified: Azure Administrator" />
+                  <div className="cert-item">
+                    <div className="cert-icon">🏆</div>
+                    <div className="cert-details">
+                      <h5>AWS Certified Solutions Architect</h5>
+                      <p>Amazon Web Services • 2023</p>
+                    </div>
+                  </div>
+                  <div className="cert-item">
+                    <div className="cert-icon">🛡️</div>
+                    <div className="cert-details">
+                      <h5>CISSP - Certified Information Systems Security Professional</h5>
+                      <p>(ISC)² • 2022</p>
+                    </div>
+                  </div>
+                  <div className="cert-item">
+                    <div className="cert-icon">☁️</div>
+                    <div className="cert-details">
+                      <h5>Microsoft Certified: Azure Administrator</h5>
+                      <p>Microsoft • 2021</p>
+                    </div>
+                  </div>
                 </div>
               </div>
 
               <div className="form-actions">
-                <button className="save-btn">Save Admin Profile</button>
-                <button className="cancel-btn">Cancel</button>
+                <button className="save-btn modern">
+                  <Save size={16} />
+                  Save Admin Profile
+                </button>
+                <button className="cancel-btn modern">
+                  <X size={16} />
+                  Cancel
+                </button>
               </div>
             </div>
           </div>
