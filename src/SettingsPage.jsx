@@ -222,7 +222,7 @@ export default function SettingsPage() {
                     </div>
                   </div>
                   
-                  <div className="permission-card denied">
+                  <div className="permission-card granted">
                     <div className="permission-icon">
                       <CreditCard size={20} />
                     </div>
@@ -231,7 +231,7 @@ export default function SettingsPage() {
                       <p>Financial system access</p>
                     </div>
                     <div className="permission-status">
-                      <X size={16} />
+                      <Check size={16} />
                     </div>
                   </div>
                 </div>
