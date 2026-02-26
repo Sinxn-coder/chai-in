@@ -2790,22 +2790,21 @@ main {
   -moz-appearance: none;
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 10px 16px 10px 40px;
-  border: 1px solid rgba(255, 0, 0, 0.1);
-  border-radius: 12px;
-  background: linear-gradient(145deg, #ffffff 0%, #f8fafc 50%, #ffffff 100%);
-  color: #1e293b;
-  font-size: 0.85rem;
-  font-weight: 500;
+  gap: 10px;
+  padding: 12px 20px 12px 44px;
+  border: 2px solid transparent;
+  border-radius: 20px;
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  color: #ffffff;
+  font-size: 0.9rem;
+  font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 
-    0 2px 8px rgba(0, 0, 0, 0.04),
-    0 1px 2px rgba(0, 0, 0, 0.06),
-    inset 0 1px 0 rgba(255, 255, 255, 0.8),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.02);
-  min-width: 140px;
+    0 8px 32px rgba(30, 41, 59, 0.3),
+    0 4px 16px rgba(30, 41, 59, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  min-width: 160px;
   position: relative;
   overflow: hidden;
 }
@@ -2817,8 +2816,8 @@ main {
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 0, 0, 0.02), transparent);
-  transition: left 0.6s ease;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transition: left 0.8s ease;
   z-index: 1;
 }
 
@@ -2827,98 +2826,102 @@ main {
 }
 
 .filter-select:hover {
-  border-color: rgba(255, 0, 0, 0.2);
-  background: linear-gradient(145deg, #ffffff 0%, #fef2f2 50%, #ffffff 100%);
+  background: linear-gradient(135deg, #FF0000 0%, #cc0000 100%);
+  border-color: rgba(255, 255, 255, 0.2);
   box-shadow: 
-    0 4px 16px rgba(255, 0, 0, 0.08),
-    0 2px 4px rgba(0, 0, 0, 0.06),
-    inset 0 1px 0 rgba(255, 255, 255, 0.9),
-    inset 0 -1px 0 rgba(255, 0, 0, 0.03);
-  transform: translateY(-1px);
+    0 12px 48px rgba(255, 0, 0, 0.4),
+    0 6px 24px rgba(255, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  transform: translateY(-3px) scale(1.02);
 }
 
 .filter-select:focus {
   outline: none;
-  border-color: #FF0000;
-  background: linear-gradient(145deg, #ffffff 0%, #fef2f2 50%, #ffffff 100%);
+  border-color: rgba(255, 255, 255, 0.3);
+  background: linear-gradient(135deg, #FF0000 0%, #cc0000 100%);
   box-shadow: 
-    0 0 0 3px rgba(255, 0, 0, 0.15),
-    0 4px 12px rgba(255, 0, 0, 0.2),
-    inset 0 1px 0 rgba(255, 255, 255, 1),
-    inset 0 -1px 0 rgba(255, 0, 0, 0.05);
-  transform: translateY(-2px);
+    0 0 0 4px rgba(255, 0, 0, 0.3),
+    0 16px 64px rgba(255, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  transform: translateY(-4px) scale(1.03);
 }
 
 .filter-select:active {
-  transform: translateY(0px);
+  transform: translateY(-1px) scale(0.98);
   box-shadow: 
-    0 2px 8px rgba(255, 0, 0, 0.1),
-    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    0 4px 16px rgba(255, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
 .filter-icon {
   position: absolute;
-  left: 12px;
+  left: 16px;
   top: 50%;
   transform: translateY(-50%);
-  width: 16px;
-  height: 16px;
-  color: #94a3b8;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  width: 18px;
+  height: 18px;
+  color: rgba(255, 255, 255, 0.8);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 2;
   pointer-events: none;
 }
 
 .filter-select:hover .filter-icon {
-  color: #FF0000;
-  transform: translateY(-50%) scale(1.05);
+  color: #ffffff;
+  transform: translateY(-50%) scale(1.15) rotate(90deg);
 }
 
 .filter-select:focus .filter-icon {
-  color: #FF0000;
-  transform: translateY(-50%) scale(1.1);
+  color: #ffffff;
+  transform: translateY(-50%) scale(1.2) rotate(180deg);
 }
 
 /* Custom dropdown arrow */
 .filter-select::after {
   content: '';
   position: absolute;
-  right: 12px;
+  right: 16px;
   top: 50%;
   transform: translateY(-50%);
   width: 0;
   height: 0;
-  border-left: 4px solid transparent;
-  border-right: 4px solid transparent;
-  border-top: 4px solid #94a3b8;
-  transition: all 0.3s ease;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 5px solid rgba(255, 255, 255, 0.6);
+  transition: all 0.4s ease;
   z-index: 2;
   pointer-events: none;
 }
 
 .filter-select:hover::after {
-  border-top-color: #FF0000;
+  border-top-color: #ffffff;
+  transform: translateY(-50%) scale(1.1);
 }
 
 .filter-select:focus::after {
-  border-top-color: #FF0000;
+  border-top-color: #ffffff;
+  transform: translateY(-50%) scale(1.2) rotate(180deg);
 }
 
-/* Enhanced focus glow effect */
-.filter-select:focus-within::after {
+/* Enhanced glow effect */
+.filter-select::after {
   content: '';
   position: absolute;
-  top: -2px;
-  left: -2px;
-  right: -2px;
-  bottom: -2px;
+  top: -4px;
+  left: -4px;
+  right: -4px;
+  bottom: -4px;
   background: linear-gradient(45deg, #FF0000, #ff6b6b, #FF0000, #ff6b6b);
-  border-radius: 14px;
-  opacity: 0.4;
+  border-radius: 24px;
+  opacity: 0;
   z-index: 0;
-  transition: opacity 0.3s ease;
+  transition: opacity 0.4s ease;
   background-size: 200% 200%;
   animation: filterGlow 3s linear infinite;
+}
+
+.filter-select:focus::after {
+  opacity: 0.8;
 }
 
 @keyframes filterGlow {
@@ -2935,22 +2938,22 @@ main {
 
 /* Filter dropdown options styling */
 .filter-select option {
-  background: #ffffff;
-  color: #1e293b;
-  padding: 8px 12px;
+  background: #1e293b;
+  color: #ffffff;
+  padding: 12px 16px;
   border: none;
-  font-weight: 400;
+  font-weight: 500;
 }
 
 .filter-select option:hover {
-  background: #fef2f2;
-  color: #FF0000;
+  background: #FF0000;
+  color: #ffffff;
 }
 
 .filter-select option:checked {
-  background: #FF0000;
-  color: white;
-  font-weight: 500;
+  background: #cc0000;
+  color: #ffffff;
+  font-weight: 600;
 }
 
 .sort-select {
