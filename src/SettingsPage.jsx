@@ -141,10 +141,10 @@ export default function SettingsPage() {
                   </div>
                   
                   <div className="form-group">
-                    <label>Extension</label>
+                    <label>Mobile Number</label>
                     <div className="input-with-icon">
                       <Phone size={16} />
-                      <input type="tel" className="form-input modern" placeholder="x1234" />
+                      <input type="tel" className="form-input modern" placeholder="+1 234 567 8900" />
                     </div>
                   </div>
                 </div>
