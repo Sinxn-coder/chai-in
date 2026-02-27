@@ -126,112 +126,116 @@ const DashboardPage = ({ setActiveTab }) => {
 
         {/* Stats Cards Section */}
         <div className="stats-section">
-          <div className="stats-grid">
-            <div className="stat-card primary modern">
-              <div className="stat-header-modern">
-                <div className="stat-icon-large">
+          <div className="stats-grid-modern">
+            <div className="stat-card-modern primary">
+              <div className="stat-header">
+                <div className="stat-icon">
                   <Users className="w-8 h-8" />
                 </div>
-                <div className="stat-info-modern">
+                <div className="stat-info">
                   <h3 className="stat-title">Total Users</h3>
-                  <div className="stat-change-modern positive">
+                  <div className="stat-trend">
                     <TrendingUp className="w-4 h-4" />
                     <span>12.5%</span>
-                    <span className="change-period">vs last month</span>
+                    <span className="trend-period">vs last month</span>
                   </div>
                 </div>
               </div>
-              <div className="stat-body-modern">
-                <div className="stat-main-value">{stats.users.toLocaleString()}</div>
-                <div className="stat-breakdown">
-                  <div className="breakdown-item">
-                    <div className="breakdown-label">Active</div>
-                    <div className="breakdown-value">892</div>
+              <div className="stat-body">
+                <div className="stat-value">{stats.users.toLocaleString()}</div>
+                <div className="stat-description">Active registered users on the platform</div>
+                <div className="stat-progress">
+                  <div className="progress-bar">
+                    <div className="progress-fill" style={{width: '75%'}}></div>
                   </div>
-                  <div className="breakdown-item">
-                    <div className="breakdown-label">New</div>
-                    <div className="breakdown-value">+127</div>
-                  </div>
+                  <span className="progress-text">75% capacity</span>
                 </div>
               </div>
             </div>
 
-            <div className="stat-card success modern">
-              <div className="stat-header-modern">
-                <div className="stat-icon-large">
+            <div className="stat-card-modern success">
+              <div className="stat-header">
+                <div className="stat-icon">
                   <MapPin className="w-8 h-8" />
                 </div>
-                <div className="stat-info-modern">
+                <div className="stat-info">
                   <h3 className="stat-title">Food Spots</h3>
-                  <div className="stat-change-modern positive">
+                  <div className="stat-trend">
                     <TrendingUp className="w-4 h-4" />
                     <span>8.2%</span>
-                    <span className="change-period">vs last month</span>
+                    <span className="trend-period">vs last month</span>
                   </div>
                 </div>
               </div>
-              <div className="stat-body-modern">
-                <div className="stat-main-value">{stats.spots.toLocaleString()}</div>
-                <div className="stat-breakdown">
-                  <div className="breakdown-item">
-                    <div className="breakdown-label">Popular</div>
-                    <div className="breakdown-value">234</div>
+              <div className="stat-body">
+                <div className="stat-value">{stats.spots.toLocaleString()}</div>
+                <div className="stat-description">Available food spots across all locations</div>
+                <div className="stat-progress">
+                  <div className="progress-bar">
+                    <div className="progress-fill success" style={{width: '82%'}}></div>
                   </div>
-                  <div className="breakdown-item">
-                    <div className="breakdown-label">New</div>
-                    <div className="breakdown-value">+37</div>
-                  </div>
+                  <span className="progress-text">82% occupied</span>
                 </div>
               </div>
             </div>
 
-            <div className="stat-card warning">
-              <div className="stat-icon-wrapper">
+            <div className="stat-card-modern warning">
+              <div className="stat-header">
                 <div className="stat-icon">
-                  <Star className="w-6 h-6" />
+                  <Star className="w-8 h-8" />
                 </div>
-              </div>
-              <div className="stat-content">
-                <div className="stat-header">
-                  <h3 className="stat-label">Reviews & Ratings</h3>
-                  <div className="stat-change positive">
+                <div className="stat-info">
+                  <h3 className="stat-title">Reviews & Ratings</h3>
+                  <div className="stat-trend">
                     <TrendingUp className="w-4 h-4" />
                     <span>15.3%</span>
+                    <span className="trend-period">vs last month</span>
                   </div>
                 </div>
+              </div>
+              <div className="stat-body">
                 <div className="stat-value">{stats.reviews.toLocaleString()}</div>
-                <div className="stat-footer">
-                  <div className="stat-detail">
-                    <span className="detail-label">Average rating</span>
-                    <span className="detail-value">4.6</span>
+                <div className="stat-description">Total customer reviews and average rating</div>
+                <div className="rating-breakdown">
+                  <div className="rating-stars">
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <Star key={star} className={`w-4 h-4 ${star <= 4.6 ? 'filled' : 'empty'}`} />
+                    ))}
                   </div>
+                  <span className="rating-text">4.6 / 5.0</span>
                 </div>
               </div>
             </div>
 
-            <div className="stat-card info">
-              <div className="stat-icon-wrapper">
+            <div className="stat-card-modern revenue">
+              <div className="stat-header">
                 <div className="stat-icon">
-                  <DollarSign className="w-6 h-6" />
+                  <DollarSign className="w-8 h-8" />
                 </div>
-              </div>
-              <div className="stat-content">
-                <div className="stat-header">
-                  <h3 className="stat-label">Revenue</h3>
-                  <div className="stat-change positive">
+                <div className="stat-info">
+                  <h3 className="stat-title">Revenue</h3>
+                  <div className="stat-trend">
                     <TrendingUp className="w-4 h-4" />
-                    <span>23.1%</span>
-                  </div>
-                </div>
-                <div className="stat-value">${stats.revenue.toLocaleString()}</div>
-                <div className="stat-footer">
-                  <div className="stat-detail">
-                    <span className="detail-label">This month</span>
-                    <span className="detail-value">$45.6K</span>
+                    <span>23.7%</span>
+                    <span className="trend-period">vs last month</span>
                   </div>
                 </div>
               </div>
-            </div>
+              <div className="stat-body">
+                <div className="stat-value">${stats.revenue.toLocaleString()}</div>
+                <div className="stat-description">Total platform revenue this month</div>
+                <div className="revenue-breakdown">
+                  <div className="revenue-item">
+                    <span className="revenue-label">This Month:</span>
+                    <span className="revenue-amount">${(stats.revenue * 0.85).toLocaleString()}</span>
+                  </div>
+                  <div className="revenue-item">
+                    <span className="revenue-label">Previous:</span>
+                    <span className="revenue-amount previous">${(stats.revenue * 0.75).toLocaleString()}</span>
+                  </div>
+                </div>
+              </div>
+          </div>
           </div>
         </div>
 
