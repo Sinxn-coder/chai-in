@@ -76,7 +76,7 @@ const DashboardPage = ({ setActiveTab }) => {
   };
 
   return (
-    <div className="dashboard-page" onClick={handleDashboardClick}>
+    <div className="dashboard-page">
       {/* Refresh Animation Overlay */}
       {showRefreshAnimation && (
         <div className="refresh-animation-overlay">
