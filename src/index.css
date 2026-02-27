@@ -582,9 +582,7 @@ main {
   transform: translateY(-2px);
 }
 
-.stat-header {
-  display: flex;
-  align-items: center;
+.stat-card.modern {
   gap: 12px;
   margin-bottom: 20px;
 }

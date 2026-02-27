@@ -127,49 +127,59 @@ const DashboardPage = ({ setActiveTab }) => {
         {/* Stats Cards Section */}
         <div className="stats-section">
           <div className="stats-grid">
-            <div className="stat-card primary">
-              <div className="stat-icon-wrapper">
-                <div className="stat-icon">
-                  <Users className="w-6 h-6" />
+            <div className="stat-card primary modern">
+              <div className="stat-header-modern">
+                <div className="stat-icon-large">
+                  <Users className="w-8 h-8" />
                 </div>
-              </div>
-              <div className="stat-content">
-                <div className="stat-header">
-                  <h3 className="stat-label">Total Users</h3>
-                  <div className="stat-change positive">
+                <div className="stat-info-modern">
+                  <h3 className="stat-title">Total Users</h3>
+                  <div className="stat-change-modern positive">
                     <TrendingUp className="w-4 h-4" />
                     <span>12.5%</span>
+                    <span className="change-period">vs last month</span>
                   </div>
                 </div>
-                <div className="stat-value">{stats.users.toLocaleString()}</div>
-                <div className="stat-footer">
-                  <div className="stat-detail">
-                    <span className="detail-label">Active this week</span>
-                    <span className="detail-value">892</span>
+              </div>
+              <div className="stat-body-modern">
+                <div className="stat-main-value">{stats.users.toLocaleString()}</div>
+                <div className="stat-breakdown">
+                  <div className="breakdown-item">
+                    <div className="breakdown-label">Active</div>
+                    <div className="breakdown-value">892</div>
+                  </div>
+                  <div className="breakdown-item">
+                    <div className="breakdown-label">New</div>
+                    <div className="breakdown-value">+127</div>
                   </div>
                 </div>
               </div>
             </div>
 
-            <div className="stat-card success">
-              <div className="stat-icon-wrapper">
-                <div className="stat-icon">
-                  <MapPin className="w-6 h-6" />
+            <div className="stat-card success modern">
+              <div className="stat-header-modern">
+                <div className="stat-icon-large">
+                  <MapPin className="w-8 h-8" />
                 </div>
-              </div>
-              <div className="stat-content">
-                <div className="stat-header">
-                  <h3 className="stat-label">Food Spots</h3>
-                  <div className="stat-change positive">
+                <div className="stat-info-modern">
+                  <h3 className="stat-title">Food Spots</h3>
+                  <div className="stat-change-modern positive">
                     <TrendingUp className="w-4 h-4" />
                     <span>8.2%</span>
+                    <span className="change-period">vs last month</span>
                   </div>
                 </div>
-                <div className="stat-value">{stats.spots.toLocaleString()}</div>
-                <div className="stat-footer">
-                  <div className="stat-detail">
-                    <span className="detail-label">New this week</span>
-                    <span className="detail-value">23</span>
+              </div>
+              <div className="stat-body-modern">
+                <div className="stat-main-value">{stats.spots.toLocaleString()}</div>
+                <div className="stat-breakdown">
+                  <div className="breakdown-item">
+                    <div className="breakdown-label">Popular</div>
+                    <div className="breakdown-value">234</div>
+                  </div>
+                  <div className="breakdown-item">
+                    <div className="breakdown-label">New</div>
+                    <div className="breakdown-value">+37</div>
                   </div>
                 </div>
               </div>
