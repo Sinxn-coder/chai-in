@@ -292,6 +292,7 @@ export default function App() {
   const [showSortDropdown, setShowSortDropdown] = useState(false);
   const [showItemsPerPageDropdown, setShowItemsPerPageDropdown] = useState(false);
   const [selectedUsers, setSelectedUsers] = useState([]);
+  const [selectedUserDetail, setSelectedUserDetail] = useState(null);
   const [activeDropdown, setActiveDropdown] = useState(null);
   const [selectedSpots, setSelectedSpots] = useState([]);
   const [showFlagConfirm, setShowFlagConfirm] = useState(false);
@@ -1238,16 +1239,16 @@ export default function App() {
         <div className="users-grid-container">
           <div className="users-grid">
             {filteredUsers.map(user => (
-              <div key={user.id} className="user-card">
-                <div className="user-card-header">
-                  <div className="user-card-avatar">
-                    <div className="user-avatar-circle">{user.name.charAt(0)}</div>
-                    <div className="user-status-indicator {user.status}"></div>
+              <div key={user.id} className="user-card-compact" onClick={() => setSelectedUserDetail(user)}>
+                <div className="user-card-compact-header">
+                  <div className="user-avatar-compact">
+                    <div className="user-avatar-circle-compact">{user.name.charAt(0)}</div>
+                    <div className={`user-status-indicator-compact ${user.status}`}></div>
                   </div>
-                  <div className="user-card-info">
-                    <h3 className="user-card-name">{user.name}</h3>
-                    <p className="user-card-email">{user.email}</p>
-                    <div className="user-card-status">
+                  <div className="user-info-compact">
+                    <h3 className="user-name-compact">{user.name}</h3>
+                    <p className="user-email-compact">{user.email}</p>
+                    <div className="user-status-compact">
                       {getStatusBadge(user.status)}
                     </div>
                   </div>
@@ -1255,99 +1256,141 @@ export default function App() {
                     <input
                       type="checkbox"
                       checked={selectedUsers.includes(user.id)}
-                      onChange={() => handleSelectUser(user.id)}
+                      onChange={(e) => {
+                        e.stopPropagation();
+                        handleSelectUser(user.id);
+                      }}
                       className="checkbox"
                     />
                   </div>
                 </div>
                 
-                <div className="user-card-body">
-                  <div className="user-stats-grid">
-                    <div className="stat-item">
-                      <div className="stat-icon">
-                        <MapPin size={16} />
-                      </div>
-                      <div className="stat-info">
-                        <div className="stat-value">{user.spots}</div>
-                        <div className="stat-label">Spots</div>
-                      </div>
-                    </div>
-                    <div className="stat-item">
-                      <div className="stat-icon">
-                        <Star size={16} />
-                      </div>
-                      <div className="stat-info">
-                        <div className="stat-value">{user.reviews}</div>
-                        <div className="stat-label">Reviews</div>
-                      </div>
-                    </div>
-                    <div className="stat-item">
-                      <div className="stat-icon">
-                        <Calendar size={16} />
-                      </div>
-                      <div className="stat-info">
-                        <div className="stat-value">{user.joined}</div>
-                        <div className="stat-label">Joined</div>
-                      </div>
-                    </div>
-                    <div className="stat-item">
-                      <div className="stat-icon">
-                        <Clock size={16} />
-                      </div>
-                      <div className="stat-info">
-                        <div className="stat-value">{user.lastActive}</div>
-                        <div className="stat-label">Last Active</div>
-                      </div>
-                    </div>
+                <div className="user-stats-compact">
+                  <div className="stat-item-compact">
+                    <MapPin size={14} />
+                    <span>{user.spots}</span>
                   </div>
-                </div>
-                
-                <div className="user-card-footer">
-                  <div className="user-actions">
-                    <button className="action-btn primary" onClick={() => handleAction('view', user)}>
-                      <Eye size={14} />
-                      View
-                    </button>
-                    <button className="action-btn secondary" onClick={() => handleAction('edit', user)}>
-                      <Edit size={14} />
-                      Edit
-                    </button>
-                    <button className="action-btn secondary" onClick={() => handleUserAction('message', user)}>
-                      <MessageSquare size={14} />
-                      Message
-                    </button>
-                    <div className="dropdown-container">
-                      <button
-                        className="action-btn more"
-                        onClick={() => toggleDropdown(user.id)}
-                      >
-                        <MoreVertical size={14} />
-                      </button>
-                      {activeDropdown === user.id && (
-                        <div className="dropdown-menu">
-                          <button
-                            className="dropdown-item danger"
-                            onClick={() => handleAction(user.status === 'banned' ? 'unban' : 'ban', user)}
-                          >
-                            <Ban size={14} />
-                            {user.status === 'banned' ? 'Unban User' : 'Ban User'}
-                          </button>
-                          <button
-                            className="dropdown-item danger"
-                            onClick={() => handleAction('delete', user)}
-                          >
-                            <Trash2 size={14} />
-                            Delete User
-                          </button>
-                        </div>
-                      )}
-                    </div>
+                  <div className="stat-item-compact">
+                    <Star size={14} />
+                    <span>{user.reviews}</span>
+                  </div>
+                  <div className="stat-item-compact">
+                    <Calendar size={14} />
+                    <span>{user.joined.split('-')[1]}/{user.joined.split('-')[2]}</span>
                   </div>
                 </div>
               </div>
             ))}
           </div>
         </div>
+
+        {/* User Detail Popup */}
+        {selectedUserDetail && (
+          <div className="user-detail-popup-overlay" onClick={() => setSelectedUserDetail(null)}>
+            <div className="user-detail-popup" onClick={(e) => e.stopPropagation()}>
+              <div className="user-detail-header">
+                <div className="user-detail-avatar">
+                  <div className="user-avatar-circle-large">{selectedUserDetail.name.charAt(0)}</div>
+                  <div className={`user-status-indicator-large ${selectedUserDetail.status}`}></div>
+                </div>
+                <div className="user-detail-info">
+                  <h2 className="user-detail-name">{selectedUserDetail.name}</h2>
+                  <p className="user-detail-email">{selectedUserDetail.email}</p>
+                  <div className="user-detail-status">
+                    {getStatusBadge(selectedUserDetail.status)}
+                  </div>
+                </div>
+                <button className="close-popup-btn" onClick={() => setSelectedUserDetail(null)}>
+                  <X size={20} />
+                </button>
+              </div>
+              
+              <div className="user-detail-body">
+                <div className="user-stats-grid-detail">
+                  <div className="stat-item-detail">
+                    <div className="stat-icon-detail">
+                      <MapPin size={20} />
+                    </div>
+                    <div className="stat-info-detail">
+                      <div className="stat-value-detail">{selectedUserDetail.spots}</div>
+                      <div className="stat-label-detail">Food Spots</div>
+                    </div>
+                  </div>
+                  <div className="stat-item-detail">
+                    <div className="stat-icon-detail">
+                      <Star size={20} />
+                    </div>
+                    <div className="stat-info-detail">
+                      <div className="stat-value-detail">{selectedUserDetail.reviews}</div>
+                      <div className="stat-label-detail">Reviews</div>
+                    </div>
+                  </div>
+                  <div className="stat-item-detail">
+                    <div className="stat-icon-detail">
+                      <Calendar size={20} />
+                    </div>
+                    <div className="stat-info-detail">
+                      <div className="stat-value-detail">{selectedUserDetail.joined}</div>
+                      <div className="stat-label-detail">Joined Date</div>
+                    </div>
+                  </div>
+                  <div className="stat-item-detail">
+                    <div className="stat-icon-detail">
+                      <Clock size={20} />
+                    </div>
+                    <div className="stat-info-detail">
+                      <div className="stat-value-detail">{selectedUserDetail.lastActive}</div>
+                      <div className="stat-label-detail">Last Active</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="user-detail-footer">
+                <div className="user-actions-detail">
+                  <button className="action-btn-detail primary" onClick={() => handleAction('view', selectedUserDetail)}>
+                    <Eye size={16} />
+                    View Profile
+                  </button>
+                  <button className="action-btn-detail secondary" onClick={() => handleAction('edit', selectedUserDetail)}>
+                    <Edit size={16} />
+                    Edit User
+                  </button>
+                  <button className="action-btn-detail secondary" onClick={() => handleUserAction('message', selectedUserDetail)}>
+                    <MessageSquare size={16} />
+                    Send Message
+                  </button>
+                  <div className="dropdown-container">
+                    <button
+                      className="action-btn-detail more"
+                      onClick={() => toggleDropdown(selectedUserDetail.id)}
+                    >
+                      <MoreVertical size={16} />
+                    </button>
+                    {activeDropdown === selectedUserDetail.id && (
+                      <div className="dropdown-menu">
+                        <button
+                          className="dropdown-item danger"
+                          onClick={() => handleAction(selectedUserDetail.status === 'banned' ? 'unban' : 'ban', selectedUserDetail)}
+                        >
+                          <Ban size={14} />
+                          {selectedUserDetail.status === 'banned' ? 'Unban User' : 'Ban User'}
+                        </button>
+                        <button
+                          className="dropdown-item danger"
+                          onClick={() => handleAction('delete', selectedUserDetail)}
+                        >
+                          <Trash2 size={14} />
+                          Delete User
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
         <div className="users-footer">
           <div className="users-count">
