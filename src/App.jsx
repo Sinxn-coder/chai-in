@@ -48,9 +48,6 @@ import {
   Info,
   Zap,
   Users as UsersIcon,
-  UserCheck,
-  UserX,
-  Calendar,
   Lock,
   Mail,
   User,
@@ -1145,13 +1142,9 @@ export default function App() {
 
   const renderUsers = () => {
     return (
-      <div className="users-management-modern">
-        <div className="users-header-modern">
-          <div className="users-title-section">
-            <h1 className="users-page-title">Users Management</h1>
-            <p className="users-page-subtitle">Manage and monitor all platform users</p>
-          </div>
-          <div className="users-controls-modern">
+      <div className="users-management">
+        <div className="users-header">
+          <div className="users-controls">
             <div className="modern-search-bar">
               <div className="search-input-wrapper">
                 <Search size={20} className="search-icon" />
@@ -1221,183 +1214,137 @@ export default function App() {
               )}
             </div>
           </div>
-          <div className="users-actions-modern">
-            <button className="modern-btn secondary">
+          <div className="users-actions">
+            <button className="btn btn-secondary">
               <Download size={16} />
-              Export Users
+              Export
             </button>
             {selectedUsers.length > 0 && (
               <>
-                <button className="modern-btn warning">
+                <button className="btn btn-warning">
                   <Ban size={16} />
-                  Ban Selected ({selectedUsers.length})
+                  Ban Selected
                 </button>
-                <button className="modern-btn success">
+                <button className="btn btn-success">
                   <Shield size={16} />
-                  Activate Selected ({selectedUsers.length})
+                  Activate Selected
                 </button>
               </>
             )}
           </div>
         </div>
 
-        <div className="users-stats-overview">
-          <div className="stat-card-modern primary">
-            <div className="stat-icon-large">
-              <Users size={24} />
-            </div>
-            <div className="stat-info">
-              <div className="stat-number">{users.length}</div>
-              <div className="stat-label">Total Users</div>
-            </div>
-          </div>
-          <div className="stat-card-modern success">
-            <div className="stat-icon-large">
-              <UserCheck size={24} />
-            </div>
-            <div className="stat-info">
-              <div className="stat-number">{users.filter(u => u.status === 'active').length}</div>
-              <div className="stat-label">Active Users</div>
-            </div>
-          </div>
-          <div className="stat-card-modern warning">
-            <div className="stat-icon-large">
-              <UserX size={24} />
-            </div>
-            <div className="stat-info">
-              <div className="stat-number">{users.filter(u => u.status === 'banned').length}</div>
-              <div className="stat-label">Banned Users</div>
-            </div>
-          </div>
-          <div className="stat-card-modern info">
-            <div className="stat-icon-large">
-              <Calendar size={24} />
-            </div>
-            <div className="stat-info">
-              <div className="stat-number">{users.filter(u => new Date(u.lastActive) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)).length}</div>
-              <div className="stat-label">Active This Week</div>
-            </div>
-          </div>
-        </div>
-
-        <div className="users-grid-modern">
-          {filteredUsers.map(user => (
-            <div key={user.id} className="user-card-modern">
-              <div className="user-card-header">
-                <div className="user-avatar-large">
-                  <div className="avatar-text">{user.name.charAt(0)}</div>
-                  <div className={`status-indicator ${user.status}`}></div>
-                </div>
-                <div className="user-info-header">
-                  <h3 className="user-name-large">{user.name}</h3>
-                  <p className="user-email-large">{user.email}</p>
-                  <div className="user-badges">
-                    <span className={`status-badge ${user.status}`}>
-                      {user.status === 'active' ? '✓ Active' : '✗ Banned'}
-                    </span>
-                    <span className="join-badge">Joined {user.joined}</span>
-                  </div>
-                </div>
-                <div className="user-card-actions">
+        <div className="users-table-container">
+          <table className="users-table">
+            <thead>
+              <tr>
+                <th>
                   <input
                     type="checkbox"
-                    checked={selectedUsers.includes(user.id)}
-                    onChange={() => handleSelectUser(user.id)}
-                    className="user-checkbox"
+                    checked={selectedUsers.length === filteredUsers.length && filteredUsers.length > 0}
+                    onChange={handleSelectAll}
+                    className="checkbox"
                   />
-                  <button
-                    className="action-btn-icon"
-                    onClick={() => toggleDropdown(user.id)}
-                  >
-                    <MoreVertical size={16} />
-                  </button>
-                </div>
-              </div>
+                </th>
+                <th>User</th>
+                <th>Status</th>
+                <th>Joined</th>
+                <th>Last Active</th>
+                <th>Spots</th>
+                <th>Reviews</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredUsers.map(user => (
+                <tr key={user.id} className="user-row">
+                  <td>
+                    <input
+                      type="checkbox"
+                      checked={selectedUsers.includes(user.id)}
+                      onChange={() => handleSelectUser(user.id)}
+                      className="checkbox"
+                    />
+                  </td>
+                  <td>
+                    <div className="user-info">
+                      <div className="user-avatar">{user.name.charAt(0)}</div>
+                      <div>
+                        <div className="user-name">{user.name}</div>
+                        <div className="user-email">{user.email}</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td>{getStatusBadge(user.status)}</td>
+                  <td>{user.joined}</td>
+                  <td>{user.lastActive}</td>
+                  <td>{user.spots}</td>
+                  <td>{user.reviews}</td>
+                  <td>
+                    <div className="dropdown-container">
+                      <button
+                        className="btn-icon"
+                        onClick={() => toggleDropdown(user.id)}
+                      >
+                        <MoreVertical size={16} />
+                      </button>
 
-              <div className="user-card-stats">
-                <div className="stat-item">
-                  <div className="stat-icon-small">
-                    <MapPin size={16} />
-                  </div>
-                  <div className="stat-details">
-                    <div className="stat-value">{user.spots}</div>
-                    <div className="stat-label">Spots</div>
-                  </div>
-                </div>
-                <div className="stat-item">
-                  <div className="stat-icon-small">
-                    <Star size={16} />
-                  </div>
-                  <div className="stat-details">
-                    <div className="stat-value">{user.reviews}</div>
-                    <div className="stat-label">Reviews</div>
-                  </div>
-                </div>
-                <div className="stat-item">
-                  <div className="stat-icon-small">
-                    <Clock size={16} />
-                  </div>
-                  <div className="stat-details">
-                    <div className="stat-value">{user.lastActive}</div>
-                    <div className="stat-label">Last Active</div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="user-card-footer">
-                <button className="modern-btn primary small">
-                  <Eye size={14} />
-                  View Profile
-                </button>
-                <button className="modern-btn secondary small">
-                  <MessageSquare size={14} />
-                  Message
-                </button>
-                <button className="modern-btn secondary small">
-                  <Edit size={14} />
-                  Edit
-                </button>
-              </div>
-
-              {activeDropdown === user.id && (
-                <div className="dropdown-menu-modern">
-                  <button className="dropdown-item" onClick={() => handleAction('view', user)}>
-                    <Eye size={14} />
-                    View Details
-                  </button>
-                  <button className="dropdown-item" onClick={() => handleAction('edit', user)}>
-                    <Edit size={14} />
-                    Edit User
-                  </button>
-                  <button className="dropdown-item" onClick={() => handleUserAction('message', user)}>
-                    <MessageSquare size={14} />
-                    Send Message
-                  </button>
-                  <div className="dropdown-divider"></div>
-                  <button className="dropdown-item danger" onClick={() => handleAction(user.status === 'banned' ? 'unban' : 'ban', user)}>
-                    <Ban size={14} />
-                    {user.status === 'banned' ? 'Unban User' : 'Ban User'}
-                  </button>
-                  <button className="dropdown-item danger" onClick={() => handleAction('delete', user)}>
-                    <Trash2 size={14} />
-                    Delete User
-                  </button>
-                </div>
-              )}
-            </div>
-          ))}
+                      {activeDropdown === user.id && (
+                        <div className="dropdown-menu">
+                          <button
+                            className="dropdown-item"
+                            onClick={() => handleAction('edit', user)}
+                          >
+                            <Edit size={14} />
+                            Edit User
+                          </button>
+                          <button
+                            className="dropdown-item"
+                            onClick={() => handleAction('view', user)}
+                          >
+                            <Eye size={14} />
+                            View Details
+                          </button>
+                          <button
+                            className="dropdown-item"
+                            onClick={() => handleUserAction('message', user)}
+                          >
+                            <MessageSquare size={14} />
+                            Send Message
+                          </button>
+                          <div className="dropdown-divider"></div>
+                          <button
+                            className="dropdown-item danger"
+                            onClick={() => handleAction(user.status === 'banned' ? 'unban' : 'ban', user)}
+                          >
+                            <Ban size={14} />
+                            {user.status === 'banned' ? 'Unban User' : 'Ban User'}
+                          </button>
+                          <button
+                            className="dropdown-item danger"
+                            onClick={() => handleAction('delete', user)}
+                          >
+                            <Trash2 size={14} />
+                            Delete User
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
 
-        <div className="users-footer-modern">
-          <div className="users-count-modern">
+        <div className="users-footer">
+          <div className="users-count">
             Showing {filteredUsers.length} of {users.length} users
           </div>
-          <div className="pagination-modern">
-            <button className="pagination-btn" disabled>Previous</button>
-            <button className="pagination-btn active">1</button>
-            <button className="pagination-btn">2</button>
-            <button className="pagination-btn">3</button>
-            <button className="pagination-btn">Next</button>
+          <div className="pagination">
+            <button className="btn btn-secondary" disabled>Previous</button>
+            <span className="page-info">Page 1 of 1</span>
+            <button className="btn btn-secondary" disabled>Next</button>
           </div>
         </div>
       </div>
