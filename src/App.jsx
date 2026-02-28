@@ -1234,85 +1234,96 @@ export default function App() {
           </div>
         </div>
 
-        <div className="users-table-container">
-          <table className="users-table">
-            <thead>
-              <tr>
-                <th>
-                  <input
-                    type="checkbox"
-                    checked={selectedUsers.length === filteredUsers.length && filteredUsers.length > 0}
-                    onChange={handleSelectAll}
-                    className="checkbox"
-                  />
-                </th>
-                <th>User</th>
-                <th>Status</th>
-                <th>Joined</th>
-                <th>Last Active</th>
-                <th>Spots</th>
-                <th>Reviews</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredUsers.map(user => (
-                <tr key={user.id} className="user-row">
-                  <td>
+        <div className="users-grid-container">
+          <div className="users-grid">
+            {filteredUsers.map(user => (
+              <div key={user.id} className="user-card">
+                <div className="user-card-header">
+                  <div className="user-card-avatar">
+                    <div className="user-avatar-circle">{user.name.charAt(0)}</div>
+                    <div className="user-status-indicator {user.status}"></div>
+                  </div>
+                  <div className="user-card-info">
+                    <h3 className="user-card-name">{user.name}</h3>
+                    <p className="user-card-email">{user.email}</p>
+                    <div className="user-card-status">
+                      {getStatusBadge(user.status)}
+                    </div>
+                  </div>
+                  <div className="user-card-checkbox">
                     <input
                       type="checkbox"
                       checked={selectedUsers.includes(user.id)}
                       onChange={() => handleSelectUser(user.id)}
                       className="checkbox"
                     />
-                  </td>
-                  <td>
-                    <div className="user-info">
-                      <div className="user-avatar">{user.name.charAt(0)}</div>
-                      <div>
-                        <div className="user-name">{user.name}</div>
-                        <div className="user-email">{user.email}</div>
+                  </div>
+                </div>
+                
+                <div className="user-card-body">
+                  <div className="user-stats-grid">
+                    <div className="stat-item">
+                      <div className="stat-icon">
+                        <MapPin size={16} />
+                      </div>
+                      <div className="stat-info">
+                        <div className="stat-value">{user.spots}</div>
+                        <div className="stat-label">Spots</div>
                       </div>
                     </div>
-                  </td>
-                  <td>{getStatusBadge(user.status)}</td>
-                  <td>{user.joined}</td>
-                  <td>{user.lastActive}</td>
-                  <td>{user.spots}</td>
-                  <td>{user.reviews}</td>
-                  <td>
+                    <div className="stat-item">
+                      <div className="stat-icon">
+                        <Star size={16} />
+                      </div>
+                      <div className="stat-info">
+                        <div className="stat-value">{user.reviews}</div>
+                        <div className="stat-label">Reviews</div>
+                      </div>
+                    </div>
+                    <div className="stat-item">
+                      <div className="stat-icon">
+                        <Calendar size={16} />
+                      </div>
+                      <div className="stat-info">
+                        <div className="stat-value">{user.joined}</div>
+                        <div className="stat-label">Joined</div>
+                      </div>
+                    </div>
+                    <div className="stat-item">
+                      <div className="stat-icon">
+                        <Clock size={16} />
+                      </div>
+                      <div className="stat-info">
+                        <div className="stat-value">{user.lastActive}</div>
+                        <div className="stat-label">Last Active</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="user-card-footer">
+                  <div className="user-actions">
+                    <button className="action-btn primary" onClick={() => handleAction('view', user)}>
+                      <Eye size={14} />
+                      View
+                    </button>
+                    <button className="action-btn secondary" onClick={() => handleAction('edit', user)}>
+                      <Edit size={14} />
+                      Edit
+                    </button>
+                    <button className="action-btn secondary" onClick={() => handleUserAction('message', user)}>
+                      <MessageSquare size={14} />
+                      Message
+                    </button>
                     <div className="dropdown-container">
                       <button
-                        className="btn-icon"
+                        className="action-btn more"
                         onClick={() => toggleDropdown(user.id)}
                       >
-                        <MoreVertical size={16} />
+                        <MoreVertical size={14} />
                       </button>
-
                       {activeDropdown === user.id && (
                         <div className="dropdown-menu">
-                          <button
-                            className="dropdown-item"
-                            onClick={() => handleAction('edit', user)}
-                          >
-                            <Edit size={14} />
-                            Edit User
-                          </button>
-                          <button
-                            className="dropdown-item"
-                            onClick={() => handleAction('view', user)}
-                          >
-                            <Eye size={14} />
-                            View Details
-                          </button>
-                          <button
-                            className="dropdown-item"
-                            onClick={() => handleUserAction('message', user)}
-                          >
-                            <MessageSquare size={14} />
-                            Send Message
-                          </button>
-                          <div className="dropdown-divider"></div>
                           <button
                             className="dropdown-item danger"
                             onClick={() => handleAction(user.status === 'banned' ? 'unban' : 'ban', user)}
@@ -1330,11 +1341,11 @@ export default function App() {
                         </div>
                       )}
                     </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
 
         <div className="users-footer">
