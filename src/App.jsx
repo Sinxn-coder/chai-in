@@ -294,6 +294,8 @@ export default function App() {
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [selectedUserDetail, setSelectedUserDetail] = useState(null);
   const [activeDropdown, setActiveDropdown] = useState(null);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
   const [selectedSpots, setSelectedSpots] = useState([]);
   const [showFlagConfirm, setShowFlagConfirm] = useState(false);
   const [showVerifyConfirm, setShowVerifyConfirm] = useState(false);
@@ -1092,6 +1094,57 @@ export default function App() {
     );
   };
 
+  const handleExportUsers = () => {
+    // Determine which users to export (selected or all filtered)
+    const usersToExport = selectedUsers.length > 0 
+      ? filteredUsers.filter(user => selectedUsers.includes(user.id))
+      : filteredUsers;
+
+    // Create CSV content
+    const headers = ['ID', 'Name', 'Email', 'Status', 'Joined Date', 'Last Active', 'Food Spots', 'Reviews'];
+    const csvContent = [
+      headers.join(','),
+      ...usersToExport.map(user => [
+        user.id,
+        `"${user.name}"`,
+        `"${user.email}"`,
+        user.status,
+        user.joined,
+        user.lastActive,
+        user.spots,
+        user.reviews
+      ].join(','))
+    ].join('\n');
+
+    // Create blob and download
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    
+    // Generate filename with timestamp
+    const timestamp = new Date().toISOString().split('T')[0];
+    const filename = `users_export_${timestamp}${selectedUsers.length > 0 ? '_selected' : '_all'}.csv`;
+    
+    link.setAttribute('href', url);
+    link.setAttribute('download', filename);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    // Show success message
+    const message = `Successfully exported ${usersToExport.length} users to ${filename}`;
+    setToastMessage(message);
+    setShowToast(true);
+    
+    // Hide toast after 3 seconds
+    setTimeout(() => {
+      setShowToast(false);
+    }, 3000);
+    
+    console.log(message);
+  };
+
   const handleSelectAll = () => {
     if (selectedUsers.length === filteredUsers.length) {
       setSelectedUsers([]);
@@ -1235,7 +1288,7 @@ export default function App() {
                 {selectedUsers.length > 0 && `${selectedUsers.length} selected`}
               </span>
             </div>
-            <button className="btn btn-secondary">
+            <button className="btn btn-secondary" onClick={handleExportUsers}>
               <Download size={16} />
               Export
             </button>
@@ -2981,6 +3034,16 @@ export default function App() {
       <main>
         {renderContent()}
       </main>
+
+      {/* Toast Notification */}
+      {showToast && (
+        <div className="toast-notification">
+          <div className="toast-content">
+            <CheckCircle size={20} className="toast-icon" />
+            <span className="toast-message">{toastMessage}</span>
+          </div>
+        </div>
+      )}
     </>
   );
 }
