@@ -1401,34 +1401,50 @@ export default function App() {
                     <MessageSquare size={16} />
                     Send Message
                   </button>
-                  <div className="dropdown-container">
-                    <button
-                      className="action-btn-detail more"
-                      onClick={() => toggleDropdown(selectedUserDetail.id)}
-                    >
-                      <MoreVertical size={16} />
-                    </button>
-                    {activeDropdown === selectedUserDetail.id && (
-                      <div className="dropdown-menu">
-                        <button
-                          className="dropdown-item danger"
-                          onClick={() => handleAction(selectedUserDetail.status === 'banned' ? 'unban' : 'ban', selectedUserDetail)}
-                        >
-                          <Ban size={14} />
-                          {selectedUserDetail.status === 'banned' ? 'Unban User' : 'Ban User'}
-                        </button>
-                        <button
-                          className="dropdown-item danger"
-                          onClick={() => handleAction('delete', selectedUserDetail)}
-                        >
-                          <Trash2 size={14} />
-                          Delete User
-                        </button>
-                      </div>
-                    )}
-                  </div>
+                  <button 
+                    className="action-btn-detail more" 
+                    onClick={() => toggleDropdown(selectedUserDetail.id)}
+                  >
+                    <MoreVertical size={16} />
+                  </button>
                 </div>
               </div>
+
+              {/* Action Popup */}
+              {activeDropdown === selectedUserDetail.id && (
+                <div className="action-popup-overlay" onClick={() => setActiveDropdown(null)}>
+                  <div className="action-popup" onClick={(e) => e.stopPropagation()}>
+                    <div className="action-popup-header">
+                      <h4>Actions</h4>
+                      <button className="action-popup-close" onClick={() => setActiveDropdown(null)}>
+                        <X size={16} />
+                      </button>
+                    </div>
+                    <div className="action-popup-body">
+                      <button 
+                        className="action-popup-item danger"
+                        onClick={() => {
+                          handleAction(selectedUserDetail.status === 'banned' ? 'unban' : 'ban', selectedUserDetail);
+                          setActiveDropdown(null);
+                        }}
+                      >
+                        <Ban size={14} />
+                        <span>{selectedUserDetail.status === 'banned' ? 'Unban User' : 'Ban User'}</span>
+                      </button>
+                      <button 
+                        className="action-popup-item danger"
+                        onClick={() => {
+                          handleAction('delete', selectedUserDetail);
+                          setActiveDropdown(null);
+                        }}
+                      >
+                        <Trash2 size={14} />
+                        <span>Delete User</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         )}

@@ -6961,6 +6961,117 @@ main {
   color: #374151;
 }
 
+/* Action Popup Styles */
+.action-popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1002;
+  padding: 20px;
+}
+
+.action-popup {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  min-width: 280px;
+  max-width: 400px;
+  width: 90%;
+  overflow: hidden;
+  animation: actionPopupSlideIn 0.3s ease-out;
+}
+
+@keyframes actionPopupSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.action-popup-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.action-popup-header h4 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0;
+}
+
+.action-popup-close {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: none;
+  background: #f3f4f6;
+  color: #6b7280;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.action-popup-close:hover {
+  background: #e5e7eb;
+  color: #374151;
+}
+
+.action-popup-body {
+  padding: 8px;
+}
+
+.action-popup-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 12px 16px;
+  border: none;
+  background: transparent;
+  color: #374151;
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-radius: 8px;
+}
+
+.action-popup-item:hover {
+  background: #f3f4f6;
+  color: #111827;
+}
+
+.action-popup-item.danger {
+  color: #dc2626;
+}
+
+.action-popup-item.danger:hover {
+  background: #fef2f2;
+  color: #b91c1c;
+}
+
+.action-popup-item span {
+  flex: 1;
+}
+
 /* Responsive Design for User Cards */
 @media (max-width: 768px) {
   .users-grid {
