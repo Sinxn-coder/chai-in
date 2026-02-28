@@ -1217,6 +1217,24 @@ export default function App() {
             </div>
           </div>
           <div className="users-actions">
+            <div className="select-all-container">
+              <label className="select-all-label">
+                <input
+                  type="checkbox"
+                  checked={selectedUsers.length === filteredUsers.length && filteredUsers.length > 0}
+                  onChange={handleSelectAll}
+                  className="select-all-checkbox"
+                />
+                <span className="select-all-text">
+                  {selectedUsers.length === filteredUsers.length && filteredUsers.length > 0 
+                    ? 'Deselect All' 
+                    : 'Select All'}
+                </span>
+              </label>
+              <span className="selected-count">
+                {selectedUsers.length > 0 && `${selectedUsers.length} selected`}
+              </span>
+            </div>
             <button className="btn btn-secondary">
               <Download size={16} />
               Export
@@ -1225,7 +1243,7 @@ export default function App() {
               <>
                 <button className="btn btn-warning">
                   <Ban size={16} />
-                  Ban Selected
+                  Deactivate Selected
                 </button>
                 <button className="btn btn-success">
                   <Shield size={16} />
