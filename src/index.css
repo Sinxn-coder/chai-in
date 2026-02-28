@@ -6360,8 +6360,42 @@ main {
   margin: 0 0 8px 0;
 }
 
-.user-card-checkbox {
+.user-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   margin-left: auto;
+}
+
+.view-user-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+  color: #6b7280;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.view-user-btn:hover {
+  background: #3b82f6;
+  color: white;
+  border-color: #3b82f6;
+  transform: scale(1.05);
+}
+
+.view-user-btn:active {
+  transform: scale(0.95);
+}
+
+.user-card-checkbox {
+  display: flex;
+  align-items: center;
 }
 
 .user-card-body {

@@ -1239,7 +1239,7 @@ export default function App() {
         <div className="users-grid-container">
           <div className="users-grid">
             {filteredUsers.map(user => (
-              <div key={user.id} className="user-card-compact" onClick={() => setSelectedUserDetail(user)}>
+              <div key={user.id} className="user-card-compact">
                 <div className="user-card-compact-header">
                   <div className="user-avatar-compact">
                     <div className="user-avatar-circle-compact">{user.name.charAt(0)}</div>
@@ -1252,7 +1252,17 @@ export default function App() {
                       {getStatusBadge(user.status)}
                     </div>
                   </div>
-                  <div className="user-card-checkbox">
+                  <div className="user-card-actions">
+                    <button 
+                      className="view-user-btn" 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedUserDetail(user);
+                      }}
+                      title="View User Details"
+                    >
+                      <Eye size={14} />
+                    </button>
                     <input
                       type="checkbox"
                       checked={selectedUsers.includes(user.id)}
