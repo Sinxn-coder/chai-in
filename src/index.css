@@ -6631,16 +6631,17 @@ main {
 /* User Detail Popup Styles */
 .user-detail-popup-overlay {
   position: fixed;
-  top: 0;
+  top: 80px;
   left: 0;
   right: 0;
   bottom: 0;
   background: rgba(0, 0, 0, 0.5);
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   z-index: 999;
   padding: 20px;
+  padding-top: 40px;
 }
 
 .user-detail-popup {
