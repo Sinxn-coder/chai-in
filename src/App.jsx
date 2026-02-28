@@ -1316,73 +1316,75 @@ export default function App() {
               </div>
               
               <div className="user-detail-body">
-                <div className="user-profile-section">
-                  <h3 className="profile-section-title">Profile Information</h3>
-                  <div className="profile-info-grid">
-                    <div className="profile-info-item">
-                      <div className="profile-info-label">Full Name</div>
-                      <div className="profile-info-value">{selectedUserDetail.name}</div>
-                    </div>
-                    <div className="profile-info-item">
-                      <div className="profile-info-label">Email Address</div>
-                      <div className="profile-info-value">{selectedUserDetail.email}</div>
-                    </div>
-                    <div className="profile-info-item">
-                      <div className="profile-info-label">Account Status</div>
-                      <div className="profile-info-value">{getStatusBadge(selectedUserDetail.status)}</div>
-                    </div>
-                    <div className="profile-info-item">
-                      <div className="profile-info-label">Member Since</div>
-                      <div className="profile-info-value">{selectedUserDetail.joined}</div>
-                    </div>
-                    <div className="profile-info-item">
-                      <div className="profile-info-label">Last Active</div>
-                      <div className="profile-info-value">{selectedUserDetail.lastActive}</div>
-                    </div>
-                    <div className="profile-info-item">
-                      <div className="profile-info-label">Account ID</div>
-                      <div className="profile-info-value">#USR{String(selectedUserDetail.id).padStart(6, '0')}</div>
+                <div className="user-content-horizontal">
+                  <div className="user-profile-section-horizontal">
+                    <h3 className="profile-section-title">Profile Information</h3>
+                    <div className="profile-info-grid-horizontal">
+                      <div className="profile-info-item">
+                        <div className="profile-info-label">Full Name</div>
+                        <div className="profile-info-value">{selectedUserDetail.name}</div>
+                      </div>
+                      <div className="profile-info-item">
+                        <div className="profile-info-label">Email Address</div>
+                        <div className="profile-info-value">{selectedUserDetail.email}</div>
+                      </div>
+                      <div className="profile-info-item">
+                        <div className="profile-info-label">Account Status</div>
+                        <div className="profile-info-value">{getStatusBadge(selectedUserDetail.status)}</div>
+                      </div>
+                      <div className="profile-info-item">
+                        <div className="profile-info-label">Member Since</div>
+                        <div className="profile-info-value">{selectedUserDetail.joined}</div>
+                      </div>
+                      <div className="profile-info-item">
+                        <div className="profile-info-label">Last Active</div>
+                        <div className="profile-info-value">{selectedUserDetail.lastActive}</div>
+                      </div>
+                      <div className="profile-info-item">
+                        <div className="profile-info-label">Account ID</div>
+                        <div className="profile-info-value">#USR{String(selectedUserDetail.id).padStart(6, '0')}</div>
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                <div className="user-activity-section">
-                  <h3 className="profile-section-title">Activity Summary</h3>
-                  <div className="user-stats-grid-detail">
-                    <div className="stat-item-detail">
-                      <div className="stat-icon-detail">
-                        <MapPin size={20} />
+                  <div className="user-activity-section-horizontal">
+                    <h3 className="profile-section-title">Activity Summary</h3>
+                    <div className="user-stats-grid-horizontal">
+                      <div className="stat-item-detail">
+                        <div className="stat-icon-detail">
+                          <MapPin size={20} />
+                        </div>
+                        <div className="stat-info-detail">
+                          <div className="stat-value-detail">{selectedUserDetail.spots}</div>
+                          <div className="stat-label-detail">Food Spots</div>
+                        </div>
                       </div>
-                      <div className="stat-info-detail">
-                        <div className="stat-value-detail">{selectedUserDetail.spots}</div>
-                        <div className="stat-label-detail">Food Spots</div>
+                      <div className="stat-item-detail">
+                        <div className="stat-icon-detail">
+                          <Star size={20} />
+                        </div>
+                        <div className="stat-info-detail">
+                          <div className="stat-value-detail">{selectedUserDetail.reviews}</div>
+                          <div className="stat-label-detail">Reviews</div>
+                        </div>
                       </div>
-                    </div>
-                    <div className="stat-item-detail">
-                      <div className="stat-icon-detail">
-                        <Star size={20} />
+                      <div className="stat-item-detail">
+                        <div className="stat-icon-detail">
+                          <MessageSquare size={20} />
+                        </div>
+                        <div className="stat-info-detail">
+                          <div className="stat-value-detail">{Math.floor(selectedUserDetail.reviews * 1.5)}</div>
+                          <div className="stat-label-detail">Comments</div>
+                        </div>
                       </div>
-                      <div className="stat-info-detail">
-                        <div className="stat-value-detail">{selectedUserDetail.reviews}</div>
-                        <div className="stat-label-detail">Reviews</div>
-                      </div>
-                    </div>
-                    <div className="stat-item-detail">
-                      <div className="stat-icon-detail">
-                        <MessageSquare size={20} />
-                      </div>
-                      <div className="stat-info-detail">
-                        <div className="stat-value-detail">{Math.floor(selectedUserDetail.reviews * 1.5)}</div>
-                        <div className="stat-label-detail">Comments</div>
-                      </div>
-                    </div>
-                    <div className="stat-item-detail">
-                      <div className="stat-icon-detail">
-                        <Users size={20} />
-                      </div>
-                      <div className="stat-info-detail">
-                        <div className="stat-value-detail">{Math.floor(selectedUserDetail.spots * 2.3)}</div>
-                        <div className="stat-label-detail">Followers</div>
+                      <div className="stat-item-detail">
+                        <div className="stat-icon-detail">
+                          <Users size={20} />
+                        </div>
+                        <div className="stat-info-detail">
+                          <div className="stat-value-detail">{Math.floor(selectedUserDetail.spots * 2.3)}</div>
+                          <div className="stat-label-detail">Followers</div>
+                        </div>
                       </div>
                     </div>
                   </div>
