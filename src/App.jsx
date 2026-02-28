@@ -1109,10 +1109,10 @@ export default function App() {
         `"${user.name}"`,
         `"${user.email}"`,
         user.status,
-        user.joined,
-        user.lastActive,
-        user.spots,
-        user.reviews
+        `"${user.joined || 'N/A'}"`,  // Handle missing dates
+        `"${user.lastActive || 'N/A'}"`,  // Handle missing dates
+        user.spots || 0,
+        user.reviews || 0
       ].join(','))
     ].join('\n');
 
