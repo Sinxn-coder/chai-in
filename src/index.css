@@ -6165,6 +6165,8 @@ main {
   padding: 4px 0;
   margin-top: 4px;
   animation: dropdownSlide 0.2s ease-out;
+  max-height: 200px;
+  overflow-y: auto;
 }
 
 @keyframes dropdownSlide {
@@ -6870,6 +6872,39 @@ main {
   padding: 16px 24px;
   background: #f8fafc;
   border-top: 1px solid #e5e7eb;
+  position: relative;
+}
+
+.user-detail-footer .dropdown-menu {
+  position: absolute;
+  bottom: 100%;
+  right: 0;
+  z-index: 1001;
+  min-width: 160px;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  box-shadow: 0 -10px 25px rgba(0, 0, 0, 0.1);
+  padding: 4px 0;
+  margin-bottom: 4px;
+  animation: dropdownSlideUp 0.2s ease-out;
+  max-height: 150px;
+  overflow-y: auto;
+}
+
+@keyframes dropdownSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.user-detail-footer .dropdown-container {
+  position: relative;
 }
 
 .user-actions-detail {
