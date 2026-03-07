@@ -1,0 +1,8 @@
+﻿Analyzing app...                                                
+
+   info - Unnecessary use of 'toList' in a spread - lib\add_spot.dart:666:14 - unnecessary_to_list_in_spreads
+   info - Don't use 'BuildContext's across async gaps, guarded by an unrelated 'mounted' check - lib\add_spot.dart:837:48 - use_build_context_synchronously
+   info - Use a 'SizedBox' to add whitespace to a layout - lib\community.dart:391:33 - sized_box_for_whitespace
+   info - Don't use 'BuildContext's across async gaps, guarded by an unrelated 'mounted' check - lib\help_support.dart:147:46 - use_build_context_synchronously
+   info - Don't use 'BuildContext's across async gaps, guarded by an unrelated 'mounted' check - lib\help_support.dart:179:44 - use_build_context_synchronously
+

@@ -1,0 +1,221 @@
+import React, { useState, useEffect } from 'react';
+import { Bell, Settings, RefreshCw, Users, MapPin, DollarSign, Activity, FileText, Settings as SettingsIcon, CheckCircle, ArrowRight, BarChart2 } from 'lucide-react';
+
+const DashboardPage = ({ setActiveTab }) => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [showRefreshAnimation, setShowRefreshAnimation] = useState(false);
+  const [currentTime, setCurrentTime] = useState(new Date());
+
+  useEffect(() => {
+    const timer = setInterval(() => setCurrentTime(new Date()), 60000); // Update time every minute
+    return () => clearInterval(timer);
+  }, []);
+
+  // Mock data for stats
+  const stats = {
+    users: 15234,
+    usersGrowth: '+12.5%',
+    spots: 456,
+    spotsGrowth: '+8.2%',
+    revenue: 45678,
+    revenueGrowth: '+23.7%'
+  };
+
+  // Recent activity data
+  const recentActivities = [
+    { id: 1, user: 'John Doe', action: 'added new spot "Pizza Palace"', time: '2h ago', avatar: 'https://picsum.photos/seed/user1/40/40' },
+    { id: 2, user: 'Jane Smith', action: 'left 5-star review', time: '4h ago', avatar: 'https://picsum.photos/seed/user2/40/40' },
+    { id: 3, user: 'Bob Johnson', action: 'updated profile information', time: '6h ago', avatar: 'https://picsum.photos/seed/user3/40/40' },
+    { id: 4, user: 'Alice Brown', action: 'reported issue with payment', time: '8h ago', avatar: 'https://picsum.photos/seed/user4/40/40' },
+    { id: 5, user: 'Charlie Wilson', action: 'completed profile verification', time: '12h ago', avatar: 'https://picsum.photos/seed/user5/40/40' }
+  ];
+
+  const handleRefresh = () => {
+    setIsLoading(true);
+    setTimeout(() => {
+      setIsLoading(false);
+      setShowRefreshAnimation(true);
+      setTimeout(() => setShowRefreshAnimation(false), 2000);
+    }, 1000);
+  };
+
+  const formatGreeting = () => {
+    const hour = currentTime.getHours();
+    if (hour < 12) return 'Good Morning';
+    if (hour < 18) return 'Good Afternoon';
+    return 'Good Evening';
+  };
+
+  const formatDate = () => {
+    return currentTime.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+  };
+
+  const formatTime = () => {
+    return currentTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+  };
+
+  return (
+    <div className="bento-dashboard-page">
+      {/* Refresh Animation Overlay */}
+      {showRefreshAnimation && (
+        <div className="refresh-animation-overlay">
+          <div className="refresh-animation-content">
+            <div className="refresh-icon-large">
+              <RefreshCw className="w-16 h-16 animate-spin" />
+            </div>
+            <div className="refresh-text">
+              <h3>Dashboard Updated!</h3>
+              <p>All data has been refreshed successfully</p>
+            </div>
+            <div className="refresh-checkmarks">
+              <div className="checkmark"><CheckCircle className="w-8 h-8 text-green-500" /></div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Main Bento Grid */}
+      <div className="bento-grid">
+
+        {/* Cell 1: Welcome Header (Spans 2 columns) */}
+        <div className="bento-cell bento-welcome">
+          <div className="welcome-content">
+            <div className="welcome-text">
+              <span className="welcome-date">{formatDate()}</span>
+              <h1>{formatGreeting()}, <span>Admin</span></h1>
+              <p>Here's what's happening on your platform today. System metrics are looking strong across all active regions.</p>
+            </div>
+            <div className="welcome-time">
+              <span>{formatTime()}</span>
+            </div>
+          </div>
+          <div className="welcome-actions">
+            <button className="bento-icon-btn" onClick={handleRefresh} title="Sync Data">
+              <RefreshCw className={`w-5 h-5 ${isLoading ? 'animate-spin' : ''}`} />
+            </button>
+            <button className="bento-icon-btn" onClick={() => setActiveTab('notifications')} title="Alerts">
+              <Bell className="w-5 h-5" />
+            </button>
+          </div>
+        </div>
+
+        {/* Cell 2: Revenue Stat */}
+        <div className="bento-cell bento-stat bento-revenue">
+          <div className="stat-icon-wrapper">
+            <DollarSign className="w-6 h-6" />
+          </div>
+          <div className="stat-data">
+            <span className="stat-label">Monthly Revenue</span>
+            <div className="stat-value-row">
+              <h2>${stats.revenue.toLocaleString()}</h2>
+              <span className="stat-badge positive">{stats.revenueGrowth}</span>
+            </div>
+            <div className="stat-chart-mini pulse-chart"></div>
+          </div>
+        </div>
+
+        {/* Cell 3: Users Stat */}
+        <div className="bento-cell bento-stat bento-users">
+          <div className="stat-icon-wrapper">
+            <Users className="w-6 h-6" />
+          </div>
+          <div className="stat-data">
+            <span className="stat-label">Active Users</span>
+            <div className="stat-value-row">
+              <h2>{stats.users.toLocaleString()}</h2>
+              <span className="stat-badge positive">{stats.usersGrowth}</span>
+            </div>
+            <div className="user-avatars-mini">
+              <img src="https://picsum.photos/seed/1/30/30" alt="u1" />
+              <img src="https://picsum.photos/seed/2/30/30" alt="u2" />
+              <img src="https://picsum.photos/seed/3/30/30" alt="u3" />
+              <div className="avatar-more">+2k</div>
+            </div>
+          </div>
+        </div>
+
+        {/* Cell 4: Main Chart Placeholder (Spans 2x2) */}
+        <div className="bento-cell bento-chart">
+          <div className="bento-cell-header">
+            <h3>Growth Trajectory</h3>
+            <button className="bento-sub-btn">View All <ArrowRight className="w-4 h-4" /></button>
+          </div>
+          <div className="chart-placeholder">
+            <div className="chart-bars">
+              {[40, 65, 45, 80, 55, 90, 75, 100].map((height, i) => (
+                <div key={i} className="chart-bar" style={{ height: `${height}%` }}></div>
+              ))}
+            </div>
+            <div className="chart-labels">
+              <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span><span>Today</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Cell 5: Activity Feed (Spans 1 col, 2 rows) */}
+        <div className="bento-cell bento-activity">
+          <div className="bento-cell-header">
+            <h3>Live Feed</h3>
+            <span className="live-indicator"></span>
+          </div>
+          <div className="bento-activity-list">
+            {recentActivities.map(activity => (
+              <div key={activity.id} className="bento-activity-item">
+                <img src={activity.avatar} alt="avatar" className="activity-avatar" />
+                <div className="activity-info">
+                  <span className="activity-name">{activity.user}</span>
+                  <span className="activity-desc">{activity.action}</span>
+                </div>
+                <span className="activity-time">{activity.time}</span>
+              </div>
+            ))}
+          </div>
+          <button className="bento-full-btn">See All Activity</button>
+        </div>
+
+        {/* Cell 6: Quick Actions Buttons (2x2 grid inside a single cell) */}
+        <div className="bento-cell bento-actions">
+          <div className="bento-actions-grid">
+            <button className="bento-action-mini color-blue">
+              <BarChart2 className="w-5 h-5" />
+              <span>Analytics</span>
+            </button>
+            <button className="bento-action-mini color-orange">
+              <FileText className="w-5 h-5" />
+              <span>Reports</span>
+            </button>
+            <button className="bento-action-mini color-green">
+              <Activity className="w-5 h-5" />
+              <span>Import</span>
+            </button>
+            <button className="bento-action-mini color-gray">
+              <SettingsIcon className="w-5 h-5" />
+              <span>Setup</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Cell 7: Spots Stat */}
+        <div className="bento-cell bento-stat bento-spots">
+          <div className="stat-icon-wrapper">
+            <MapPin className="w-6 h-6" />
+          </div>
+          <div className="stat-data">
+            <span className="stat-label">Verified Spots</span>
+            <div className="stat-value-row">
+              <h2>{stats.spots.toLocaleString()}</h2>
+              <span className="stat-badge positive">{stats.spotsGrowth}</span>
+            </div>
+            <div className="progress-bar-container">
+              <div className="progress-bar-fill" style={{ width: '75%' }}></div>
+            </div>
+            <span className="progress-label">75% capacity goal</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  );
+};
+
+export default DashboardPage;
