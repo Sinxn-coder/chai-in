@@ -5,6 +5,7 @@ const DashboardPage = ({ setActiveTab }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [showRefreshAnimation, setShowRefreshAnimation] = useState(false);
   const [currentTime, setCurrentTime] = useState(new Date());
+  const [activeSection, setActiveSection] = useState(null);
 
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 60000); // Update time every minute
@@ -37,6 +38,10 @@ const DashboardPage = ({ setActiveTab }) => {
       setShowRefreshAnimation(true);
       setTimeout(() => setShowRefreshAnimation(false), 2000);
     }, 1000);
+  };
+
+  const toggleSection = (section) => {
+    setActiveSection(prev => prev === section ? null : section);
   };
 
   const formatGreeting = () => {
@@ -176,19 +181,31 @@ const DashboardPage = ({ setActiveTab }) => {
         {/* Cell 6: Quick Actions Buttons (2x2 grid inside a single cell) */}
         <div className="bento-cell bento-actions">
           <div className="bento-actions-grid">
-            <button className="bento-action-mini color-blue">
+            <button
+              className={`bento-action-mini color-blue ${activeSection === 'analytics' ? 'active' : ''}`}
+              onClick={() => toggleSection('analytics')}
+            >
               <BarChart2 className="w-5 h-5" />
               <span>Analytics</span>
             </button>
-            <button className="bento-action-mini color-orange">
+            <button
+              className={`bento-action-mini color-orange ${activeSection === 'reports' ? 'active' : ''}`}
+              onClick={() => toggleSection('reports')}
+            >
               <FileText className="w-5 h-5" />
               <span>Reports</span>
             </button>
-            <button className="bento-action-mini color-green">
+            <button
+              className={`bento-action-mini color-green ${activeSection === 'import' ? 'active' : ''}`}
+              onClick={() => toggleSection('import')}
+            >
               <Activity className="w-5 h-5" />
               <span>Import</span>
             </button>
-            <button className="bento-action-mini color-gray">
+            <button
+              className={`bento-action-mini color-gray ${activeSection === 'setup' ? 'active' : ''}`}
+              onClick={() => toggleSection('setup')}
+            >
               <SettingsIcon className="w-5 h-5" />
               <span>Setup</span>
             </button>
@@ -214,6 +231,149 @@ const DashboardPage = ({ setActiveTab }) => {
         </div>
 
       </div>
+
+      {/* Expanded Sections Container */}
+      <div className="bento-sections-container">
+
+        {/* Analytics Section */}
+        {activeSection === 'analytics' && (
+          <div className="bento-expanded-card animation-slide-up">
+            <div className="bento-expanded-header">
+              <div className="header-icon-part bg-blue">
+                <BarChart2 className="w-6 h-6 text-blue" />
+              </div>
+              <div className="header-text-part">
+                <h2>Advanced Analytics</h2>
+                <p>Deep dive into platform performance metrics</p>
+              </div>
+            </div>
+
+            <div className="bento-mini-grid">
+              <div className="bento-mini-cell">
+                <span className="mini-label">Session Duration</span>
+                <h3>4m 32s</h3>
+                <span className="stat-badge positive">+12s</span>
+              </div>
+              <div className="bento-mini-cell">
+                <span className="mini-label">Conversion Rate</span>
+                <h3>3.8%</h3>
+                <span className="stat-badge positive">+0.4%</span>
+              </div>
+              <div className="bento-mini-cell">
+                <span className="mini-label">Bounce Rate</span>
+                <h3>42.1%</h3>
+                <span className="stat-badge negative">-2.1%</span>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Reports Section */}
+        {activeSection === 'reports' && (
+          <div className="bento-expanded-card animation-slide-up">
+            <div className="bento-expanded-header">
+              <div className="header-icon-part bg-orange">
+                <FileText className="w-6 h-6 text-orange" />
+              </div>
+              <div className="header-text-part">
+                <h2>Generate Reports</h2>
+                <p>Export data for accounting and analysis</p>
+              </div>
+            </div>
+
+            <div className="bento-report-list">
+              <div className="report-item">
+                <div className="report-info">
+                  <h4>Monthly Revenue Summary</h4>
+                  <p>PDF export of all transactions and platform fees.</p>
+                </div>
+                <button className="bento-outline-btn">Download PDF</button>
+              </div>
+              <div className="report-item">
+                <div className="report-info">
+                  <h4>User Growth Export</h4>
+                  <p>CSV file containing all user acquisition data.</p>
+                </div>
+                <button className="bento-outline-btn">Download CSV</button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Import Section */}
+        {activeSection === 'import' && (
+          <div className="bento-expanded-card animation-slide-up">
+            <div className="bento-expanded-header">
+              <div className="header-icon-part bg-green">
+                <Activity className="w-6 h-6 text-green" />
+              </div>
+              <div className="header-text-part">
+                <h2>Data Import</h2>
+                <p>Sync external data into the platform</p>
+              </div>
+            </div>
+
+            <div className="bento-import-area">
+              <div className="upload-zone">
+                <Activity className="w-10 h-10 text-gray-400 mb-2" />
+                <p>Drag and drop your CSV or JSON files here</p>
+                <span>or click to browse from your computer</span>
+              </div>
+              <button className="bento-filled-btn mt-4 w-full bg-green text-white">Select File</button>
+            </div>
+          </div>
+        )}
+
+        {/* Setup Section */}
+        {activeSection === 'setup' && (
+          <div className="bento-expanded-card animation-slide-up">
+            <div className="bento-expanded-header">
+              <div className="header-icon-part bg-gray">
+                <SettingsIcon className="w-6 h-6 text-slate" />
+              </div>
+              <div className="header-text-part">
+                <h2>System Configuration</h2>
+                <p>Manage core platform behaviors</p>
+              </div>
+            </div>
+
+            <div className="bento-settings-list">
+              <div className="bento-setting-item">
+                <div>
+                  <h4>Maintenance Mode</h4>
+                  <p>Disables external access to the platform</p>
+                </div>
+                <div className="toggle-switch">
+                  <input type="checkbox" />
+                  <span className="toggle-slider"></span>
+                </div>
+              </div>
+              <div className="bento-setting-item">
+                <div>
+                  <h4>Auto-Approve Spots</h4>
+                  <p>Skip manual verification for new submissions</p>
+                </div>
+                <div className="toggle-switch">
+                  <input type="checkbox" defaultChecked />
+                  <span className="toggle-slider"></span>
+                </div>
+              </div>
+              <div className="bento-setting-item">
+                <div>
+                  <h4>Debug Logging</h4>
+                  <p>Log all API requests to the database</p>
+                </div>
+                <div className="toggle-switch">
+                  <input type="checkbox" />
+                  <span className="toggle-slider"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+      </div>
+
     </div>
   );
 };
