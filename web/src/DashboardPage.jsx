@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Bell, Settings, RefreshCw, Users, MapPin, DollarSign, Activity, FileText, Settings as SettingsIcon, CheckCircle, ArrowRight, BarChart2 } from 'lucide-react';
+import { Bell, Settings, RefreshCw, Users, MapPin, DollarSign, Activity, FileText, Settings as SettingsIcon, CheckCircle, ArrowRight, BarChart2, Download } from 'lucide-react';
 
 const DashboardPage = ({ setActiveTab }) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -287,14 +287,20 @@ const DashboardPage = ({ setActiveTab }) => {
                   <h4>Monthly Revenue Summary</h4>
                   <p>PDF export of all transactions and platform fees.</p>
                 </div>
-                <button className="bento-outline-btn">Download PDF</button>
+                <button className="bento-outline-btn">
+                  <Download className="w-4 h-4" />
+                  Download PDF
+                </button>
               </div>
               <div className="report-item">
                 <div className="report-info">
                   <h4>User Growth Export</h4>
                   <p>CSV file containing all user acquisition data.</p>
                 </div>
-                <button className="bento-outline-btn">Download CSV</button>
+                <button className="bento-outline-btn">
+                  <Download className="w-4 h-4" />
+                  Download CSV
+                </button>
               </div>
             </div>
           </div>
