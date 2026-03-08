@@ -175,7 +175,12 @@ const DashboardPage = ({ setActiveTab }) => {
               </div>
             ))}
           </div>
-          <button className="bento-full-btn">See All Activity</button>
+          <button
+            className={`bento-full-btn ${activeSection === 'activity' ? 'active' : ''}`}
+            onClick={() => toggleSection('activity')}
+          >
+            See All Activity
+          </button>
         </div>
 
         {/* Cell 6: Quick Actions Buttons (2x2 grid inside a single cell) */}
@@ -374,6 +379,44 @@ const DashboardPage = ({ setActiveTab }) => {
                   <span className="toggle-slider"></span>
                 </div>
               </div>
+            </div>
+          </div>
+        )}
+
+        {/* Activity Section */}
+        {activeSection === 'activity' && (
+          <div className="bento-expanded-card animation-slide-up">
+            <div className="bento-expanded-header">
+              <div className="header-icon-part bg-purple">
+                <Bell className="w-6 h-6 text-purple" />
+              </div>
+              <div className="header-text-part">
+                <h2>Platform Activity Log</h2>
+                <p>Comprehensive history of all user and system events</p>
+              </div>
+            </div>
+
+            <div className="bento-full-activity-list">
+              {[...recentActivities,
+              { id: 6, user: 'System', action: 'automated weekly backup completed', time: '1d ago', avatar: 'https://ui-avatars.com/api/?name=Sys&background=6366f1&color=fff' },
+              { id: 7, user: 'Admin', action: 'updated platform terms of service', time: '1d ago', avatar: 'https://ui-avatars.com/api/?name=Adm&background=0f172a&color=fff' },
+              { id: 8, user: 'Sarah Jenkins', action: 'registered a new business account', time: '2d ago', avatar: 'https://picsum.photos/seed/user6/40/40' },
+              { id: 9, user: 'David Kim', action: 'upgraded to premium subscription', time: '2d ago', avatar: 'https://picsum.photos/seed/user7/40/40' },
+              { id: 10, user: 'System', action: 'server health check passed', time: '3d ago', avatar: 'https://ui-avatars.com/api/?name=Sys&background=6366f1&color=fff' }
+              ].map(activity => (
+                <div key={activity.id} className="bento-activity-item expanded">
+                  <img src={activity.avatar} alt="avatar" className="activity-avatar" />
+                  <div className="activity-info">
+                    <span className="activity-name">{activity.user}</span>
+                    <span className="activity-desc">{activity.action}</span>
+                  </div>
+                  <span className="activity-time">{activity.time}</span>
+                </div>
+              ))}
+            </div>
+
+            <div style={{ display: 'flex', justifyContent: 'center', marginTop: '24px' }}>
+              <button className="bento-outline-btn">Load Older Events</button>
             </div>
           </div>
         )}

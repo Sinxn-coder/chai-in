@@ -442,7 +442,8 @@
   transition: all 0.2s;
 }
 
-.bento-full-btn:hover {
+.bento-full-btn:hover,
+.bento-full-btn.active {
   background: #e2e8f0;
 }
 
@@ -730,6 +731,30 @@
   background: #f8fafc;
 }
 
+.header-icon-part.bg-purple {
+  background: #f3e8ff;
+}
+
+.text-blue {
+  color: #3b82f6;
+}
+
+.text-orange {
+  color: #f97316;
+}
+
+.text-green {
+  color: #22c55e;
+}
+
+.text-slate {
+  color: #64748b;
+}
+
+.text-purple {
+  color: #a855f7;
+}
+
 .header-text-part h2 {
   font-size: 24px;
   font-weight: 800;
@@ -846,6 +871,23 @@
 
 .bento-outline-btn:hover svg {
   color: #0f172a;
+}
+
+.bento-full-activity-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.bento-activity-item.expanded {
+  background: #f8fafc;
+  padding: 16px 20px;
+}
+
+.bento-activity-item.expanded:hover {
+  background: white;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
+  transform: translateY(-2px);
 }
 
 /* Import Area */
