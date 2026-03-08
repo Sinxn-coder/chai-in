@@ -3192,11 +3192,11 @@ main {
   left: 0;
   right: 0;
   background: #ffffff;
-  border: 1px solid #e5e7eb;
+  border: 1px solid rgba(0, 0, 0, 0.05);
   border-radius: 16px;
   box-shadow:
-    0 20px 60px rgba(0, 0, 0, 0.15),
-    0 8px 24px rgba(0, 0, 0, 0.08);
+    0 20px 60px rgba(0, 0, 0, 0.08),
+    0 8px 24px rgba(0, 0, 0, 0.04);
   opacity: 0;
   visibility: hidden;
   transform: translateY(-10px) scale(0.95);
@@ -3214,7 +3214,7 @@ main {
 
 .filter-option {
   padding: 0;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid #f8fafc;
   cursor: pointer;
   transition: all 0.2s ease;
   position: relative;
@@ -3232,13 +3232,13 @@ main {
   top: 0;
   bottom: 0;
   width: 3px;
-  background: linear-gradient(135deg, #FF0000, #ff6b6b);
+  background: linear-gradient(135deg, #6366f1, #3b82f6);
   transform: scaleY(0);
   transition: transform 0.2s ease;
 }
 
 .filter-option:hover {
-  background: #fef2f2;
+  background: #f8fafc;
 }
 
 .filter-option:hover::before {
@@ -3261,14 +3261,17 @@ main {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #f8fafc;
+  background: white;
+  border: 1px solid rgba(0, 0, 0, 0.04);
   border-radius: 8px;
   flex-shrink: 0;
   transition: all 0.2s ease;
 }
 
 .filter-option:hover .filter-option-icon {
-  background: #FF0000;
+  background: #eef2ff;
+  color: #6366f1;
+  border-color: rgba(99, 102, 241, 0.2);
   transform: scale(1.05);
 }
 
@@ -3287,7 +3290,7 @@ main {
 }
 
 .filter-option:hover .filter-option-title {
-  color: #FF0000;
+  color: #6366f1;
 }
 
 .filter-option-description {
@@ -3302,7 +3305,7 @@ main {
 
 /* Active state for selected option */
 .filter-option.active {
-  background: #fef2f2;
+  background: #f8fafc;
 }
 
 .filter-option.active::before {
@@ -3310,15 +3313,82 @@ main {
 }
 
 .filter-option.active .filter-option-icon {
-  background: #FF0000;
+  background: #eef2ff;
+  color: #6366f1;
+  border-color: rgba(99, 102, 241, 0.2);
 }
 
 .filter-option.active .filter-option-title {
-  color: #FF0000;
+  color: #6366f1;
 }
 
 .filter-option.active .revenue-amount.previous {
   color: #9ca3af;
+}
+
+/* Select All User Actions Container */
+.select-all-container {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 8px 16px;
+  background: white;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+}
+
+.select-all-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.select-all-checkbox {
+  width: 18px;
+  height: 18px;
+  accent-color: #6366f1;
+  cursor: pointer;
+}
+
+.select-all-text {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #334155;
+  user-select: none;
+}
+
+.selected-count {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #6366f1;
+  background: #eef2ff;
+  padding: 4px 10px;
+  border-radius: 20px;
+}
+
+/* Premium Button Overrides */
+.premium-action-btn.premium-warning {
+  background: #fff7ed;
+  color: #ea580c;
+  border-color: rgba(234, 88, 12, 0.2);
+}
+
+.premium-action-btn.premium-warning:hover {
+  background: #ffedd5;
+  box-shadow: 0 4px 12px rgba(234, 88, 12, 0.15);
+}
+
+.premium-action-btn.premium-success {
+  background: #f0fdf4;
+  color: #16a34a;
+  border-color: rgba(22, 163, 74, 0.2);
+}
+
+.premium-action-btn.premium-success:hover {
+  background: #dcfce7;
+  box-shadow: 0 4px 12px rgba(22, 163, 74, 0.15);
 }
 
 /* Modern Dashboard Cards Styles */

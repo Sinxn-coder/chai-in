@@ -1348,11 +1348,11 @@ export default function App() {
             </button>
             {selectedUsers.length > 0 && (
               <>
-                <button className="btn btn-warning">
+                <button className="premium-action-btn premium-warning">
                   <Ban size={16} />
                   Deactivate Selected
                 </button>
-                <button className="btn btn-success">
+                <button className="premium-action-btn premium-success">
                   <Shield size={16} />
                   Activate Selected
                 </button>
