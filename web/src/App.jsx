@@ -58,7 +58,13 @@ import {
   Camera,
   Flag,
   CheckSquare,
-  Calendar
+  Calendar,
+  LayoutList,
+  Type,
+  AlignLeft,
+  LayoutGrid,
+  Menu,
+  List
 } from 'lucide-react';
 import './index.css';
 
@@ -1422,13 +1428,14 @@ export default function App() {
                 <div className="ul-col ul-col-actions">
                   <div className="row-actions-group">
                     <button
-                      className="row-action-btn view"
+                      className="view-details-btn"
                       onClick={(e) => {
                         e.stopPropagation();
                         setSelectedUserDetail(user);
                       }}
                       title="View Full Profile"
                     >
+                      <Eye size={14} />
                       View Details
                     </button>
                     <button
@@ -2044,169 +2051,117 @@ export default function App() {
     );
   };
 
-  const renderViewDetailsModal = () => {
-    if (!viewDetailsModalOpen || !viewingSpotData) return null;
+  const renderSpotSidePanel = () => {
+    if (!viewingSpotData) return null;
 
     return (
-      <div className="modern-modal-overlay" onClick={() => setViewDetailsModalOpen(false)}>
-        <div className="modern-modal-container" onClick={(e) => e.stopPropagation()}>
-          {/* Modal Header */}
-          <div className="modern-modal-header">
-            <div className="header-content">
-              <div className="spot-info">
-                <div className="spot-avatar">
-                  <MapPin size={24} />
+      <div className="user-sidepanel-backdrop" onClick={() => setViewingSpotData(null)}>
+        <div className="user-sidepanel-container animation-slide-left" onClick={(e) => e.stopPropagation()}>
+          <div className="sidepanel-header">
+            <button className="sidepanel-close" onClick={() => setViewingSpotData(null)}>
+              <X size={24} />
+            </button>
+            <div className="sidepanel-user-hero">
+              <div className="hero-avatar-wrapper">
+                <div className="hero-avatar" style={{ background: 'linear-gradient(135deg, #6366f1, #4f46e5)' }}>
+                  <MapPin size={32} />
                 </div>
-                <div className="spot-details">
-                  <h2 className="spot-name">{viewingSpotData.name}</h2>
-                  <p className="spot-category">{viewingSpotData.category}</p>
+                <div className={`hero-status-dot ${viewingSpotData.status === 'verified' ? 'active' : 'banned'}`}></div>
+              </div>
+              <h2 className="hero-name">{viewingSpotData.name}</h2>
+              <p className="hero-email">{viewingSpotData.category}</p>
+              <div className="hero-badge-wrap">
+                <span className={`status-pill pill-${viewingSpotData.status}`}>
+                  {viewingSpotData.status.toUpperCase()}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div className="sidepanel-scrollable-body">
+            {/* Immersive Stats Grid */}
+            <div className="sidepanel-bento-grid">
+              <div className="sidepanel-bento-cell spots-cell">
+                <div className="sb-icon bg-orange"><Star size={20} /></div>
+                <div className="sb-data">
+                  <h3>{viewingSpotData.rating}</h3>
+                  <span>Avg Rating</span>
                 </div>
               </div>
-              <button className="modern-close-btn" onClick={() => setViewDetailsModalOpen(false)}>
-                <X size={20} />
+              <div className="sidepanel-bento-cell reviews-cell">
+                <div className="sb-icon bg-blue"><MessageSquare size={20} /></div>
+                <div className="sb-data">
+                  <h3>{viewingSpotData.reviews}</h3>
+                  <span>Total Reviews</span>
+                </div>
+              </div>
+              <div className="sidepanel-bento-cell comments-cell">
+                <div className="sb-icon bg-green"><Clock size={20} /></div>
+                <div className="sb-data">
+                  <h3>{viewingSpotData.added}</h3>
+                  <span>Date Added</span>
+                </div>
+              </div>
+              <div className="sidepanel-bento-cell followers-cell">
+                <div className="sb-icon bg-purple"><TrendingUp size={20} /></div>
+                <div className="sb-data">
+                  <h3>98%</h3>
+                  <span>Active Rank</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Location Details */}
+            <div className="sidepanel-info-group">
+              <h4 className="info-group-title">Location Details</h4>
+              <div className="info-list-card">
+                <div className="info-list-row">
+                  <span className="il-label">Address</span>
+                  <span className="il-value">{viewingSpotData.address}</span>
+                </div>
+                <div className="info-list-row">
+                  <span className="il-label">City</span>
+                  <span className="il-value">{viewingSpotData.city}</span>
+                </div>
+                <div className="info-list-row">
+                  <span className="il-label">State</span>
+                  <span className="il-value">{viewingSpotData.state}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Platform Information */}
+            <div className="sidepanel-info-group">
+              <h4 className="info-group-title">Platform Identity</h4>
+              <div className="info-list-card">
+                <div className="info-list-row">
+                  <span className="il-label">Spot ID</span>
+                  <span className="il-value monospace">#SPT{String(viewingSpotData.id).padStart(6, '0')}</span>
+                </div>
+                <div className="info-list-row">
+                  <span className="il-label">Last Audit</span>
+                  <span className="il-value">{viewingSpotData.added}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="sidepanel-footer">
+            <button className="sp-action-btn message" onClick={() => {
+              setViewingSpotData(null);
+              setEditingSpotData(viewingSpotData);
+              setEditModalOpen(true);
+            }}>
+              <Edit size={16} />
+              Edit Spot
+            </button>
+            <div className="sp-danger-actions">
+              <button className="sp-action-btn suspend" title="Phone">
+                <Phone size={16} />
               </button>
-            </div>
-          </div>
-
-          {/* Modal Body */}
-          <div className="modern-modal-body">
-            <div className="edit-form-container">
-              {/* Left Column - Spot Information */}
-              <div className="form-column">
-                <div className="modern-section">
-                  <h3 className="section-title">
-                    <div className="title-icon">
-                      <MapPin size={18} />
-                    </div>
-                    Spot Information
-                  </h3>
-                  <div className="form-row">
-                    <div className="form-group">
-                      <label className="modern-label">Name</label>
-                      <div className="detail-display">{viewingSpotData.name}</div>
-                    </div>
-                    <div className="form-group">
-                      <label className="modern-label">Category</label>
-                      <div className="detail-display">{viewingSpotData.category}</div>
-                    </div>
-                  </div>
-                  <div className="form-row">
-                    <div className="form-group">
-                      <label className="modern-label">Status</label>
-                      <div className="detail-display">
-                        <span className={`status-badge status-${viewingSpotData.status}`}>
-                          {viewingSpotData.status}
-                        </span>
-                      </div>
-                    </div>
-                    <div className="form-group">
-                      <label className="modern-label">Rating</label>
-                      <div className="detail-display">
-                        <StarIcon size={16} />
-                        <span> {viewingSpotData.rating}</span>
-                        <span className="rating-text">({viewingSpotData.reviews} reviews)</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="modern-section">
-                  <h3 className="section-title">
-                    <div className="title-icon">
-                      <Globe size={18} />
-                    </div>
-                    Location Details
-                  </h3>
-                  <div className="form-row">
-                    <div className="form-group full-width">
-                      <label className="modern-label">Address</label>
-                      <div className="detail-display">{viewingSpotData.address}</div>
-                    </div>
-                  </div>
-                  <div className="form-row">
-                    <div className="form-group">
-                      <label className="modern-label">City</label>
-                      <div className="detail-display">{viewingSpotData.city}</div>
-                    </div>
-                    <div className="form-group">
-                      <label className="modern-label">State</label>
-                      <div className="detail-display">{viewingSpotData.state}</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Right Column - Performance Metrics */}
-              <div className="form-column">
-                <div className="modern-section">
-                  <h3 className="section-title">
-                    <div className="title-icon">
-                      <Star size={18} />
-                    </div>
-                    Performance Metrics
-                  </h3>
-                  <div className="metrics-grid">
-                    <div className="metric-card">
-                      <div className="metric-value">{viewingSpotData.rating}</div>
-                      <div className="metric-label">Average Rating</div>
-                      <div className="metric-stars">
-                        {[1, 2, 3, 4, 5].map(star => (
-                          <Star
-                            key={star}
-                            size={12}
-                            className={star <= (viewingSpotData.rating || 0) ? 'metric-star-filled' : 'metric-star-empty'}
-                          />
-                        ))}
-                      </div>
-                    </div>
-                    <div className="metric-card">
-                      <div className="metric-value">{viewingSpotData.reviews}</div>
-                      <div className="metric-label">Total Reviews</div>
-                    </div>
-                    <div className="metric-card">
-                      <div className="metric-value">{viewingSpotData.added}</div>
-                      <div className="metric-label">Date Added</div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="modern-section">
-                  <h3 className="section-title">
-                    <div className="title-icon">
-                      <Settings size={18} />
-                    </div>
-                    Quick Actions
-                  </h3>
-                  <div className="quick-actions">
-                    <button className="action-btn primary" onClick={() => {
-                      setViewDetailsModalOpen(false);
-                      setEditingSpotData(viewingSpotData);
-                      setEditModalOpen(true);
-                    }}>
-                      <Edit size={16} />
-                      Edit Spot
-                    </button>
-                    <button className="action-btn secondary">
-                      <Phone size={16} />
-                      Contact Owner
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Modal Footer */}
-          <div className="modern-modal-footer">
-            <div className="footer-content">
-              <div className="footer-info">
-                <p className="last-modified">Last modified: {viewingSpotData.added}</p>
-              </div>
-              <div className="footer-actions">
-                <button className="modern-btn cancel" onClick={() => setViewDetailsModalOpen(false)}>
-                  Close
-                </button>
-              </div>
+              <button className="sp-action-btn delete" onClick={() => handleSpotAction('delete', viewingSpotData)} title="Delete Spot">
+                <Trash2 size={16} />
+              </button>
             </div>
           </div>
         </div>
@@ -2248,10 +2203,10 @@ export default function App() {
                 {showStatusDropdown && (
                   <div className="status-dropdown-menu">
                     {[
-                      { value: 'all', label: 'All Status', color: '#6b7280', icon: '📊' },
-                      { value: 'verified', label: 'Verified', color: '#10b981', icon: '✅' },
-                      { value: 'pending', label: 'Pending', color: '#f59e0b', icon: '⏳' },
-                      { value: 'flagged', label: 'Flagged', color: '#ef4444', icon: '🚩' }
+                      { value: 'all', label: 'All Status', color: '#6b7280', icon: <LayoutList size={16} /> },
+                      { value: 'verified', label: 'Verified', color: '#10b981', icon: <CheckCircle size={16} /> },
+                      { value: 'pending', label: 'Pending', color: '#f59e0b', icon: <Clock size={16} /> },
+                      { value: 'flagged', label: 'Flagged', color: '#ef4444', icon: <Flag size={16} /> }
                     ].map(status => (
                       <div
                         key={status.value}
@@ -2264,9 +2219,6 @@ export default function App() {
                       >
                         <span className="status-icon">{status.icon}</span>
                         <span className="status-text">{status.label}</span>
-                        {statusFilter === status.value && (
-                          <div className="status-checkmark">✓</div>
-                        )}
                       </div>
                     ))}
                   </div>
@@ -2288,10 +2240,10 @@ export default function App() {
                 {showSortDropdown && (
                   <div className="sort-dropdown-menu">
                     {[
-                      { value: 'name', label: 'Sort by Name', icon: '🔤', description: 'Alphabetical order' },
-                      { value: 'rating', label: 'Sort by Rating', icon: '⭐', description: 'Highest rated first' },
-                      { value: 'date', label: 'Sort by Date', icon: '📅', description: 'Newest first' },
-                      { value: 'reviews', label: 'Sort by Reviews', icon: '💬', description: 'Most reviewed first' }
+                      { value: 'name', label: 'Sort by Name', icon: <Type size={16} />, description: 'Alphabetical order' },
+                      { value: 'rating', label: 'Sort by Rating', icon: <Star size={16} />, description: 'Highest rated first' },
+                      { value: 'date', label: 'Sort by Date', icon: <Calendar size={16} />, description: 'Newest first' },
+                      { value: 'reviews', label: 'Sort by Reviews', icon: <MessageSquare size={16} />, description: 'Most reviewed first' }
                     ].map(sort => (
                       <div
                         key={sort.value}
@@ -2305,9 +2257,6 @@ export default function App() {
                           <div className="sort-item-main">
                             <span className="sort-icon">{sort.icon}</span>
                             <span className="sort-text">{sort.label}</span>
-                            {sortBy === sort.value && (
-                              <div className="sort-checkmark">✓</div>
-                            )}
                           </div>
                           <div className="sort-description">{sort.description}</div>
                         </div>
@@ -2330,11 +2279,11 @@ export default function App() {
                 {showItemsPerPageDropdown && (
                   <div className="items-per-page-menu">
                     {[
-                      { value: 2, label: '2 per page', icon: '📄', description: 'Minimal view' },
-                      { value: 5, label: '5 per page', icon: '📋', description: 'Compact view' },
-                      { value: 10, label: '10 per page', icon: '📝', description: 'Standard view' },
-                      { value: 20, label: '20 per page', icon: '📊', description: 'Extended view' },
-                      { value: 50, label: '50 per page', icon: '📚', description: 'Maximum view' }
+                      { value: 2, label: '2 per page', icon: <Menu size={16} />, description: 'Minimal view' },
+                      { value: 5, label: '5 per page', icon: <AlignLeft size={16} />, description: 'Compact view' },
+                      { value: 10, label: '10 per page', icon: <List size={16} />, description: 'Standard view' },
+                      { value: 20, label: '20 per page', icon: <LayoutList size={16} />, description: 'Extended view' },
+                      { value: 50, label: '50 per page', icon: <LayoutGrid size={16} />, description: 'Maximum view' }
                     ].map(option => (
                       <div
                         key={option.value}
@@ -2348,9 +2297,6 @@ export default function App() {
                           <div className="items-per-page-main">
                             <span className="items-per-page-icon">{option.icon}</span>
                             <span className="items-per-page-text">{option.label}</span>
-                            {itemsPerPage === option.value && (
-                              <div className="items-per-page-checkmark">✓</div>
-                            )}
                           </div>
                           <div className="items-per-page-description">{option.description}</div>
                         </div>
@@ -2361,53 +2307,39 @@ export default function App() {
               </div>
             </div>
             <div className="spots-actions">
-              <div className="modern-export-button" onClick={handleExport}>
-                <div className="export-button-content">
-                  <div className="export-icon-wrapper">
-                    <Download size={18} />
-                  </div>
-                  <div className="export-text-content">
-                    <span className="export-main-text">Export</span>
-                    <span className="export-sub-text">Download data</span>
-                  </div>
-                  <div className="export-arrow">
-                    <div className="arrow-icon">→</div>
-                  </div>
+              {/* Batch Actions rendered dynamically if selected */}
+              {selectedSpots.length > 0 && (
+                <div className="select-all-container">
+                  <label className="select-all-label">
+                    <input
+                      type="checkbox"
+                      checked={selectedSpots.length === filteredSpots.length && filteredSpots.length > 0}
+                      onChange={handleSelectAllSpots}
+                      className="select-all-checkbox"
+                    />
+                    <span className="select-all-text">Deselect All</span>
+                  </label>
+                  <span className="selected-count">{selectedSpots.length} selected</span>
+
+                  <button className="premium-action-btn premium-warning" onClick={() => handleFlagSelected()} style={{ marginLeft: 'auto' }}>
+                    <Flag size={16} />
+                    <span>Flag</span>
+                  </button>
+                  <button className="premium-action-btn premium-success" onClick={() => handleVerifySelected()}>
+                    <CheckCircle size={16} />
+                    <span>Verify</span>
+                  </button>
                 </div>
-                <div className="export-button-shine"></div>
-              </div>
+              )}
+
+              <button className="premium-action-btn" onClick={handleExport}>
+                <Download size={16} />
+                Export
+              </button>
             </div>
           </div>
 
-          {/* Selected Spots Action Bar */}
-          <div className={`selected-spots-action-bar ${selectedSpots.length > 0 ? 'visible' : ''}`}>
-            <div className="action-bar-content">
-              <div className="selection-info">
-                <div className="selection-count">
-                  <CheckSquare size={20} />
-                  <span>{selectedSpots.length} {selectedSpots.length === 1 ? 'spot' : 'spots'} selected</span>
-                </div>
-              </div>
-              <div className="action-buttons-group">
-                <button className="action-btn flag-btn" onClick={() => handleFlagSelected()}>
-                  <Flag size={16} />
-                  <span>Flag Selected</span>
-                </button>
-                <button className="action-btn verify-btn" onClick={() => handleVerifySelected()}>
-                  <CheckCircle size={16} />
-                  <span>Verify Selected</span>
-                </button>
-                <button className="action-btn delete-btn" onClick={() => handleDeleteSelected()}>
-                  <Trash2 size={16} />
-                  <span>Delete Selected</span>
-                </button>
-                <button className="action-btn cancel-btn" onClick={() => setSelectedSpots([])}>
-                  <X size={16} />
-                  <span>Cancel</span>
-                </button>
-              </div>
-            </div>
-          </div>
+
 
           {/* Flag Confirmation Popup */}
           {showFlagConfirm && (
@@ -2484,103 +2416,145 @@ export default function App() {
             </div>
           )}
 
-          {/* Statistics Section */}
-          <div className="spots-stats">
-            <div className="stat-card">
-              <div className="stat-icon">📍</div>
-              <div className="stat-info">
-                <div className="stat-number">{spotStats.total}</div>
-                <div className="stat-label">Total Spots</div>
+          {/* Statistics Section - Bento Grid */}
+          <div className="stats-grid-modern">
+            <div className="stat-card-modern spots-total">
+              <div className="stat-card-header">
+                <span className="stat-title">Total Spots</span>
+                <div className="stat-icon-wrapper red">
+                  <MapPin size={20} />
+                </div>
               </div>
+              <div className="stat-value">{spotStats.total}</div>
+              <div className="stat-timeline">Across all categories</div>
             </div>
-            <div className="stat-card">
-              <div className="stat-icon">🔵</div>
-              <div className="stat-info">
-                <div className="stat-number">{spotStats.verified}</div>
-                <div className="stat-label">Verified</div>
+
+            <div className="stat-card-modern spots-verified">
+              <div className="stat-card-header">
+                <span className="stat-title">Verified</span>
+                <div className="stat-icon-wrapper green">
+                  <CheckCircle size={20} />
+                </div>
               </div>
+              <div className="stat-value">{spotStats.verified}</div>
+              <div className="stat-timeline">Ready for discover</div>
             </div>
-            <div className="stat-card">
-              <div className="stat-icon">🟡</div>
-              <div className="stat-info">
-                <div className="stat-number">{spotStats.pending}</div>
-                <div className="stat-label">Pending</div>
+
+            <div className="stat-card-modern spots-pending">
+              <div className="stat-card-header">
+                <span className="stat-title">Pending</span>
+                <div className="stat-icon-wrapper warning">
+                  <Clock size={20} />
+                </div>
               </div>
+              <div className="stat-value">{spotStats.pending}</div>
+              <div className="stat-timeline">Awaiting review</div>
             </div>
-            <div className="stat-card">
-              <div className="stat-icon">🔴</div>
-              <div className="stat-info">
-                <div className="stat-number">{spotStats.flagged}</div>
-                <div className="stat-label">Flagged</div>
+
+            <div className="stat-card-modern spots-flagged">
+              <div className="stat-card-header">
+                <span className="stat-title">Flagged</span>
+                <div className="stat-icon-wrapper danger">
+                  <Flag size={20} />
+                </div>
               </div>
+              <div className="stat-value">{spotStats.flagged}</div>
+              <div className="stat-timeline">Requires attention</div>
             </div>
-            <div className="stat-card">
-              <div className="stat-icon">⭐</div>
-              <div className="stat-info">
-                <div className="stat-number">{spotStats.avgRating.toFixed(1)}</div>
-                <div className="stat-label">Avg Rating</div>
+
+            <div className="stat-card-modern spots-rating">
+              <div className="stat-card-header">
+                <span className="stat-title">Avg Rating</span>
+                <div className="stat-icon-wrapper yellow">
+                  <Star size={20} />
+                </div>
               </div>
+              <div className="stat-value">{spotStats.avgRating.toFixed(1)}</div>
+              <div className="stat-timeline">Global platform rating</div>
             </div>
           </div>
 
-          <div className="spots-table-container">
-            <table className="spots-table">
-              <thead>
-                <tr>
-                  <th>
+          {/* Premium List View Container (Desktop Only) */}
+          <div className="users-list-container spots-list-container">
+            {/* Header Row */}
+            <div className="users-list-header">
+              <div className="header-col col-check">
+                <input
+                  type="checkbox"
+                  checked={selectedSpots.length === filteredSpots.length && filteredSpots.length > 0}
+                  onChange={handleSelectAllSpots}
+                  className="select-all-checkbox"
+                />
+              </div>
+              <div className="header-col col-spot-info">SPOT DETAILS</div>
+              <div className="header-col col-status">STATUS</div>
+              <div className="header-col col-location">LOCATION</div>
+              <div className="header-col col-rating">RATING</div>
+              <div className="header-col col-added">DATE ADDED</div>
+            </div>
+
+            {/* List Body */}
+            <div className="users-list-body">
+              {paginatedSpots.map(spot => (
+                <div key={spot.id} className="user-list-row spot-list-row">
+                  <div className="row-col col-check">
                     <input
                       type="checkbox"
-                      checked={selectedSpots.length === filteredSpots.length && filteredSpots.length > 0}
-                      onChange={handleSelectAllSpots}
-                      className="checkbox"
+                      checked={selectedSpots.includes(spot.id)}
+                      onChange={() => handleSelectSpot(spot.id)}
+                      className="user-checkbox"
                     />
-                  </th>
-                  <th>Spot Info</th>
-                  <th>Location</th>
-                  <th>Category</th>
-                  <th>Status</th>
-                  <th>Rating</th>
-                  <th>Reviews</th>
-                  <th>Added</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {paginatedSpots.map(spot => (
-                  <tr key={spot.id} className="spot-row">
-                    <td>
-                      <input
-                        type="checkbox"
-                        checked={selectedSpots.includes(spot.id)}
-                        onChange={() => handleSelectSpot(spot.id)}
-                        className="checkbox"
-                      />
-                    </td>
-                    <td>
-                      <div className="spot-info">
-                        <div className="spot-name">{spot.name}</div>
-                        <div className="spot-address">{spot.address}</div>
-                      </div>
-                    </td>
-                    <td>{spot.city}, {spot.state}</td>
-                    <td>{spot.category}</td>
-                    <td>
-                      <span className={`status-badge status-${spot.status}`}>
-                        {spot.status}
-                      </span>
-                    </td>
-                    <td>
-                      <div className="rating">
-                        <StarIcon size={14} />
-                        {spot.rating}
-                      </div>
-                    </td>
-                    <td>{spot.reviews}</td>
-                    <td>{spot.added}</td>
-                    <td>
+                  </div>
+                  <div className="row-col col-spot-info">
+                    <div className="user-avatar-initials" style={{ background: '#f8fafc', color: '#64748b' }}>
+                      <MapPin size={18} />
+                    </div>
+                    <div className="user-identity">
+                      <span className="user-name">{spot.name} <span style={{ color: '#94a3b8', margin: '0 4px', fontSize: '0.8rem' }}>•</span></span>
+                      <span className="user-email">{spot.category}</span>
+                    </div>
+                  </div>
+                  <div className="row-col col-status">
+                    <span className={`status-pill pill-${spot.status.toLowerCase()}`}>
+                      {spot.status.toUpperCase()}
+                    </span>
+                  </div>
+                  <div className="row-col col-location">
+                    <div className="platform-stat">
+                      <span className="stat-val" style={{ fontSize: '0.9rem', color: '#475569', fontWeight: 500 }}>{spot.city}, {spot.state}</span>
+                    </div>
+                  </div>
+
+                  <div className="row-col col-rating">
+                    <div className="platform-stat rating">
+                      <Star size={14} className="star-icon" />
+                      <span className="stat-val">{spot.rating}</span>
+                    </div>
+                  </div>
+
+                  <div className="row-col col-added">
+                    <span className="join-date">{spot.added}</span>
+                  </div>
+
+                  <div className="row-col col-actions" style={{ position: 'relative', display: 'flex', justifyContent: 'flex-end' }}>
+                    {/* Spot Row Action Overlay */}
+                    <div className="row-actions-overlay" style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '8px' }}>
+                      <button className="view-details-btn" onClick={() => {
+                        setViewingSpotData(spot);
+                      }}>
+                        <Eye size={14} />
+                        View Details
+                      </button>
+                      <button
+                        className="row-action-icon-btn"
+                        onClick={() => handleSpotAction('edit', spot)}
+                        title="Edit"
+                      >
+                        <Edit size={16} />
+                      </button>
                       <div className="dropdown-container">
                         <button
-                          className="btn-icon"
+                          className="row-action-icon-btn"
                           onClick={() => toggleSpotDropdown(spot.id)}
                         >
                           <MoreVertical size={16} />
@@ -2588,31 +2562,6 @@ export default function App() {
 
                         {activeSpotDropdown === spot.id && (
                           <div className="dropdown-menu">
-                            <button
-                              className="dropdown-item"
-                              onClick={() => handleSpotAction('edit', spot)}
-                            >
-                              <Edit size={14} />
-                              Edit Spot
-                            </button>
-                            <button
-                              className="dropdown-item"
-                              onClick={() => {
-                                setViewingSpotData(spot);
-                                setViewDetailsModalOpen(true);
-                              }}
-                            >
-                              <Eye size={14} />
-                              View Details
-                            </button>
-                            <button
-                              className="dropdown-item"
-                              onClick={() => handleSpotAction('message', spot)}
-                            >
-                              <MessageSquare size={14} />
-                              Contact Owner
-                            </button>
-                            <div className="dropdown-divider"></div>
                             <button
                               className="dropdown-item warning"
                               onClick={() => handleSpotAction(spot.status === 'flagged' ? 'unflag' : 'flag', spot)}
@@ -2627,6 +2576,7 @@ export default function App() {
                               <CheckCircle size={14} />
                               {spot.status === 'verified' ? 'Unverify Spot' : 'Verify Spot'}
                             </button>
+                            <div className="dropdown-divider"></div>
                             <button
                               className="dropdown-item danger"
                               onClick={() => handleSpotAction('delete', spot)}
@@ -2637,20 +2587,20 @@ export default function App() {
                           </div>
                         )}
                       </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
 
-          <div className="spots-footer">
-            <div className="spots-count">
+          <div className="users-footer">
+            <div className="users-count">
               Showing {paginatedSpots.length} of {spots.length} spots
             </div>
             <div className="pagination">
               <button
-                className="btn btn-secondary"
+                className="premium-action-btn"
                 onClick={handlePreviousPage}
                 disabled={currentPage === 1}
               >
@@ -2658,7 +2608,7 @@ export default function App() {
               </button>
               <span className="page-info">Page {currentPage} of {totalPages}</span>
               <button
-                className="btn btn-secondary"
+                className="premium-action-btn"
                 onClick={handleNextPage}
                 disabled={currentPage === totalPages}
               >
@@ -2668,9 +2618,8 @@ export default function App() {
           </div>
         </div>
 
-        {renderSpotModal()}
+        {renderSpotSidePanel()}
         {renderModernEditModal()}
-        {renderViewDetailsModal()}
         {renderImageEditorModal()}
         {renderContactModal()}
       </>
