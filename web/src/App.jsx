@@ -1342,7 +1342,7 @@ export default function App() {
                 {selectedUsers.length > 0 && `${selectedUsers.length} selected`}
               </span>
             </div>
-            <button className="btn btn-secondary" onClick={handleExportUsers}>
+            <button className="premium-action-btn" onClick={handleExportUsers}>
               <Download size={16} />
               Export
             </button>
@@ -1361,57 +1361,110 @@ export default function App() {
           </div>
         </div>
 
-        <div className="users-grid-container">
-          <div className="users-grid">
+        <div className="users-list-container">
+          <div className="users-list-header">
+            <div className="ul-col ul-col-check"></div>
+            <div className="ul-col ul-col-user">User Details</div>
+            <div className="ul-col ul-col-status">Status</div>
+            <div className="ul-col ul-col-stats">Platform Stats</div>
+            <div className="ul-col ul-col-date">Joined</div>
+            <div className="ul-col ul-col-actions"></div>
+          </div>
+
+          <div className="users-list-body">
             {filteredUsers.map(user => (
-              <div key={user.id} className="user-card-compact">
-                <div className="user-card-compact-header">
-                  <div className="user-avatar-compact">
-                    <div className="user-avatar-circle-compact">{user.name.charAt(0)}</div>
-                    <div className={`user-status-indicator-compact ${user.status}`}></div>
+              <div key={user.id} className="user-list-row group">
+                <div className="ul-col ul-col-check">
+                  <input
+                    type="checkbox"
+                    checked={selectedUsers.includes(user.id)}
+                    onChange={(e) => {
+                      e.stopPropagation();
+                      handleSelectUser(user.id);
+                    }}
+                    className="checkbox subtle-checkbox"
+                  />
+                </div>
+
+                <div className="ul-col ul-col-user">
+                  <div className="user-avatar-list">
+                    <div className="user-avatar-circle-list bg-gradient">{user.name.charAt(0)}</div>
                   </div>
-                  <div className="user-info-compact">
-                    <h3 className="user-name-compact">{user.name}</h3>
-                    <p className="user-email-compact">{user.email}</p>
-                    <div className="user-status-compact">
-                      {getStatusBadge(user.status)}
+                  <div className="user-info-list">
+                    <h3 className="user-name-list">{user.name}</h3>
+                    <p className="user-email-list">{user.email}</p>
+                  </div>
+                </div>
+
+                <div className="ul-col ul-col-status">
+                  <div className="status-pill-list">
+                    {getStatusBadge(user.status)}
+                  </div>
+                </div>
+
+                <div className="ul-col ul-col-stats">
+                  <div className="stats-group-list">
+                    <div className="stat-badge" title="Verified Spots">
+                      <MapPin size={14} />
+                      <span>{user.spots}</span>
+                    </div>
+                    <div className="stat-badge orange" title="Reviews Left">
+                      <Star size={14} />
+                      <span>{user.reviews}</span>
                     </div>
                   </div>
-                  <div className="user-card-actions">
+                </div>
+
+                <div className="ul-col ul-col-date">
+                  <span className="date-text-list">{user.joined}</span>
+                </div>
+
+                <div className="ul-col ul-col-actions">
+                  <div className="row-actions-group">
                     <button
-                      className="view-user-btn"
+                      className="row-action-btn view"
                       onClick={(e) => {
                         e.stopPropagation();
                         setSelectedUserDetail(user);
                       }}
-                      title="View User Details"
+                      title="View Full Profile"
                     >
-                      <Eye size={14} />
+                      View Details
                     </button>
-                    <input
-                      type="checkbox"
-                      checked={selectedUsers.includes(user.id)}
-                      onChange={(e) => {
+                    <button
+                      className="row-action-icon-btn more"
+                      onClick={(e) => {
                         e.stopPropagation();
-                        handleSelectUser(user.id);
+                        toggleDropdown(user.id);
                       }}
-                      className="checkbox"
-                    />
-                  </div>
-                </div>
+                    >
+                      <MoreVertical size={16} />
+                    </button>
 
-                <div className="user-stats-compact">
-                  <div className="stat-item-compact">
-                    <MapPin size={14} />
-                    <span>{user.spots}</span>
-                  </div>
-                  <div className="stat-item-compact">
-                    <Star size={14} />
-                    <span>{user.reviews}</span>
-                  </div>
-                  <div className="stat-item-compact">
-                    <Calendar size={14} />
-                    <span>{user.joined.split('-')[1]}/{user.joined.split('-')[2]}</span>
+                    {activeDropdown === user.id && (
+                      <div className="row-action-menu">
+                        <button
+                          className="row-action-item warning"
+                          onClick={() => {
+                            handleAction(user.status === 'banned' ? 'unban' : 'ban', user);
+                            setActiveDropdown(null);
+                          }}
+                        >
+                          <Ban size={14} />
+                          <span>{user.status === 'banned' ? 'Unban User' : 'Ban User'}</span>
+                        </button>
+                        <button
+                          className="row-action-item danger"
+                          onClick={() => {
+                            handleAction('delete', user);
+                            setActiveDropdown(null);
+                          }}
+                        >
+                          <Trash2 size={14} />
+                          <span>Delete User</span>
+                        </button>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -1419,157 +1472,115 @@ export default function App() {
           </div>
         </div>
 
-        {/* User Detail Popup */}
+        {/* Ultra-Premium Side Panel for User Details */}
         {selectedUserDetail && (
-          <div className="user-detail-popup-overlay" onClick={() => setSelectedUserDetail(null)}>
-            <div className="user-detail-popup" onClick={(e) => e.stopPropagation()}>
-              <div className="user-detail-header">
-                <div className="user-detail-avatar">
-                  <div className="user-avatar-circle-large">{selectedUserDetail.name.charAt(0)}</div>
-                  <div className={`user-status-indicator-large ${selectedUserDetail.status}`}></div>
-                </div>
-                <div className="user-detail-info">
-                  <h2 className="user-detail-name">{selectedUserDetail.name}</h2>
-                  <p className="user-detail-email">{selectedUserDetail.email}</p>
-                  <div className="user-detail-status">
+          <div className="user-sidepanel-backdrop" onClick={() => setSelectedUserDetail(null)}>
+            <div className="user-sidepanel-container animation-slide-left" onClick={(e) => e.stopPropagation()}>
+              <div className="sidepanel-header">
+                <button className="sidepanel-close" onClick={() => setSelectedUserDetail(null)}>
+                  <X size={24} />
+                </button>
+                <div className="sidepanel-user-hero">
+                  <div className="hero-avatar-wrapper">
+                    <div className="hero-avatar">{selectedUserDetail.name.charAt(0)}</div>
+                    <div className={`hero-status-dot ${selectedUserDetail.status}`}></div>
+                  </div>
+                  <h2 className="hero-name">{selectedUserDetail.name}</h2>
+                  <p className="hero-email">{selectedUserDetail.email}</p>
+                  <div className="hero-badge-wrap">
                     {getStatusBadge(selectedUserDetail.status)}
                   </div>
                 </div>
-                <button className="close-popup-btn" onClick={() => setSelectedUserDetail(null)}>
-                  <X size={20} />
-                </button>
               </div>
 
-              <div className="user-detail-body">
-                <div className="user-content-horizontal">
-                  <div className="user-profile-section-horizontal">
-                    <h3 className="profile-section-title">Profile Information</h3>
-                    <div className="profile-info-grid-horizontal">
-                      <div className="profile-info-item">
-                        <div className="profile-info-label">Full Name</div>
-                        <div className="profile-info-value">{selectedUserDetail.name}</div>
-                      </div>
-                      <div className="profile-info-item">
-                        <div className="profile-info-label">Email Address</div>
-                        <div className="profile-info-value">{selectedUserDetail.email}</div>
-                      </div>
-                      <div className="profile-info-item">
-                        <div className="profile-info-label">Account Status</div>
-                        <div className="profile-info-value">{getStatusBadge(selectedUserDetail.status)}</div>
-                      </div>
-                      <div className="profile-info-item">
-                        <div className="profile-info-label">Member Since</div>
-                        <div className="profile-info-value">{selectedUserDetail.joined}</div>
-                      </div>
-                      <div className="profile-info-item">
-                        <div className="profile-info-label">Last Active</div>
-                        <div className="profile-info-value">{selectedUserDetail.lastActive}</div>
-                      </div>
-                      <div className="profile-info-item">
-                        <div className="profile-info-label">Account ID</div>
-                        <div className="profile-info-value">#USR{String(selectedUserDetail.id).padStart(6, '0')}</div>
-                      </div>
+              <div className="sidepanel-scrollable-body">
+                {/* Immersive Stats Grid */}
+                <div className="sidepanel-bento-grid">
+                  <div className="sidepanel-bento-cell spots-cell">
+                    <div className="sb-icon bg-blue"><MapPin size={20} /></div>
+                    <div className="sb-data">
+                      <h3>{selectedUserDetail.spots}</h3>
+                      <span>Created Spots</span>
                     </div>
                   </div>
+                  <div className="sidepanel-bento-cell reviews-cell">
+                    <div className="sb-icon bg-orange"><Star size={20} /></div>
+                    <div className="sb-data">
+                      <h3>{selectedUserDetail.reviews}</h3>
+                      <span>Total Reviews</span>
+                    </div>
+                  </div>
+                  <div className="sidepanel-bento-cell comments-cell">
+                    <div className="sb-icon bg-green"><MessageSquare size={20} /></div>
+                    <div className="sb-data">
+                      <h3>{Math.floor(selectedUserDetail.reviews * 1.5)}</h3>
+                      <span>Forum Comments</span>
+                    </div>
+                  </div>
+                  <div className="sidepanel-bento-cell followers-cell">
+                    <div className="sb-icon bg-purple"><Users size={20} /></div>
+                    <div className="sb-data">
+                      <h3>{Math.floor(selectedUserDetail.spots * 2.3)}</h3>
+                      <span>Followers</span>
+                    </div>
+                  </div>
+                </div>
 
-                  <div className="user-activity-section-horizontal">
-                    <h3 className="profile-section-title">Activity Summary</h3>
-                    <div className="user-stats-grid-horizontal">
-                      <div className="stat-item-detail">
-                        <div className="stat-icon-detail">
-                          <MapPin size={20} />
-                        </div>
-                        <div className="stat-info-detail">
-                          <div className="stat-value-detail">{selectedUserDetail.spots}</div>
-                          <div className="stat-label-detail">Food Spots</div>
-                        </div>
-                      </div>
-                      <div className="stat-item-detail">
-                        <div className="stat-icon-detail">
-                          <Star size={20} />
-                        </div>
-                        <div className="stat-info-detail">
-                          <div className="stat-value-detail">{selectedUserDetail.reviews}</div>
-                          <div className="stat-label-detail">Reviews</div>
-                        </div>
-                      </div>
-                      <div className="stat-item-detail">
-                        <div className="stat-icon-detail">
-                          <MessageSquare size={20} />
-                        </div>
-                        <div className="stat-info-detail">
-                          <div className="stat-value-detail">{Math.floor(selectedUserDetail.reviews * 1.5)}</div>
-                          <div className="stat-label-detail">Comments</div>
-                        </div>
-                      </div>
-                      <div className="stat-item-detail">
-                        <div className="stat-icon-detail">
-                          <Users size={20} />
-                        </div>
-                        <div className="stat-info-detail">
-                          <div className="stat-value-detail">{Math.floor(selectedUserDetail.spots * 2.3)}</div>
-                          <div className="stat-label-detail">Followers</div>
-                        </div>
-                      </div>
+                {/* Identity Information List */}
+                <div className="sidepanel-info-group">
+                  <h4 className="info-group-title">Account Identity</h4>
+                  <div className="info-list-card">
+                    <div className="info-list-row">
+                      <span className="il-label">Full Name</span>
+                      <span className="il-value">{selectedUserDetail.name}</span>
+                    </div>
+                    <div className="info-list-row">
+                      <span className="il-label">Email Address</span>
+                      <span className="il-value">{selectedUserDetail.email}</span>
+                    </div>
+                    <div className="info-list-row">
+                      <span className="il-label">Account ID</span>
+                      <span className="il-value monospace">#USR{String(selectedUserDetail.id).padStart(6, '0')}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="sidepanel-info-group">
+                  <h4 className="info-group-title">Timeline</h4>
+                  <div className="info-list-card">
+                    <div className="info-list-row">
+                      <span className="il-label">Registered On</span>
+                      <span className="il-value">{selectedUserDetail.joined}</span>
+                    </div>
+                    <div className="info-list-row">
+                      <span className="il-label">Last Active</span>
+                      <span className="il-value">{selectedUserDetail.lastActive}</span>
                     </div>
                   </div>
                 </div>
               </div>
 
-              <div className="user-detail-footer">
-                <div className="user-actions-detail">
-                  <button className="action-btn-detail secondary" onClick={() => handleAction('edit', selectedUserDetail)}>
+              <div className="sidepanel-footer">
+                <button className="sp-action-btn message" onClick={() => handleUserAction('message', selectedUserDetail)}>
+                  <MessageSquare size={16} />
+                  Message
+                </button>
+                <div className="sp-danger-actions">
+                  <button className="sp-action-btn edit" onClick={() => handleAction('edit', selectedUserDetail)} title="Edit">
                     <Edit size={16} />
-                    Edit User
-                  </button>
-                  <button className="action-btn-detail secondary" onClick={() => handleUserAction('message', selectedUserDetail)}>
-                    <MessageSquare size={16} />
-                    Send Message
                   </button>
                   <button
-                    className="action-btn-detail more"
-                    onClick={() => toggleDropdown(selectedUserDetail.id)}
+                    className="sp-action-btn suspend"
+                    onClick={() => handleAction(selectedUserDetail.status === 'banned' ? 'unban' : 'ban', selectedUserDetail)}
+                    title={selectedUserDetail.status === 'banned' ? 'Unban' : 'Suspend'}
                   >
-                    <MoreVertical size={16} />
+                    <Ban size={16} />
+                  </button>
+                  <button className="sp-action-btn delete" onClick={() => handleAction('delete', selectedUserDetail)} title="Delete Data">
+                    <Trash2 size={16} />
                   </button>
                 </div>
               </div>
-
-              {/* Action Popup */}
-              {activeDropdown === selectedUserDetail.id && (
-                <div className="action-popup-overlay" onClick={() => setActiveDropdown(null)}>
-                  <div className="action-popup" onClick={(e) => e.stopPropagation()}>
-                    <div className="action-popup-header">
-                      <h4>Actions</h4>
-                      <button className="action-popup-close" onClick={() => setActiveDropdown(null)}>
-                        <X size={16} />
-                      </button>
-                    </div>
-                    <div className="action-popup-body">
-                      <button
-                        className="action-popup-item danger"
-                        onClick={() => {
-                          handleAction(selectedUserDetail.status === 'banned' ? 'unban' : 'ban', selectedUserDetail);
-                          setActiveDropdown(null);
-                        }}
-                      >
-                        <Ban size={14} />
-                        <span>{selectedUserDetail.status === 'banned' ? 'Unban User' : 'Ban User'}</span>
-                      </button>
-                      <button
-                        className="action-popup-item danger"
-                        onClick={() => {
-                          handleAction('delete', selectedUserDetail);
-                          setActiveDropdown(null);
-                        }}
-                      >
-                        <Trash2 size={14} />
-                        <span>Delete User</span>
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              )}
             </div>
           </div>
         )}
@@ -1579,9 +1590,9 @@ export default function App() {
             Showing {filteredUsers.length} of {users.length} users
           </div>
           <div className="pagination">
-            <button className="btn btn-secondary" disabled>Previous</button>
+            <button className="premium-action-btn" disabled>Previous</button>
             <span className="page-info">Page 1 of 1</span>
-            <button className="btn btn-secondary" disabled>Next</button>
+            <button className="premium-action-btn" disabled>Next</button>
           </div>
         </div>
       </div>
