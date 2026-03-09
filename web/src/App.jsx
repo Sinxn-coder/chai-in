@@ -242,6 +242,11 @@ export default function App() {
   const [showItemsPerPageDropdown, setShowItemsPerPageDropdown] = useState(false);
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [toastMessage, setToastMessage] = useState('');
+  const [showToast, setShowToast] = useState(false);
+  const [activeDropdown, setActiveDropdown] = useState(null);
+  const [activeSpotDropdown, setActiveSpotDropdown] = useState(null);
+  const [selectedUserDetail, setSelectedUserDetail] = useState(null);
+
 
 
 
