@@ -1602,16 +1602,27 @@ export default function App() {
                 <h4>Location</h4>
                 <div className="detail-grid">
                   <div className="detail-item">
-                    <label>Address</label>
-                    <span>{selectedSpot.address}</span>
-                  </div>
-                  <div className="detail-item">
                     <label>City</label>
-                    <span>{selectedSpot.city}</span>
+                    <span>{selectedSpot.city || 'N/A'}</span>
                   </div>
                   <div className="detail-item">
-                    <label>State</label>
-                    <span>{selectedSpot.state}</span>
+                    <label>Coordinates</label>
+                    <span>{selectedSpot.latitude ? `${selectedSpot.latitude}, ${selectedSpot.longitude}` : 'N/A'}</span>
+                  </div>
+                  <div className="detail-item" style={{ display: 'flex', alignItems: 'center' }}>
+                    <label style={{ marginRight: '8px' }}>Map</label>
+                    {selectedSpot.latitude && selectedSpot.longitude ? (
+                      <button
+                        className="btn-icon"
+                        onClick={(e) => { e.stopPropagation(); window.open(`https://www.google.com/maps/search/?api=1&query=${selectedSpot.latitude},${selectedSpot.longitude}`, '_blank'); }}
+                        title="View on Maps"
+                        style={{ color: '#4f46e5', background: 'transparent', padding: 0 }}
+                      >
+                        <Map size={18} />
+                      </button>
+                    ) : (
+                      <span>N/A</span>
+                    )}
                   </div>
                 </div>
               </div>
@@ -1621,24 +1632,34 @@ export default function App() {
                 <div className="detail-grid">
                   <div className="detail-item">
                     <label>Phone</label>
-                    <span>{selectedSpot.phone}</span>
+                    <span>{selectedSpot.phone || 'N/A'}</span>
                   </div>
                   <div className="detail-item">
-                    <label>Email</label>
-                    <span>{selectedSpot.email}</span>
+                    <label>WhatsApp</label>
+                    <span>{selectedSpot.whatsapp || 'N/A'}</span>
                   </div>
                   <div className="detail-item">
-                    <label>Website</label>
-                    <span>{selectedSpot.website}</span>
+                    <label>Instagram</label>
+                    <span>{selectedSpot.instagram || 'N/A'}</span>
                   </div>
                 </div>
               </div>
 
               <div className="detail-section">
-                <h4>Business Hours</h4>
-                <div className="detail-item">
-                  <label>Hours</label>
-                  <span>{selectedSpot.hours}</span>
+                <h4>Business Details</h4>
+                <div className="detail-grid">
+                  <div className="detail-item">
+                    <label>Opening Time</label>
+                    <span>{selectedSpot.opening_time || 'N/A'}</span>
+                  </div>
+                  <div className="detail-item">
+                    <label>Closing Time</label>
+                    <span>{selectedSpot.closing_time || 'N/A'}</span>
+                  </div>
+                  <div className="detail-item">
+                    <label>Average Cost</label>
+                    <span>{selectedSpot.average_cost ? `₹${selectedSpot.average_cost}` : 'N/A'}</span>
+                  </div>
                 </div>
               </div>
 
@@ -1768,31 +1789,33 @@ export default function App() {
                     Location Details
                   </h3>
                   <div className="form-group">
-                    <label className="modern-label">Street Address</label>
+                    <label className="modern-label">City</label>
                     <input
                       type="text"
-                      defaultValue={editingSpotData.address}
+                      defaultValue={editingSpotData.city}
                       className="modern-input"
-                      placeholder="Enter street address"
+                      placeholder="Enter city"
                     />
                   </div>
                   <div className="form-row">
                     <div className="form-group half-width">
-                      <label className="modern-label">City</label>
+                      <label className="modern-label">Latitude</label>
                       <input
-                        type="text"
-                        defaultValue={editingSpotData.city}
+                        type="number"
+                        step="any"
+                        defaultValue={editingSpotData.latitude}
                         className="modern-input"
-                        placeholder="Enter city"
+                        placeholder="Enter latitude"
                       />
                     </div>
                     <div className="form-group half-width">
-                      <label className="modern-label">State</label>
+                      <label className="modern-label">Longitude</label>
                       <input
-                        type="text"
-                        defaultValue={editingSpotData.state}
+                        type="number"
+                        step="any"
+                        defaultValue={editingSpotData.longitude}
                         className="modern-input"
-                        placeholder="Enter state"
+                        placeholder="Enter longitude"
                       />
                     </div>
                   </div>
@@ -2089,23 +2112,25 @@ export default function App() {
               <h4 className="info-group-title">Location Details</h4>
               <div className="info-list-card">
                 <div className="info-list-row">
-                  <span className="il-label">Address</span>
-                  <span className="il-value">{viewingSpotData.address}</span>
-                </div>
-                <div className="info-list-row">
                   <span className="il-label">City</span>
-                  <span className="il-value">{viewingSpotData.city}</span>
+                  <span className="il-value">{viewingSpotData.city || 'N/A'}</span>
                 </div>
                 <div className="info-list-row">
-                  <span className="il-label">State</span>
-                  <span className="il-value">{viewingSpotData.state}</span>
+                  <span className="il-label">Coordinates</span>
+                  <span className="il-value">{viewingSpotData.latitude ? `${viewingSpotData.latitude}, ${viewingSpotData.longitude}` : 'N/A'}</span>
                 </div>
 
                 {/* Google Maps Action */}
                 <div className="info-list-action">
                   <button
                     className="maps-action-btn"
-                    onClick={() => window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(viewingSpotData.name + ' ' + viewingSpotData.address + ' ' + viewingSpotData.city)}`, '_blank')}
+                    onClick={() => {
+                      if (viewingSpotData.latitude && viewingSpotData.longitude) {
+                        window.open(`https://www.google.com/maps/search/?api=1&query=${viewingSpotData.latitude},${viewingSpotData.longitude}`, '_blank');
+                      } else {
+                        window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(viewingSpotData.name + ' ' + (viewingSpotData.city || ''))}`, '_blank');
+                      }
+                    }}
                   >
                     <Map size={16} />
                     <span>View on Google Maps</span>
@@ -2813,7 +2838,7 @@ export default function App() {
                       <div className="card-footer">
                         <div className="spot-location-text">
                           <MapPin size={14} />
-                          <span>{spot.city}, {spot.state}</span>
+                          <span>{spot.city || 'Location N/A'}</span>
                         </div>
                         <div className="spot-id-tag">#{spot.id}</div>
                       </div>
