@@ -220,7 +220,9 @@ export default function App() {
           avatar_url, 
           created_at,
           reviews!user_id(count),
-          spots!created_by(count)
+          spots!created_by(count),
+          followers:follows!following_id(count),
+          posts!user_id(count)
         `)
         .order('created_at', { ascending: false });
 
@@ -243,7 +245,9 @@ export default function App() {
         joined: user.created_at ? new Date(user.created_at).toISOString().split('T')[0] : 'N/A',
         lastActive: user.created_at ? new Date(user.created_at).toISOString().split('T')[0] : 'N/A', // Using created_at as fallback
         spots: user.spots?.[0]?.count || 0,
-        reviews: user.reviews?.[0]?.count || 0
+        reviews: user.reviews?.[0]?.count || 0,
+        followers: user.followers?.[0]?.count || 0,
+        posts: user.posts?.[0]?.count || 0
       }));
 
       setUsers(mappedUsers);
@@ -1470,14 +1474,14 @@ export default function App() {
                   <div className="sidepanel-bento-cell comments-cell">
                     <div className="sb-icon bg-green"><MessageSquare size={20} /></div>
                     <div className="sb-data">
-                      <h3>{Math.floor(selectedUserDetail.reviews * 1.5)}</h3>
-                      <span>Forum Comments</span>
+                      <h3>{selectedUserDetail.posts || 0}</h3>
+                      <span>Forum Posts</span>
                     </div>
                   </div>
                   <div className="sidepanel-bento-cell followers-cell">
                     <div className="sb-icon bg-purple"><Users size={20} /></div>
                     <div className="sb-data">
-                      <h3>{Math.floor(selectedUserDetail.spots * 2.3)}</h3>
+                      <h3>{selectedUserDetail.followers || 0}</h3>
                       <span>Followers</span>
                     </div>
                   </div>
