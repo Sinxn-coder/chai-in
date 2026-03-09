@@ -569,6 +569,7 @@ export default function App() {
     );
   };
 
+
   // Filter and search users
   const filteredUsers = useMemo(() => {
     return users.filter(user => {
@@ -579,87 +580,8 @@ export default function App() {
     });
   }, [users, searchTerm, statusFilter]);
 
-  // Filter and search spots
-  const filteredSpots = useMemo(() => {
-    let filtered = spots.filter(spot => {
-      const matchesSearch = spot.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        spot.address.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        spot.category.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchesStatus = statusFilter === 'all' || spot.status === statusFilter;
-      return matchesSearch && matchesStatus;
-    });
 
-    // Apply sorting
-    return filtered.sort((a, b) => {
-      switch (sortBy) {
-        case 'name':
-          return a.name.localeCompare(b.name);
-        case 'rating':
-          return (b.rating || 0) - (a.rating || 0);
-        case 'date':
-          return new Date(b.added) - new Date(a.added);
-        case 'reviews':
-          return b.reviews - a.reviews;
-        default:
-          return 0;
-      }
-    });
-  }, [spots, searchTerm, statusFilter, sortBy]);
 
-  // Pagination logic
-  const paginatedSpots = useMemo(() => {
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    return filteredSpots.slice(startIndex, endIndex);
-  }, [filteredSpots, currentPage, itemsPerPage]);
-
-  const totalPages = Math.ceil(filteredSpots.length / itemsPerPage);
-
-  const handleNextPage = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage(currentPage + 1);
-    }
-  };
-
-  const handlePreviousPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    }
-  };
-
-  const handleItemsPerPageChange = (value) => {
-    setItemsPerPage(parseInt(value));
-    setCurrentPage(1); // Reset to first page when changing items per page
-  };
-
-  const handleExport = () => {
-    // Create CSV content
-    const headers = ['Name', 'Category', 'City', 'State', 'Rating', 'Reviews', 'Status', 'Added Date'];
-    const csvContent = [
-      headers.join(','),
-      ...filteredSpots.map(spot => [
-        `"${spot.name}"`,
-        `"${spot.category}"`,
-        `"${spot.city}"`,
-        `"${spot.state}"`,
-        spot.rating || '0',
-        spot.reviews || '0',
-        `"${spot.status}"`,
-        `"${spot.added}"`
-      ].join(','))
-    ].join('\n');
-
-    // Create blob and download
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement('a');
-    const url = URL.createObjectURL(blob);
-    link.setAttribute('href', url);
-    link.setAttribute('download', `spots_export_${new Date().toISOString().split('T')[0]}.csv`);
-    link.style.visibility = 'hidden';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
 
   const handleSelectUser = (userId) => {
     setSelectedUsers(prev =>
