@@ -168,6 +168,7 @@ export default function App() {
   // User data from Supabase
   const [users, setUsers] = useState([]);
   const [loadingUsers, setLoadingUsers] = useState(true);
+  const [errorUsers, setErrorUsers] = useState(false);
 
   // Spot data from Supabase
   const [spots, setSpots] = useState([]);
@@ -208,6 +209,7 @@ export default function App() {
   const fetchUsers = async () => {
     try {
       setLoadingUsers(true);
+      setErrorUsers(false);
       const { data, error } = await supabase
         .from('users')
         .select(`
@@ -237,6 +239,7 @@ export default function App() {
       setUsers(mappedUsers);
     } catch (err) {
       console.error('Error fetching users:', err);
+      setErrorUsers(true);
       setToastMessage('Failed to load real users data');
       setShowToast(true);
     } finally {
@@ -1291,6 +1294,19 @@ export default function App() {
               <div className="loading-state-placeholder" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '40px', gap: '12px', color: '#64748b' }}>
                 <RotateCw size={24} className="animate-spin" />
                 <span>Fetching real users...</span>
+              </div>
+            ) : errorUsers ? (
+              <div className="error-state-placeholder" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '40px', gap: '16px', color: '#ef4444' }}>
+                <AlertCircle size={48} strokeWidth={1.5} />
+                <p style={{ fontSize: '1.1rem', fontWeight: 500 }}>Failed to load users data</p>
+                <button
+                  onClick={fetchUsers}
+                  className="premium-action-btn premium-success"
+                  style={{ marginTop: '8px' }}
+                >
+                  <RotateCw size={16} />
+                  <span>Refresh Data</span>
+                </button>
               </div>
             ) : filteredUsers.length === 0 ? (
               <div className="empty-state-placeholder" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '60px', gap: '16px', color: '#94a3b8' }}>
