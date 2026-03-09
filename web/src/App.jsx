@@ -28,7 +28,14 @@ import {
   Eye,
   X,
   Ban,
-  Trash2
+  Trash2,
+  Search,
+  Filter,
+  ChevronDown,
+  Download,
+  RotateCw,
+  AlertCircle,
+  Shield
 } from 'lucide-react';
 import './index.css';
 

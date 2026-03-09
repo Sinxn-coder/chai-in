@@ -50,6 +50,10 @@ export default function SpotsDesktop({ spots, loading, onRefresh }) {
     const [showVerifyConfirm, setShowVerifyConfirm] = useState(false);
     const [showFlagConfirm, setShowFlagConfirm] = useState(false);
 
+    // Image Gallery State
+    const [showGallery, setShowGallery] = useState(false);
+    const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
     // Filter and search logic
     const filteredSpots = useMemo(() => {
         let filtered = spots.filter(spot => {
@@ -149,6 +153,107 @@ export default function SpotsDesktop({ spots, loading, onRefresh }) {
         setActiveSpotDropdown(null);
     };
 
+    // Update multiple spots status
+    const handleBatchStatusChange = async (newStatus) => {
+        try {
+            const { supabase } = await import('./supabase');
+            const dbStatus = newStatus === 'verified' ? 'approved' : newStatus === 'flagged' ? 'rejected' : newStatus;
+            const isVerified = newStatus === 'verified';
+
+            const { error } = await supabase
+                .from('spots')
+                .update({ status: dbStatus, is_verified: isVerified })
+                .in('id', selectedSpots);
+
+            if (error) throw error;
+            onRefresh();
+            setSelectedSpots([]);
+        } catch (err) {
+            console.error('Failed to update multiple spots:', err);
+        }
+        setShowVerifyConfirm(false);
+        setShowFlagConfirm(false);
+    };
+
+    const handleBatchDelete = async () => {
+        try {
+            const { supabase } = await import('./supabase');
+            const { error } = await supabase
+                .from('spots')
+                .delete()
+                .in('id', selectedSpots);
+
+            if (error) throw error;
+            onRefresh();
+            setSelectedSpots([]);
+        } catch (err) {
+            console.error('Failed to delete spots:', err);
+        }
+        setShowDeleteConfirm(false);
+    };
+
+    const ImageGalleryModal = ({ spot }) => {
+        if (!spot || !spot.images || spot.images.length === 0) return null;
+
+        const images = Array.isArray(spot.images) ? spot.images : [spot.images];
+
+        return (
+            <div className="image-gallery-overlay" onClick={() => setShowGallery(false)}>
+                <div className="image-gallery-container" onClick={e => e.stopPropagation()}>
+                    <button className="gallery-close-btn" onClick={() => setShowGallery(false)}>
+                        <X size={24} />
+                    </button>
+
+                    <div className="gallery-main-display">
+                        {images.length > 1 && (
+                            <button
+                                className="gallery-nav-btn prev"
+                                onClick={() => setCurrentImageIndex(prev => prev > 0 ? prev - 1 : images.length - 1)}
+                                disabled={(images.length <= 1)}
+                            >
+                                <ChevronLeft size={32} />
+                            </button>
+                        )}
+
+                        <img
+                            src={images[currentImageIndex]}
+                            alt={`${spot.name} - ${currentImageIndex + 1}`}
+                            className="gallery-main-image"
+                        />
+
+                        {images.length > 1 && (
+                            <button
+                                className="gallery-nav-btn next"
+                                onClick={() => setCurrentImageIndex(prev => prev < images.length - 1 ? prev + 1 : 0)}
+                                disabled={(images.length <= 1)}
+                            >
+                                <ChevronRight size={32} />
+                            </button>
+                        )}
+                    </div>
+
+                    {images.length > 1 && (
+                        <div className="gallery-thumbnails-wrapper">
+                            {images.map((img, idx) => (
+                                <img
+                                    key={idx}
+                                    src={img}
+                                    alt="thumbnail"
+                                    className={`gallery-thumbnail ${idx === currentImageIndex ? 'active' : ''}`}
+                                    onClick={() => setCurrentImageIndex(idx)}
+                                />
+                            ))}
+                        </div>
+                    )}
+
+                    <div className="gallery-counter">
+                        {currentImageIndex + 1} / {images.length}
+                    </div>
+                </div>
+            </div>
+        );
+    };
+
     return (
         <div className="spots-management">
             {/* Header & Controls */}
@@ -205,14 +310,6 @@ export default function SpotsDesktop({ spots, loading, onRefresh }) {
                 </div>
 
                 <div className="spots-actions">
-                    {selectedSpots.length > 0 && (
-                        <div className="batch-actions">
-                            <span className="selected-count">{selectedSpots.length} Selected</span>
-                            <button className="premium-action-btn premium-success" onClick={() => setShowVerifyConfirm(true)}>Verify</button>
-                            <button className="premium-action-btn premium-warning" onClick={() => setShowFlagConfirm(true)}>Flag</button>
-                            <button className="premium-action-btn premium-danger" onClick={() => setShowDeleteConfirm(true)}>Delete</button>
-                        </div>
-                    )}
                     <button className="premium-action-btn" onClick={handleExport}>
                         <Download size={16} /> Export
                     </button>
@@ -280,7 +377,7 @@ export default function SpotsDesktop({ spots, loading, onRefresh }) {
                         </div>
                     ) : (
                         paginatedSpots.map(spot => (
-                            <div key={spot.id} className="user-list-row group" style={{ gridTemplateColumns: '50px 2fr 1.2fr 1fr 1fr 1.5fr' }}>
+                            <div key={spot.id} className={`user-list-row group ${activeSpotDropdown === spot.id ? 'active' : ''}`} style={{ gridTemplateColumns: '50px 2fr 1.2fr 1fr 1fr 1.5fr' }}>
                                 <div className="ul-col">
                                     <input type="checkbox" checked={selectedSpots.includes(spot.id)} onChange={() => toggleSelectSpot(spot.id)} />
                                 </div>
@@ -452,31 +549,106 @@ export default function SpotsDesktop({ spots, loading, onRefresh }) {
                             <div className="sidepanel-info-group">
                                 <h4 className="info-group-title">Social Media</h4>
                                 <div className="info-list-card" style={{ display: 'flex', gap: '10px', padding: '15px' }}>
-                                    <button className="social-btn" onClick={() => window.open(`https://instagram.com/${viewingSpotData.instagram || ''}`, '_blank')}><Instagram size={20} /></button>
+                                    <button className="social-btn" onClick={() => window.open(`https:// instagram.com/${viewingSpotData.instagram || ''}`, '_blank')}><Instagram size={20} /></button>
                                     <button className="social-btn" onClick={() => window.open(`https://wa.me/${viewingSpotData.whatsapp || ''}`, '_blank')}><MessageCircle size={20} /></button>
                                 </div>
                             </div>
+
+                            {viewingSpotData.images && viewingSpotData.images.length > 0 && (
+                                <div className="sidepanel-info-group">
+                                    <h4 className="info-group-title">Gallery</h4>
+                                    <button
+                                        className="view-gallery-action-btn"
+                                        onClick={() => {
+                                            setCurrentImageIndex(0);
+                                            setShowGallery(true);
+                                        }}
+                                    >
+                                        <Eye size={18} />
+                                        View Spot Photos ({viewingSpotData.images.length})
+                                    </button>
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>
             )}
 
-            {/* Delete Confirmation */}
+            {showGallery && <ImageGalleryModal spot={viewingSpotData} />}
+
+            {/* Batch Actions Popup */}
+            {selectedSpots.length > 0 && (
+                <div className="batch-actions-popup fade-in-up">
+                    <div className="batch-popup-content">
+                        <div className="selected-info">
+                            <span className="count-circle">{selectedSpots.length}</span>
+                            <span className="selection-label">Spots selected</span>
+                        </div>
+                        <div className="popup-divider"></div>
+                        <div className="batch-buttons">
+                            <button className="batch-btn verify" onClick={() => setShowVerifyConfirm(true)}>
+                                <ShieldCheck size={18} />
+                                Verify All
+                            </button>
+                            <button className="batch-btn flag" onClick={() => setShowFlagConfirm(true)}>
+                                <Ban size={18} />
+                                Flag All
+                            </button>
+                            <button className="batch-btn delete" onClick={() => setShowDeleteConfirm(true)}>
+                                <Trash2 size={18} />
+                                Delete
+                            </button>
+                        </div>
+                        <div className="popup-divider"></div>
+                        <button className="batch-clear-btn" onClick={() => setSelectedSpots([])}>
+                            <X size={20} />
+                        </button>
+                    </div>
+                </div>
+            )}
+
+            {/* Modal Confirmations */}
+            {showVerifyConfirm && (
+                <div className="modal-overlay">
+                    <div className="modal-content small">
+                        <ShieldCheck size={48} color="#10b981" />
+                        <h3>Verify {selectedSpots.length} Spots?</h3>
+                        <p>These spots will be marked as approved and verified on the platform.</p>
+                        <div className="modal-footer">
+                            <button className="btn btn-secondary" onClick={() => setShowVerifyConfirm(false)}>Cancel</button>
+                            <button className="btn btn-primary success" onClick={() => handleBatchStatusChange('verified')}>Verify Now</button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {showFlagConfirm && (
+                <div className="modal-overlay">
+                    <div className="modal-content small">
+                        <AlertTriangle size={48} color="#f59e0b" />
+                        <h3>Flag {selectedSpots.length} Spots?</h3>
+                        <p>These spots will be rejected and flagged for review.</p>
+                        <div className="modal-footer">
+                            <button className="btn btn-secondary" onClick={() => setShowFlagConfirm(false)}>Cancel</button>
+                            <button className="btn btn-primary warning" onClick={() => handleBatchStatusChange('flagged')}>Flag Now</button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             {showDeleteConfirm && (
                 <div className="modal-overlay">
-                    <div className="modal-content" style={{ maxWidth: '400px', textAlign: 'center' }}>
-                        <Trash2 size={48} color="#ef4444" style={{ margin: '0 auto 20px' }} />
-                        <h3>Delete Spots?</h3>
-                        <p>Are you sure you want to delete {selectedSpots.length} spots? This cannot be undone.</p>
-                        <div className="modal-footer" style={{ border: 'none', justifyContent: 'center', gap: '15px' }}>
+                    <div className="modal-content small">
+                        <Trash2 size={48} color="#ef4444" />
+                        <h3>Delete {selectedSpots.length} Spots?</h3>
+                        <p>Are you sure you want to delete these spots? This action cannot be undone.</p>
+                        <div className="modal-footer">
                             <button className="btn btn-secondary" onClick={() => setShowDeleteConfirm(false)}>Cancel</button>
-                            <button className="btn btn-primary" style={{ backgroundColor: '#ef4444' }} onClick={() => setShowDeleteConfirm(false)}>Delete Forever</button>
+                            <button className="btn btn-primary danger" onClick={handleBatchDelete}>Delete Forever</button>
                         </div>
                     </div>
                 </div>
             )}
-
-            {/* Generic Modal logic for Verify/Flag can be similar */}
         </div>
     );
 }

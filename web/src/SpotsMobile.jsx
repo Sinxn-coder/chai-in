@@ -22,50 +22,18 @@ import {
     CheckCircle,
     AlertTriangle,
     Edit,
-    Trash2,
-    Eye,
-    Ban,
-    ShieldCheck
+    Trash2
 } from 'lucide-react';
 
 export default function SpotsMobile({ spots, loading, onRefresh }) {
     const [searchTerm, setSearchTerm] = useState('');
     const [activeFilter, setActiveFilter] = useState('all');
     const [viewingSpot, setViewingSpot] = useState(null);
-    const [editingSpot, setEditingSpot] = useState(null);
     const [showFilterDrawer, setShowFilterDrawer] = useState(false);
-    const [activeSpotDropdown, setActiveSpotDropdown] = useState(null);
-    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-    const [spotToDelete, setSpotToDelete] = useState(null);
 
-    // Update spot status in Supabase (shared logic with Desktop)
-    const handleSpotStatusChange = async (spot, newStatus) => {
-        try {
-            const { supabase } = await import('./supabase');
-            const dbStatus = newStatus === 'verified' ? 'approved' : newStatus === 'flagged' ? 'rejected' : newStatus;
-            const isVerified = newStatus === 'verified';
-            const { error } = await supabase.from('spots').update({ status: dbStatus, is_verified: isVerified }).eq('id', spot.id);
-            if (error) throw error;
-            onRefresh();
-        } catch (err) {
-            console.error('Failed to update spot status:', err);
-        }
-        setActiveSpotDropdown(null);
-    };
-
-    const handleDeleteSpot = async () => {
-        if (!spotToDelete) return;
-        try {
-            const { supabase } = await import('./supabase');
-            const { error } = await supabase.from('spots').delete().eq('id', spotToDelete.id);
-            if (error) throw error;
-            onRefresh();
-        } catch (err) {
-            console.error('Failed to delete spot:', err);
-        }
-        setShowDeleteConfirm(false);
-        setSpotToDelete(null);
-    };
+    // Image Gallery State
+    const [showGallery, setShowGallery] = useState(false);
+    const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
     const filteredSpots = useMemo(() => {
         return spots.filter(spot => {
@@ -152,90 +120,14 @@ export default function SpotsMobile({ spots, loading, onRefresh }) {
                                 </div>
                             </div>
 
-                            <div className="card-footer-mobile pt-3 border-t flex items-center justify-between">
-                                <div className="flex gap-2">
-                                    <button
-                                        className="mobile-action-pill view"
-                                        onClick={(e) => { e.stopPropagation(); setViewingSpot(spot); }}
-                                    >
-                                        <Eye size={14} /> View
-                                    </button>
-                                    <button
-                                        className="mobile-action-pill edit"
-                                        onClick={(e) => { e.stopPropagation(); setEditingSpot(spot); }}
-                                    >
-                                        <Edit size={14} />
-                                    </button>
-                                </div>
-                                <div className="relative">
-                                    <button
-                                        className="mobile-action-more"
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            setActiveSpotDropdown(activeSpotDropdown === spot.id ? null : spot.id);
-                                        }}
-                                    >
-                                        <MoreVertical size={20} />
-                                    </button>
-
-                                    {activeSpotDropdown === spot.id && (
-                                        <div className="mobile-action-dropdown animation-scale-in" onClick={e => e.stopPropagation()}>
-                                            {spot.latitude && spot.longitude && (
-                                                <button className="dropdown-item" onClick={() => {
-                                                    window.open(`https://www.google.com/maps/search/?api=1&query=${spot.latitude},${spot.longitude}`, '_blank');
-                                                    setActiveSpotDropdown(null);
-                                                }}>
-                                                    <Map size={16} /> Open Map
-                                                </button>
-                                            )}
-
-                                            {(spot.status === 'pending' || spot.status === 'flagged' || spot.status === 'rejected') && (
-                                                <button className="dropdown-item success" onClick={() => handleSpotStatusChange(spot, 'verified')}>
-                                                    <CheckCircle size={16} /> Verify Spot
-                                                </button>
-                                            )}
-
-                                            {(spot.status === 'verified' || spot.status === 'approved' || spot.status === 'pending') && (
-                                                <button className="dropdown-item warning" onClick={() => handleSpotStatusChange(spot, 'flagged')}>
-                                                    <Ban size={16} /> Ban Spot
-                                                </button>
-                                            )}
-
-                                            <button className="dropdown-item danger" onClick={() => {
-                                                setSpotToDelete(spot);
-                                                setShowDeleteConfirm(true);
-                                                setActiveSpotDropdown(null);
-                                            }}>
-                                                <Trash2 size={16} /> Delete
-                                            </button>
-                                        </div>
-                                    )}
-                                </div>
+                            <div className="card-footer-mobile">
+                                <span className="spot-id">#SPT{String(spot.id).slice(0, 6).toUpperCase()}</span>
+                                <ChevronRight size={18} className="text-gray-400" />
                             </div>
                         </div>
                     ))
                 )}
             </div>
-
-            {/* Delete Modal */}
-            {showDeleteConfirm && (
-                <div className="mobile-drawer-overlay" onClick={() => setShowDeleteConfirm(false)}>
-                    <div className="mobile-drawer-mount animation-slide-up" onClick={e => e.stopPropagation()}>
-                        <div className="drawer-handle"></div>
-                        <div className="p-6 text-center">
-                            <div className="w-16 h-16 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                                <Trash2 size={32} />
-                            </div>
-                            <h3 className="text-xl font-bold mb-2">Delete Spot?</h3>
-                            <p className="text-gray-500 mb-8">This action cannot be undone. Are you sure you want to remove "{spotToDelete?.name}"?</p>
-                            <div className="flex flex-col gap-3">
-                                <button className="w-100 py-3 bg-red-600 text-white rounded-xl font-bold" onClick={handleDeleteSpot}>Delete Forever</button>
-                                <button className="w-100 py-3 bg-gray-100 text-gray-700 rounded-xl font-bold" onClick={() => setShowDeleteConfirm(false)}>Cancel</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            )}
 
             {/* Add Spot FAB */}
             <button className="mobile-fab">
@@ -346,6 +238,64 @@ export default function SpotsMobile({ spots, loading, onRefresh }) {
                                     )}
                                 </div>
                             </div>
+
+                            {viewingSpot.images && viewingSpot.images.length > 0 && (
+                                <div className="info-group-mobile mt-6">
+                                    <h3>Gallery</h3>
+                                    <button
+                                        className="view-gallery-action-btn"
+                                        onClick={() => {
+                                            setCurrentImageIndex(0);
+                                            setShowGallery(true);
+                                        }}
+                                    >
+                                        <Eye size={18} />
+                                        View Spot Photos ({viewingSpot.images.length})
+                                    </button>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {showGallery && (
+                <div className="image-gallery-overlay" onClick={() => setShowGallery(false)} style={{ zIndex: 1100 }}>
+                    <div className="image-gallery-container" onClick={e => e.stopPropagation()} style={{ width: '95%', height: '70%' }}>
+                        <button className="gallery-close-btn" onClick={() => setShowGallery(false)} style={{ top: '-40px' }}>
+                            <X size={20} />
+                        </button>
+
+                        <div className="gallery-main-display">
+                            {viewingSpot.images.length > 1 && (
+                                <button
+                                    className="gallery-nav-btn prev"
+                                    onClick={() => setCurrentImageIndex(prev => prev > 0 ? prev - 1 : viewingSpot.images.length - 1)}
+                                    style={{ width: '44px', height: '44px', left: '-10px' }}
+                                >
+                                    <ChevronLeft size={24} />
+                                </button>
+                            )}
+
+                            <img
+                                src={viewingSpot.images[currentImageIndex]}
+                                alt="Spot"
+                                className="gallery-main-image"
+                            />
+
+                            {viewingSpot.images.length > 1 && (
+                                <button
+                                    className="gallery-nav-btn next"
+                                    onClick={() => setCurrentImageIndex(prev => prev < viewingSpot.images.length - 1 ? prev + 1 : 0)}
+                                    style={{ width: '44px', height: '44px', right: '-10px' }}
+                                >
+                                    <ChevronRight size={24} />
+                                </button>
+                            )}
+                        </div>
+
+                        <div className="gallery-counter">
+                            {currentImageIndex + 1} / {viewingSpot.images.length}
                         </div>
                     </div>
                 </div>
