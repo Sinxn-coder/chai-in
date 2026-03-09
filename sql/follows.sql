@@ -1,7 +1,10 @@
--- Create Follows Table
-CREATE TABLE IF NOT EXISTS public.follows (
-    follower_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
-    following_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+-- Clean up existing table and policies to ensure relationship update
+DROP TABLE IF EXISTS public.follows CASCADE;
+
+-- Create Follows Table referencing public.users(id)
+CREATE TABLE public.follows (
+    follower_id UUID REFERENCES public.users(id) ON DELETE CASCADE,
+    following_id UUID REFERENCES public.users(id) ON DELETE CASCADE,
     created_at TIMESTAMPTZ DEFAULT NOW(),
     PRIMARY KEY (follower_id, following_id),
     CONSTRAINT cannot_follow_self CHECK (follower_id <> following_id)
