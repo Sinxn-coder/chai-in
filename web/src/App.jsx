@@ -208,6 +208,7 @@ export default function App() {
   // Fetch users from Supabase
   const fetchUsers = async () => {
     try {
+      console.log('Initiating fetchUsers query...');
       setLoadingUsers(true);
       setErrorUsers(false);
       const { data, error } = await supabase
@@ -218,12 +219,21 @@ export default function App() {
           full_name, 
           avatar_url, 
           created_at,
-          reviews(count),
-          spots:spots!created_by(count)
+          reviews!user_id(count),
+          spots!created_by(count)
         `)
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Supabase query error:', error);
+        throw error;
+      }
+
+      console.log('Users data fetched successfully:', data?.length, 'users found');
+      // Log first user to check structure
+      if (data && data.length > 0) {
+        console.log('First user structure sample:', JSON.stringify(data[0], null, 2));
+      }
 
       const mappedUsers = (data || []).map(user => ({
         id: user.id,
@@ -239,6 +249,9 @@ export default function App() {
       setUsers(mappedUsers);
     } catch (err) {
       console.error('Error fetching users:', err);
+      if (err.message) console.error('Error message:', err.message);
+      if (err.details) console.error('Error details:', err.details);
+      if (err.hint) console.error('Error hint:', err.hint);
       setErrorUsers(true);
       setToastMessage('Failed to load real users data');
       setShowToast(true);
