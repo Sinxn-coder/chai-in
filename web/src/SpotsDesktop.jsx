@@ -3,19 +3,12 @@ import {
     Search,
     Filter,
     TrendingUp,
-    Users,
-    LayoutList,
     CheckCircle,
     Clock,
     Flag,
-    Type,
     Star,
     Calendar,
     MessageSquare,
-    Menu,
-    AlignLeft,
-    List,
-    LayoutGrid,
     MapPin,
     ChevronDown,
     Download,
@@ -27,13 +20,13 @@ import {
     Phone,
     MessageCircle,
     Instagram,
-    ExternalLink,
     Map,
     Eye,
-    ArrowLeft,
-    Save,
-    Camera,
     RotateCw,
+    Ban,
+    ShieldCheck,
+    ChevronLeft,
+    ChevronRight,
     AlertCircle
 } from 'lucide-react';
 
@@ -137,6 +130,23 @@ export default function SpotsDesktop({ spots, loading, onRefresh }) {
     const handleSelectAll = () => {
         if (selectedSpots.length === filteredSpots.length) setSelectedSpots([]);
         else setSelectedSpots(filteredSpots.map(s => s.id));
+    };
+
+    // Update spot status in Supabase
+    const handleSpotStatusChange = async (spot, newStatus) => {
+        try {
+            const { supabase } = await import('./supabase');
+
+            const dbStatus = newStatus === 'verified' ? 'approved' : newStatus === 'flagged' ? 'rejected' : newStatus;
+            const isVerified = newStatus === 'verified';
+            const { error } = await supabase.from('spots').update({ status: dbStatus, is_verified: isVerified }).eq('id', spot.id);
+
+            if (error) throw error;
+            onRefresh();
+        } catch (err) {
+            console.error('Failed to update spot status:', err);
+        }
+        setActiveSpotDropdown(null);
     };
 
     return (
@@ -286,41 +296,87 @@ export default function SpotsDesktop({ spots, loading, onRefresh }) {
                                 <div className="ul-col"><span className="spot-category-tag">{spot.category}</span></div>
                                 <div className="ul-col">{getStatusBadge(spot.status)}</div>
                                 <div className="ul-col">
-                                    <div className="row-actions-group">
-                                        <button className="view-details-btn" onClick={() => setViewingSpotData(spot)}>
-                                            <Eye size={14} /> View
-                                        </button>
-                                        <button className="row-action-icon-btn" onClick={() => setEditingSpotData(spot)}>
-                                            <Edit size={14} />
-                                        </button>
+                                    <div className="spot-row-actions">
+                                        {/* View Details */}
                                         <button
-                                            className="row-action-icon-btn more"
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                setActiveSpotDropdown(activeSpotDropdown === spot.id ? null : spot.id);
-                                            }}
+                                            className="spot-action-btn view"
+                                            onClick={() => setViewingSpotData(spot)}
+                                            title="View Details"
                                         >
-                                            <MoreVertical size={16} />
+                                            <Eye size={15} />
+                                            <span>View</span>
                                         </button>
-                                        {activeSpotDropdown === spot.id && (
-                                            <div className="row-action-menu">
-                                                <button className="row-action-item" onClick={() => {
-                                                    if (spot.latitude && spot.longitude) {
-                                                        window.open(`https://www.google.com/maps/search/?api=1&query=${spot.latitude},${spot.longitude}`, '_blank');
-                                                    }
-                                                    setActiveSpotDropdown(null);
-                                                }}>
-                                                    <Map size={14} /> Map
-                                                </button>
-                                                <button className="row-action-item danger" onClick={() => {
-                                                    setSelectedSpots([spot.id]);
-                                                    setShowDeleteConfirm(true);
-                                                    setActiveSpotDropdown(null);
-                                                }}>
-                                                    <Trash2 size={14} /> Delete
-                                                </button>
-                                            </div>
-                                        )}
+
+                                        {/* Edit */}
+                                        <button
+                                            className="spot-action-btn edit"
+                                            onClick={() => setEditingSpotData(spot)}
+                                            title="Edit Spot"
+                                        >
+                                            <Edit size={15} />
+                                        </button>
+
+                                        {/* More (context-sensitive + Delete) */}
+                                        <div className="spot-action-more-wrapper">
+                                            <button
+                                                className="spot-action-btn more"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    setActiveSpotDropdown(activeSpotDropdown === spot.id ? null : spot.id);
+                                                }}
+                                                title="More"
+                                            >
+                                                <MoreVertical size={15} />
+                                            </button>
+                                            {activeSpotDropdown === spot.id && (
+                                                <div className="spot-action-dropdown">
+                                                    {/* Map link */}
+                                                    {spot.latitude && spot.longitude && (
+                                                        <button
+                                                            className="spot-dropdown-item"
+                                                            onClick={() => {
+                                                                window.open(`https://www.google.com/maps/search/?api=1&query=${spot.latitude},${spot.longitude}`, '_blank');
+                                                                setActiveSpotDropdown(null);
+                                                            }}
+                                                        >
+                                                            <Map size={14} /> Open Map
+                                                        </button>
+                                                    )}
+
+                                                    {/* Verify — only for pending/flagged */}
+                                                    {(spot.status === 'pending' || spot.status === 'flagged' || spot.status === 'rejected') && (
+                                                        <button
+                                                            className="spot-dropdown-item success"
+                                                            onClick={() => handleSpotStatusChange(spot, 'verified')}
+                                                        >
+                                                            <ShieldCheck size={14} /> Verify
+                                                        </button>
+                                                    )}
+
+                                                    {/* Ban/Flag — only for verified/pending */}
+                                                    {(spot.status === 'verified' || spot.status === 'approved' || spot.status === 'pending') && (
+                                                        <button
+                                                            className="spot-dropdown-item warning"
+                                                            onClick={() => handleSpotStatusChange(spot, 'flagged')}
+                                                        >
+                                                            <Ban size={14} /> Ban
+                                                        </button>
+                                                    )}
+
+                                                    {/* Delete — always */}
+                                                    <button
+                                                        className="spot-dropdown-item danger"
+                                                        onClick={() => {
+                                                            setSelectedSpots([spot.id]);
+                                                            setShowDeleteConfirm(true);
+                                                            setActiveSpotDropdown(null);
+                                                        }}
+                                                    >
+                                                        <Trash2 size={14} /> Delete
+                                                    </button>
+                                                </div>
+                                            )}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -333,9 +389,29 @@ export default function SpotsDesktop({ spots, loading, onRefresh }) {
             <div className="users-footer">
                 <div className="users-count">Showing {paginatedSpots.length} of {filteredSpots.length} spots</div>
                 <div className="pagination">
-                    <button disabled={currentPage === 1} onClick={() => setCurrentPage(prev => prev - 1)}>Previous</button>
-                    <span>Page {currentPage} of {totalPages || 1}</span>
-                    <button disabled={currentPage >= totalPages} onClick={() => setCurrentPage(prev => prev + 1)}>Next</button>
+                    <button
+                        className="pagination-btn"
+                        disabled={currentPage === 1}
+                        onClick={() => setCurrentPage(prev => prev - 1)}
+                        title="Previous Page"
+                    >
+                        <ChevronLeft size={18} />
+                        <span>Previous</span>
+                    </button>
+                    <div className="page-indicator">
+                        <span className="current-page">{currentPage}</span>
+                        <span className="page-separator">/</span>
+                        <span className="total-pages">{totalPages || 1}</span>
+                    </div>
+                    <button
+                        className="pagination-btn"
+                        disabled={currentPage >= totalPages}
+                        onClick={() => setCurrentPage(prev => prev + 1)}
+                        title="Next Page"
+                    >
+                        <span>Next</span>
+                        <ChevronRight size={18} />
+                    </button>
                 </div>
             </div>
 

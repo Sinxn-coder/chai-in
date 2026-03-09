@@ -1006,6 +1006,124 @@ main {
 
 /* Other controls preserved... */
 
+/* ── Rebuilt Spot Row Actions ── */
+.spot-row-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.spot-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 10px;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.78rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.18s, color 0.18s, transform 0.15s;
+  white-space: nowrap;
+}
+
+.spot-action-btn.view {
+  background: #ede9fe;
+  color: #6d28d9;
+}
+
+.spot-action-btn.view:hover {
+  background: #ddd6fe;
+  transform: translateY(-1px);
+}
+
+.spot-action-btn.edit {
+  background: #e0f2fe;
+  color: #0284c7;
+  padding: 6px 8px;
+}
+
+.spot-action-btn.edit:hover {
+  background: #bae6fd;
+  transform: translateY(-1px);
+}
+
+.spot-action-btn.more {
+  background: #f1f5f9;
+  color: #64748b;
+  padding: 6px 8px;
+}
+
+.spot-action-btn.more:hover {
+  background: #e2e8f0;
+  color: #1e293b;
+}
+
+.spot-action-more-wrapper {
+  position: relative;
+}
+
+.spot-action-dropdown {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  background: white;
+  border: 1px solid #f1f5f9;
+  border-radius: 10px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+  padding: 6px;
+  z-index: 99;
+  min-width: 140px;
+  animation: scaleIn 0.15s ease;
+  transform-origin: top right;
+}
+
+.spot-dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 8px 10px;
+  border: none;
+  background: transparent;
+  border-radius: 7px;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: #334155;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.spot-dropdown-item:hover {
+  background: #f8fafc;
+}
+
+.spot-dropdown-item.danger {
+  color: #ef4444;
+}
+
+.spot-dropdown-item.danger:hover {
+  background: #fef2f2;
+}
+
+.spot-dropdown-item.success {
+  color: #16a34a;
+}
+
+.spot-dropdown-item.success:hover {
+  background: #f0fdf4;
+}
+
+.spot-dropdown-item.warning {
+  color: #ea580c;
+}
+
+.spot-dropdown-item.warning:hover {
+  background: #fff7ed;
+}
+
+
+
 .users-controls {
   display: flex;
   gap: 12px;
@@ -5831,13 +5949,70 @@ main {
 .pagination {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 16px;
+  margin-top: 4px;
 }
 
-.page-info {
-  color: #6b7280;
-  font-size: 0.9rem;
-  padding: 0 8px;
+.pagination-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border: 1px solid #e5e7eb;
+  background: white;
+  color: #374151;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.pagination-btn:hover:not(:disabled) {
+  border-color: #4f46e5;
+  color: #4f46e5;
+  background: #f5f3ff;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.pagination-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.pagination-btn:disabled {
+  background: #f3f4f6;
+  color: #9ca3af;
+  border-color: #e5e7eb;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.page-indicator {
+  display: flex;
+  align-items: center;
+  background: white;
+  padding: 6px 12px;
+  border-radius: 20px;
+  border: 1px solid #f1f5f9;
+  font-size: 0.85rem;
+  font-weight: 600;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.02);
+}
+
+.current-page {
+  color: #4f46e5;
+}
+
+.page-separator {
+  margin: 0 6px;
+  color: #cbd5e1;
+  font-weight: 400;
+}
+
+.total-pages {
+  color: #64748b;
 }
 
 /* Status Badge Styles */
