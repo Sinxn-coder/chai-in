@@ -48,6 +48,10 @@ import {
   X,
   AlertTriangle,
   Info,
+  ExternalLink,
+  Instagram,
+  MessageCircle,
+  Map,
   Zap,
   Users as UsersIcon,
   Lock,
@@ -161,189 +165,49 @@ export default function App() {
     return activeItem ? activeItem.name : 'Dashboard';
   };
 
-  // Mock user data
-  const [users] = useState([
-    { id: 1, name: 'John Doe', email: 'john@example.com', status: 'active', joined: '2024-01-15', lastActive: '2024-02-13', spots: 12, reviews: 45 },
-    { id: 2, name: 'Jane Smith', email: 'jane@example.com', status: 'active', joined: '2024-01-20', lastActive: '2024-02-12', spots: 8, reviews: 23 },
-    { id: 3, name: 'Mike Johnson', email: 'mike@example.com', status: 'banned', joined: '2023-12-10', lastActive: '2024-02-01', spots: 3, reviews: 15 },
-    { id: 4, name: 'Tom Brown', email: 'tom@example.com', status: 'active', joined: '2023-11-25', lastActive: '2024-02-13', spots: 15, reviews: 67 },
-    { id: 5, name: 'Emily Davis', email: 'emily@example.com', status: 'active', joined: '2024-01-05', lastActive: '2024-02-11', spots: 6, reviews: 19 },
-    { id: 6, name: 'Chris Lee', email: 'chris@example.com', status: 'banned', joined: '2023-10-15', lastActive: '2024-01-20', spots: 2, reviews: 8 },
-    { id: 7, name: 'Lisa Anderson', email: 'lisa@example.com', status: 'active', joined: '2024-02-01', lastActive: '2024-02-13', spots: 4, reviews: 12 },
-    { id: 8, name: 'David Wilson', email: 'david@example.com', status: 'active', joined: '2024-01-18', lastActive: '2024-02-12', spots: 9, reviews: 31 }
-  ]);
+  // User data from Supabase
+  const [users, setUsers] = useState([]);
 
-  // Mock spot data
-  const [spots] = useState([
-    {
-      id: 1,
-      name: 'Central Perk Cafe',
-      address: '123 Main St',
-      city: 'New York',
-      state: 'NY',
-      category: 'Cafe',
-      status: 'verified',
-      rating: 4.5,
-      reviews: 127,
-      added: '2024-01-15',
-      phone: '+1-212-555-1234',
-      instagram: 'centralperk_cafe'
-    },
-    {
-      id: 2,
-      name: 'Sunset Restaurant',
-      address: '456 Oak Ave',
-      city: 'Los Angeles',
-      state: 'CA',
-      category: 'Restaurant',
-      status: 'pending',
-      rating: 4.2,
-      reviews: 89,
-      added: '2024-01-20',
-      phone: '+1-310-555-6789',
-      instagram: 'sunset_restaurant_la'
-    },
-    {
-      id: 3,
-      name: 'Mountain View Grill',
-      address: '789 Pine Rd',
-      city: 'Denver',
-      state: 'CO',
-      category: 'Restaurant',
-      status: 'verified',
-      rating: 4.8,
-      reviews: 234,
-      added: '2024-01-25',
-      phone: '+1-303-555-0123',
-      instagram: 'mountainview_grill'
-    },
-    {
-      id: 4,
-      name: 'Beachside Coffee',
-      address: '321 Ocean Blvd',
-      city: 'Miami',
-      state: 'FL',
-      category: 'Cafe',
-      status: 'flagged',
-      rating: 3.9,
-      reviews: 156,
-      added: '2024-02-01',
-      phone: '+1-305-555-9876',
-      instagram: 'beachside_coffee'
-    },
-    {
-      id: 5,
-      name: 'Downtown Bistro',
-      address: '654 Elm St',
-      city: 'Chicago',
-      state: 'IL',
-      category: 'Restaurant',
-      status: 'verified',
-      rating: 4.6,
-      reviews: 198,
-      added: '2024-02-05',
-      phone: '+1-773-555-4321',
-      instagram: 'downtown_bistro_chi'
-    },
-    {
-      id: 6,
-      name: 'Riverside Cafe',
-      address: '987 River Rd',
-      city: 'Seattle',
-      state: 'WA',
-      category: 'Cafe',
-      status: 'pending',
-      rating: 4.1,
-      reviews: 87,
-      added: '2024-02-10',
-      phone: '+1-206-555-7890',
-      instagram: 'riverside_cafe_sea'
-    },
-    {
-      id: 7,
-      name: 'Hilltop Restaurant',
-      address: '147 Hill Dr',
-      city: 'Boston',
-      state: 'MA',
-      category: 'Restaurant',
-      status: 'verified',
-      rating: 4.7,
-      reviews: 312,
-      added: '2024-02-15',
-      phone: '+1-617-555-3456',
-      instagram: 'hilltop_restaurant'
-    },
-    {
-      id: 8,
-      name: 'Lakeside Coffee Shop',
-      address: '258 Lake View',
-      city: 'Portland',
-      state: 'OR',
-      category: 'Cafe',
-      status: 'flagged',
-      rating: 3.8,
-      reviews: 94,
-      added: '2024-02-20',
-      phone: '+1-503-555-2345',
-      instagram: 'lakeside_coffee_pdx'
-    },
-    {
-      id: 9,
-      name: 'Urban Eatery',
-      address: '369 City Plaza',
-      city: 'Austin',
-      state: 'TX',
-      category: 'Restaurant',
-      status: 'pending',
-      rating: 4.3,
-      reviews: 167,
-      added: '2024-02-25',
-      phone: '+1-512-555-6789',
-      instagram: 'urban_eatery_atx'
-    },
-    {
-      id: 10,
-      name: 'Parkside Cafe',
-      address: '741 Park Ave',
-      city: 'San Francisco',
-      state: 'CA',
-      category: 'Cafe',
-      status: 'verified',
-      rating: 4.4,
-      reviews: 201,
-      added: '2024-03-01',
-      phone: '+1-415-555-8901',
-      instagram: 'parkside_cafe_sf'
-    },
-    {
-      id: 11,
-      name: 'Mountain Peak Diner',
-      address: '852 Summit Rd',
-      city: 'Phoenix',
-      state: 'AZ',
-      category: 'Restaurant',
-      status: 'flagged',
-      rating: 3.7,
-      reviews: 123,
-      added: '2024-03-05',
-      phone: '+1-602-555-3456',
-      instagram: 'mountainpeak_diner_phx'
-    },
-    {
-      id: 12,
-      name: 'Sunrise Coffee House',
-      address: '963 Dawn Blvd',
-      city: 'Nashville',
-      state: 'TN',
-      category: 'Cafe',
-      status: 'pending',
-      rating: 4.0,
-      reviews: 145,
-      added: '2024-03-10',
-      phone: '+1-615-555-7890',
-      instagram: 'sunrise_coffee_nash'
+  // Spot data from Supabase
+  const [spots, setSpots] = useState([]);
+  const [loadingSpots, setLoadingSpots] = useState(true);
+
+  // Fetch spots from Supabase
+  const fetchSpots = async () => {
+    try {
+      setLoadingSpots(true);
+      const { data, error } = await supabase
+        .from('spots')
+        .select('*')
+        .order('name', { ascending: true });
+
+      if (error) throw error;
+
+      // Map Supabase fields to UI fields if necessary
+      const mappedSpots = (data || []).map(spot => ({
+        ...spot,
+        reviews: spot.review_count || 0, // Map review_count to reviews
+        added: new Date(spot.created_at).toISOString().split('T')[0], // Format date
+        // UI expects 'verified', 'pending', 'flagged'
+        // Supabase has 'approved', 'pending', 'rejected'
+        status: spot.status === 'approved' ? 'verified' : (spot.status === 'rejected' ? 'flagged' : 'pending')
+      }));
+
+      setSpots(mappedSpots);
+    } catch (err) {
+      console.error('Error fetching spots:', err);
+      setToastMessage('Failed to load real spots data');
+      setShowToast(true);
+    } finally {
+      setLoadingSpots(false);
     }
-  ]);
+  };
+
+  useEffect(() => {
+    if (isAdminLoggedIn && activeTab === 'spots') {
+      fetchSpots();
+    }
+  }, [isAdminLoggedIn, activeTab]);
 
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
@@ -2070,6 +1934,25 @@ export default function App() {
               </div>
               <h2 className="hero-name">{viewingSpotData.name}</h2>
               <p className="hero-email">{viewingSpotData.category}</p>
+
+              {/* Social Quick Actions */}
+              <div className="hero-social-actions">
+                <button
+                  className="social-btn whatsapp"
+                  onClick={() => window.open(`https://wa.me/${viewingSpotData.phone?.replace(/\D/g, '') || '919876543210'}`, '_blank')}
+                  title="WhatsApp"
+                >
+                  <MessageCircle size={18} />
+                </button>
+                <button
+                  className="social-btn instagram"
+                  onClick={() => window.open(`https://instagram.com/${viewingSpotData.instagram || 'bytspot_official'}`, '_blank')}
+                  title="Instagram"
+                >
+                  <Instagram size={18} />
+                </button>
+              </div>
+
               <div className="hero-badge-wrap">
                 <span className={`status-pill pill-${viewingSpotData.status}`}>
                   {viewingSpotData.status.toUpperCase()}
@@ -2126,6 +2009,18 @@ export default function App() {
                 <div className="info-list-row">
                   <span className="il-label">State</span>
                   <span className="il-value">{viewingSpotData.state}</span>
+                </div>
+
+                {/* Google Maps Action */}
+                <div className="info-list-action">
+                  <button
+                    className="maps-action-btn"
+                    onClick={() => window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(viewingSpotData.name + ' ' + viewingSpotData.address + ' ' + viewingSpotData.city)}`, '_blank')}
+                  >
+                    <Map size={16} />
+                    <span>View on Google Maps</span>
+                    <ExternalLink size={14} className="ext-icon" />
+                  </button>
                 </div>
               </div>
             </div>
@@ -2437,13 +2332,13 @@ export default function App() {
                 </div>
               </div>
               <div className="stat-value">{spotStats.verified}</div>
-              <div className="stat-timeline">Ready for discover</div>
+              <div className="stat-timeline">Ready for discovery</div>
             </div>
 
             <div className="stat-card-modern spots-pending">
               <div className="stat-card-header">
                 <span className="stat-title">Pending</span>
-                <div className="stat-icon-wrapper warning">
+                <div className="stat-icon-wrapper blue">
                   <Clock size={20} />
                 </div>
               </div>
@@ -2454,177 +2349,70 @@ export default function App() {
             <div className="stat-card-modern spots-flagged">
               <div className="stat-card-header">
                 <span className="stat-title">Flagged</span>
-                <div className="stat-icon-wrapper danger">
-                  <Flag size={20} />
+                <div className="stat-icon-wrapper yellow">
+                  <AlertTriangle size={20} />
                 </div>
               </div>
               <div className="stat-value">{spotStats.flagged}</div>
-              <div className="stat-timeline">Requires attention</div>
-            </div>
-
-            <div className="stat-card-modern spots-rating">
-              <div className="stat-card-header">
-                <span className="stat-title">Avg Rating</span>
-                <div className="stat-icon-wrapper yellow">
-                  <Star size={20} />
-                </div>
-              </div>
-              <div className="stat-value">{spotStats.avgRating.toFixed(1)}</div>
-              <div className="stat-timeline">Global platform rating</div>
+              <div className="stat-timeline">Needs attention</div>
             </div>
           </div>
 
-          {/* Premium List View Container (Desktop Only) */}
-          <div className="users-list-container spots-list-container">
-            {/* Header Row */}
-            <div className="users-list-header">
-              <div className="header-col col-check">
-                <input
-                  type="checkbox"
-                  checked={selectedSpots.length === filteredSpots.length && filteredSpots.length > 0}
-                  onChange={handleSelectAllSpots}
-                  className="select-all-checkbox"
-                />
-              </div>
-              <div className="header-col col-spot-info">SPOT DETAILS</div>
-              <div className="header-col col-status">STATUS</div>
-              <div className="header-col col-location">LOCATION</div>
-              <div className="header-col col-rating">RATING</div>
-              <div className="header-col col-added">DATE ADDED</div>
-            </div>
-
-            {/* List Body */}
-            <div className="users-list-body">
-              {paginatedSpots.map(spot => (
-                <div key={spot.id} className="user-list-row spot-list-row">
-                  <div className="row-col col-check">
-                    <input
-                      type="checkbox"
-                      checked={selectedSpots.includes(spot.id)}
-                      onChange={() => handleSelectSpot(spot.id)}
-                      className="user-checkbox"
-                    />
-                  </div>
-                  <div className="row-col col-spot-info">
-                    <div className="user-avatar-initials" style={{ background: '#f8fafc', color: '#64748b' }}>
-                      <MapPin size={18} />
-                    </div>
-                    <div className="user-identity">
-                      <span className="user-name">{spot.name} <span style={{ color: '#94a3b8', margin: '0 4px', fontSize: '0.8rem' }}>•</span></span>
-                      <span className="user-email">{spot.category}</span>
-                    </div>
-                  </div>
-                  <div className="row-col col-status">
-                    <span className={`status-pill pill-${spot.status.toLowerCase()}`}>
-                      {spot.status.toUpperCase()}
-                    </span>
-                  </div>
-                  <div className="row-col col-location">
-                    <div className="platform-stat">
-                      <span className="stat-val" style={{ fontSize: '0.9rem', color: '#475569', fontWeight: 500 }}>{spot.city}, {spot.state}</span>
-                    </div>
-                  </div>
-
-                  <div className="row-col col-rating">
-                    <div className="platform-stat rating">
-                      <Star size={14} className="star-icon" />
-                      <span className="stat-val">{spot.rating}</span>
-                    </div>
-                  </div>
-
-                  <div className="row-col col-added">
-                    <span className="join-date">{spot.added}</span>
-                  </div>
-
-                  <div className="row-col col-actions" style={{ position: 'relative', display: 'flex', justifyContent: 'flex-end' }}>
-                    {/* Spot Row Action Overlay */}
-                    <div className="row-actions-overlay" style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '8px' }}>
-                      <button className="view-details-btn" onClick={() => {
-                        setViewingSpotData(spot);
-                      }}>
-                        <Eye size={14} />
-                        View Details
-                      </button>
-                      <button
-                        className="row-action-icon-btn"
-                        onClick={() => handleSpotAction('edit', spot)}
-                        title="Edit"
-                      >
-                        <Edit size={16} />
-                      </button>
-                      <div className="dropdown-container">
-                        <button
-                          className="row-action-icon-btn"
-                          onClick={() => toggleSpotDropdown(spot.id)}
-                        >
-                          <MoreVertical size={16} />
-                        </button>
-
-                        {activeSpotDropdown === spot.id && (
-                          <div className="dropdown-menu">
-                            <button
-                              className="dropdown-item warning"
-                              onClick={() => handleSpotAction(spot.status === 'flagged' ? 'unflag' : 'flag', spot)}
-                            >
-                              <AlertCircle size={14} />
-                              {spot.status === 'flagged' ? 'Unflag Spot' : 'Flag Spot'}
-                            </button>
-                            <button
-                              className="dropdown-item success"
-                              onClick={() => handleSpotAction(spot.status === 'verified' ? 'unverify' : 'verify', spot)}
-                            >
-                              <CheckCircle size={14} />
-                              {spot.status === 'verified' ? 'Unverify Spot' : 'Verify Spot'}
-                            </button>
-                            <div className="dropdown-divider"></div>
-                            <button
-                              className="dropdown-item danger"
-                              onClick={() => handleSpotAction('delete', spot)}
-                            >
-                              <Trash2 size={14} />
-                              Delete Spot
-                            </button>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  </div>
+          <div className="dashboard-grid-modern">
+            <div className="dashboard-chart-card">
+              <div className="card-header-modern">
+                <h3 className="card-title">Spots Growth</h3>
+                <div className="card-actions">
+                  <button className="period-btn active">Monthly</button>
+                  <button className="period-btn">Weekly</button>
                 </div>
-              ))}
+              </div>
+              <div className="chart-placeholder">
+                <div className="chart-bar-wrap">
+                  {[45, 60, 40, 75, 50, 85, 90].map((h, i) => (
+                    <div key={i} className="chart-bar" style={{ height: `${h}%` }}>
+                      <div className="bar-tooltip">{h} New</div>
+                    </div>
+                  ))}
+                </div>
+                <div className="chart-labels">
+                  {['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'].map(m => (
+                    <span key={m}>{m}</span>
+                  ))}
+                </div>
+              </div>
             </div>
-          </div>
 
-          <div className="users-footer">
-            <div className="users-count">
-              Showing {paginatedSpots.length} of {spots.length} spots
-            </div>
-            <div className="pagination">
-              <button
-                className="premium-action-btn"
-                onClick={handlePreviousPage}
-                disabled={currentPage === 1}
-              >
-                Previous
-              </button>
-              <span className="page-info">Page {currentPage} of {totalPages}</span>
-              <button
-                className="premium-action-btn"
-                onClick={handleNextPage}
-                disabled={currentPage === totalPages}
-              >
-                Next
-              </button>
+            <div className="dashboard-activity-card">
+              <div className="card-header-modern">
+                <h3 className="card-title">Recent Activity</h3>
+                <button className="view-all-link">View All</button>
+              </div>
+              <div className="activity-list-modern">
+                {[
+                  { user: 'Admin', action: 'Verified', target: 'Oceanic Grill', time: '2m ago', icon: <CheckCircle size={14} /> },
+                  { user: 'System', action: 'New Spot', target: 'The Coffee Bean', time: '1h ago', icon: <MapPin size={14} /> },
+                  { user: 'Admin', action: 'Flagged', target: 'Sunset Cafe', time: '3h ago', icon: <AlertTriangle size={14} /> }
+                ].map((act, i) => (
+                  <div key={i} className="activity-item-modern">
+                    <div className={`activity-icon-small ${act.action.toLowerCase()}`}>
+                      {act.icon}
+                    </div>
+                    <div className="activity-text-wrap">
+                      <p className="activity-desc"><strong>{act.user}</strong> {act.action} {act.target}</p>
+                      <span className="activity-time">{act.time}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
-
-        {renderSpotSidePanel()}
-        {renderModernEditModal()}
-        {renderImageEditorModal()}
-        {renderContactModal()}
       </>
     );
   };
+
+
 
   const renderContactModal = () => {
     if (!contactModalOpen || !contactSpotData) return null;
