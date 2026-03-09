@@ -210,7 +210,15 @@ export default function App() {
       setLoadingUsers(true);
       const { data, error } = await supabase
         .from('users')
-        .select('id, email, full_name, avatar_url, created_at')
+        .select(`
+          id, 
+          email, 
+          full_name, 
+          avatar_url, 
+          created_at,
+          reviews(count),
+          spots:spots!created_by(count)
+        `)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
@@ -222,8 +230,8 @@ export default function App() {
         status: 'active', // Default status as discussed
         joined: user.created_at ? new Date(user.created_at).toISOString().split('T')[0] : 'N/A',
         lastActive: user.created_at ? new Date(user.created_at).toISOString().split('T')[0] : 'N/A', // Using created_at as fallback
-        spots: 0, // Default value to maintain UI layout
-        reviews: 0 // Default value to maintain UI layout
+        spots: user.spots?.[0]?.count || 0,
+        reviews: user.reviews?.[0]?.count || 0
       }));
 
       setUsers(mappedUsers);
