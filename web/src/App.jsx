@@ -167,6 +167,7 @@ export default function App() {
 
   // User data from Supabase
   const [users, setUsers] = useState([]);
+  const [loadingUsers, setLoadingUsers] = useState(true);
 
   // Spot data from Supabase
   const [spots, setSpots] = useState([]);
@@ -203,9 +204,45 @@ export default function App() {
     }
   };
 
+  // Fetch users from Supabase
+  const fetchUsers = async () => {
+    try {
+      setLoadingUsers(true);
+      const { data, error } = await supabase
+        .from('users')
+        .select('id, email, full_name, avatar_url, created_at')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+
+      const mappedUsers = (data || []).map(user => ({
+        id: user.id,
+        name: user.full_name || 'Anonymous User',
+        email: user.email,
+        status: 'active', // Default status as discussed
+        joined: user.created_at ? new Date(user.created_at).toISOString().split('T')[0] : 'N/A',
+        lastActive: user.created_at ? new Date(user.created_at).toISOString().split('T')[0] : 'N/A', // Using created_at as fallback
+        spots: 0, // Default value to maintain UI layout
+        reviews: 0 // Default value to maintain UI layout
+      }));
+
+      setUsers(mappedUsers);
+    } catch (err) {
+      console.error('Error fetching users:', err);
+      setToastMessage('Failed to load real users data');
+      setShowToast(true);
+    } finally {
+      setLoadingUsers(false);
+    }
+  };
+
   useEffect(() => {
-    if (isAdminLoggedIn && activeTab === 'spots') {
-      fetchSpots();
+    if (isAdminLoggedIn) {
+      if (activeTab === 'spots') {
+        fetchSpots();
+      } else if (activeTab === 'users') {
+        fetchUsers();
+      }
     }
   }, [isAdminLoggedIn, activeTab]);
 
@@ -1242,104 +1279,116 @@ export default function App() {
           </div>
 
           <div className="users-list-body">
-            {filteredUsers.map(user => (
-              <div key={user.id} className="user-list-row group">
-                <div className="ul-col ul-col-check">
-                  <input
-                    type="checkbox"
-                    checked={selectedUsers.includes(user.id)}
-                    onChange={(e) => {
-                      e.stopPropagation();
-                      handleSelectUser(user.id);
-                    }}
-                    className="checkbox subtle-checkbox"
-                  />
-                </div>
-
-                <div className="ul-col ul-col-user">
-                  <div className="user-avatar-list">
-                    <div className="user-avatar-circle-list bg-gradient">{user.name.charAt(0)}</div>
-                  </div>
-                  <div className="user-info-list">
-                    <h3 className="user-name-list">{user.name}</h3>
-                    <p className="user-email-list">{user.email}</p>
-                  </div>
-                </div>
-
-                <div className="ul-col ul-col-status">
-                  <div className="status-pill-list">
-                    {getStatusBadge(user.status)}
-                  </div>
-                </div>
-
-                <div className="ul-col ul-col-stats">
-                  <div className="stats-group-list">
-                    <div className="stat-badge" title="Verified Spots">
-                      <MapPin size={14} />
-                      <span>{user.spots}</span>
-                    </div>
-                    <div className="stat-badge orange" title="Reviews Left">
-                      <Star size={14} />
-                      <span>{user.reviews}</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="ul-col ul-col-date">
-                  <span className="date-text-list">{user.joined}</span>
-                </div>
-
-                <div className="ul-col ul-col-actions">
-                  <div className="row-actions-group">
-                    <button
-                      className="view-details-btn"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setSelectedUserDetail(user);
-                      }}
-                      title="View Full Profile"
-                    >
-                      <Eye size={14} />
-                      View Details
-                    </button>
-                    <button
-                      className="row-action-icon-btn more"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        toggleDropdown(user.id);
-                      }}
-                    >
-                      <MoreVertical size={16} />
-                    </button>
-
-                    {activeDropdown === user.id && (
-                      <div className="row-action-menu">
-                        <button
-                          className="row-action-item warning"
-                          onClick={() => {
-                            handleAction(user.status === 'banned' ? 'unban' : 'ban', user);
-                            setActiveDropdown(null);
-                          }}
-                        >
-                          <Ban size={14} />
-                          <span>{user.status === 'banned' ? 'Unban User' : 'Ban User'}</span>
-                        </button>
-                        <button
-                          className="row-action-item danger"
-                          onClick={() => {
-                            handleAction('delete', user);
-                            setActiveDropdown(null);
-                          }}
-                        >
-                          <Trash2 size={14} />
-                          <span>Delete User</span>
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                </div>
+            {loadingUsers ? (
+              <div className="loading-state-placeholder" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '40px', gap: '12px', color: '#64748b' }}>
+                <RotateCw size={24} className="animate-spin" />
+                <span>Fetching real users...</span>
               </div>
-            ))}
+            ) : filteredUsers.length === 0 ? (
+              <div className="empty-state-placeholder" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '60px', gap: '16px', color: '#94a3b8' }}>
+                <Users size={48} strokeWidth={1.5} />
+                <p style={{ fontSize: '1.1rem', fontWeight: 500 }}>No users found matching your search</p>
+              </div>
+            ) : (
+              filteredUsers.map(user => (
+                <div key={user.id} className="user-list-row group">
+                  <div className="ul-col ul-col-check">
+                    <input
+                      type="checkbox"
+                      checked={selectedUsers.includes(user.id)}
+                      onChange={(e) => {
+                        e.stopPropagation();
+                        handleSelectUser(user.id);
+                      }}
+                      className="checkbox subtle-checkbox"
+                    />
+                  </div>
+
+                  <div className="ul-col ul-col-user">
+                    <div className="user-avatar-list">
+                      <div className="user-avatar-circle-list bg-gradient">{user.name.charAt(0)}</div>
+                    </div>
+                    <div className="user-info-list">
+                      <h3 className="user-name-list">{user.name}</h3>
+                      <p className="user-email-list">{user.email}</p>
+                    </div>
+                  </div>
+
+                  <div className="ul-col ul-col-status">
+                    <div className="status-pill-list">
+                      {getStatusBadge(user.status)}
+                    </div>
+                  </div>
+
+                  <div className="ul-col ul-col-stats">
+                    <div className="stats-group-list">
+                      <div className="stat-badge" title="Verified Spots">
+                        <MapPin size={14} />
+                        <span>{user.spots}</span>
+                      </div>
+                      <div className="stat-badge orange" title="Reviews Left">
+                        <Star size={14} />
+                        <span>{user.reviews}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="ul-col ul-col-date">
+                    <span className="date-text-list">{user.joined}</span>
+                  </div>
+
+                  <div className="ul-col ul-col-actions">
+                    <div className="row-actions-group">
+                      <button
+                        className="view-details-btn"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSelectedUserDetail(user);
+                        }}
+                        title="View Full Profile"
+                      >
+                        <Eye size={14} />
+                        View Details
+                      </button>
+                      <button
+                        className="row-action-icon-btn more"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toggleDropdown(user.id);
+                        }}
+                      >
+                        <MoreVertical size={16} />
+                      </button>
+
+                      {activeDropdown === user.id && (
+                        <div className="row-action-menu">
+                          <button
+                            className="row-action-item warning"
+                            onClick={() => {
+                              handleAction(user.status === 'banned' ? 'unban' : 'ban', user);
+                              setActiveDropdown(null);
+                            }}
+                          >
+                            <Ban size={14} />
+                            <span>{user.status === 'banned' ? 'Unban User' : 'Ban User'}</span>
+                          </button>
+                          <button
+                            className="row-action-item danger"
+                            onClick={() => {
+                              handleAction('delete', user);
+                              setActiveDropdown(null);
+                            }}
+                          >
+                            <Trash2 size={14} />
+                            <span>Delete User</span>
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))
+            )}
           </div>
         </div>
 
