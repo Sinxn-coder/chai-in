@@ -135,12 +135,6 @@ const PushNotifications = () => {
           <div className="stat-trend positive">System Active</div>
         </div>
         <div className="stat-card">
-          <div className="stat-icon" style={{ color: '#10b981' }}><Users size={24} /></div>
-          <h3>User Reach</h3>
-          <div className="stat-value">1.2k+</div>
-          <div className="stat-trend positive">All Platforms</div>
-        </div>
-        <div className="stat-card">
           <div className="stat-icon" style={{ color: '#f59e0b' }}><Activity size={24} /></div>
           <h3>Monthly Activity</h3>
           <div className="stat-value">{notifications.filter(n => {
