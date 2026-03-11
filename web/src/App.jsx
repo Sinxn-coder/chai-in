@@ -250,7 +250,7 @@ export default function App() {
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [toastMessage, setToastMessage] = useState('');
   const [showToast, setShowToast] = useState(false);
-  const [activeDropdown, setActiveDropdown] = useState(null);
+  const [selectedUserForActions, setSelectedUserForActions] = useState(null);
   const [activeSpotDropdown, setActiveSpotDropdown] = useState(null);
   const [selectedUserDetail, setSelectedUserDetail] = useState(null);
 
@@ -272,6 +272,7 @@ export default function App() {
 
 
   const handleSelectUser = (userId) => {
+    setSelectedUserForActions(null); // Clear individual action bar when using batch selection
     setSelectedUsers(prev =>
       prev.includes(userId)
         ? prev.filter(id => id !== userId)
@@ -355,19 +356,23 @@ export default function App() {
   };
 
   const toggleDropdown = (userId) => {
-    setActiveDropdown(activeDropdown === userId ? null : userId);
+    const user = users.find(u => u.id === userId);
+    setSelectedUserForActions(user);
+    setSelectedUsers([]); // Clear batch selection when opening individual actions
   };
 
   const handleAction = (action, user) => {
     console.log(`${action} user:`, user.name);
-    setActiveDropdown(null);
+    // Add real logic for ban/delete/etc here if needed, 
+    // for now we just close the popup
+    setSelectedUserForActions(null);
   };
 
-  // Close dropdown when clicking outside
+  // Close dropdown/popup when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (!event.target.closest('.dropdown-container')) {
-        setActiveDropdown(null);
+      if (!event.target.closest('.dropdown-container') && !event.target.closest('.batch-actions-popup')) {
+        setSelectedUserForActions(null);
         setActiveSpotDropdown(null);
         // Remove dropdown-open class from all cards
         document.querySelectorAll('.mobile-spot-card').forEach(card => {
@@ -378,7 +383,7 @@ export default function App() {
 
     document.addEventListener('click', handleClickOutside);
     return () => document.removeEventListener('click', handleClickOutside);
-  }, []);
+  }, [selectedUserForActions]);
 
   const renderUsers = () => {
     return (
@@ -477,18 +482,6 @@ export default function App() {
               <Download size={16} />
               Export
             </button>
-            {selectedUsers.length > 0 && (
-              <>
-                <button className="premium-action-btn premium-warning">
-                  <Ban size={16} />
-                  Deactivate Selected
-                </button>
-                <button className="premium-action-btn premium-success">
-                  <Shield size={16} />
-                  Activate Selected
-                </button>
-              </>
-            )}
           </div>
         </div>
 
@@ -596,31 +589,6 @@ export default function App() {
                       >
                         <MoreVertical size={16} />
                       </button>
-
-                      {activeDropdown === user.id && (
-                        <div className="row-action-menu">
-                          <button
-                            className="row-action-item warning"
-                            onClick={() => {
-                              handleAction(user.status === 'banned' ? 'unban' : 'ban', user);
-                              setActiveDropdown(null);
-                            }}
-                          >
-                            <Ban size={14} />
-                            <span>{user.status === 'banned' ? 'Unban User' : 'Ban User'}</span>
-                          </button>
-                          <button
-                            className="row-action-item danger"
-                            onClick={() => {
-                              handleAction('delete', user);
-                              setActiveDropdown(null);
-                            }}
-                          >
-                            <Trash2 size={14} />
-                            <span>Delete User</span>
-                          </button>
-                        </div>
-                      )}
                     </div>
                   </div>
                 </div>
@@ -628,6 +596,78 @@ export default function App() {
             )}
           </div>
         </div>
+
+        {/* Individual User Actions Popup */}
+        {selectedUserForActions && (
+          <div className="batch-actions-popup fade-in-up">
+            <div className="batch-popup-content">
+              <div className="selected-info">
+                <div className="user-avatar-circle-list bg-gradient" style={{ width: 32, height: 32, fontSize: '0.8rem' }}>{selectedUserForActions.name.charAt(0)}</div>
+                <div className="selection-label">
+                  <div style={{ fontSize: '0.85rem', color: 'white', fontWeight: 600 }}>{selectedUserForActions.name}</div>
+                  <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.5)' }}>User Actions</div>
+                </div>
+              </div>
+              <div className="popup-divider"></div>
+              <div className="batch-buttons">
+                <button className="batch-btn verify" onClick={() => setSelectedUserDetail(selectedUserForActions)}>
+                  <Eye size={18} />
+                  Details
+                </button>
+                <button className="batch-btn message" onClick={() => handleUserAction('message', selectedUserForActions)}>
+                  <MessageSquare size={18} />
+                  Message
+                </button>
+                <button 
+                  className="batch-btn flag" 
+                  onClick={() => handleAction(selectedUserForActions.status === 'banned' ? 'unban' : 'ban', selectedUserForActions)}
+                >
+                  <Ban size={18} />
+                  {selectedUserForActions.status === 'banned' ? 'Unban' : 'Ban'}
+                </button>
+                <button className="batch-btn delete" onClick={() => handleAction('delete', selectedUserForActions)}>
+                  <Trash2 size={18} />
+                  Delete
+                </button>
+              </div>
+              <div className="popup-divider"></div>
+              <button className="batch-clear-btn" onClick={() => setSelectedUserForActions(null)}>
+                <X size={20} />
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Batch User Actions Popup */}
+        {selectedUsers.length > 0 && (
+          <div className="batch-actions-popup fade-in-up">
+            <div className="batch-popup-content">
+              <div className="selected-info">
+                <span className="count-circle">{selectedUsers.length}</span>
+                <span className="selection-label">Users selected</span>
+              </div>
+              <div className="popup-divider"></div>
+              <div className="batch-buttons">
+                <button className="batch-btn verify" style={{ color: '#10b981' }}>
+                  <Shield size={18} />
+                  Activate All
+                </button>
+                <button className="batch-btn flag" style={{ color: '#f59e0b' }}>
+                  <Ban size={18} />
+                  Deactivate All
+                </button>
+                <button className="batch-btn delete" style={{ color: '#ef4444' }}>
+                  <Trash2 size={18} />
+                  Delete
+                </button>
+              </div>
+              <div className="popup-divider"></div>
+              <button className="batch-clear-btn" onClick={() => setSelectedUsers([])}>
+                <X size={20} />
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Ultra-Premium Side Panel for User Details */}
         {selectedUserDetail && (
