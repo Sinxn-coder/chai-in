@@ -636,12 +636,12 @@ export default function App() {
         {/* Individual User Actions Popup */}
         {selectedUserForActions && (
           <div className="batch-actions-popup fade-in-up">
-            <div className="batch-popup-content">
+            <div className="batch-popup-content light-glass">
               <div className="selected-info">
                 <div className="user-avatar-circle-list bg-gradient" style={{ width: 32, height: 32, fontSize: '0.8rem' }}>{selectedUserForActions.name.charAt(0)}</div>
                 <div className="selection-label">
-                  <div style={{ fontSize: '0.85rem', color: 'white', fontWeight: 600 }}>{selectedUserForActions.name}</div>
-                  <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.5)' }}>User Actions</div>
+                  <div>{selectedUserForActions.name}</div>
+                  <div>User Actions</div>
                 </div>
               </div>
               <div className="popup-divider"></div>
@@ -649,10 +649,6 @@ export default function App() {
                 <button className="batch-btn verify" onClick={() => setSelectedUserDetail(selectedUserForActions)}>
                   <Eye size={18} />
                   Details
-                </button>
-                <button className="batch-btn message" onClick={() => handleUserAction('message', selectedUserForActions)}>
-                  <MessageSquare size={18} />
-                  Message
                 </button>
                 <button 
                   className="batch-btn flag" 
