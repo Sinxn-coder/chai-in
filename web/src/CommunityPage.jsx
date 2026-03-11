@@ -103,19 +103,12 @@ export default function CommunityPage() {
     const fetchData = async () => {
       setLoading(true);
       try {
-        // Fetch Posts with author data
+        // Fetch Posts with author data (using user_id as relation name)
         const { data: postsData, error: postsError } = await supabase
           .from('posts')
           .select(`
-            id,
-            content,
-            images,
-            likes_count,
-            comments_count,
-            views_count,
-            created_at,
-            category,
-            author:users(full_name, avatar_url, email)
+            *,
+            author:user_id(full_name, avatar_url, email)
           `)
           .order('created_at', { ascending: false });
 
@@ -128,7 +121,7 @@ export default function CommunityPage() {
           userEmail: post.author?.email,
           time: new Date(post.created_at).toLocaleDateString() + ' at ' + new Date(post.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
           content: post.content,
-          images: Array.isArray(post.images) ? post.images : (post.images ? JSON.parse(post.images) : []),
+          images: Array.isArray(post.images) ? post.images : (post.images ? (typeof post.images === 'string' ? JSON.parse(post.images) : []) : []),
           currentImageIndex: 0,
           likes: post.likes_count || 0,
           comments: post.comments_count || 0,
@@ -150,7 +143,7 @@ export default function CommunityPage() {
         }));
 
       } catch (err) {
-        console.error('Error fetching data:', err);
+        console.error('Error fetching data:', err.message || err, err.details || '');
       } finally {
         setLoading(false);
       }
@@ -214,9 +207,6 @@ export default function CommunityPage() {
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
-            <button className="filter-btn">
-              <Filter size={18} />
-            </button>
           </div>
         </div>
       </div>
@@ -268,17 +258,6 @@ export default function CommunityPage() {
                       <Upload size={18} />
                       Bulk Import
                     </button>
-                  </div>
-                  <div className="admin-actions-right">
-                    <div className="filter-group">
-                      <select className="admin-select">
-                        <option>All Posts</option>
-                        <option>Pending Review</option>
-                        <option>Flagged Content</option>
-                        <option>Removed Posts</option>
-                        <option>High Priority</option>
-                      </select>
-                    </div>
                   </div>
                 </div>
 
