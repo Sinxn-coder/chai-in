@@ -22,6 +22,8 @@ import {
   BarChart3,
   Settings,
   ImageIcon,
+  PlusCircle,
+  Send,
   X,
   Clock,
   RefreshCw
@@ -286,11 +288,11 @@ export default function CommunityPage() {
                 <div className="admin-toolbar">
                   <div className="admin-actions-left">
                     <button 
-                      className="btn-primary"
+                      className="btn-create-post-compact"
                       onClick={() => setIsCreateModalOpen(true)}
                     >
-                      <Plus size={18} />
-                      Create New Post
+                      <PlusCircle size={20} />
+                      <span>New Post</span>
                     </button>
                     <button className="btn-secondary">
                       <Download size={18} />
@@ -1151,72 +1153,81 @@ export default function CommunityPage() {
         </div>
       </div>
 
-      {/* Create Post Modal */}
-      {isCreateModalOpen && (
-        <div className="modal-overlay">
-          <div className="modal-content create-post-modal">
-            <div className="modal-header">
-              <h2>Create New Post</h2>
-              <button 
-                className="close-btn"
-                onClick={() => setIsCreateModalOpen(false)}
-              >
-                <X size={20} />
-              </button>
+      {/* Create Post Side Drawer */}
+      <div className={`side-drawer-overlay ${isCreateModalOpen ? 'active' : ''}`} onClick={() => setIsCreateModalOpen(false)}>
+        <div className={`side-drawer create-post-drawer ${isCreateModalOpen ? 'active' : ''}`} onClick={(e) => e.stopPropagation()}>
+          <div className="drawer-header">
+            <div className="header-title">
+              <PlusCircle size={24} className="header-icon" />
+              <h2>Create Community Post</h2>
             </div>
-            <div className="modal-body">
-              <div className="form-group">
-                <label>Category</label>
-                <select 
-                  className="form-input modern"
-                  value={newPost.category}
-                  onChange={(e) => setNewPost({...newPost, category: e.target.value})}
-                >
-                  <option value="discussion">Discussion</option>
-                  <option value="announcement">Announcement</option>
-                  <option value="spot_highlight">Spot Highlight</option>
-                  <option value="event">Event</option>
-                </select>
+            <button 
+              className="drawer-close-btn"
+              onClick={() => setIsCreateModalOpen(false)}
+            >
+              <X size={20} />
+            </button>
+          </div>
+          <div className="drawer-body">
+            <div className="form-section">
+              <label>What are you sharing?</label>
+              <div className="category-chips">
+                {['discussion', 'announcement', 'spot_highlight', 'event'].map(cat => (
+                  <button 
+                    key={cat}
+                    type="button"
+                    className={`category-chip ${newPost.category === cat ? 'active' : ''}`}
+                    onClick={() => setNewPost({...newPost, category: cat})}
+                  >
+                    {cat.replace('_', ' ')}
+                  </button>
+                ))}
               </div>
-              <div className="form-group">
-                <label>Content</label>
-                <textarea 
-                  className="form-input modern text-area"
-                  placeholder="Share something with the community..."
-                  value={newPost.content}
-                  onChange={(e) => setNewPost({...newPost, content: e.target.value})}
-                  rows={5}
-                />
-              </div>
-              <div className="form-group">
-                <label>Image URLs (comma separated)</label>
+            </div>
+
+            <div className="form-section">
+              <label>Content</label>
+              <textarea 
+                className="drawer-textarea"
+                placeholder="Write your post here..."
+                value={newPost.content}
+                onChange={(e) => setNewPost({...newPost, content: e.target.value})}
+                rows={8}
+              />
+            </div>
+
+            <div className="form-section">
+              <label>Media Links</label>
+              <div className="image-input-wrapper">
                 <input 
                   type="text" 
-                  className="form-input modern"
-                  placeholder="https://example.com/image.jpg"
+                  className="drawer-input"
+                  placeholder="Paste image URLs (comma separated)"
                   value={newPost.images.join(', ')}
                   onChange={(e) => setNewPost({...newPost, images: e.target.value.split(',').map(s => s.trim()).filter(Boolean)})}
                 />
+                <ImageIcon size={18} className="input-icon" />
               </div>
             </div>
-            <div className="modal-footer">
-              <button 
-                className="btn-secondary"
-                onClick={() => setIsCreateModalOpen(false)}
-              >
-                Cancel
-              </button>
-              <button 
-                className="btn-primary"
-                onClick={handleCreatePost}
-                disabled={isSubmitting || !newPost.content.trim()}
-              >
-                {isSubmitting ? 'Posting...' : 'Post to Community'}
-              </button>
-            </div>
+          </div>
+          <div className="drawer-footer">
+            <button 
+              className="btn-cancel"
+              onClick={() => setIsCreateModalOpen(false)}
+            >
+              Cancel
+            </button>
+            <button 
+              className="btn-publish"
+              onClick={handleCreatePost}
+              disabled={isSubmitting || !newPost.content.trim()}
+            >
+              {isSubmitting ? 'Publishing...' : 'Publish Post'}
+              <Send size={18} />
+            </button>
           </div>
         </div>
-      )}
+      </div>
 
       {/* Image Popup Modal */}
       {selectedImage && (
