@@ -22,13 +22,16 @@ import {
     CheckCircle,
     AlertTriangle,
     Edit,
-    Trash2
+    Trash2,
+    ClipboardList,
+    ChevronLeft
 } from 'lucide-react';
 
 export default function SpotsMobile({ spots, loading, onRefresh }) {
     const [searchTerm, setSearchTerm] = useState('');
     const [activeFilter, setActiveFilter] = useState('all');
     const [viewingSpot, setViewingSpot] = useState(null);
+    const [viewingSuggestionsSpot, setViewingSuggestionsSpot] = useState(null);
     const [showFilterDrawer, setShowFilterDrawer] = useState(false);
 
     // Image Gallery State
@@ -103,6 +106,18 @@ export default function SpotsMobile({ spots, loading, onRefresh }) {
                                         spot.status === 'flagged' ? <AlertTriangle size={12} /> : <Clock size={12} />}
                                     <span>{spot.status.toUpperCase()}</span>
                                 </div>
+                                {spot.suggestion_count > 0 && (
+                                    <div 
+                                        className="suggestion-count-tag-mobile"
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            setViewingSuggestionsSpot(spot);
+                                        }}
+                                    >
+                                        <ClipboardList size={10} />
+                                        <span>{spot.suggestion_count}</span>
+                                    </div>
+                                )}
                             </div>
 
                             <div className="spot-card-stats">
@@ -204,6 +219,16 @@ export default function SpotsMobile({ spots, loading, onRefresh }) {
                                     <h4>{viewingSpot.created_at ? new Date(viewingSpot.created_at).toLocaleDateString(undefined, { month: 'short', year: '2-digit' }) : 'N/A'}</h4>
                                     <p>Added</p>
                                 </div>
+                                {viewingSpot.suggestion_count > 0 && (
+                                    <div 
+                                        className="bento-item suggestions-item"
+                                        onClick={() => setViewingSuggestionsSpot(viewingSpot)}
+                                    >
+                                        <ClipboardList size={20} className="text-purple-600" />
+                                        <h4>{viewingSpot.suggestion_count}</h4>
+                                        <p>Suggestions</p>
+                                    </div>
+                                )}
                             </div>
 
                             <div className="info-group-mobile">
@@ -300,6 +325,140 @@ export default function SpotsMobile({ spots, loading, onRefresh }) {
                     </div>
                 </div>
             )}
+
+            {viewingSuggestionsSpot && (
+                <SpotSuggestionsModal
+                    spot={viewingSuggestionsSpot}
+                    onClose={() => setViewingSuggestionsSpot(null)}
+                    onRefresh={onRefresh}
+                />
+            )}
         </div>
     );
 }
+
+const SpotSuggestionsModal = ({ spot, onClose, onRefresh }) => {
+    const [suggestions, setSuggestions] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchSuggestions = async () => {
+            try {
+                const { supabase } = await import('./supabase');
+                const { data, error } = await supabase
+                    .from('spot_suggestions')
+                    .select(`
+                        id,
+                        suggestion,
+                        status,
+                        created_at,
+                        user:users(id, full_name, email)
+                    `)
+                    .eq('spot_id', spot.id)
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+                setSuggestions(data || []);
+            } catch (err) {
+                console.error('Error fetching suggestions:', err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchSuggestions();
+    }, [spot.id]);
+
+    const handleUpdateStatus = async (suggestionId, newStatus) => {
+        try {
+            const { supabase } = await import('./supabase');
+            const { error } = await supabase
+                .from('spot_suggestions')
+                .update({ status: newStatus })
+                .eq('id', suggestionId);
+
+            if (error) throw error;
+            
+            setSuggestions(prev => prev.map(s => s.id === suggestionId ? { ...s, status: newStatus } : s));
+            onRefresh(); // Refresh parent to update counts if needed
+        } catch (err) {
+            console.error('Error updating suggestion status:', err);
+        }
+    };
+
+    return (
+        <div className="modal-overlay" style={{ zIndex: 1200 }} onClick={onClose}>
+            <div className="modal-content large mobile-full" onClick={e => e.stopPropagation()}>
+                <div className="modal-header">
+                    <div className="modal-title-with-icon">
+                        <ClipboardList size={24} color="#4f46e5" />
+                        <div>
+                            <h3>Suggestions</h3>
+                            <p className="modal-subtitle">{spot.name}</p>
+                        </div>
+                    </div>
+                    <button className="modal-close-btn" onClick={onClose}><X size={24} /></button>
+                </div>
+
+                <div className="suggestions-list-body">
+                    {loading ? (
+                        <div className="loading-state-placeholder" style={{ padding: '40px' }}>
+                            <RotateCw size={32} className="animate-spin" />
+                            <span>Loading...</span>
+                        </div>
+                    ) : suggestions.length === 0 ? (
+                        <div className="empty-state-placeholder" style={{ padding: '40px' }}>
+                            <MessageSquare size={48} />
+                            <p>No suggestions yet.</p>
+                        </div>
+                    ) : (
+                        <div className="suggestions-grid" style={{ gridTemplateColumns: '1fr' }}>
+                            {suggestions.map(s => (
+                                <div key={s.id} className="suggestion-card">
+                                    <div className="suggestion-card-header">
+                                        <div className="suggesting-user">
+                                            <div className="user-mini-avatar">{s.user?.full_name?.charAt(0) || 'U'}</div>
+                                            <div>
+                                                <div className="user-name">{s.user?.full_name || 'Anonymous'}</div>
+                                                <div className="user-email">{s.user?.email}</div>
+                                            </div>
+                                        </div>
+                                        <div className={`suggestion-status-tag ${s.status}`}>
+                                            {s.status}
+                                        </div>
+                                    </div>
+                                    <div className="suggestion-text">
+                                        "{s.suggestion}"
+                                    </div>
+                                    <div className="suggestion-card-footer">
+                                        <span className="suggestion-date">
+                                            {new Date(s.created_at).toLocaleDateString()}
+                                        </span>
+                                        <div className="suggestion-actions">
+                                            {s.status === 'pending' && (
+                                                <>
+                                                    <button 
+                                                        className="sug-action-btn implement" 
+                                                        onClick={() => handleUpdateStatus(s.id, 'reviewed')}
+                                                    >
+                                                        <CheckCircle size={14} /> OK
+                                                    </button>
+                                                    <button 
+                                                        className="sug-action-btn reject" 
+                                                        onClick={() => handleUpdateStatus(s.id, 'rejected')}
+                                                    >
+                                                        <Ban size={14} /> Skip
+                                                    </button>
+                                                </>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
+            </div>
+        </div>
+    );
+};

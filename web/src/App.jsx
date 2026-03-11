@@ -147,7 +147,10 @@ export default function App() {
       setLoadingSpots(true);
       const { data, error } = await supabase
         .from('spots')
-        .select('*')
+        .select(`
+          *,
+          suggestions:spot_suggestions!spot_id(count)
+        `)
         .order('name', { ascending: true });
 
       if (error) throw error;
@@ -159,7 +162,8 @@ export default function App() {
         added: new Date(spot.created_at).toISOString().split('T')[0], // Format date
         // UI expects 'verified', 'pending', 'flagged'
         // Supabase has 'approved', 'pending', 'rejected'
-        status: spot.status === 'approved' ? 'verified' : (spot.status === 'rejected' ? 'flagged' : 'pending')
+        status: spot.status === 'approved' ? 'verified' : (spot.status === 'rejected' ? 'flagged' : 'pending'),
+        suggestion_count: spot.suggestions?.[0]?.count || 0
       }));
 
       setSpots(mappedSpots);

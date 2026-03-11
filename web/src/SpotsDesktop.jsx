@@ -27,7 +27,8 @@ import {
     ShieldCheck,
     ChevronLeft,
     ChevronRight,
-    AlertCircle
+    AlertCircle,
+    ClipboardList
 } from 'lucide-react';
 
 export default function SpotsDesktop({ spots, loading, onRefresh }) {
@@ -43,6 +44,7 @@ export default function SpotsDesktop({ spots, loading, onRefresh }) {
     const [showSortDropdown, setShowSortDropdown] = useState(false);
     const [showItemsPerPageDropdown, setShowItemsPerPageDropdown] = useState(false);
     const [activeSpotDropdown, setActiveSpotDropdown] = useState(null);
+    const [viewingSuggestionsSpot, setViewingSuggestionsSpot] = useState(null);
 
     const [viewingSpotData, setViewingSpotData] = useState(null);
     const [editingSpotData, setEditingSpotData] = useState(null);
@@ -412,6 +414,18 @@ export default function SpotsDesktop({ spots, loading, onRefresh }) {
                                         >
                                             <Edit size={15} />
                                         </button>
+                                        
+                                        {/* Suggestions */}
+                                        <button
+                                            className={`spot-action-btn suggestions ${spot.suggestion_count > 0 ? 'has-suggestions' : ''}`}
+                                            onClick={() => setViewingSuggestionsSpot(spot)}
+                                            title="View User Suggestions"
+                                        >
+                                            <ClipboardList size={15} />
+                                            {spot.suggestion_count > 0 && (
+                                                <span className="suggestion-badge-inline">{spot.suggestion_count}</span>
+                                            )}
+                                        </button>
 
                                         {/* More (context-sensitive + Delete) */}
                                         <div className="spot-action-more-wrapper">
@@ -576,6 +590,14 @@ export default function SpotsDesktop({ spots, loading, onRefresh }) {
 
             {showGallery && <ImageGalleryModal spot={viewingSpotData} />}
 
+            {viewingSuggestionsSpot && (
+                <SpotSuggestionsModal
+                    spot={viewingSuggestionsSpot}
+                    onClose={() => setViewingSuggestionsSpot(null)}
+                    onRefresh={onRefresh}
+                />
+            )}
+
             {/* Batch Actions Popup */}
             {selectedSpots.length > 0 && (
                 <div className="batch-actions-popup fade-in-up">
@@ -652,3 +674,131 @@ export default function SpotsDesktop({ spots, loading, onRefresh }) {
         </div>
     );
 }
+
+const SpotSuggestionsModal = ({ spot, onClose, onRefresh }) => {
+    const [suggestions, setSuggestions] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchSuggestions = async () => {
+            try {
+                const { supabase } = await import('./supabase');
+                const { data, error } = await supabase
+                    .from('spot_suggestions')
+                    .select(`
+                        id,
+                        suggestion,
+                        status,
+                        created_at,
+                        user:users(id, full_name, email)
+                    `)
+                    .eq('spot_id', spot.id)
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+                setSuggestions(data || []);
+            } catch (err) {
+                console.error('Error fetching suggestions:', err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchSuggestions();
+    }, [spot.id]);
+
+    const handleUpdateStatus = async (suggestionId, newStatus) => {
+        try {
+            const { supabase } = await import('./supabase');
+            const { error } = await supabase
+                .from('spot_suggestions')
+                .update({ status: newStatus })
+                .eq('id', suggestionId);
+
+            if (error) throw error;
+            
+            setSuggestions(prev => prev.map(s => s.id === suggestionId ? { ...s, status: newStatus } : s));
+            onRefresh(); // Refresh parent to update counts if needed
+        } catch (err) {
+            console.error('Error updating suggestion status:', err);
+        }
+    };
+
+    return (
+        <div className="modal-overlay" onClick={onClose}>
+            <div className="modal-content large" onClick={e => e.stopPropagation()}>
+                <div className="modal-header">
+                    <div className="modal-title-with-icon">
+                        <ClipboardList size={24} color="#4f46e5" />
+                        <div>
+                            <h3>Suggestions for {spot.name}</h3>
+                            <p className="modal-subtitle">User-submitted edits and improvements</p>
+                        </div>
+                    </div>
+                    <button className="modal-close-btn" onClick={onClose}><X size={24} /></button>
+                </div>
+
+                <div className="suggestions-list-body">
+                    {loading ? (
+                        <div className="loading-state-placeholder" style={{ padding: '60px' }}>
+                            <RotateCw size={32} className="animate-spin" />
+                            <span>Fetching suggestions...</span>
+                        </div>
+                    ) : suggestions.length === 0 ? (
+                        <div className="empty-state-placeholder" style={{ padding: '60px' }}>
+                            <MessageSquare size={48} />
+                            <p>No suggestions found for this spot yet.</p>
+                        </div>
+                    ) : (
+                        <div className="suggestions-grid">
+                            {suggestions.map(s => (
+                                <div key={s.id} className="suggestion-card">
+                                    <div className="suggestion-card-header">
+                                        <div className="suggesting-user">
+                                            <div className="user-mini-avatar">{s.user?.full_name?.charAt(0) || 'U'}</div>
+                                            <div>
+                                                <div className="user-name">{s.user?.full_name || 'Anonymous'}</div>
+                                                <div className="user-email">{s.user?.email}</div>
+                                            </div>
+                                        </div>
+                                        <div className={`suggestion-status-tag ${s.status}`}>
+                                            {s.status}
+                                        </div>
+                                    </div>
+                                    <div className="suggestion-text">
+                                        "{s.suggestion}"
+                                    </div>
+                                    <div className="suggestion-card-footer">
+                                        <span className="suggestion-date">
+                                            {new Date(s.created_at).toLocaleDateString()} at {new Date(s.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                        </span>
+                                        <div className="suggestion-actions">
+                                            {s.status === 'pending' && (
+                                                <>
+                                                    <button 
+                                                        className="sug-action-btn implement" 
+                                                        onClick={() => handleUpdateStatus(s.id, 'reviewed')}
+                                                        title="Mark as Reviewed"
+                                                    >
+                                                        <CheckCircle size={14} /> Mark Reviewed
+                                                    </button>
+                                                    <button 
+                                                        className="sug-action-btn reject" 
+                                                        onClick={() => handleUpdateStatus(s.id, 'rejected')}
+                                                        title="Reject Suggestion"
+                                                    >
+                                                        <Ban size={14} /> Reject
+                                                    </button>
+                                                </>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
+            </div>
+        </div>
+    );
+};
