@@ -1,66 +1,64 @@
 import React, { useState } from 'react';
 import { Send, X, AlertTriangle, Info, CheckCircle, AlertCircle, MessageSquare, Zap, MoreVertical } from 'lucide-react';
 import './PushNotifications.css';
+import { supabase } from './supabase';
 
 const PushNotifications = () => {
   const [showSendForm, setShowSendForm] = useState(false);
+  const [isSending, setIsSending] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [newNotification, setNewNotification] = useState({
     type: 'info',
     title: '',
     message: ''
   });
-  const [notifications, setNotifications] = useState([
-    {
-      id: 1,
-      type: 'urgent',
-      title: 'Security Alert',
-      message: 'Your account was accessed from a new device. Please verify if this was you.',
-      time: '2 min ago',
-      read: false
-    },
-    {
-      id: 2,
-      type: 'info',
-      title: 'New Feature Available',
-      message: 'Check out our new spot recommendation engine that helps you discover better places!',
-      time: '15 min ago',
-      read: false
-    },
-    {
-      id: 3,
-      type: 'success',
-      title: 'Spot Verified Successfully',
-      message: 'Your submitted spot "Sunset Restaurant" has been approved and is now live!',
-      time: '1 hour ago',
-      read: true
-    },
-    {
-      id: 4,
-      type: 'warning',
-      title: 'Account Activity Warning',
-      message: 'Unusual login pattern detected. Please review your recent activity.',
-      time: '2 hours ago',
-      read: true
-    },
-    {
-      id: 5,
-      type: 'message',
-      title: 'New Message from Admin',
-      message: 'Thank you for being an active community member! Here\'s a special reward for you.',
-      time: '3 hours ago',
-      read: false
-    }
-  ]);
+  const [notifications, setNotifications] = useState([]);
   const [activeDropdown, setActiveDropdown] = useState(null);
 
-  const sendNotification = () => {
+  React.useEffect(() => {
+    fetchNotifications();
+  }, []);
+
+  const fetchNotifications = async () => {
+    try {
+      setIsLoading(true);
+      const { data, error } = await supabase
+        .from('notifications')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(20);
+
+      if (error) throw error;
+      setNotifications(data || []);
+    } catch (err) {
+      console.error('Error fetching notifications:', err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const sendNotification = async () => {
     try {
       if (newNotification.title && newNotification.message) {
-        // Here you would normally send the notification to backend
-        console.log('Notification sent:', newNotification);
+        setIsSending(true);
+        
+        // Use RPC to broadcast to all users
+        const { error } = await supabase.rpc('broadcast_notification', {
+          p_type: newNotification.type,
+          p_title: newNotification.title,
+          p_message: newNotification.message,
+          p_data: { 
+            sender_name: 'Admin',
+            category: 'broadcast'
+          }
+        });
+
+        if (error) throw error;
+
         setNewNotification({ type: 'info', title: '', message: '' });
         setShowSendForm(false);
-        alert('Notification sent successfully!');
+        alert('Broadcast notification sent to all users!');
+        fetchNotifications();
       }
     } catch (error) {
       console.error('Error sending notification:', error);
@@ -171,10 +169,14 @@ const PushNotifications = () => {
                 e.stopPropagation();
                 sendNotification();
               }}
-              disabled={!newNotification.title || !newNotification.message}
+              disabled={!newNotification.title || !newNotification.message || isSending}
             >
-              <Send size={16} />
-              Send Notification
+              {isSending ? (
+                <div className="spinner-small" style={{ width: 16, height: 16, borderColor: 'white', borderTopColor: 'transparent' }}></div>
+              ) : (
+                <Send size={16} />
+              )}
+              {isSending ? 'Sending Broadcast...' : 'Broadcast to All Users'}
             </button>
           </div>
         </div>
@@ -182,11 +184,16 @@ const PushNotifications = () => {
 
       {/* Recent Notifications Section */}
       <div className="notifications-list">
-        <h3>Recent Notifications</h3>
-        {notifications.length === 0 ? (
+        <h3>Recent Activity</h3>
+        {isLoading ? (
+          <div className="empty-notifications">
+            <div className="spinner-small" style={{ width: 30, height: 30, margin: '0 auto 10px' }}></div>
+            <p>Loading notifications...</p>
+          </div>
+        ) : notifications.length === 0 ? (
           <div className="empty-notifications">
             <p>No notifications yet</p>
-            <span>Send your first notification using the Send button above</span>
+            <span>Broadcast messages will appear here</span>
           </div>
         ) : (
           <div className="notifications-container">
@@ -198,7 +205,9 @@ const PushNotifications = () => {
                     <div className="notification-text">
                       <h4>{notification.title}</h4>
                       <p>{notification.message}</p>
-                      <span className="notification-time">{notification.time}</span>
+                      <span className="notification-time">
+                        {new Date(notification.created_at).toLocaleString()}
+                      </span>
                     </div>
                   </div>
                   <div className="notification-actions">

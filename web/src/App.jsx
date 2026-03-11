@@ -423,16 +423,30 @@ export default function App() {
     
     setIsSendingMsg(true);
     try {
-      // Logic for sending message goes here
-      // For now, simulate success
-      await new Promise(resolve => setTimeout(resolve, 800));
+      // Logic for sending message to Supabase notifications table
+      const { error } = await supabase
+        .from('notifications')
+        .insert([
+          {
+            user_id: messagingUser.id,
+            type: 'system',
+            title: msgTitle,
+            message: msgContent,
+            data: { 
+              sender_name: 'Admin',
+              priority: 'high'
+            }
+          }
+        ]);
+
+      if (error) throw error;
       
       setToastMessage(`Message sent to ${messagingUser.name} successfully!`);
       setShowToast(true);
       setMessagingUser(null);
     } catch (err) {
       console.error('Error sending message:', err);
-      setToastMessage('Failed to send message.');
+      setToastMessage(`Failed to send message: ${err.message || 'Unknown error'}`);
       setShowToast(true);
     } finally {
       setIsSendingMsg(false);
