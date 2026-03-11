@@ -1,10 +1,56 @@
-import React, { useState } from 'react';
-import { User, Shield, Database, Crown, Lock, Building, Mail, MapPin, Phone, Key, Server, Users, Settings, Check, X, CreditCard, FileText, Award, Save, Eye, Clock } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { User, Shield, Database, Crown, Lock, Building, Mail, MapPin, Phone, Key, Server, Users, Settings, Check, X, CreditCard, FileText, Award, Save, Eye, Clock, AlertTriangle } from 'lucide-react';
 import './SettingsPage.css';
+import { supabase } from './supabase';
 
 export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState('profile');
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [maintenanceMode, setMaintenanceMode] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Fetch system settings
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('system_settings')
+          .select('value')
+          .eq('key', 'maintenance_mode')
+          .maybeSingle();
+
+        if (error) throw error;
+        if (data) {
+          setMaintenanceMode(data.value === true || data.value === 'true');
+        }
+      } catch (err) {
+        console.error('Error fetching system settings:', err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    if (activeTab === 'system') {
+      fetchSettings();
+    }
+  }, [activeTab]);
+
+  const handleSaveSystemSettings = async () => {
+    setIsRefreshing(true);
+    try {
+      const { error } = await supabase
+        .from('system_settings')
+        .upsert({ key: 'maintenance_mode', value: maintenanceMode }, { onConflict: 'key' });
+
+      if (error) throw error;
+      alert('System settings updated successfully!');
+    } catch (err) {
+      console.error('Error saving system settings:', err);
+      alert('Failed to update system settings.');
+    } finally {
+      setIsRefreshing(false);
+    }
+  };
 
   const handleRefresh = () => {
     setIsRefreshing(true);
@@ -445,12 +491,22 @@ export default function SettingsPage() {
                       <p>Current operational mode</p>
                     </div>
                     <div className="system-control">
-                      <select className="form-input modern">
-                        <option>Successfully Running</option>
-                        <option>Maintenance</option>
+                      <select 
+                        className="form-input modern"
+                        value={maintenanceMode ? 'Maintenance' : 'Successfully Running'}
+                        onChange={(e) => setMaintenanceMode(e.target.value === 'Maintenance')}
+                      >
+                        <option value="Successfully Running">Successfully Running (Active)</option>
+                        <option value="Maintenance">Maintenance Mode</option>
                       </select>
                     </div>
                   </div>
+                  {maintenanceMode && (
+                    <div className="maintenance-warning">
+                      <AlertTriangle size={16} color="#f59e0b" />
+                      <span>Warning: App will be restricted to users!</span>
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -659,9 +715,13 @@ export default function SettingsPage() {
             </div>
 
             <div className="system-actions">
-              <button className="save-btn modern">
+              <button 
+                className="save-btn modern"
+                onClick={handleSaveSystemSettings}
+                disabled={isRefreshing}
+              >
                 <Save size={16} />
-                Save System Settings
+                {isRefreshing ? 'Saving...' : 'Save System Settings'}
               </button>
               <button className="cancel-btn modern">
                 <X size={16} />
