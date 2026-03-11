@@ -19,11 +19,11 @@ import {
   Flag,
   Star,
   Users,
-  BarChart3,
-  Settings,
   ImageIcon,
   PlusCircle,
   Send,
+  Link as LinkIcon,
+  Upload as UploadIcon,
   X,
   Clock,
   RefreshCw
@@ -46,6 +46,23 @@ export default function CommunityPage() {
     category: 'discussion',
     images: []
   });
+
+  const [uploadMode, setUploadMode] = useState('link'); // 'link' or 'upload'
+  const [selectedFiles, setSelectedFiles] = useState([]);
+  const [previewUrls, setPreviewUrls] = useState([]);
+
+  const handleFileChange = (e) => {
+    const files = Array.from(e.target.files);
+    setSelectedFiles(prev => [...prev, ...files]);
+    const newPreviews = files.map(file => URL.createObjectURL(file));
+    setPreviewUrls(prev => [...prev, ...newPreviews]);
+  };
+
+  const removeFile = (index) => {
+    URL.revokeObjectURL(previewUrls[index]);
+    setSelectedFiles(prev => prev.filter((_, i) => i !== index));
+    setPreviewUrls(prev => prev.filter((_, i) => i !== index));
+  };
 
   // Mock posts data with enhanced structure
   // State for posts and stats
@@ -80,13 +97,39 @@ export default function CommunityPage() {
       const user = (await supabase.auth.getUser()).data.user;
       if (!user) throw new Error('Not authenticated');
 
+      let finalImages = [...newPost.images];
+
+      // Handle file uploads if in upload mode
+      if (uploadMode === 'upload' && selectedFiles.length > 0) {
+        const uploadPromises = selectedFiles.map(async (file) => {
+          const fileExt = file.name.split('.').pop();
+          const fileName = `${Math.random()}.${fileExt}`;
+          const filePath = `${user.id}/${Date.now()}_${fileName}`;
+
+          const { error: uploadError } = await supabase.storage
+            .from('posts')
+            .upload(filePath, file);
+
+          if (uploadError) throw uploadError;
+
+          const { data: { publicUrl } } = supabase.storage
+            .from('posts')
+            .getPublicUrl(filePath);
+
+          return publicUrl;
+        });
+
+        const uploadedUrls = await Promise.all(uploadPromises);
+        finalImages = [...finalImages, ...uploadedUrls];
+      }
+
       const { data, error } = await supabase
         .from('posts')
         .insert({
           user_id: user.id,
           content: newPost.content,
           category: newPost.category,
-          images: newPost.images,
+          images: finalImages,
         })
         .select()
         .single();
@@ -97,6 +140,8 @@ export default function CommunityPage() {
       fetchData();
       setIsCreateModalOpen(false);
       setNewPost({ content: '', category: 'discussion', images: [] });
+      setSelectedFiles([]);
+      setPreviewUrls([]);
     } catch (err) {
       console.error('Error creating post:', err);
       alert('Failed to create post');
@@ -1197,17 +1242,66 @@ export default function CommunityPage() {
             </div>
 
             <div className="form-section">
-              <label>Media Links</label>
-              <div className="image-input-wrapper">
-                <input 
-                  type="text" 
-                  className="drawer-input"
-                  placeholder="Paste image URLs (comma separated)"
-                  value={newPost.images.join(', ')}
-                  onChange={(e) => setNewPost({...newPost, images: e.target.value.split(',').map(s => s.trim()).filter(Boolean)})}
-                />
-                <ImageIcon size={18} className="input-icon" />
+              <div className="section-header-row">
+                <label>Media</label>
+                <div className="upload-toggle">
+                  <button 
+                    type="button"
+                    className={`toggle-btn ${uploadMode === 'link' ? 'active' : ''}`}
+                    onClick={() => setUploadMode('link')}
+                  >
+                    <LinkIcon size={14} /> <span>Link</span>
+                  </button>
+                  <button 
+                    type="button"
+                    className={`toggle-btn ${uploadMode === 'upload' ? 'active' : ''}`}
+                    onClick={() => setUploadMode('upload')}
+                  >
+                    <UploadIcon size={14} /> <span>Upload</span>
+                  </button>
+                </div>
               </div>
+
+              {uploadMode === 'link' ? (
+                <div className="image-input-wrapper">
+                  <input 
+                    type="text" 
+                    className="drawer-input"
+                    placeholder="Paste image URLs (comma separated)"
+                    value={newPost.images.join(', ')}
+                    onChange={(e) => setNewPost({...newPost, images: e.target.value.split(',').map(s => s.trim()).filter(Boolean)})}
+                  />
+                  <ImageIcon size={18} className="input-icon" />
+                </div>
+              ) : (
+                <div className="upload-area-wrapper">
+                  <div className="file-previews">
+                    {previewUrls.map((url, idx) => (
+                      <div key={idx} className="preview-item">
+                        <img src={url} alt="Preview" />
+                        <button type="button" className="remove-preview" onClick={() => removeFile(idx)}>
+                          <X size={12} />
+                        </button>
+                      </div>
+                    ))}
+                    {selectedFiles.length < 5 && (
+                      <label className="add-file-btn">
+                        <input 
+                          type="file" 
+                          multiple 
+                          accept="image/*" 
+                          onChange={handleFileChange} 
+                          hidden 
+                        />
+                        <PlusCircle size={24} />
+                      </label>
+                    )}
+                  </div>
+                  {selectedFiles.length === 0 && (
+                    <p className="upload-hint">Upload up to 5 images</p>
+                  )}
+                </div>
+              )}
             </div>
           </div>
           <div className="drawer-footer">

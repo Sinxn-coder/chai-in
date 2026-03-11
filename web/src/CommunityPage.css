@@ -3419,3 +3419,121 @@ input:checked + .toggle-slider:before {
 .verified-tick {
   filter: drop-shadow(0 2px 4px rgba(59, 130, 246, 0.3));
 }
+
+/* Image Upload UI Styles */
+.section-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.upload-toggle {
+  display: flex;
+  background: #f3f4f6;
+  padding: 4px;
+  border-radius: 10px;
+  gap: 4px;
+}
+
+.toggle-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border: none;
+  background: transparent;
+  color: #6b7280;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.toggle-btn.active {
+  background: white;
+  color: #FF0000;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.upload-area-wrapper {
+  background: #f9fafb;
+  border: 2px dashed #e5e7eb;
+  border-radius: 16px;
+  padding: 16px;
+  transition: all 0.2s ease;
+}
+
+.upload-area-wrapper:hover {
+  border-color: #FF0000;
+  background: #fff5f5;
+}
+
+.file-previews {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  gap: 12px;
+}
+
+.preview-item {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #e5e7eb;
+}
+
+.preview-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.remove-preview {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(4px);
+  transition: all 0.2s ease;
+}
+
+.remove-preview:hover {
+  background: #ef4444;
+}
+
+.add-file-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1;
+  background: white;
+  border: 1px dashed #d1d5db;
+  border-radius: 12px;
+  color: #9ca3af;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.add-file-btn:hover {
+  border-color: #FF0000;
+  color: #FF0000;
+  background: #fff5f5;
+}
+
+.upload-hint {
+  text-align: center;
+  font-size: 13px;
+  color: #9ca3af;
+  margin-top: 8px;
+  font-weight: 500;
+}
