@@ -29,11 +29,21 @@ const PushNotifications = () => {
       const { data, error } = await supabase
         .from('notifications')
         .select('*')
-        .order('created_at', { ascending: false })
-        .limit(20);
+        .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setNotifications(data || []);
+      
+      // Group by broadcast_id to avoid duplicates in admin history
+      const seenBroadcasts = new Set();
+      const uniqueNotifications = (data || []).filter(n => {
+        if (n.broadcast_id) {
+          if (seenBroadcasts.has(n.broadcast_id)) return false;
+          seenBroadcasts.add(n.broadcast_id);
+        }
+        return true;
+      }).slice(0, 20);
+
+      setNotifications(uniqueNotifications);
     } catch (err) {
       console.error('Error fetching notifications:', err);
     } finally {
@@ -62,8 +72,6 @@ const PushNotifications = () => {
 
         setNewNotification({ type: 'info', title: '', message: '' });
         setShowSendForm(false);
-        // Using native alert for now as requested by original logic, 
-        // but could be replaced with a toast later
         alert('Broadcast notification sent to all users!');
         fetchNotifications();
       }
@@ -79,16 +87,25 @@ const PushNotifications = () => {
     setActiveDropdown(activeDropdown === id ? null : id);
   };
 
-  const deleteNotification = async (id) => {
+  const deleteNotification = async (notification) => {
     try {
-      const { error } = await supabase
-        .from('notifications')
-        .delete()
-        .eq('id', id);
+      let query = supabase.from('notifications').delete();
+      
+      // If it's a broadcast, delete all associated rows
+      if (notification.broadcast_id) {
+        query = query.eq('broadcast_id', notification.broadcast_id);
+      } else {
+        query = query.eq('id', notification.id);
+      }
 
+      const { error } = await query;
       if (error) throw error;
 
-      setNotifications(notifications.filter(n => n.id !== id));
+      if (notification.broadcast_id) {
+        setNotifications(notifications.filter(n => n.broadcast_id !== notification.broadcast_id));
+      } else {
+        setNotifications(notifications.filter(n => n.id !== notification.id));
+      }
       setActiveDropdown(null);
     } catch (err) {
       console.error('Error deleting notification:', err);
@@ -286,7 +303,7 @@ const PushNotifications = () => {
                           </button>
                           <button 
                             className="dropdown-action delete"
-                            onClick={() => deleteNotification(notification.id)}
+                            onClick={() => deleteNotification(notification)}
                           >
                             <Trash2 size={14} />
                             Remove
