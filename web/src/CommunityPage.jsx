@@ -27,6 +27,7 @@ import {
   RefreshCw
 } from 'lucide-react';
 import './CommunityPage.css';
+import { supabase } from './supabase';
 
 export default function CommunityPage() {
   const [activeSection, setActiveSection] = useState('posts');
@@ -38,64 +39,15 @@ export default function CommunityPage() {
   const [chartPeriod, setChartPeriod] = useState('7days');
 
   // Mock posts data with enhanced structure
-  const [posts, setPosts] = useState([
-    {
-      id: 1,
-      userName: 'Sarah Johnson',
-      userPfp: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=1000&auto=format&fit=crop',
-      time: '2 hours ago',
-      content: 'Just discovered this amazing hidden gem downtown! The pasta was incredible and atmosphere was perfect. Highly recommend checking it out! 🍝',
-      images: [
-        'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?q=80&w=1000&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1000&q=80'
-      ],
-      currentImageIndex: 0,
-      likes: 42,
-      comments: 8,
-      isLiked: false,
-      isSaved: false,
-      views: 1250,
-      category: 'review'
-    },
-    {
-      id: 2,
-      userName: 'Mike Chen',
-      userPfp: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=1000&auto=format&fit=crop',
-      time: '4 hours ago',
-      content: 'Coffee lovers, you need to try this new cafe! Their specialty latte is life-changing. Plus the vibes are just perfect for working or catching up with friends. ☕',
-      images: [
-        'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?q=80&w=1000&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1000&q=80'
-      ],
-      currentImageIndex: 0,
-      likes: 28,
-      comments: 12,
-      isLiked: false,
-      isSaved: false,
-      views: 890,
-      category: 'review'
-    },
-    {
-      id: 3,
-      userName: 'Emma Wilson',
-      userPfp: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=1000&auto=format&fit=crop',
-      time: '6 hours ago',
-      content: 'Best brunch spot I\'ve found this month! The avocado toast was perfection and they have most beautiful outdoor seating. Perfect for weekend vibes! 🥑',
-      images: [
-        'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1000&q=80',
-        'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?q=80&w=1000&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?q=80&w=1000&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?q=80&w=1000&auto=format&fit=crop'
-      ],
-      currentImageIndex: 0,
-      likes: 35,
-      comments: 6,
-      isLiked: false,
-      isSaved: false,
-      views: 2100,
-      category: 'spot'
-    }
-  ]);
+  // State for posts and stats
+  const [posts, setPosts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [stats, setStats] = useState({
+    totalUsers: 0,
+    totalPosts: 0,
+    engagementRate: 68.4, // Keep as baseline or calc if possible
+    totalViews: 0
+  });
 
   const sections = [
     { id: 'posts', name: 'Posts', icon: ImageIcon },
@@ -112,12 +64,21 @@ export default function CommunityPage() {
     ));
   };
 
-  const handleToggleSave = (postId) => {
-    setPosts(prev => prev.map(post => 
-      post.id === postId 
-        ? { ...post, isSaved: !post.isSaved }
-        : post
-    ));
+  const handleDeletePost = async (postId) => {
+    if (!window.confirm('Are you sure you want to delete this post?')) return;
+    
+    try {
+      const { error } = await supabase
+        .from('posts')
+        .delete()
+        .eq('id', postId);
+
+      if (error) throw error;
+      setPosts(prev => prev.filter(post => post.id !== postId));
+      setStats(prev => ({ ...prev, totalPosts: prev.totalPosts - 1 }));
+    } catch (err) {
+      console.error('Error deleting post:', err);
+    }
   };
 
   const handleImageNavigation = (postId, direction) => {
@@ -137,8 +98,67 @@ export default function CommunityPage() {
     );
   };
 
-  // Close dropdown when clicking outside
+  // Fetch data from Supabase
   useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        // Fetch Posts with author data
+        const { data: postsData, error: postsError } = await supabase
+          .from('posts')
+          .select(`
+            id,
+            content,
+            images,
+            likes_count,
+            comments_count,
+            views_count,
+            created_at,
+            category,
+            author:users(full_name, avatar_url, email)
+          `)
+          .order('created_at', { ascending: false });
+
+        if (postsError) throw postsError;
+
+        setPosts(postsData.map(post => ({
+          id: post.id,
+          userName: post.author?.full_name || 'Anonymous',
+          userPfp: post.author?.avatar_url || 'https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=100&auto=format&fit=crop',
+          userEmail: post.author?.email,
+          time: new Date(post.created_at).toLocaleDateString() + ' at ' + new Date(post.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          content: post.content,
+          images: Array.isArray(post.images) ? post.images : (post.images ? JSON.parse(post.images) : []),
+          currentImageIndex: 0,
+          likes: post.likes_count || 0,
+          comments: post.comments_count || 0,
+          views: post.views_count || 0,
+          category: post.category
+        })));
+
+        // Fetch Stats
+        const [usersCount, postsCount] = await Promise.all([
+          supabase.from('users').select('*', { count: 'exact', head: true }),
+          supabase.from('posts').select('*', { count: 'exact', head: true })
+        ]);
+
+        setStats(prev => ({
+          ...prev,
+          totalUsers: usersCount.count || 0,
+          totalPosts: postsCount.count || 0,
+          totalViews: postsData.reduce((acc, curr) => acc + (curr.views_count || 0), 0)
+        }));
+
+      } catch (err) {
+        console.error('Error fetching data:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+
+    // Close dropdown when clicking outside
     const handleClickOutside = (event) => {
       if (!event.target.closest('.dropdown-container')) {
         setActiveDropdown(null);
@@ -285,17 +305,16 @@ export default function CommunityPage() {
                             </button>
                             {activeDropdown === post.id && (
                               <div className="moderation-dropdown">
-                                <button className="moderation-dropdown-item approve">
-                                  <CheckCircle size={14} />
-                                  Approve
-                                </button>
                                 <button className="moderation-dropdown-item hide">
                                   <Eye size={14} />
-                                  Hide
+                                  Hide Post
                                 </button>
-                                <button className="moderation-dropdown-item delete">
+                                <button 
+                                  className="moderation-dropdown-item delete"
+                                  onClick={() => handleDeletePost(post.id)}
+                                >
                                   <Trash2 size={14} />
-                                  Delete
+                                  Delete Permanently
                                 </button>
                               </div>
                             )}
@@ -379,7 +398,7 @@ export default function CommunityPage() {
                       </div>
                     </div>
                     <div className="analytics-card-value">
-                      <span className="value">12,543</span>
+                      <span className="value">{stats.totalUsers.toLocaleString()}</span>
                       <span className="change positive">+12.5%</span>
                     </div>
                   </div>
@@ -395,7 +414,7 @@ export default function CommunityPage() {
                       </div>
                     </div>
                     <div className="analytics-card-value">
-                      <span className="value">3,847</span>
+                      <span className="value">{stats.totalPosts.toLocaleString()}</span>
                       <span className="change positive">+8.2%</span>
                     </div>
                   </div>
@@ -411,7 +430,7 @@ export default function CommunityPage() {
                       </div>
                     </div>
                     <div className="analytics-card-value">
-                      <span className="value">68.4%</span>
+                      <span className="value">{stats.engagementRate}%</span>
                       <span className="change positive">+5.1%</span>
                     </div>
                   </div>
@@ -427,7 +446,7 @@ export default function CommunityPage() {
                       </div>
                     </div>
                     <div className="analytics-card-value">
-                      <span className="value">89.2K</span>
+                      <span className="value">{(stats.totalViews / 1000).toFixed(1)}K</span>
                       <span className="change positive">+18.7%</span>
                     </div>
                   </div>
