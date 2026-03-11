@@ -398,7 +398,7 @@ export default function App() {
         setShowToast(true);
       } catch (err) {
         console.error(`Error ${action}ning user:`, err);
-        setToastMessage(`Failed to ${action} user.`);
+        setToastMessage(`Failed to ${action} user: ${err.message || 'Unknown error'}`);
         setShowToast(true);
       }
     } else if (action === 'delete') {
