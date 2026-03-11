@@ -24,7 +24,8 @@ import {
     Edit,
     Trash2,
     ClipboardList,
-    ChevronLeft
+    ChevronLeft,
+    Ban
 } from 'lucide-react';
 
 export default function SpotsMobile({ spots, loading, onRefresh }) {
