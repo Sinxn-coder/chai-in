@@ -723,9 +723,6 @@ export default function App() {
                   Message
                 </button>
                 <div className="sp-danger-actions">
-                  <button className="sp-action-btn edit" onClick={() => handleAction('edit', selectedUserDetail)} title="Edit">
-                    <Edit size={16} />
-                  </button>
                   <button
                     className="sp-action-btn suspend"
                     onClick={() => handleAction(selectedUserDetail.status === 'banned' ? 'unban' : 'ban', selectedUserDetail)}
