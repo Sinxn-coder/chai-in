@@ -37,6 +37,13 @@ export default function CommunityPage() {
   const [selectedPostId, setSelectedPostId] = useState(null);
   const [activeDropdown, setActiveDropdown] = useState(null);
   const [chartPeriod, setChartPeriod] = useState('7days');
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [newPost, setNewPost] = useState({
+    content: '',
+    category: 'discussion',
+    images: []
+  });
 
   // Mock posts data with enhanced structure
   // State for posts and stats
@@ -62,6 +69,38 @@ export default function CommunityPage() {
         ? { ...post, isLiked: !post.isLiked, likes: post.isLiked ? post.likes - 1 : post.likes + 1 }
         : post
     ));
+  };
+
+  const handleCreatePost = async () => {
+    if (!newPost.content.trim()) return;
+    setIsSubmitting(true);
+    try {
+      const user = (await supabase.auth.getUser()).data.user;
+      if (!user) throw new Error('Not authenticated');
+
+      const { data, error } = await supabase
+        .from('posts')
+        .insert({
+          user_id: user.id,
+          content: newPost.content,
+          category: newPost.category,
+          images: newPost.images,
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+      
+      // Refresh posts
+      fetchData();
+      setIsCreateModalOpen(false);
+      setNewPost({ content: '', category: 'discussion', images: [] });
+    } catch (err) {
+      console.error('Error creating post:', err);
+      alert('Failed to create post');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleDeletePost = async (postId) => {
@@ -246,7 +285,10 @@ export default function CommunityPage() {
                 {/* Admin Actions Bar */}
                 <div className="admin-toolbar">
                   <div className="admin-actions-left">
-                    <button className="btn-primary">
+                    <button 
+                      className="btn-primary"
+                      onClick={() => setIsCreateModalOpen(true)}
+                    >
                       <Plus size={18} />
                       Create New Post
                     </button>
@@ -270,7 +312,12 @@ export default function CommunityPage() {
                         <div className="user-info">
                           <img src={post.userPfp} alt={post.userName} className="user-avatar" />
                           <div className="user-details">
-                            <h4>{post.userName}</h4>
+                            <div className="user-name-wrapper">
+                              <h4>{post.userName}</h4>
+                              {post.userEmail === 'bytspot.in@gmail.com' && (
+                                <CheckCircle size={14} className="verified-tick" fill="#3b82f6" color="white" />
+                              )}
+                            </div>
                             <span className="post-time">{post.time}</span>
                           </div>
                         </div>
@@ -1103,6 +1150,73 @@ export default function CommunityPage() {
           </div>
         </div>
       </div>
+
+      {/* Create Post Modal */}
+      {isCreateModalOpen && (
+        <div className="modal-overlay">
+          <div className="modal-content create-post-modal">
+            <div className="modal-header">
+              <h2>Create New Post</h2>
+              <button 
+                className="close-btn"
+                onClick={() => setIsCreateModalOpen(false)}
+              >
+                <X size={20} />
+              </button>
+            </div>
+            <div className="modal-body">
+              <div className="form-group">
+                <label>Category</label>
+                <select 
+                  className="form-input modern"
+                  value={newPost.category}
+                  onChange={(e) => setNewPost({...newPost, category: e.target.value})}
+                >
+                  <option value="discussion">Discussion</option>
+                  <option value="announcement">Announcement</option>
+                  <option value="spot_highlight">Spot Highlight</option>
+                  <option value="event">Event</option>
+                </select>
+              </div>
+              <div className="form-group">
+                <label>Content</label>
+                <textarea 
+                  className="form-input modern text-area"
+                  placeholder="Share something with the community..."
+                  value={newPost.content}
+                  onChange={(e) => setNewPost({...newPost, content: e.target.value})}
+                  rows={5}
+                />
+              </div>
+              <div className="form-group">
+                <label>Image URLs (comma separated)</label>
+                <input 
+                  type="text" 
+                  className="form-input modern"
+                  placeholder="https://example.com/image.jpg"
+                  value={newPost.images.join(', ')}
+                  onChange={(e) => setNewPost({...newPost, images: e.target.value.split(',').map(s => s.trim()).filter(Boolean)})}
+                />
+              </div>
+            </div>
+            <div className="modal-footer">
+              <button 
+                className="btn-secondary"
+                onClick={() => setIsCreateModalOpen(false)}
+              >
+                Cancel
+              </button>
+              <button 
+                className="btn-primary"
+                onClick={handleCreatePost}
+                disabled={isSubmitting || !newPost.content.trim()}
+              >
+                {isSubmitting ? 'Posting...' : 'Post to Community'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Image Popup Modal */}
       {selectedImage && (

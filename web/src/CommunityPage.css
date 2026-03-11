@@ -3158,3 +3158,95 @@ input:checked + .toggle-slider:before {
   background: #dbeafe;
   color: #1e40af;
 }
+/* Create Post Modal Styles */
+.create-post-modal {
+  max-width: 600px;
+  width: 90%;
+  background: white;
+  border-radius: 24px;
+  padding: 0;
+  overflow: hidden;
+  box-shadow: 
+    0 25px 50px -12px rgba(0, 0, 0, 0.25),
+    0 10px 20px -5px rgba(0, 0, 0, 0.1);
+  animation: modalScaleUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes modalScaleUp {
+  from { transform: scale(0.9); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.create-post-modal .modal-header {
+  padding: 24px 32px;
+  background: linear-gradient(135deg, #FF0000 0%, #cc0000 100%);
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.create-post-modal .modal-header h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  color: white;
+}
+
+.create-post-modal .close-btn {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  padding: 8px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.create-post-modal .close-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: rotate(90deg);
+}
+
+.create-post-modal .modal-body {
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.create-post-modal .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.create-post-modal .form-group label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #4b5563;
+}
+
+.create-post-modal .text-area {
+  resize: none;
+}
+
+.create-post-modal .modal-footer {
+  padding: 24px 32px;
+  background: #f9fafb;
+  border-top: 1px solid #e5e7eb;
+  display: flex;
+  justify-content: flex-end;
+  gap: 16px;
+}
+
+/* User Name Wrapper with Verified Tick */
+.user-name-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.verified-tick {
+  filter: drop-shadow(0 2px 4px rgba(59, 130, 246, 0.3));
+}
