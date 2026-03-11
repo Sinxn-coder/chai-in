@@ -19,6 +19,8 @@ import {
   Flag,
   Star,
   Users,
+  BarChart3,
+  Settings,
   ImageIcon,
   PlusCircle,
   Send,
