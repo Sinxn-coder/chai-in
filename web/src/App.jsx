@@ -185,6 +185,7 @@ export default function App() {
           email, 
           full_name, 
           avatar_url, 
+          status,
           created_at,
           reviews!user_id(count),
           spots!created_by(count),
@@ -208,7 +209,7 @@ export default function App() {
         id: user.id,
         name: user.full_name || 'Anonymous User',
         email: user.email,
-        status: 'active', // Default status as discussed
+        status: user.status || 'active', 
         joined: user.created_at ? new Date(user.created_at).toISOString().split('T')[0] : 'N/A',
         lastActive: user.created_at ? new Date(user.created_at).toISOString().split('T')[0] : 'N/A', // Using created_at as fallback
         spots: user.spots?.[0]?.count || 0,
@@ -253,6 +254,16 @@ export default function App() {
   const [selectedUserForActions, setSelectedUserForActions] = useState(null);
   const [activeSpotDropdown, setActiveSpotDropdown] = useState(null);
   const [selectedUserDetail, setSelectedUserDetail] = useState(null);
+
+  // Auto-close toasts
+  useEffect(() => {
+    if (showToast) {
+      const timer = setTimeout(() => {
+        setShowToast(false);
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [showToast]);
 
 
 
@@ -361,10 +372,35 @@ export default function App() {
     setSelectedUsers([]); // Clear batch selection when opening individual actions
   };
 
-  const handleAction = (action, user) => {
+  const handleAction = async (action, user) => {
     console.log(`${action} user:`, user.name);
-    // Add real logic for ban/delete/etc here if needed, 
-    // for now we just close the popup
+    
+    if (action === 'ban' || action === 'unban') {
+      const newStatus = action === 'ban' ? 'banned' : 'active';
+      try {
+        const { error } = await supabase
+          .from('users')
+          .update({ status: newStatus })
+          .eq('id', user.id);
+
+        if (error) throw error;
+
+        // Update local state
+        setUsers(prev => prev.map(u => u.id === user.id ? { ...u, status: newStatus } : u));
+        
+        setToastMessage(`User ${user.name} has been ${action}ned successfully.`);
+        setShowToast(true);
+      } catch (err) {
+        console.error(`Error ${action}ning user:`, err);
+        setToastMessage(`Failed to ${action} user.`);
+        setShowToast(true);
+      }
+    } else if (action === 'delete') {
+      // Implement delete logic if needed
+      setToastMessage("Delete functionality not yet connected to backend.");
+      setShowToast(true);
+    }
+
     setSelectedUserForActions(null);
   };
 
