@@ -255,6 +255,12 @@ export default function App() {
   const [activeSpotDropdown, setActiveSpotDropdown] = useState(null);
   const [selectedUserDetail, setSelectedUserDetail] = useState(null);
 
+  // Messaging State
+  const [messagingUser, setMessagingUser] = useState(null);
+  const [msgTitle, setMsgTitle] = useState('');
+  const [msgContent, setMsgContent] = useState('');
+  const [isSendingMsg, setIsSendingMsg] = useState(false);
+
   // Auto-close toasts
   useEffect(() => {
     if (showToast) {
@@ -402,6 +408,35 @@ export default function App() {
     }
 
     setSelectedUserForActions(null);
+  };
+
+  const handleUserAction = (type, user) => {
+    if (type === 'message') {
+      setMessagingUser(user);
+      setMsgTitle('');
+      setMsgContent('');
+    }
+  };
+
+  const handleSendMessage = async () => {
+    if (!messagingUser || !msgTitle || !msgContent) return;
+    
+    setIsSendingMsg(true);
+    try {
+      // Logic for sending message goes here
+      // For now, simulate success
+      await new Promise(resolve => setTimeout(resolve, 800));
+      
+      setToastMessage(`Message sent to ${messagingUser.name} successfully!`);
+      setShowToast(true);
+      setMessagingUser(null);
+    } catch (err) {
+      console.error('Error sending message:', err);
+      setToastMessage('Failed to send message.');
+      setShowToast(true);
+    } finally {
+      setIsSendingMsg(false);
+    }
   };
 
   // Close dropdown/popup when clicking outside
@@ -998,6 +1033,64 @@ export default function App() {
       <main>
         {renderContent()}
       </main>
+
+      {/* Messaging Modal */}
+      {messagingUser && (
+        <div className="messaging-modal-overlay" onClick={() => setMessagingUser(null)}>
+          <div className="messaging-modal-container" onClick={(e) => e.stopPropagation()}>
+            <div className="messaging-modal-header">
+              <div className="messaging-modal-title">
+                <h2>Send Message</h2>
+                <span className="user-tag">{messagingUser.name}</span>
+              </div>
+              <button className="messaging-modal-close" onClick={() => setMessagingUser(null)}>
+                <X size={20} />
+              </button>
+            </div>
+            <div className="messaging-modal-body">
+              <div className="msg-input-group">
+                <label>Subject / Title</label>
+                <input 
+                  type="text" 
+                  className="msg-input-field" 
+                  placeholder="Enter message title..."
+                  value={msgTitle}
+                  onChange={(e) => setMsgTitle(e.target.value)}
+                  autoFocus
+                />
+              </div>
+              <div className="msg-input-group">
+                <label>Your Message</label>
+                <textarea 
+                  className="msg-input-field msg-textarea" 
+                  placeholder="Write your message here..."
+                  value={msgContent}
+                  onChange={(e) => setMsgContent(e.target.value)}
+                ></textarea>
+              </div>
+            </div>
+            <div className="messaging-modal-footer">
+              <button className="msg-btn cancel" onClick={() => setMessagingUser(null)}>
+                Cancel
+              </button>
+              <button 
+                className="msg-btn send" 
+                onClick={handleSendMessage}
+                disabled={isSendingMsg || !msgTitle.trim() || !msgContent.trim()}
+              >
+                {isSendingMsg ? (
+                  <div className="spinner-small" style={{ width: 18, height: 18 }}></div>
+                ) : (
+                  <>
+                    <MessageSquare size={18} />
+                    Send Message
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Toast Notification */}
       {showToast && (
