@@ -131,11 +131,13 @@ const DashboardPage = ({ setActiveTab }) => {
         label: new Date(date).toLocaleDateString('en-US', { weekday: 'short' })
       }));
 
-      // Normalize heights for the chart (max value = 100%)
-      const maxMins = Math.max(...processedUsage.map(d => d.minutes), 1); // Avoid div by 0
+      // Normalize heights for the chart (max value rounds up to nearest 5h increment)
+      const observedMaxMins = Math.max(...processedUsage.map(d => d.minutes), 0);
+      const maxScaleMins = Math.max(300, Math.ceil(observedMaxMins / 300) * 300);
+      
       const chartValues = processedUsage.map(d => ({
         ...d,
-        height: Math.max(10, (d.minutes / maxMins) * 100) // Min height 10% for visibility
+        height: Math.max(8, (d.minutes / maxScaleMins) * 100) // Min height for visibility
       }));
 
       setUsageStats(chartValues);
@@ -304,11 +306,18 @@ const DashboardPage = ({ setActiveTab }) => {
             <button className="bento-sub-btn">View All <ArrowRight className="w-4 h-4" /></button>
           </div>
           <div className="chart-placeholder">
+            <div className="chart-grid-lines">
+              <div className="grid-line"></div>
+              <div className="grid-line"></div>
+              <div className="grid-line"></div>
+            </div>
             <div className="chart-bars">
               {usageStats.length > 0 ? (
                 usageStats.map((stat, i) => (
-                  <div key={i} className="chart-bar-wrapper" title={`${stat.minutes} mins`}>
-                    <div className="chart-bar" style={{ height: `${stat.height}%` }}></div>
+                  <div key={i} className="chart-bar-wrapper" title={`${stat.minutes} mins (${(stat.minutes / 60).toFixed(1)}h)`}>
+                    <div className="chart-bar" style={{ height: `${stat.height}%` }}>
+                      <div className="bar-glow"></div>
+                    </div>
                   </div>
                 ))
               ) : (
