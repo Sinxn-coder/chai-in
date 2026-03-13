@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Bell, Settings, RefreshCw, Users, MapPin, DollarSign, Activity, FileText, Settings as SettingsIcon, CheckCircle, ArrowRight, BarChart2, Download } from 'lucide-react';
+import { Bell, Settings, RefreshCw, Users, MapPin, DollarSign, Activity, FileText, Settings as SettingsIcon, CheckCircle, ArrowRight, BarChart2, Download, ChevronUp } from 'lucide-react';
 import { supabase } from './supabase';
 
 const DashboardPage = ({ setActiveTab }) => {
@@ -19,23 +19,12 @@ const DashboardPage = ({ setActiveTab }) => {
 
   const [recentActivities, setRecentActivities] = useState([]);
   const [recentUsers, setRecentUsers] = useState([]);
+  const [isPaginationLoading, setIsPaginationLoading] = useState(false);
+  const [hasMoreActivities, setHasMoreActivities] = useState(true);
+  const [showBackToTop, setShowBackToTop] = useState(false);
 
-  const fetchData = async () => {
-    setIsLoading(true);
+  const fetchActivities = async (offset = 0) => {
     try {
-      // 1. Fetch Stats
-      const [usersCount, spotsCount] = await Promise.all([
-        supabase.from('users').select('*', { count: 'exact', head: true }),
-        supabase.from('spots').select('*', { count: 'exact', head: true, eq: { status: 'approved' } })
-      ]);
-
-      setStats(prev => ({
-        ...prev,
-        users: usersCount.count || 0,
-        spots: spotsCount.count || 0
-      }));
-
-      // 2. Fetch Recent Activities (Posts)
       const { data: postsData, error: postsError } = await supabase
         .from('posts')
         .select(`
@@ -46,12 +35,15 @@ const DashboardPage = ({ setActiveTab }) => {
           author:user_id(full_name, avatar_url)
         `)
         .order('created_at', { ascending: false })
-        .limit(20);
+        .range(offset, offset + (offset === 0 ? 19 : 9));
 
       if (postsError) throw postsError;
 
-      const formattedActivities = postsData.map(post => {
-        // Calculate relative time
+      if (postsData.length < (offset === 0 ? 20 : 10)) {
+        setHasMoreActivities(false);
+      }
+
+      const formatted = postsData.map(post => {
         const created = new Date(post.created_at);
         const now = new Date();
         const diffInHours = Math.floor((now - created) / (1000 * 60 * 60));
@@ -66,7 +58,34 @@ const DashboardPage = ({ setActiveTab }) => {
         };
       });
 
-      setRecentActivities(formattedActivities);
+      if (offset === 0) {
+        setRecentActivities(formatted);
+      } else {
+        setRecentActivities(prev => [...prev, ...formatted]);
+      }
+    } catch (err) {
+      console.error('Error fetching activities:', err);
+    }
+  };
+
+  const fetchData = async () => {
+    setIsLoading(true);
+    setHasMoreActivities(true);
+    try {
+      // 1. Fetch Stats
+      const [usersCount, spotsCount] = await Promise.all([
+        supabase.from('users').select('*', { count: 'exact', head: true }),
+        supabase.from('spots').select('*', { count: 'exact', head: true, eq: { status: 'approved' } })
+      ]);
+
+      setStats(prev => ({
+        ...prev,
+        users: usersCount.count || 0,
+        spots: spotsCount.count || 0
+      }));
+
+      // 2. Fetch Recent Activities (Initial load)
+      await fetchActivities(0);
 
       // 3. Fetch Recent Users for avatars
       const { data: userData, error: userError } = await supabase
@@ -89,7 +108,20 @@ const DashboardPage = ({ setActiveTab }) => {
   useEffect(() => {
     fetchData();
     const timer = setInterval(() => setCurrentTime(new Date()), 60000); // Update time every minute
-    return () => clearInterval(timer);
+
+    const handleScroll = () => {
+      if (window.pageYOffset > 300) {
+        setShowBackToTop(true);
+      } else {
+        setShowBackToTop(false);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => {
+      clearInterval(timer);
+      window.removeEventListener('scroll', handleScroll);
+    };
   }, []);
 
   const handleRefresh = async () => {
@@ -100,6 +132,20 @@ const DashboardPage = ({ setActiveTab }) => {
 
   const toggleSection = (section) => {
     setActiveSection(prev => prev === section ? null : section);
+  };
+
+  const handleLoadMore = async () => {
+    if (isPaginationLoading || !hasMoreActivities) return;
+    setIsPaginationLoading(true);
+    await fetchActivities(recentActivities.length);
+    setIsPaginationLoading(false);
+  };
+
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
   };
 
   const formatGreeting = () => {
@@ -479,12 +525,38 @@ const DashboardPage = ({ setActiveTab }) => {
             </div>
 
             <div style={{ display: 'flex', justifyContent: 'center', marginTop: '24px' }}>
-              <button className="bento-outline-btn">Load Older Events</button>
+              {hasMoreActivities ? (
+                <button
+                  className={`bento-outline-btn ${isPaginationLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  onClick={handleLoadMore}
+                  disabled={isPaginationLoading}
+                >
+                  {isPaginationLoading ? (
+                    <>
+                      <RefreshCw className="w-4 h-4 animate-spin mr-2" />
+                      Loading...
+                    </>
+                  ) : (
+                    'Load Older Events'
+                  )}
+                </button>
+              ) : (
+                <span className="text-gray-400 text-sm">All activities loaded</span>
+              )}
             </div>
           </div>
         )}
 
       </div>
+
+      {/* Back to Top Button */}
+      <button 
+        className={`back-to-top-btn ${showBackToTop ? 'visible' : ''}`}
+        onClick={scrollToTop}
+        title="Back to Top"
+      >
+        <ChevronUp className="w-6 h-6" />
+      </button>
 
     </div>
   );
