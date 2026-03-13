@@ -18,6 +18,7 @@ const DashboardPage = ({ setActiveTab }) => {
   });
 
   const [recentActivities, setRecentActivities] = useState([]);
+  const [recentUsers, setRecentUsers] = useState([]);
 
   const fetchData = async () => {
     setIsLoading(true);
@@ -66,6 +67,17 @@ const DashboardPage = ({ setActiveTab }) => {
       });
 
       setRecentActivities(formattedActivities);
+
+      // 3. Fetch Recent Users for avatars
+      const { data: userData, error: userError } = await supabase
+        .from('users')
+        .select('avatar_url, full_name')
+        .not('avatar_url', 'is', null)
+        .order('created_at', { ascending: false })
+        .limit(3);
+
+      if (userError) throw userError;
+      setRecentUsers(userData || []);
 
     } catch (err) {
       console.error('Error fetching dashboard data:', err);
@@ -177,10 +189,21 @@ const DashboardPage = ({ setActiveTab }) => {
               <span className="stat-badge positive">{stats.usersGrowth}</span>
             </div>
             <div className="user-avatars-mini">
-              <img src="https://picsum.photos/seed/1/30/30" alt="u1" />
-              <img src="https://picsum.photos/seed/2/30/30" alt="u2" />
-              <img src="https://picsum.photos/seed/3/30/30" alt="u3" />
-              <div className="avatar-more">+2k</div>
+              {recentUsers.map((user, idx) => (
+                <img 
+                  key={idx} 
+                  src={user.avatar_url} 
+                  alt={user.full_name} 
+                  onError={(e) => {
+                    e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.full_name || 'U')}&background=random`;
+                  }}
+                />
+              ))}
+              {stats.users > recentUsers.length && (
+                <div className="avatar-more">
+                  +{stats.users > 1000 ? `${(stats.users / 1000).toFixed(1)}k` : stats.users - recentUsers.length}
+                </div>
+              )}
             </div>
           </div>
         </div>
