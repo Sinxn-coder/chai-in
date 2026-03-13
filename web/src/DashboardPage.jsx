@@ -46,7 +46,7 @@ const DashboardPage = ({ setActiveTab }) => {
           author:user_id(full_name, avatar_url)
         `)
         .order('created_at', { ascending: false })
-        .limit(5);
+        .limit(20);
 
       if (postsError) throw postsError;
 
@@ -233,7 +233,7 @@ const DashboardPage = ({ setActiveTab }) => {
             <span className="live-indicator"></span>
           </div>
           <div className="bento-activity-list">
-            {recentActivities.map(activity => (
+            {recentActivities.slice(0, 5).map(activity => (
               <div key={activity.id} className="bento-activity-item">
                 <img src={activity.avatar} alt="avatar" className="activity-avatar" />
                 <div className="activity-info">
@@ -466,13 +466,7 @@ const DashboardPage = ({ setActiveTab }) => {
             </div>
 
             <div className="bento-full-activity-list">
-              {[...recentActivities,
-              { id: 6, user: 'System', action: 'automated weekly backup completed', time: '1d ago', avatar: 'https://ui-avatars.com/api/?name=Sys&background=6366f1&color=fff' },
-              { id: 7, user: 'Admin', action: 'updated platform terms of service', time: '1d ago', avatar: 'https://ui-avatars.com/api/?name=Adm&background=0f172a&color=fff' },
-              { id: 8, user: 'Sarah Jenkins', action: 'registered a new business account', time: '2d ago', avatar: 'https://picsum.photos/seed/user6/40/40' },
-              { id: 9, user: 'David Kim', action: 'upgraded to premium subscription', time: '2d ago', avatar: 'https://picsum.photos/seed/user7/40/40' },
-              { id: 10, user: 'System', action: 'server health check passed', time: '3d ago', avatar: 'https://ui-avatars.com/api/?name=Sys&background=6366f1&color=fff' }
-              ].map(activity => (
+              {recentActivities.map(activity => (
                 <div key={activity.id} className="bento-activity-item expanded">
                   <img src={activity.avatar} alt="avatar" className="activity-avatar" />
                   <div className="activity-info">
