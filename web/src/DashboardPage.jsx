@@ -125,6 +125,7 @@ const DashboardPage = ({ setActiveTab }) => {
   }, []);
 
   const handleRefresh = async () => {
+    setCurrentTime(new Date()); // Sync clock
     await fetchData();
     setShowRefreshAnimation(true);
     setTimeout(() => setShowRefreshAnimation(false), 2000);
