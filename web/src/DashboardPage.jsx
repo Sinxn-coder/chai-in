@@ -45,7 +45,7 @@ const DashboardPage = ({ setActiveTab }) => {
           author:user_id(full_name, avatar_url)
         `)
         .order('created_at', { ascending: false })
-        .limit(10);
+        .limit(5);
 
       if (postsError) throw postsError;
 
