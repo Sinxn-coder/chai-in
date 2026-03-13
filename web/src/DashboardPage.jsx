@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Bell, Settings, RefreshCw, Users, MapPin, DollarSign, Activity, FileText, Settings as SettingsIcon, CheckCircle, ArrowRight, BarChart2, Download } from 'lucide-react';
+import { supabase } from './supabase';
 
 const DashboardPage = ({ setActiveTab }) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -7,37 +8,82 @@ const DashboardPage = ({ setActiveTab }) => {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [activeSection, setActiveSection] = useState(null);
 
+  const [stats, setStats] = useState({
+    users: 0,
+    usersGrowth: '+12.5%',
+    spots: 0,
+    spotsGrowth: '+8.2%',
+    revenue: 45678,
+    revenueGrowth: '+23.7%'
+  });
+
+  const [recentActivities, setRecentActivities] = useState([]);
+
+  const fetchData = async () => {
+    setIsLoading(true);
+    try {
+      // 1. Fetch Stats
+      const [usersCount, spotsCount] = await Promise.all([
+        supabase.from('users').select('*', { count: 'exact', head: true }),
+        supabase.from('spots').select('*', { count: 'exact', head: true, eq: { status: 'approved' } })
+      ]);
+
+      setStats(prev => ({
+        ...prev,
+        users: usersCount.count || 0,
+        spots: spotsCount.count || 0
+      }));
+
+      // 2. Fetch Recent Activities (Posts)
+      const { data: postsData, error: postsError } = await supabase
+        .from('posts')
+        .select(`
+          id,
+          content,
+          created_at,
+          spot_name,
+          author:user_id(full_name, avatar_url)
+        `)
+        .order('created_at', { ascending: false })
+        .limit(10);
+
+      if (postsError) throw postsError;
+
+      const formattedActivities = postsData.map(post => {
+        // Calculate relative time
+        const created = new Date(post.created_at);
+        const now = new Date();
+        const diffInHours = Math.floor((now - created) / (1000 * 60 * 60));
+        const timeStr = diffInHours < 1 ? 'Just now' : diffInHours < 24 ? `${diffInHours}h ago` : `${Math.floor(diffInHours / 24)}d ago`;
+
+        return {
+          id: post.id,
+          user: post.author?.full_name || 'Anonymous',
+          action: `shared a post at "${post.spot_name || 'General'}"`,
+          time: timeStr,
+          avatar: post.author?.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(post.author?.full_name || 'A')}&background=random`
+        };
+      });
+
+      setRecentActivities(formattedActivities);
+
+    } catch (err) {
+      console.error('Error fetching dashboard data:', err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
+    fetchData();
     const timer = setInterval(() => setCurrentTime(new Date()), 60000); // Update time every minute
     return () => clearInterval(timer);
   }, []);
 
-  // Mock data for stats
-  const stats = {
-    users: 15234,
-    usersGrowth: '+12.5%',
-    spots: 456,
-    spotsGrowth: '+8.2%',
-    revenue: 45678,
-    revenueGrowth: '+23.7%'
-  };
-
-  // Recent activity data
-  const recentActivities = [
-    { id: 1, user: 'John Doe', action: 'added new spot "Pizza Palace"', time: '2h ago', avatar: 'https://picsum.photos/seed/user1/40/40' },
-    { id: 2, user: 'Jane Smith', action: 'left 5-star review', time: '4h ago', avatar: 'https://picsum.photos/seed/user2/40/40' },
-    { id: 3, user: 'Bob Johnson', action: 'updated profile information', time: '6h ago', avatar: 'https://picsum.photos/seed/user3/40/40' },
-    { id: 4, user: 'Alice Brown', action: 'reported issue with payment', time: '8h ago', avatar: 'https://picsum.photos/seed/user4/40/40' },
-    { id: 5, user: 'Charlie Wilson', action: 'completed profile verification', time: '12h ago', avatar: 'https://picsum.photos/seed/user5/40/40' }
-  ];
-
-  const handleRefresh = () => {
-    setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-      setShowRefreshAnimation(true);
-      setTimeout(() => setShowRefreshAnimation(false), 2000);
-    }, 1000);
+  const handleRefresh = async () => {
+    await fetchData();
+    setShowRefreshAnimation(true);
+    setTimeout(() => setShowRefreshAnimation(false), 2000);
   };
 
   const toggleSection = (section) => {
