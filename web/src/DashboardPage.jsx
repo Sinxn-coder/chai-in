@@ -19,6 +19,7 @@ const DashboardPage = ({ setActiveTab }) => {
 
   const [recentActivities, setRecentActivities] = useState([]);
   const [recentUsers, setRecentUsers] = useState([]);
+  const [usageStats, setUsageStats] = useState([]);
   const [isPaginationLoading, setIsPaginationLoading] = useState(false);
   const [hasMoreActivities, setHasMoreActivities] = useState(true);
   const [showBackToTop, setShowBackToTop] = useState(false);
@@ -97,6 +98,47 @@ const DashboardPage = ({ setActiveTab }) => {
 
       if (userError) throw userError;
       setRecentUsers(userData || []);
+
+      // 4. Fetch Usage stats for the chart (Last 8 days)
+      const eightDaysAgo = new Date();
+      eightDaysAgo.setDate(eightDaysAgo.getDate() - 7);
+      const dateStr = eightDaysAgo.toISOString().split('T')[0];
+
+      const { data: usageData, error: usageError } = await supabase
+        .from('user_usage')
+        .select('usage_date, minutes')
+        .gte('usage_date', dateStr)
+        .order('usage_date', { ascending: true });
+
+      if (usageError) throw usageError;
+
+      // Group by date and calculate heights
+      const dayData = {};
+      // Initialize with 0s for last 8 days
+      for (let i = 7; i >= 0; i--) {
+        const d = new Date();
+        d.setDate(d.getDate() - i);
+        dayData[d.toISOString().split('T')[0]] = 0;
+      }
+
+      usageData.forEach(entry => {
+        dayData[entry.usage_date] = (dayData[entry.usage_date] || 0) + entry.minutes;
+      });
+
+      const processedUsage = Object.entries(dayData).map(([date, mins]) => ({
+        date,
+        minutes: mins,
+        label: new Date(date).toLocaleDateString('en-US', { weekday: 'short' })
+      }));
+
+      // Normalize heights for the chart (max value = 100%)
+      const maxMins = Math.max(...processedUsage.map(d => d.minutes), 1); // Avoid div by 0
+      const chartValues = processedUsage.map(d => ({
+        ...d,
+        height: Math.max(10, (d.minutes / maxMins) * 100) // Min height 10% for visibility
+      }));
+
+      setUsageStats(chartValues);
 
     } catch (err) {
       console.error('Error fetching dashboard data:', err);
@@ -263,12 +305,26 @@ const DashboardPage = ({ setActiveTab }) => {
           </div>
           <div className="chart-placeholder">
             <div className="chart-bars">
-              {[40, 65, 45, 80, 55, 90, 75, 100].map((height, i) => (
-                <div key={i} className="chart-bar" style={{ height: `${height}%` }}></div>
-              ))}
+              {usageStats.length > 0 ? (
+                usageStats.map((stat, i) => (
+                  <div key={i} className="chart-bar-wrapper" title={`${stat.minutes} mins`}>
+                    <div className="chart-bar" style={{ height: `${stat.height}%` }}></div>
+                  </div>
+                ))
+              ) : (
+                [40, 65, 45, 80, 55, 90, 75, 100].map((height, i) => (
+                  <div key={i} className="chart-bar" style={{ height: `${height}%` }}></div>
+                ))
+              )}
             </div>
             <div className="chart-labels">
-              <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span><span>Today</span>
+              {usageStats.length > 0 ? (
+                usageStats.map((stat, i) => (
+                  <span key={i}>{i === usageStats.length - 1 ? 'Today' : stat.label}</span>
+                ))
+              ) : (
+                <><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span><span>Today</span></>
+              )}
             </div>
           </div>
         </div>
