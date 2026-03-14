@@ -264,6 +264,7 @@ export default function App() {
   const [msgTitle, setMsgTitle] = useState('');
   const [msgContent, setMsgContent] = useState('');
   const [isSendingMsg, setIsSendingMsg] = useState(false);
+  const [sendMsgPush, setSendMsgPush] = useState(true);
 
   // Auto-close toasts
   useEffect(() => {
@@ -438,7 +439,8 @@ export default function App() {
             message: msgContent,
             data: { 
               sender_name: 'Admin',
-              priority: 'high'
+              priority: 'high',
+              send_push: sendMsgPush
             }
           }
         ]);
@@ -1085,6 +1087,17 @@ export default function App() {
                   value={msgContent}
                   onChange={(e) => setMsgContent(e.target.value)}
                 ></textarea>
+              </div>
+              <div className="msg-input-group" style={{ marginTop: '15px' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+                  <input 
+                    type="checkbox" 
+                    checked={sendMsgPush}
+                    onChange={(e) => setSendMsgPush(e.target.checked)}
+                    style={{ width: 'auto', marginBottom: 0 }}
+                  />
+                  <span style={{ fontSize: '14px', color: '#64748b' }}>Send as Push Notification</span>
+                </label>
               </div>
             </div>
             <div className="messaging-modal-footer">

@@ -16,6 +16,7 @@ const PushNotifications = () => {
     title: '',
     message: ''
   });
+  const [sendPush, setSendPush] = useState(true);
   const [notifications, setNotifications] = useState([]);
   const [activeDropdown, setActiveDropdown] = useState(null);
 
@@ -64,7 +65,8 @@ const PushNotifications = () => {
           p_data: { 
             sender_name: 'Admin',
             category: 'broadcast',
-            visual_style: 'premium'
+            visual_style: 'premium',
+            send_push: sendPush
           }
         });
 
@@ -225,6 +227,18 @@ const PushNotifications = () => {
                   className="modern-textarea"
                   rows="4"
                 />
+              </div>
+              
+              <div className="form-group checkbox-group" style={{ marginBottom: '20px' }}>
+                <label className="checkbox-label" style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', color: 'rgba(255, 255, 255, 0.8)' }}>
+                  <input
+                    type="checkbox"
+                    checked={sendPush}
+                    onChange={(e) => setSendPush(e.target.checked)}
+                    style={{ cursor: 'pointer', width: 'auto' }}
+                  />
+                  <span style={{ fontSize: '14px' }}>Send as Push Notification?</span>
+                </label>
               </div>
               
               <button 
