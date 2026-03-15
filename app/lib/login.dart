@@ -9,6 +9,9 @@ import 'supabase_config.dart';
 import 'terms_and_conditions.dart';
 import 'privacy.dart';
 import 'widgets/food_loading.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'services/auth_gate.dart';
+import 'services/push_notification_service.dart';
 
 enum AuthState { initial, registering, welcomeBack }
 
@@ -51,6 +54,11 @@ class _LoginPageState extends State<LoginPage>
     setState(() => _isLoading = true);
     try {
       await SupabaseConfig.client.auth.signOut();
+      
+      // Clear local cache
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.clear();
+
       final GoogleSignIn googleSignIn = GoogleSignIn();
 
       // Use disconnect() to clear the Google session and force account selection next time
@@ -70,6 +78,8 @@ class _LoginPageState extends State<LoginPage>
           _usernameController.clear();
           _cityController.clear();
         });
+        // Clear guest status on sign out
+        await AuthGate.setGuestStatus(false);
         _animationController.forward();
       }
     } catch (e) {
@@ -92,36 +102,41 @@ class _LoginPageState extends State<LoginPage>
     try {
       const webClientId =
           '139410303233-knd9qh4d9eqlrflk81pdpg996f27aosj.apps.googleusercontent.com';
-      const androidClientId =
-          '139410303233-eqkm6u5c7iq5eh6fvuf81ldbi0r3g2po.apps.googleusercontent.com';
 
       final googleSignIn = GoogleSignIn(
-        clientId: androidClientId,
         serverClientId: webClientId,
       );
 
-      // Force sign out first to ensure account selection prompt
+      debugPrint('Step 1: Signing out from Google...');
       await googleSignIn.signOut();
 
+      debugPrint('Step 2: Calling googleSignIn.signIn()...');
       final googleUser = await googleSignIn.signIn();
+      debugPrint('Step 3: Google user result: $googleUser');
+      
       if (googleUser == null) {
+        debugPrint('Step 3a: Google Sign-In cancelled by user.');
         setState(() => _isLoading = false);
         return;
       }
 
+      debugPrint('Step 4: Getting googleAuth tokens...');
       final googleAuth = await googleUser.authentication;
       final accessToken = googleAuth.accessToken;
       final idToken = googleAuth.idToken;
+      debugPrint('Step 5: Tokens retrieved. Access: ${accessToken != null}, ID: ${idToken != null}');
 
       if (accessToken == null || idToken == null) {
         throw 'Missing tokens.';
       }
 
+      debugPrint('Step 6: Calling Supabase signInWithIdToken...');
       final response = await SupabaseConfig.client.auth.signInWithIdToken(
         provider: OAuthProvider.google,
         idToken: idToken,
         accessToken: accessToken,
       );
+      debugPrint('Step 7: Supabase response user: ${response.user?.id}');
 
       if (response.user != null) {
         await _checkUserProfile(response.user!);
@@ -131,6 +146,23 @@ class _LoginPageState extends State<LoginPage>
         message: 'Auth Error: ${e.toString()}',
         type: NotificationType.error,
       );
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
+  Future<void> _handleGuestSignIn() async {
+    setState(() => _isLoading = true);
+    try {
+      await AuthGate.setGuestStatus(true);
+      if (mounted) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const MainContainer()),
+        );
+      }
+    } catch (e) {
+      debugPrint('Guest login error: $e');
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -148,6 +180,19 @@ class _LoginPageState extends State<LoginPage>
       debugPrint('Profile data fetched: $data');
 
       if (data != null) {
+        // NEW: Check for banned status
+        if (data['status'] == 'banned' || data['status'] == 'blocked') {
+          debugPrint('Banned user detected: ${user.id}');
+          if (mounted) {
+            NotificationService.show(
+              message: 'Your account has been suspended. Please contact support.',
+              type: NotificationType.error,
+            );
+            await _handleSignOut();
+          }
+          return;
+        }
+
         _existingProfile = data;
         _fullNameController.text =
             data['full_name'] ?? user.userMetadata?['full_name'] ?? '';
@@ -162,6 +207,12 @@ class _LoginPageState extends State<LoginPage>
       }
 
       if (data != null && data['username'] != null && data['city'] != null) {
+        // Cache session for welcome back users
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('cached_user_id', user.id);
+        await prefs.setBool('has_active_session', true);
+        await prefs.setString('user_name', data['username'] ?? '');
+
         setState(() {
           _authState = AuthState.welcomeBack;
         });
@@ -170,6 +221,12 @@ class _LoginPageState extends State<LoginPage>
           _authState = AuthState.registering;
         });
       }
+      
+      // Sync FCM Token
+      await PushNotificationService.syncTokenWithSupabase();
+
+      // Also clear guest status if real profile found
+      await AuthGate.setGuestStatus(false);
       _animationController.forward();
     } catch (e) {
       debugPrint('Error checking profile: $e');
@@ -236,6 +293,12 @@ class _LoginPageState extends State<LoginPage>
       }
 
       await SupabaseConfig.client.from('users').upsert(updateData);
+
+      // Cache session
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('cached_user_id', user.id);
+      await prefs.setBool('has_active_session', true);
+      await prefs.setString('user_name', newUsername);
 
       if (mounted) {
         Navigator.pushReplacement(
@@ -398,6 +461,8 @@ class _LoginPageState extends State<LoginPage>
             ),
             const SizedBox(height: 35),
             _buildGoogleButton(),
+            const SizedBox(height: 15),
+            _buildGuestButton(),
           ],
         );
 
@@ -512,63 +577,71 @@ class _LoginPageState extends State<LoginPage>
   }
 
   Widget _buildLegalCheckbox() {
-    return Row(
-      children: [
-        SizedBox(
-          width: 24,
-          height: 24,
-          child: Checkbox(
-            value: _acceptedTerms,
-            side: const BorderSide(color: Colors.white70, width: 1.5),
-            activeColor: Colors.white,
-            checkColor: const Color(0xFFFF0000),
-            onChanged: (val) => setState(() => _acceptedTerms = val ?? false),
-          ),
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: RichText(
-            text: TextSpan(
-              style: TextStyle(
-                color: Colors.white.withOpacity(0.9),
-                fontSize: 12.5,
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Transform.translate(
+            offset: const Offset(0, -4),
+            child: SizedBox(
+              width: 24,
+              height: 24,
+              child: Checkbox(
+                value: _acceptedTerms,
+                side: const BorderSide(color: Colors.white70, width: 1.5),
+                activeColor: Colors.white,
+                checkColor: const Color(0xFFFF0000),
+                onChanged: (val) => setState(() => _acceptedTerms = val ?? false),
               ),
-              children: [
-                const TextSpan(text: 'By signing in, I agree to the '),
-                TextSpan(
-                  text: 'Terms',
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    decoration: TextDecoration.underline,
-                  ),
-                  recognizer: TapGestureRecognizer()
-                    ..onTap = () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const TermsAndConditionsPage(),
-                      ),
-                    ),
-                ),
-                const TextSpan(text: ' and '),
-                TextSpan(
-                  text: 'Privacy Policy',
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    decoration: TextDecoration.underline,
-                  ),
-                  recognizer: TapGestureRecognizer()
-                    ..onTap = () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const PrivacyPage(),
-                      ),
-                    ),
-                ),
-              ],
             ),
           ),
-        ),
-      ],
+          const SizedBox(width: 12),
+          Expanded(
+            child: RichText(
+              text: TextSpan(
+                style: TextStyle(
+                  color: Colors.white.withOpacity(0.9),
+                  fontSize: 14,
+                  height: 1.6,
+                ),
+                children: [
+                  const TextSpan(text: 'By signing in, I agree to the '),
+                  TextSpan(
+                    text: 'Terms',
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      decoration: TextDecoration.underline,
+                    ),
+                    recognizer: TapGestureRecognizer()
+                      ..onTap = () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const TermsAndConditionsPage(),
+                        ),
+                      ),
+                  ),
+                  const TextSpan(text: ' and '),
+                  TextSpan(
+                    text: 'Privacy Policy',
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      decoration: TextDecoration.underline,
+                    ),
+                    recognizer: TapGestureRecognizer()
+                      ..onTap = () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const PrivacyPage(),
+                        ),
+                      ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -703,6 +776,31 @@ class _LoginPageState extends State<LoginPage>
           contentPadding: const EdgeInsets.symmetric(
             vertical: 18,
             horizontal: 20,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildGuestButton() {
+    return InkWell(
+      onTap: _isLoading ? null : _handleGuestSignIn,
+      borderRadius: BorderRadius.circular(15),
+      child: Container(
+        height: 60,
+        decoration: BoxDecoration(
+          color: Colors.white.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(15),
+          border: Border.all(color: Colors.white.withOpacity(0.3)),
+        ),
+        child: const Center(
+          child: Text(
+            'Browse as Guest',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w700,
+              color: Colors.white,
+            ),
           ),
         ),
       ),

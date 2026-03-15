@@ -6,6 +6,8 @@ import 'profile.dart';
 import 'supabase_config.dart';
 import 'widgets/food_loading.dart';
 import 'services/spot_status_service.dart';
+import 'services/auth_gate.dart';
+import 'widgets/guest_profile_view.dart';
 
 class HomePageContent extends StatefulWidget {
   const HomePageContent({super.key});
@@ -165,13 +167,22 @@ class _HomePageContentState extends State<HomePageContent> {
                                 fit: BoxFit.contain,
                               ),
                               GestureDetector(
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => const ProfilePage(),
-                                    ),
-                                  );
+                                onTap: () async {
+                                  if (await AuthGate.isGuest()) {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => const GuestProfileView(),
+                                      ),
+                                    );
+                                  } else {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => const ProfilePage(),
+                                      ),
+                                    );
+                                  }
                                 },
                                 child: Container(
                                   padding: const EdgeInsets.all(2),
@@ -321,8 +332,17 @@ class _HomePageContentState extends State<HomePageContent> {
 
     // In a real app we'd fetch the latest profile from DB,
     // but for the header, we can just use the cached user object or icon.
+    if (googlePhoto == null || googlePhoto.isEmpty) {
+      return Image.asset(
+        'assets/images/icon.png',
+        width: 40,
+        height: 40,
+        fit: BoxFit.cover,
+      );
+    }
+
     return Image.network(
-      googlePhoto ?? '',
+      googlePhoto,
       width: 40,
       height: 40,
       fit: BoxFit.cover,

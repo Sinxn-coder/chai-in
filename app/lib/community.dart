@@ -1,5 +1,6 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter/material.dart';
+import 'dart:ui';
 import 'services/notification_service.dart';
 import 'services/image_helper.dart';
 import 'services/post_service.dart';
@@ -8,6 +9,9 @@ import 'widgets/food_loading.dart';
 import 'supabase_config.dart';
 import 'profile.dart';
 import 'user_profile.dart';
+import 'create_post.dart';
+import 'spot_details.dart';
+import 'services/auth_gate.dart';
 
 class CommunityPage extends StatefulWidget {
   const CommunityPage({super.key});
@@ -77,9 +81,27 @@ class _CommunityPageState extends State<CommunityPage> {
       final Set<String> followingIds = results[3] as Set<String>;
 
       if (mounted) {
+        // Collect names of spots that are mentioned but not linked
+        final unlinkedNames = rawPosts
+            .where((p) => p['spot_id'] == null && p['spot_name'] != null)
+            .map((p) => p['spot_name'] as String)
+            .toSet()
+            .toList();
+
+        // Fetch spot details for those names
+        final recoveredSpots = await PostService.getSpotsByNames(unlinkedNames);
+
         setState(() {
           _posts = rawPosts.map((post) {
             final author = post['author'] as Map<String, dynamic>?;
+            
+            // Try to link spot by name if it's missing but we found a match
+            var spotData = post['spot'];
+            final sName = post['spot_name'];
+            if (spotData == null && sName != null && recoveredSpots.containsKey(sName)) {
+              spotData = recoveredSpots[sName];
+            }
+
             return {
               'id': post['id'],
               'userName': author?['username'] ?? author?['full_name'] ?? 'User',
@@ -93,6 +115,10 @@ class _CommunityPageState extends State<CommunityPage> {
               'isSaved': savedPostIds.contains(post['id'].toString()),
               'isFollowing': followingIds.contains(post['user_id']?.toString()),
               'authorId': post['user_id']?.toString(),
+              'authorEmail': author?['email'] ?? '',
+              'spot': spotData,
+              'spotName': sName,
+              'showSpotPopup': false,
             };
           }).toList();
           _followingIds = followingIds;
@@ -192,9 +218,17 @@ class _CommunityPageState extends State<CommunityPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        Container(
+    return GestureDetector(
+      onTap: () {
+        _searchFocusNode.unfocus();
+        setState(() {
+          _isSearchFocused = false;
+        });
+      },
+      behavior: HitTestBehavior.translucent,
+      child: Stack(
+        children: [
+          Container(
           width: double.infinity,
           height: double.infinity,
           decoration: const BoxDecoration(
@@ -554,13 +588,26 @@ class _CommunityPageState extends State<CommunityPage> {
                                                     );
                                                   }
                                                 },
-                                                child: Text(
-                                                  post['userName'] ?? 'User',
-                                                  style: const TextStyle(
-                                                    fontSize: 14,
-                                                    fontWeight: FontWeight.w700,
-                                                    color: Color(0xFF1A1A1A),
-                                                  ),
+                                                child: Row(
+                                                  children: [
+                                                    Text(
+                                                      post['userName'] ?? 'User',
+                                                      style: const TextStyle(
+                                                        fontSize: 14,
+                                                        fontWeight: FontWeight.w700,
+                                                        color: Color(0xFF1A1A1A),
+                                                      ),
+                                                    ),
+                                                    if (post['authorEmail'] == 'bytspot.in@gmail.com')
+                                                      const Padding(
+                                                        padding: EdgeInsets.only(left: 4.0),
+                                                        child: Icon(
+                                                          Icons.check_circle,
+                                                          size: 14,
+                                                          color: Colors.blue,
+                                                        ),
+                                                      ),
+                                                  ],
                                                 ),
                                               ),
                                               const SizedBox(height: 2),
@@ -584,6 +631,8 @@ class _CommunityPageState extends State<CommunityPage> {
                                             ),
                                             child: TextButton(
                                               onPressed: () async {
+                                                if (!await AuthGate.check(context, message: 'Sign in to follow other food explorers!')) return;
+                                                
                                                 final authorId =
                                                     post['authorId'];
                                                 if (authorId == null) return;
@@ -673,6 +722,8 @@ class _CommunityPageState extends State<CommunityPage> {
                                         // Save Icon
                                         GestureDetector(
                                           onTap: () async {
+                                            if (!await AuthGate.check(context, message: 'Sign in to save posts you love!')) return;
+
                                             final postId = post['id']
                                                 .toString();
                                             final success =
@@ -844,7 +895,195 @@ class _CommunityPageState extends State<CommunityPage> {
                                                     ),
                                                   ),
                                                 ),
-                                            ],
+                                               
+                                               // Spot Tag Icon
+                                               if (post['spotName'] != null || post['spot'] != null)
+                                                 Positioned(
+                                                   bottom: 12,
+                                                   right: 12,
+                                                   child: GestureDetector(
+                                                     onTap: () {
+                                                       setState(() {
+                                                         final mainIdx = _posts.indexWhere((p) => p['id'] == post['id']);
+                                                         if (mainIdx != -1) {
+                                                           _posts[mainIdx]['showSpotPopup'] = !(post['showSpotPopup'] ?? false);
+                                                         }
+                                                       });
+                                                     },
+                                                     child: AnimatedContainer(
+                                                       duration: const Duration(milliseconds: 200),
+                                                       padding: const EdgeInsets.all(8),
+                                                       decoration: BoxDecoration(
+                                                         color: (post['showSpotPopup'] ?? false) 
+                                                           ? const Color(0xFFFF0000)
+                                                           : Colors.black.withOpacity(0.6),
+                                                         shape: BoxShape.circle,
+                                                         boxShadow: [
+                                                           BoxShadow(
+                                                             color: Colors.black.withOpacity(0.2),
+                                                             blurRadius: 8,
+                                                             offset: const Offset(0, 2),
+                                                           ),
+                                                         ],
+                                                       ),
+                                                       child: const Icon(
+                                                         Icons.location_on_rounded,
+                                                         size: 18,
+                                                         color: Colors.white,
+                                                       ),
+                                                     ),
+                                                   ),
+                                                 ),
+                                               
+                                                // Spot Popup
+                                                if (post['showSpotPopup'] ?? false)
+                                                  Positioned(
+                                                    bottom: 57,
+                                                    right: 12,
+                                                    child: ClipRRect(
+                                                      borderRadius: BorderRadius.circular(20),
+                                                      child: BackdropFilter(
+                                                        filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+                                                        child: AnimatedOpacity(
+                                                          duration: const Duration(milliseconds: 300),
+                                                          opacity: (post['showSpotPopup'] ?? false) ? 1.0 : 0.0,
+                                                          child: Container(
+                                                            width: 200,
+                                                            padding: const EdgeInsets.all(16),
+                                                            decoration: BoxDecoration(
+                                                              color: Colors.white.withOpacity(0.85),
+                                                              borderRadius: BorderRadius.circular(20),
+                                                              border: Border.all(
+                                                                color: Colors.white.withOpacity(0.5),
+                                                                width: 1.5,
+                                                              ),
+                                                              boxShadow: [
+                                                                BoxShadow(
+                                                                  color: Colors.black.withOpacity(0.1),
+                                                                  blurRadius: 20,
+                                                                  offset: const Offset(0, 10),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                            child: Column(
+                                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                                              mainAxisSize: MainAxisSize.min,
+                                                              children: [
+                                                                Row(
+                                                                  children: [
+                                                                    Expanded(
+                                                                      child: Text(
+                                                                        post['spotName'] ?? post['spot']?['name'] ?? 'Spot',
+                                                                        style: const TextStyle(
+                                                                          fontWeight: FontWeight.w900,
+                                                                          fontSize: 14,
+                                                                          color: Color(0xFF1A1A1A),
+                                                                          letterSpacing: -0.2,
+                                                                        ),
+                                                                        maxLines: 1,
+                                                                        overflow: TextOverflow.ellipsis,
+                                                                      ),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                                const SizedBox(height: 4),
+                                                                Row(
+                                                                  children: [
+                                                                    Icon(
+                                                                      Icons.location_on_rounded,
+                                                                      size: 10,
+                                                                      color: Colors.grey[600],
+                                                                    ),
+                                                                    const SizedBox(width: 4),
+                                                                    Text(
+                                                                      post['spot'] != null ? 'Verified Spot' : 'Location Mention',
+                                                                      style: TextStyle(
+                                                                        fontSize: 10,
+                                                                        fontWeight: FontWeight.w600,
+                                                                        color: Colors.grey[600],
+                                                                        letterSpacing: 0.1,
+                                                                      ),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                                const SizedBox(height: 12),
+                                                                if (post['spot'] != null)
+                                                                  SizedBox(
+                                                                    width: double.infinity,
+                                                                    child: Container(
+                                                                      decoration: BoxDecoration(
+                                                                        borderRadius: BorderRadius.circular(12),
+                                                                        boxShadow: [
+                                                                          BoxShadow(
+                                                                            color: const Color(0xFFFF0000).withOpacity(0.3),
+                                                                            blurRadius: 10,
+                                                                            offset: const Offset(0, 4),
+                                                                          ),
+                                                                        ],
+                                                                      ),
+                                                                      child: ElevatedButton(
+                                                                        onPressed: () {
+                                                                          Navigator.push(
+                                                                            context,
+                                                                            MaterialPageRoute(
+                                                                              builder: (context) => SpotDetailsPage(
+                                                                                spot: post['spot'],
+                                                                              ),
+                                                                            ),
+                                                                          );
+                                                                        },
+                                                                        style: ElevatedButton.styleFrom(
+                                                                          backgroundColor: const Color(0xFFFF0000),
+                                                                          foregroundColor: Colors.white,
+                                                                          elevation: 0,
+                                                                          padding: const EdgeInsets.symmetric(vertical: 10),
+                                                                          shape: RoundedRectangleBorder(
+                                                                            borderRadius: BorderRadius.circular(12),
+                                                                          ),
+                                                                        ),
+                                                                        child: const Text(
+                                                                          'View Details',
+                                                                          style: TextStyle(
+                                                                            fontSize: 12,
+                                                                            fontWeight: FontWeight.w800,
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                  )
+                                                                else
+                                                                  Container(
+                                                                    padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
+                                                                    decoration: BoxDecoration(
+                                                                      color: Colors.grey[100]!.withOpacity(0.5),
+                                                                      borderRadius: BorderRadius.circular(10),
+                                                                    ),
+                                                                    child: Row(
+                                                                      children: [
+                                                                        Icon(Icons.info_outline_rounded, size: 12, color: Colors.grey[600]),
+                                                                        const SizedBox(width: 6),
+                                                                        Expanded(
+                                                                          child: Text(
+                                                                            'Linking pending...',
+                                                                            style: TextStyle(
+                                                                              fontSize: 10,
+                                                                              color: Colors.grey[700],
+                                                                              fontWeight: FontWeight.w500,
+                                                                              fontStyle: FontStyle.italic,
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                  ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                             ],
                                           ),
                                         ),
                                       ),
@@ -858,6 +1097,8 @@ class _CommunityPageState extends State<CommunityPage> {
                                           children: [
                                             GestureDetector(
                                               onTap: () async {
+                                                if (!await AuthGate.check(context, message: 'Sign in to like posts!')) return;
+
                                                 final postId = post['id']
                                                     .toString();
                                                 final bool currentlyLiked =
@@ -934,9 +1175,31 @@ class _CommunityPageState extends State<CommunityPage> {
             ],
           ),
         ),
+        // Create Post FAB
+        Positioned(
+          bottom: 100,
+          right: 20,
+          child: FloatingActionButton(
+            onPressed: () async {
+              if (!await AuthGate.check(context, message: 'Sign in to share your food experiences!')) return;
+              
+              final result = await Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const CreatePostPage()),
+              );
+              if (result == true) {
+                _fetchPosts();
+              }
+            },
+            backgroundColor: const Color(0xFFFF0000),
+            elevation: 8,
+            child: const Icon(Icons.add_a_photo_rounded, color: Colors.white),
+          ),
+        ),
       ],
-    );
-  }
+    ),
+  );
+}
 
   Widget _buildUserSearchResults() {
     if (_isSearchingUsers) {

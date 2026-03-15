@@ -1,12 +1,17 @@
+import 'dart:io';
 import '../supabase_config.dart';
 
 class PostService {
-  /// Fetch posts with author details
+  /// Fetch posts with author details and mentioned spot
   static Future<List<Map<String, dynamic>>> getPosts() async {
     try {
       final response = await SupabaseConfig.client
           .from('posts')
-          .select('*, author:user_id(username, full_name, avatar_url)')
+          .select('''
+            *,
+            author:user_id(username, full_name, avatar_url, email),
+            spot:spot_id(id, name, city, images, rating)
+          ''')
           .order('created_at', ascending: false);
 
       final List<Map<String, dynamic>> data = List<Map<String, dynamic>>.from(
@@ -102,7 +107,7 @@ class PostService {
     try {
       final response = await SupabaseConfig.client
           .from('saved_posts')
-          .select('posts(*, author:user_id(username, full_name, avatar_url))')
+          .select('posts(*, author:user_id(username, full_name, avatar_url, email), spot:spot_id(id, name, city, images, rating))')
           .eq('user_id', userId)
           .order('created_at', ascending: false);
 
@@ -157,7 +162,7 @@ class PostService {
     try {
       final response = await SupabaseConfig.client
           .from('posts')
-          .select('*, author:user_id(username, full_name, avatar_url)')
+          .select('*, author:user_id(username, full_name, avatar_url, email), spot:spot_id(id, name, city, images, rating)')
           .eq('user_id', userId)
           .order('created_at', ascending: false);
 
@@ -165,6 +170,134 @@ class PostService {
     } catch (e) {
       print('Error fetching user posts: $e');
       return [];
+    }
+  }
+
+  /// Creates a new community post
+  static Future<bool> createPost({
+    required String? content,
+    required List<String> imagePaths,
+    String? spotId,
+    String? spotName,
+  }) async {
+    try {
+      final user = SupabaseConfig.client.auth.currentUser;
+      if (user == null) return false;
+
+      final List<String> imageUrls = [];
+
+      // 1. Upload images to 'posts' bucket
+      if (imagePaths.isNotEmpty) {
+        for (int i = 0; i < imagePaths.length; i++) {
+          final file = File(imagePaths[i]);
+          final String fileName =
+              '${user.id}/${DateTime.now().millisecondsSinceEpoch}_$i.jpg';
+
+          await SupabaseConfig.client.storage.from('posts').upload(fileName, file);
+
+          final String publicUrl =
+              SupabaseConfig.client.storage.from('posts').getPublicUrl(fileName);
+
+          imageUrls.add(publicUrl);
+        }
+      }
+
+      // 2. Insert post data
+      await SupabaseConfig.client.from('posts').insert({
+        'user_id': user.id,
+        'content': content,
+        'images': imageUrls,
+        'spot_id': spotId,
+        'spot_name': spotName,
+      });
+
+      return true;
+    } catch (e) {
+      print('Error creating post: $e');
+      return false;
+    }
+  }
+
+  /// Fetch spots by a list of exact names
+  static Future<Map<String, Map<String, dynamic>>> getSpotsByNames(
+    List<String> names,
+  ) async {
+    if (names.isEmpty) return {};
+
+    try {
+      final response = await SupabaseConfig.client
+          .from('spots')
+          .select('id, name, city, images, rating')
+          .inFilter('name', names);
+
+      final List<dynamic> data = response;
+      final Map<String, Map<String, dynamic>> results = {};
+      
+      for (var spot in data) {
+        final name = spot['name'] as String;
+        results[name] = Map<String, dynamic>.from(spot);
+      }
+      
+      return results;
+    } catch (e) {
+      print('Error fetching spots by names: $e');
+      return {};
+    }
+  }
+
+  /// Updates a post's content
+  static Future<bool> updatePost(String postId, String newContent) async {
+    try {
+      await SupabaseConfig.client
+          .from('posts')
+          .update({'content': newContent})
+          .eq('id', postId);
+      return true;
+    } catch (e) {
+      print('Error updating post: $e');
+      return false;
+    }
+  }
+
+  /// Deletes a post and its associated images from storage
+  static Future<bool> deletePost(String postId) async {
+    try {
+      // 1. Fetch post details to get image URLs
+      final post = await SupabaseConfig.client
+          .from('posts')
+          .select('images')
+          .eq('id', postId)
+          .maybeSingle();
+
+      if (post != null && post['images'] != null) {
+        final List<dynamic> images = post['images'];
+        if (images.isNotEmpty) {
+          final List<String> pathsToDelete = [];
+          
+          for (var imageUrl in images) {
+            // Extract the path after /public/posts/
+            // URL format: .../storage/v1/object/public/posts/folder/image.jpg
+            final String url = imageUrl.toString();
+            final String marker = '/public/posts/';
+            if (url.contains(marker)) {
+              final String path = url.substring(url.indexOf(marker) + marker.length);
+              pathsToDelete.add(path);
+            }
+          }
+
+          if (pathsToDelete.isNotEmpty) {
+            await SupabaseConfig.client.storage.from('posts').remove(pathsToDelete);
+            print('Deleted ${pathsToDelete.length} images from storage');
+          }
+        }
+      }
+
+      // 2. Delete the post record (this will also trigger cascade deletes if set up)
+      await SupabaseConfig.client.from('posts').delete().eq('id', postId);
+      return true;
+    } catch (e) {
+      print('Error deleting post: $e');
+      return false;
     }
   }
 }

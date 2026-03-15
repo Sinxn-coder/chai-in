@@ -15,6 +15,9 @@ class PermissionService {
     if (!context.mounted) return;
 
     await _requestCameraPermission(context);
+    if (!context.mounted) return;
+
+    await _requestNotificationPermission(context);
   }
 
   // Request location permission
@@ -207,5 +210,26 @@ class PermissionService {
   // Request camera permission with callback
   Future<bool> requestCameraPermissionWithCallback(BuildContext context) async {
     return await _requestCameraPermission(context);
+  }
+
+  // Request notification permission
+  Future<bool> _requestNotificationPermission(BuildContext context) async {
+    try {
+      PermissionStatus status = await Permission.notification.status;
+
+      if (status.isDenied) {
+        status = await Permission.notification.request();
+      }
+
+      return status.isGranted;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  // Request notification permission with callback
+  Future<bool> requestNotificationPermissionWithCallback(
+      BuildContext context) async {
+    return await _requestNotificationPermission(context);
   }
 }

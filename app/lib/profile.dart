@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'dart:ui';
 import 'saved_posts.dart';
 import 'my_reviews.dart';
+import 'my_posts.dart';
 import 'settings.dart';
 import 'help_support.dart';
 import 'edit_profile.dart';
@@ -13,6 +14,7 @@ import 'notifications.dart';
 import 'supabase_config.dart';
 import 'services/follow_service.dart';
 import 'widgets/food_loading.dart';
+import 'services/auth_gate.dart';
 
 class ProfilePage extends StatefulWidget {
   final String? userId;
@@ -32,6 +34,7 @@ class _ProfilePageState extends State<ProfilePage>
   int _followingCount = 0;
   bool _isFollowing = false;
   int _unreadNotifications = 0;
+  bool _isGuest = false;
   late AnimationController _fadeController;
 
   @override
@@ -45,6 +48,14 @@ class _ProfilePageState extends State<ProfilePage>
     _fetchStats();
     _fetchUnreadCount();
     _checkFollowStatus();
+    _checkGuestStatus();
+  }
+
+  Future<void> _checkGuestStatus() async {
+    final guest = await AuthGate.isGuest();
+    if (mounted) {
+      setState(() => _isGuest = guest);
+    }
   }
 
   Future<void> _checkFollowStatus() async {
@@ -105,13 +116,20 @@ class _ProfilePageState extends State<ProfilePage>
   Future<void> _fetchProfile() async {
     try {
       final userId = widget.userId ?? SupabaseConfig.currentUserId;
-      if (userId == null) return;
+      if (userId == null) {
+        if (mounted) setState(() => _isLoading = false);
+        return;
+      }
 
       final data = await SupabaseConfig.client
           .from('users')
           .select()
           .eq('id', userId)
-          .maybeSingle();
+          .maybeSingle()
+          .timeout(const Duration(seconds: 5), onTimeout: () {
+            debugPrint('Profile fetch timed out');
+            return null;
+          });
 
       if (mounted) {
         setState(() {
@@ -156,6 +174,25 @@ class _ProfilePageState extends State<ProfilePage>
 
     final screenWidth = MediaQuery.of(context).size.width;
     final isSmallScreen = screenWidth < 360;
+
+    // Show guest view if logged in as guest and viewing own profile
+    if (_isGuest && widget.userId == null) {
+      return Scaffold(
+        backgroundColor: const Color(0xFFF8F9FA),
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          leading: Navigator.canPop(context)
+              ? IconButton(
+                  icon: const Icon(Icons.arrow_back, color: Color(0xFF1A1A1A)),
+                  onPressed: () => Navigator.pop(context),
+                )
+              : null,
+        ),
+        body: SafeArea(child: _buildGuestView()),
+      );
+    }
+
     final user = SupabaseConfig.client.auth.currentUser;
 
     return Scaffold(
@@ -279,17 +316,33 @@ class _ProfilePageState extends State<ProfilePage>
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
-                                          Text(
-                                            _userData?['full_name'] ??
-                                                user?.userMetadata?['full_name'] ??
-                                                'User',
-                                            style: const TextStyle(
-                                              fontSize: 24,
-                                              fontWeight: FontWeight.w900,
-                                              color: Color(0xFF1A1A1A),
-                                              fontFamily: 'MPLUSRounded1c',
-                                              letterSpacing: -0.5,
-                                            ),
+                                          Row(
+                                            children: [
+                                              Flexible(
+                                                child: Text(
+                                                  _userData?['full_name'] ??
+                                                      user?.userMetadata?['full_name'] ??
+                                                      'User',
+                                                  style: const TextStyle(
+                                                    fontSize: 24,
+                                                    fontWeight: FontWeight.w900,
+                                                    color: Color(0xFF1A1A1A),
+                                                    fontFamily: 'MPLUSRounded1c',
+                                                    letterSpacing: -0.5,
+                                                  ),
+                                                  overflow: TextOverflow.ellipsis,
+                                                ),
+                                              ),
+                                              if (_userData?['email'] == 'bytspot.in@gmail.com' || user?.email == 'bytspot.in@gmail.com')
+                                                const Padding(
+                                                  padding: EdgeInsets.only(left: 8),
+                                                  child: Icon(
+                                                    Icons.verified,
+                                                    size: 20,
+                                                    color: Colors.blue,
+                                                  ),
+                                                ),
+                                            ],
                                           ),
                                           if (_userData?['username'] != null)
                                             Text(
@@ -421,6 +474,9 @@ class _ProfilePageState extends State<ProfilePage>
                                 else
                                   GestureDetector(
                                     onTap: () async {
+                                      if (!await AuthGate.check(context,
+                                          message: 'Sign in to follow other food explorers!'))
+                                        return;
                                       HapticFeedback.mediumImpact();
                                       final success =
                                           await FollowService.toggleFollow(
@@ -521,6 +577,20 @@ class _ProfilePageState extends State<ProfilePage>
                                       MaterialPageRoute(
                                         builder: (context) =>
                                             const MyReviewsPage(),
+                                      ),
+                                    );
+                                  },
+                                ),
+                                _buildMenuItem(
+                                  icon: Icons.article_outlined,
+                                  title: 'My Posts',
+                                  onTap: () {
+                                    HapticFeedback.selectionClick();
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            const MyPostsPage(),
                                       ),
                                     );
                                   },
@@ -793,6 +863,86 @@ class _ProfilePageState extends State<ProfilePage>
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildGuestView() {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 40),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(35),
+              decoration: BoxDecoration(
+                color: const Color(0xFFFF0000).withOpacity(0.05),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.account_circle_rounded,
+                size: 70,
+                color: const Color(0xFFFF0000).withOpacity(0.2),
+              ),
+            ),
+            const SizedBox(height: 24),
+            const Text(
+              'Your Profile',
+              style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.w900,
+                color: Color(0xFF1A1A1A),
+              ),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              'Sign in to see your profile, tracked visits, following list, and more!',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.grey[500],
+                height: 1.5,
+              ),
+            ),
+            const SizedBox(height: 35),
+            GestureDetector(
+              onTap: () {
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                  (route) => false,
+                );
+              },
+              child: Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [Color(0xFFFF0000), Color(0xFFC40000)],
+                  ),
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color(0xFFFF0000).withOpacity(0.3),
+                      blurRadius: 15,
+                      offset: const Offset(0, 8),
+                    ),
+                  ],
+                ),
+                child: const Text(
+                  'Sign In / Create Account',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

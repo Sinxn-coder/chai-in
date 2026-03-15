@@ -3,6 +3,7 @@ import 'services/notification_service.dart';
 import 'services/image_helper.dart';
 import 'services/post_service.dart';
 import 'widgets/food_loading.dart';
+import 'services/auth_gate.dart';
 
 class SavedPostsPage extends StatefulWidget {
   const SavedPostsPage({super.key});
@@ -215,8 +216,11 @@ class _SavedPostsPageState extends State<SavedPostsPage> {
                         ],
                       ),
                     ),
-                    GestureDetector(
+                     GestureDetector(
                       onTap: () async {
+                        if (!await AuthGate.check(context,
+                            message: 'Sign in to manage your saved posts!'))
+                          return;
                         final postId = post['id'].toString();
                         final success = await PostService.toggleSave(postId);
 

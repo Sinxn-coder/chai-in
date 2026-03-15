@@ -9,9 +9,11 @@ import 'services/permission_service.dart';
 import 'services/notification_service.dart';
 import 'supabase_config.dart';
 import 'widgets/food_loading.dart';
+import 'services/auth_gate.dart';
 
 class AddSpotPage extends StatefulWidget {
-  const AddSpotPage({super.key});
+  final String? initialName;
+  const AddSpotPage({super.key, this.initialName});
 
   @override
   State<AddSpotPage> createState() => _AddSpotPageState();
@@ -140,7 +142,17 @@ class _AddSpotPageState extends State<AddSpotPage> {
   @override
   void initState() {
     super.initState();
+    _checkAuth();
+    if (widget.initialName != null) {
+      _nameController.text = widget.initialName!;
+    }
     _fetchCategories();
+  }
+
+  Future<void> _checkAuth() async {
+    if (!await AuthGate.check(context, message: 'Sign in to add new food spots to the community!')) {
+      if (mounted) Navigator.of(context).pop();
+    }
   }
 
   Future<void> _fetchCategories() async {

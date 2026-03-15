@@ -3,6 +3,8 @@ import 'spot_details.dart';
 import 'services/image_helper.dart';
 import 'services/favorite_service.dart';
 import 'widgets/food_loading.dart';
+import 'services/auth_gate.dart';
+import 'login.dart';
 
 class FavoritesPage extends StatefulWidget {
   final VoidCallback? onExploreRequested;
@@ -20,17 +22,30 @@ class FavoritesPage extends StatefulWidget {
 class _FavoritesPageState extends State<FavoritesPage> {
   List<Map<String, dynamic>> _favoriteSpots = [];
   bool _isLoading = true;
+  bool _isGuest = false;
 
   @override
   void initState() {
     super.initState();
-    _loadFavorites();
+    _checkGuestStatus();
+  }
+
+  Future<void> _checkGuestStatus() async {
+    final guest = await AuthGate.isGuest();
+    if (mounted) {
+      setState(() => _isGuest = guest);
+      if (!guest) {
+        _loadFavorites();
+      } else {
+        setState(() => _isLoading = false);
+      }
+    }
   }
 
   @override
   void didUpdateWidget(covariant FavoritesPage oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (!oldWidget.isActive && widget.isActive) {
+    if (!oldWidget.isActive && widget.isActive && !_isGuest) {
       _loadFavorites(isSilent: true);
     }
   }
@@ -168,7 +183,9 @@ class _FavoritesPageState extends State<FavoritesPage> {
                 : RefreshIndicator(
                     onRefresh: _loadFavorites,
                     color: const Color(0xFFFF0000),
-                    child: _favoriteSpots.isEmpty
+                    child: _isGuest
+                        ? _buildGuestView()
+                        : _favoriteSpots.isEmpty
                         ? SingleChildScrollView(
                             physics: const AlwaysScrollableScrollPhysics(),
                             child: SizedBox(
@@ -414,6 +431,85 @@ class _FavoritesPageState extends State<FavoritesPage> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildGuestView() {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 40),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(35),
+              decoration: BoxDecoration(
+                color: const Color(0xFFFF0000).withOpacity(0.05),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.favorite_rounded,
+                size: 70,
+                color: const Color(0xFFFF0000).withOpacity(0.2),
+              ),
+            ),
+            const SizedBox(height: 24),
+            const Text(
+              'Save Your Favorites',
+              style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.w900,
+                color: Color(0xFF1A1A1A),
+              ),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              'Sign in to save the food spots you love and keep them handy!',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.grey[500],
+                height: 1.5,
+              ),
+            ),
+            const SizedBox(height: 35),
+            GestureDetector(
+              onTap: () {
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                  (route) => false,
+                );
+              },
+              child: Container(
+                height: 60,
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: const Color(0xFFFF0000),
+                  borderRadius: BorderRadius.circular(15),
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color(0xFFFF0000).withOpacity(0.2),
+                      blurRadius: 15,
+                      offset: const Offset(0, 8),
+                    ),
+                  ],
+                ),
+                child: const Center(
+                  child: Text(
+                    'Sign In Now',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

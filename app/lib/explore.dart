@@ -10,6 +10,7 @@ import 'package:latlong2/latlong.dart';
 import 'services/notification_service.dart';
 import 'services/favorite_service.dart';
 import 'services/spot_status_service.dart';
+import 'services/auth_gate.dart';
 
 class ExplorePageContent extends StatefulWidget {
   final bool isActive;
@@ -389,15 +390,57 @@ class _ExplorePageContentState extends State<ExplorePageContent> {
   Future<void> _handleNearMeSelection() async {
     setState(() => _isGettingLocation = true);
     try {
-      bool serviceEnabled;
-      LocationPermission permission;
-
-      serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      // 1. Check if location services are enabled
+      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
       if (!serviceEnabled) {
         if (mounted) {
-          NotificationService.show(
-            message: 'Location services are disabled.',
-            type: NotificationType.error,
+          showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: const Text(
+                  'Location Services Disabled',
+                  style: TextStyle(
+                    color: Color(0xFF1A1A1A),
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                content: const Text(
+                  'Please enable location services to find spots near you. Go to Settings and enable location.',
+                  style: TextStyle(color: Color(0xFF6B7280), fontSize: 14),
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text(
+                      'Cancel',
+                      style: TextStyle(color: Color(0xFF6B7280), fontSize: 14),
+                    ),
+                  ),
+                  ElevatedButton(
+                    onPressed: () async {
+                      Navigator.of(context).pop();
+                      await Geolocator.openLocationSettings();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFFFF0000),
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    child: const Text(
+                      'Settings',
+                      style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                    ),
+                  ),
+                ],
+              );
+            },
           );
         }
         setState(() {
@@ -407,7 +450,8 @@ class _ExplorePageContentState extends State<ExplorePageContent> {
         return;
       }
 
-      permission = await Geolocator.checkPermission();
+      // 2. Check permissions using PermissionService logic
+      LocationPermission permission = await Geolocator.checkPermission();
       if (permission == LocationPermission.denied) {
         permission = await Geolocator.requestPermission();
         if (permission == LocationPermission.denied) {
@@ -428,7 +472,7 @@ class _ExplorePageContentState extends State<ExplorePageContent> {
       if (permission == LocationPermission.deniedForever) {
         if (mounted) {
           NotificationService.show(
-            message: 'Location permissions are permanently denied.',
+            message: 'Location permissions are permanently denied. Please enable them in app settings.',
             type: NotificationType.error,
           );
         }
@@ -766,9 +810,19 @@ class _ExplorePageContentState extends State<ExplorePageContent> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      height: double.infinity,
+    return GestureDetector(
+      onTap: () {
+        _searchFocusNode.unfocus();
+        if (mounted) {
+          setState(() {
+            _isSearchFocused = false;
+          });
+        }
+      },
+      behavior: HitTestBehavior.translucent,
+      child: Container(
+        width: double.infinity,
+        height: double.infinity,
       decoration: const BoxDecoration(
         gradient: RadialGradient(
           center: Alignment(-0.5, -0.6),
@@ -1098,8 +1152,9 @@ class _ExplorePageContentState extends State<ExplorePageContent> {
           ),
         ],
       ),
-    );
-  }
+    ),
+  );
+}
 
   Widget _buildSpotCard(Map<String, dynamic> spot) {
     final spotId = spot['id']?.toString();
@@ -1251,6 +1306,8 @@ class _ExplorePageContentState extends State<ExplorePageContent> {
             right: 12,
             child: GestureDetector(
               onTap: () async {
+                if (!await AuthGate.check(context,
+                    message: 'Sign in to save spots you love!')) return;
                 if (spotId == null) return;
                 try {
                   final isNowFav = await FavoriteService.toggleFavorite(spotId);

@@ -7,6 +7,7 @@ import 'services/notification_service.dart';
 import 'supabase_config.dart';
 import 'user_profile.dart';
 import 'profile.dart';
+import 'services/auth_gate.dart';
 
 class PostDetailsPage extends StatefulWidget {
   final List<Map<String, dynamic>> posts;
@@ -100,7 +101,9 @@ class _PostDetailItemState extends State<PostDetailItem> {
     _isSaved = widget.post['isSaved'] ?? false;
   }
 
-  Future<void> _handleLike() async {
+   Future<void> _handleLike() async {
+    if (!await AuthGate.check(context,
+        message: 'Sign in to like posts!')) return;
     HapticFeedback.mediumImpact();
     final newIsLiked = !_isLiked;
     final newLikesCount = _likesCount + (newIsLiked ? 1 : -1);
@@ -126,7 +129,9 @@ class _PostDetailItemState extends State<PostDetailItem> {
     }
   }
 
-  Future<void> _handleSave() async {
+   Future<void> _handleSave() async {
+    if (!await AuthGate.check(context,
+        message: 'Sign in to save posts you love!')) return;
     HapticFeedback.lightImpact();
     final success = await PostService.toggleSave(widget.post['id'].toString());
     if (mounted) {

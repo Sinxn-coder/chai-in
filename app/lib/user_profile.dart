@@ -5,6 +5,7 @@ import 'dart:ui';
 import 'services/follow_service.dart';
 import 'services/post_service.dart';
 import 'services/notification_service.dart';
+import 'services/auth_gate.dart';
 import 'widgets/food_loading.dart';
 import 'supabase_config.dart';
 import 'services/image_helper.dart';
@@ -155,6 +156,8 @@ class _UserProfilePageState extends State<UserProfilePage> {
   }
 
   Future<void> _handleFollow() async {
+    if (!await AuthGate.check(context,
+        message: 'Sign in to follow other food explorers!')) return;
     HapticFeedback.mediumImpact();
     // The original instruction provided a change to PostService.toggleSave,
     // but this method is for following users on a UserProfilePage.
@@ -293,14 +296,30 @@ class _UserProfilePageState extends State<UserProfilePage> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              _userData?['full_name'] ?? 'User',
-                              style: const TextStyle(
-                                fontSize: 22,
-                                fontWeight: FontWeight.w900,
-                                color: Color(0xFF1A1A1A),
-                                letterSpacing: -0.5,
-                              ),
+                            Row(
+                              children: [
+                                Flexible(
+                                  child: Text(
+                                    _userData?['full_name'] ?? 'User',
+                                    style: const TextStyle(
+                                      fontSize: 22,
+                                      fontWeight: FontWeight.w900,
+                                      color: Color(0xFF1A1A1A),
+                                      letterSpacing: -0.5,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                                if (_userData?['email'] == 'bytspot.in@gmail.com')
+                                  const Padding(
+                                    padding: EdgeInsets.only(left: 6),
+                                    child: Icon(
+                                      Icons.verified,
+                                      size: 18,
+                                      color: Colors.blue,
+                                    ),
+                                  ),
+                              ],
                             ),
                             Text(
                               '@${_userData?['username'] ?? 'username'}',
@@ -523,12 +542,26 @@ class _UserProfilePageState extends State<UserProfilePage> {
                 ),
                 const Spacer(),
                 if (_scrollOpacity > 0.8)
-                  Text(
-                    _userData?['username'] ?? 'User',
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w900,
-                      fontSize: 16,
-                    ),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        _userData?['username'] ?? 'User',
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w900,
+                          fontSize: 16,
+                        ),
+                      ),
+                      if (_userData?['email'] == 'bytspot.in@gmail.com')
+                        const Padding(
+                          padding: EdgeInsets.only(left: 4),
+                          child: Icon(
+                            Icons.verified,
+                            size: 14,
+                            color: Colors.blue,
+                          ),
+                        ),
+                    ],
                   ),
                 const Spacer(),
                 const SizedBox(width: 40), // Balance

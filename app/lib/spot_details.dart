@@ -9,7 +9,9 @@ import 'services/review_service.dart';
 import 'services/feature_service.dart';
 import 'services/visit_service.dart';
 import 'services/spot_status_service.dart';
+import 'services/suggestion_service.dart';
 import 'supabase_config.dart';
+import 'services/auth_gate.dart';
 
 class SpotDetailsPage extends StatefulWidget {
   final Map<String, dynamic> spot;
@@ -51,6 +53,7 @@ class _SpotDetailsPageState extends State<SpotDetailsPage>
   String? _editingReviewId;
   final TextEditingController _reviewController = TextEditingController();
   final TextEditingController _suggestionController = TextEditingController();
+  bool _isSubmittingSuggestion = false;
 
   double get _averageRating {
     if (_reviews.isEmpty)
@@ -112,6 +115,8 @@ class _SpotDetailsPageState extends State<SpotDetailsPage>
   }
 
   Future<void> _toggleReviewLike(int index) async {
+    if (!await AuthGate.check(context,
+        message: 'Sign in to like reviews!')) return;
     final review = _reviews[index];
     final reviewId = review['id'];
     if (reviewId == null) return;
@@ -178,201 +183,248 @@ class _SpotDetailsPageState extends State<SpotDetailsPage>
     });
   }
 
-  void _showSuggestEditDialog() {
-    showDialog(
+  void _showSuggestEditDialog() async {
+    if (!await AuthGate.check(context, message: 'Sign in to suggest edits and help the community!')) return;
+    
+    showModalBottomSheet(
       context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return Dialog(
-          backgroundColor: Colors.transparent,
-          child: Container(
-            margin: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(20),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
-                  blurRadius: 20,
-                  spreadRadius: 5,
-                ),
-              ],
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // Header
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(20),
-                  decoration: const BoxDecoration(
-                    color: Color(0xFFFF0000),
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(20),
-                      topRight: Radius.circular(20),
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      barrierColor: Colors.black.withOpacity(0.5),
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setModalState) {
+            return Container(
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom,
+              ),
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black12,
+                    blurRadius: 20,
+                    spreadRadius: 5,
+                  ),
+                ],
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Drag Handle
+                  Container(
+                    margin: const EdgeInsets.only(top: 12),
+                    width: 40,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade300,
+                      borderRadius: BorderRadius.circular(2),
                     ),
                   ),
-                  child: const Text(
-                    'Suggest Edits',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
 
-                // Content
-                Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        Icons.edit_outlined,
-                        size: 48,
-                        color: const Color(0xFFFF0000),
-                      ),
-                      const SizedBox(height: 16),
-                      const Text(
-                        'Help us improve this spot with your suggestions!',
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Color(0xFF1A1A1A),
-                          height: 1.4,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 24),
-                      TextField(
-                        controller: _suggestionController,
-                        maxLines: 4,
-                        decoration: InputDecoration(
-                          hintText: 'Enter your suggestions...',
-                          hintStyle: const TextStyle(
-                            color: Color(0xFF6B7280),
-                            fontSize: 14,
+                  // Header
+                  Padding(
+                    padding: const EdgeInsets.all(24),
+                    child: Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: Colors.indigo.shade50,
+                            borderRadius: BorderRadius.circular(16),
                           ),
-                          prefixIcon: const Icon(
-                            Icons.edit,
-                            color: Color(0xFF6B7280),
-                            size: 20,
-                          ),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: const BorderSide(
-                              color: Color(0xFFE5E7EB),
-                              width: 1,
-                            ),
-                          ),
-                          contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 12,
+                          child: Icon(
+                            Icons.edit_note_rounded,
+                            color: Colors.indigo.shade600,
+                            size: 24,
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                ),
-
-                // Buttons
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: Row(
-                    children: [
-                      // Cancel Button
-                      Expanded(
-                        child: GestureDetector(
-                          onTap: () {
-                            Navigator.pop(context);
-                          },
-                          child: Container(
-                            height: 50,
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFF3F4F6),
-                              borderRadius: BorderRadius.circular(16),
-                              border: Border.all(
-                                color: const Color(0xFFE5E7EB),
-                                width: 1,
-                              ),
-                            ),
-                            child: const Center(
-                              child: Text(
-                                'Cancel',
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                'Suggest Edits',
                                 style: TextStyle(
-                                  color: Color(0xFF6B7280),
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w800,
+                                  color: Color(0xFF1E293B),
+                                  letterSpacing: -0.5,
                                 ),
                               ),
+                              Text(
+                                'Help us improve this spot',
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  color: Colors.grey.shade600,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: () => Navigator.pop(context),
+                          icon: Icon(Icons.close_rounded, color: Colors.grey.shade400),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const Divider(height: 1),
+
+                  // Content
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(24, 24, 24, 32),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Description of changes',
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w700,
+                            color: Color(0xFF1E293B),
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        Container(
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFF8FAFC),
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(
+                              color: const Color(0xFFE2E8F0),
+                              width: 1.5,
+                            ),
+                          ),
+                          child: TextField(
+                            controller: _suggestionController,
+                            maxLines: 4,
+                            autofocus: true,
+                            onChanged: (val) => setModalState(() {}),
+                            style: const TextStyle(
+                              fontSize: 15,
+                              color: Color(0xFF0F172A),
+                              height: 1.5,
+                            ),
+                            decoration: InputDecoration(
+                              hintText: 'What should be corrected or added?',
+                              hintStyle: TextStyle(
+                                color: Colors.grey.shade400,
+                                fontSize: 14,
+                              ),
+                              border: InputBorder.none,
+                              contentPadding: const EdgeInsets.all(20),
                             ),
                           ),
                         ),
-                      ),
-
-                      const SizedBox(width: 12),
-
-                      // Send Button
-                      Expanded(
-                        flex: 2, // Give more room to the longer text
-                        child: GestureDetector(
-                          onTap: () async {
-                            if (_reviewController.text.trim().isNotEmpty) {
-                              // In a real app, this would send to backend
-                              NotificationService.show(
-                                message: 'Suggestion sent successfully!',
-                                type: NotificationType.success,
-                              );
-                              Navigator.pop(context);
-                              _suggestionController.clear();
-                            } else {
-                              NotificationService.show(
-                                message: 'Please enter a suggestion',
-                                type: NotificationType.error,
-                              );
-                            }
-                          },
-                          child: Container(
-                            height: 50,
-                            decoration: BoxDecoration(
-                              gradient: const LinearGradient(
-                                colors: [Color(0xFFFF0000), Color(0xFFDC2626)],
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                              ),
-                              borderRadius: BorderRadius.circular(16),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: const Color(
-                                    0xFFFF0000,
-                                  ).withOpacity(0.25),
-                                  blurRadius: 12,
-                                  offset: const Offset(0, 4),
+                        const SizedBox(height: 16),
+                        Row(
+                          children: [
+                            Icon(Icons.verified_user_outlined, size: 16, color: Colors.green.shade600),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                'Your contribution helps the community.',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.green.shade700,
+                                  fontWeight: FontWeight.w500,
                                 ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 32),
+
+                        // Action Button
+                        GestureDetector(
+                          onTap: _isSubmittingSuggestion
+                              ? null
+                              : () async {
+                                  final text = _suggestionController.text.trim();
+                                  if (text.isNotEmpty) {
+                                    setModalState(() => _isSubmittingSuggestion = true);
+                                    final success = await SuggestionService.submitSuggestion(
+                                      spotId: widget.spot['id'].toString(),
+                                      suggestion: text,
+                                    );
+                                    if (mounted) {
+                                      setModalState(() => _isSubmittingSuggestion = false);
+                                      if (success) {
+                                        NotificationService.show(
+                                          message: 'Suggestion sent! Thank you.',
+                                          type: NotificationType.success,
+                                        );
+                                        Navigator.pop(context);
+                                        _suggestionController.clear();
+                                      } else {
+                                        NotificationService.show(
+                                          message: 'Failed to send suggestion.',
+                                          type: NotificationType.error,
+                                        );
+                                      }
+                                    }
+                                  } else {
+                                    NotificationService.show(
+                                      message: 'Please describe the changes',
+                                      type: NotificationType.error,
+                                    );
+                                  }
+                                },
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 200),
+                            height: 56,
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: _isSubmittingSuggestion
+                                    ? [Colors.grey.shade300, Colors.grey.shade400]
+                                    : [const Color(0xFF6366F1), const Color(0xFF4F46E5)],
+                                begin: Alignment.centerLeft,
+                                end: Alignment.centerRight,
+                              ),
+                              borderRadius: BorderRadius.circular(18),
+                              boxShadow: [
+                                if (!_isSubmittingSuggestion)
+                                  BoxShadow(
+                                    color: Colors.indigo.withOpacity(0.2),
+                                    blurRadius: 12,
+                                    offset: const Offset(0, 4),
+                                  ),
                               ],
                             ),
-                            child: const Center(
-                              child: Text(
-                                'Send Suggestion',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold,
-                                  letterSpacing: 0.2,
-                                ),
-                              ),
+                            child: Center(
+                              child: _isSubmittingSuggestion
+                                  ? const SizedBox(
+                                      width: 24,
+                                      height: 24,
+                                      child: CircularProgressIndicator(
+                                        color: Colors.white,
+                                        strokeWidth: 2,
+                                      ),
+                                    )
+                                  : const Text(
+                                      'Send Suggestion',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w700,
+                                        letterSpacing: 0.2,
+                                      ),
+                                    ),
                             ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-
-                const SizedBox(height: 20),
-              ],
-            ),
-          ),
+                ],
+              ),
+            );
+          },
         );
       },
     );
@@ -479,6 +531,8 @@ class _SpotDetailsPageState extends State<SpotDetailsPage>
   }
 
   Future<void> _toggleSaved() async {
+    if (!await AuthGate.check(context, message: 'Sign in to save your favorite spots!')) return;
+    
     final spotId = widget.spot['id']?.toString();
     print('DEBUG: Details bookmark tapped for spot: $spotId');
     if (spotId == null) return;
@@ -500,6 +554,8 @@ class _SpotDetailsPageState extends State<SpotDetailsPage>
   }
 
   Future<void> _toggleVisited() async {
+    if (!await AuthGate.check(context, message: 'Sign in to track your visits!')) return;
+    
     final spotId = widget.spot['id']?.toString();
     if (spotId == null) return;
 
@@ -514,6 +570,8 @@ class _SpotDetailsPageState extends State<SpotDetailsPage>
   }
 
   Future<void> _openDirections() async {
+    if (!await AuthGate.canUseDirections(context)) return;
+
     final lat = widget.spot['latitude'];
     final lng = widget.spot['longitude'];
 
@@ -569,6 +627,8 @@ class _SpotDetailsPageState extends State<SpotDetailsPage>
   }
 
   Future<void> _submitReview() async {
+    if (!await AuthGate.check(context, message: 'Sign in to share your experience with others!')) return;
+    
     final content = _reviewController.text.trim();
     if (content.isEmpty) return;
 
@@ -1687,10 +1747,17 @@ class _SpotDetailsPageState extends State<SpotDetailsPage>
                                                 children: List.generate(
                                                   5,
                                                   (index) => GestureDetector(
-                                                    onTap: () => setState(
-                                                      () => _selectedRating =
-                                                          index + 1.0,
-                                                    ),
+                                                    onTap: () async {
+                                                      if (!await AuthGate.check(
+                                                        context,
+                                                        message:
+                                                            'Sign in to share your experience with others!',
+                                                      )) return;
+                                                      setState(
+                                                        () => _selectedRating =
+                                                            index + 1.0,
+                                                      );
+                                                    },
                                                     child: Padding(
                                                       padding:
                                                           const EdgeInsets.symmetric(
@@ -1728,11 +1795,20 @@ class _SpotDetailsPageState extends State<SpotDetailsPage>
                                               SizedBox(
                                                 width: double.infinity,
                                                 child: ElevatedButton(
-                                                  onPressed: _selectedRating > 0
-                                                      ? () => setState(
-                                                          () => _isReviewStep2 =
-                                                              true,
-                                                        )
+                                                   onPressed: _selectedRating > 0
+                                                      ? () async {
+                                                          if (!await AuthGate
+                                                              .check(
+                                                            context,
+                                                            message:
+                                                                'Sign in to share your experience with others!',
+                                                          )) return;
+                                                          setState(
+                                                            () =>
+                                                                _isReviewStep2 =
+                                                                    true,
+                                                          );
+                                                        }
                                                       : null,
                                                   style: ElevatedButton.styleFrom(
                                                     backgroundColor:

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../add_spot.dart';
+import '../services/auth_gate.dart';
 
 class CustomBottomNavBar extends StatelessWidget {
   final int currentIndex;
@@ -11,8 +12,11 @@ class CustomBottomNavBar extends StatelessWidget {
     required this.onTap,
   });
 
-  void _navigateToAddSpot(BuildContext context) {
-    Navigator.of(context).push(_CircularRevealTransition(const AddSpotPage()));
+  void _navigateToAddSpot(BuildContext context) async {
+    if (!await AuthGate.check(context, message: 'Sign in to add new food spots to the community!')) return;
+    if (context.mounted) {
+      Navigator.of(context).push(_CircularRevealTransition(const AddSpotPage()));
+    }
   }
 
   @override
