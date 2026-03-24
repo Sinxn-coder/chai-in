@@ -39,8 +39,6 @@ import {
 } from 'lucide-react';
 import './index.css';
 
-const ADMIN_EMAIL = 'bytspot.in@gmail.com';
-
 export default function App() {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [isMobile, setIsMobile] = useState(false);
@@ -73,7 +71,7 @@ export default function App() {
 
         if (session) {
           console.log('Session found for:', session.user.email);
-          if (session.user.email === ADMIN_EMAIL) {
+          if (session.user.email === 'bytspot.in@gmail.com') {
             setIsAdminLoggedIn(true);
           } else {
             console.warn('Unauthorized user blocked:', session.user.email);
@@ -95,7 +93,7 @@ export default function App() {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       console.log('Auth state changed:', event);
       if (session) {
-        if (session.user.email === ADMIN_EMAIL) {
+        if (session.user.email === 'bytspot.in@gmail.com') {
           setIsAdminLoggedIn(true);
         } else {
           setIsAdminLoggedIn(false);
@@ -113,16 +111,8 @@ export default function App() {
     setIsAdminLoggedIn(true);
   };
 
-  const handleAdminLogout = async () => {
-    try {
-      await supabase.auth.signOut();
-    } catch (err) {
-      console.error('Logout error:', err);
-    } finally {
-      setIsAdminLoggedIn(false);
-      setActiveTab('dashboard');
-      setMobileAdminTab('spots');
-    }
+  const handleMobileLogout = () => {
+    setIsAdminLoggedIn(false);
   };
 
 
@@ -930,7 +920,7 @@ export default function App() {
       return (
         <div className="mobile-admin-dashboard ultra-simplified">
           <header className="mobile-admin-header">
-            <button className="back-btn-logout" onClick={handleAdminLogout}>
+            <button className="back-btn-logout" onClick={handleMobileLogout}>
               <ArrowLeft size={24} />
             </button>
             <h1>Admin Panel</h1>
@@ -1022,7 +1012,7 @@ export default function App() {
         </div>
       );
     }
-    return <MobileIntro onLogin={handleAdminLogin} />;
+    return <MobileIntro onLogin={handleMobileLogin} />;
   }
 
   if (!isAdminLoggedIn) {

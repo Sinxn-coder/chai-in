@@ -37,10 +37,7 @@ const AdminLoginPage = ({ onLogin }) => {
             const { error } = await supabase.auth.signInWithOAuth({
                 provider: 'google',
                 options: {
-                    redirectTo: redirectTo,
-                    queryParams: {
-                        prompt: 'select_account'
-                    }
+                    redirectTo: redirectTo
                 }
             });
             if (error) throw error;
