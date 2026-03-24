@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
-import 'dart:async';
 import 'dart:ui';
 import 'main_container.dart';
 import 'services/notification_service.dart';
@@ -37,8 +35,6 @@ class _LoginPageState extends State<LoginPage>
   Map<String, dynamic>? _existingProfile;
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
-  StreamSubscription<dynamic>? _authStateSubscription;
-  bool _isCheckingProfile = false;
 
   @override
   void initState() {
@@ -52,35 +48,6 @@ class _LoginPageState extends State<LoginPage>
       curve: Curves.easeIn,
     );
     _animationController.forward();
-    _resumeWebAuthFlowIfNeeded();
-    _authStateSubscription = SupabaseConfig.client.auth.onAuthStateChange.listen((
-      data,
-    ) {
-      final event = data.event;
-      final session = data.session;
-
-      if ((event == AuthChangeEvent.initialSession ||
-              event == AuthChangeEvent.signedIn) &&
-          session?.user != null) {
-        _checkUserProfile(session!.user);
-      }
-    });
-  }
-
-  Future<void> _resumeWebAuthFlowIfNeeded() async {
-    final currentUser = SupabaseConfig.client.auth.currentUser;
-    if (currentUser == null) return;
-
-    final hasOAuthCallbackParams =
-        Uri.base.queryParameters.containsKey('code') ||
-        Uri.base.fragment.contains('access_token') ||
-        Uri.base.fragment.contains('refresh_token');
-
-    if (hasOAuthCallbackParams && mounted) {
-      setState(() => _isLoading = true);
-    }
-
-    await _checkUserProfile(currentUser);
   }
 
   Future<void> _handleSignOut() async {
@@ -133,26 +100,10 @@ class _LoginPageState extends State<LoginPage>
 
     setState(() => _isLoading = true);
     try {
-      if (kIsWeb) {
-        debugPrint('Web detected: Using Supabase native OAuth for Google Sign-In');
-        final redirectUri = Uri.base.replace(
-          queryParameters: <String, String>{},
-          fragment: '/login',
-        );
-        await SupabaseConfig.client.auth.signInWithOAuth(
-          OAuthProvider.google,
-          redirectTo: redirectUri.toString(),
-        );
-        // On web, signInWithOAuth usually redirects to Google and then back.
-        // The flow continues when the app reloads and Supabase recovers the session.
-        return;
-      }
-
       const webClientId =
           '139410303233-knd9qh4d9eqlrflk81pdpg996f27aosj.apps.googleusercontent.com';
 
       final googleSignIn = GoogleSignIn(
-        clientId: null, // Only used for web, but we handle web above via OAuth
         serverClientId: webClientId,
       );
 
@@ -218,8 +169,6 @@ class _LoginPageState extends State<LoginPage>
   }
 
   Future<void> _checkUserProfile(User user) async {
-    if (_isCheckingProfile) return;
-    _isCheckingProfile = true;
     try {
       debugPrint('Checking profile for user: ${user.id}');
       final data = await SupabaseConfig.client
@@ -281,11 +230,6 @@ class _LoginPageState extends State<LoginPage>
       _animationController.forward();
     } catch (e) {
       debugPrint('Error checking profile: $e');
-    } finally {
-      _isCheckingProfile = false;
-      if (mounted) {
-        setState(() => _isLoading = false);
-      }
     }
   }
 
@@ -381,7 +325,6 @@ class _LoginPageState extends State<LoginPage>
 
   @override
   void dispose() {
-    _authStateSubscription?.cancel();
     _usernameController.dispose();
     _fullNameController.dispose();
     _cityController.dispose();
